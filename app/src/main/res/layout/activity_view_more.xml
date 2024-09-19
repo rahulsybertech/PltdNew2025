@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@color/color_10"
+    tools:context=".activitys.NewGallery.ViewMoreActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/app_bar"
+        android:theme="@style/RoundedDialog"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:theme="@style/Widget.AppCompat.PopupMenu">
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+        <RelativeLayout
+            android:id="@+id/layout_ll"
+            android:layout_margin="5dp"
+            android:layout_below="@id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:id="@+id/setImg_logo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/sss_logo"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:fontFamily="@font/roboto_italic"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:id="@+id/eventName"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="40dp"
+                android:gravity="start"
+                android:layout_toRightOf="@id/setImg_logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+
+        </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventImgRecyc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_ll"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/layout_ll">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <include
+        android:id="@+id/supportChat"
+        layout="@layout/floating_button_layout">
+
+    </include>
+
+    <include
+        android:layout_centerInParent="true"
+        layout="@layout/progress_loader"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/include_progress"/>
+
+
+</RelativeLayout>

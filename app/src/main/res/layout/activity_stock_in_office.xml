@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_bg"
+    tools:context=".activitys.StockInOfficeActivity">
+    <include layout="@layout/backbutton_toolbar"
+        android:id="@+id/tool"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/tool"
+        android:id="@+id/stockInOfficeRecy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <include
+        android:layout_centerInParent="true"
+        layout="@layout/progress_loader"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/include_progress"/>
+
+    <include
+        android:id="@+id/supportChat"
+        layout="@layout/floating_button_layout"></include>
+
+
+</RelativeLayout>

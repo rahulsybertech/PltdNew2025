@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/light_gray"
+    tools:context=".activitys.supplierorderform.SupplierReportActivity">
+      <com.google.android.material.appbar.AppBarLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/app_bar"
+          android:theme="@style/AppTheme.AppBarOverlay">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:title="Order Details" />
+      </com.google.android.material.appbar.AppBarLayout>
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/app_bar"
+          android:id="@+id/ll_btn"
+          android:layout_marginTop="7dp"
+          android:orientation="horizontal">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:text="Apr. Pending"
+                android:id="@+id/btn_pending"
+                android:textAllCaps="false"
+                android:visibility="gone"
+                android:background="@drawable/background_effect"
+                android:gravity="center"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/white"
+                android:textSize="17dp"
+                android:layout_marginEnd="5dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginEnd="5dp"
+                android:text="Confirm"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/background_effect"
+                android:gravity="center"
+                android:id="@+id/btn_confirm"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="17dp"
+                android:layout_weight="1"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginEnd="5dp"
+                android:text="Hold"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="17dp"
+                android:background="@drawable/background_effect"
+                android:id="@+id/btn_hold"
+                android:textAllCaps="false"
+                android:layout_weight="1" />
+      </LinearLayout>
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@+id/ll_btn"
+          android:id="@+id/recycler_view"
+          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+      <include
+          android:layout_centerInParent="true"
+          layout="@layout/progress_loader"
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:id="@+id/include_progress"/>
+</RelativeLayout>

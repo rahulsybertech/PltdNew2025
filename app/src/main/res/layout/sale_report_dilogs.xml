@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/sale_dialogs"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+            <TextView
+                android:padding="6dp"
+                android:layout_marginLeft="5dp"
+                android:textSize="18dp"
+                android:text="For PDF  Click on Bill no and Purchase no, Highlighted in Red "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+        <RadioGroup
+            android:layout_gravity="center"
+            android:id="@+id/no_order_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:buttonTint="@color/colorPrimary"
+                android:id="@+id/sale_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Don't show this message again"
+                android:textSize="16dp">
+
+            </CheckBox>
+
+        </RadioGroup>
+
+
+
+        <Button
+            android:id="@+id/sale_submit"
+            android:layout_margin="10dp"
+            android:textColor="@color/white"
+            android:background="@drawable/filter_button_two"
+            android:text="@string/submit"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+</LinearLayout>
+
+
+    </RelativeLayout>

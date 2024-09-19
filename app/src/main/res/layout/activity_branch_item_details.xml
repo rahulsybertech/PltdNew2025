@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_bg"
+    tools:context=".activitys.BranchItemDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/RoundedDialog">
+
+
+    <androidx.appcompat.widget.Toolbar
+        app:title="BRANCH DETAIL"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:id="@+id/toolbar"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_below="@id/toolbar1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/branchItem_Img"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:scaleType="centerCrop" />
+
+            <RelativeLayout
+                android:id="@+id/item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100sp">
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/product_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:layout_weight="0"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Manager Name  "
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/managerName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/roboto_regular"
+                                android:paddingLeft="5dp"
+                                android:textColor="@color/gerrn" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:layout_weight="0"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="StayFacility         "
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/stayfacility"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/roboto_regular"
+                                android:paddingLeft="5dp"
+                                android:textColor="@color/gerrn" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/dst_ret_mech"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Mobile Number  "
+                                android:textColor="@color/black"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/branch_MobNo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center|start"
+                                android:fontFamily="@font/roboto_regular"
+                                android:paddingLeft="5dp"
+                                android:textColor="@color/red" />
+                            <ImageView
+                                android:id="@+id/call_mobile"
+                                android:padding="6dp"
+                                android:background="@drawable/circle_outline"
+                                android:layout_marginRight="70dp"
+                                android:layout_below="@id/location_map"
+                                android:src="@drawable/ic_call__"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:visibility="visible">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:layout_weight="0"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Email_id               "
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/branch_EmailID"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/roboto_regular"
+                                android:paddingLeft="5dp"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:visibility="visible">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Office Contact    "
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/branch_OffCont"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center|start"
+                                android:fontFamily="@font/roboto_regular"
+                                android:paddingLeft="5dp"
+                                android:textColor="@color/red" />
+                            <ImageView
+                                android:layout_below="@id/location_map"
+                                android:id="@+id/officeConcat"
+                                android:padding="6dp"
+                                android:background="@drawable/circle_outline"
+                                android:layout_alignParentRight="true"
+                                android:src="@drawable/ic_call__"
+                                android:layout_width="30dp"
+                                android:layout_marginEnd="70dp"
+                                android:layout_height="30dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:visibility="visible">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:layout_weight="0"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Weekly Off          "
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/branch_weekly_off"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/roboto_regular"
+                                android:paddingLeft="5dp"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:visibility="visible">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:layout_weight="0"
+                                android:fontFamily="@font/roboto_regular"
+                                android:text="Address              "
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/branch_address"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/roboto_regular"
+                                android:paddingLeft="5dp"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+            </RelativeLayout>
+
+
+
+
+
+
+
+    <RelativeLayout
+        android:gravity="center"
+        android:id="@+id/rl_branch_details"
+        android:layout_below="@id/item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/layout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+
+            <TextView
+                android:id="@+id/marketer"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/all_outline"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/marketer"
+                android:textColor="@color/black" />
+
+
+            <TextView
+                android:id="@+id/billing"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginBottom="2dp"
+                android:layout_toRightOf="@id/sale_report"
+                android:layout_weight="1"
+                android:background="@drawable/all_outline"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/BILLING"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_below="@id/layout1"
+            android:id="@+id/layout2"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/account"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/all_outline"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/ACCOUNT"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="2dp"
+                android:id="@+id/go_down_packing"
+                android:layout_weight="1"
+                android:layout_toRightOf="@id/sale_report"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/black"
+                android:padding="10dp"
+                android:gravity="center"
+                android:background="@drawable/all_outline"
+                android:text="@string/GODOWN_PACKING"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:padding="10dp"
+            android:layout_below="@id/layout2"
+            android:id="@+id/layout3"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <TextView
+                android:id="@+id/G_R"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/black"
+                android:padding="10dp"
+                android:gravity="center"
+                android:background="@drawable/all_outline"
+                android:text="GR"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+<!--    <include-->
+<!--        android:id="@+id/supportChat"-->
+<!--        layout="@layout/floating_button_layout"></include>-->
+    <ImageView
+        android:id="@+id/location_map"
+        android:padding="6dp"
+        android:background="@drawable/all_outline"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="110dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_location"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+
+
+
+
+
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/supportChat"
+        layout="@layout/floating_button_layout"></include>
+
+    <include
+        android:layout_centerInParent="true"
+        layout="@layout/progress_loader"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/include_progress"/>
+
+
+</RelativeLayout>
+
+

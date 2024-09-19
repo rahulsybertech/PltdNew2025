@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/all_outline"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="0"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Courier Name         :"
+                android:textColor="@color/black"
+                android:textSize="12dp"
+                android:textStyle="bold"
+
+                />
+
+            <TextView
+                android:id="@+id/courierName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_regular"
+                android:paddingStart="5dp"
+                android:text="abc"
+                android:textColor="@color/green"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dst_ret_mech"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:layout_weight="0"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Station                    :"
+                android:textColor="@color/black"
+                android:textSize="12dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/courierStation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_regular"
+                android:paddingStart="5dp"
+                android:text="4587645"
+                android:textColor="@color/black"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/otp_line">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/otp_line"
+                android:fontFamily="@font/helvetica_regular"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text="Date"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/otp_line"
+                android:fontFamily="@font/helvetica_regular"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text="Sale Bill No."
+                android:textColor="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/otp_line"
+                android:fontFamily="@font/helvetica_regular"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text="Courier No."
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/otp_line">
+
+            <TextView
+                android:id="@+id/courierDate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/otp_line"
+                android:fontFamily="@font/helvetica_regular"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text="10/12/2020"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/courierBillNo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/otp_line"
+                android:fontFamily="@font/helvetica_regular"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text="1"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/courierNo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/otp_line"
+                android:fontFamily="@font/helvetica_regular"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text="200"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

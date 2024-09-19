@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<!--    <com.smarteist.autoimageslider.SliderView-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:id="@+id/imageSlider"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="210dp"-->
+<!--        app:sliderAutoCycleDirection="right"-->
+<!--        app:sliderAutoCycleEnabled="true"-->
+<!--        app:sliderIndicatorSelectedColor="#ef423e"-->
+<!--        app:sliderIndicatorUnselectedColor="@color/white"-->
+<!--        app:sliderStartAutoCycle="true" />-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/ll"
+                android:layout_width="match_parent"
+                android:layout_height="200dp">
+
+                <com.jama.carouselview.CarouselView
+                    android:id="@+id/carouselView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:nestedScrollingEnabled="false"
+                    app:carouselOffset="center"
+                    app:enableSnapping="true"
+                    app:indicatorAnimationType="drop"
+                    app:indicatorSelectedColor="@color/white"
+                    app:indicatorUnselectedColor="@color/white"
+                    app:resource="@layout/image_view_page"
+                    app:scaleOnScroll="true"
+                    app:setAutoPlay="true"
+                    app:setAutoPlayDelay="3000"
+                    app:size="10"
+                    app:spacing="10" />
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_below="@id/ll"
+                android:id="@+id/current_belTab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/home_button_color"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="start"
+                    android:paddingLeft="10dp"
+                    android:text="@string/current_bel" />
+
+                <TextView
+                    android:id="@+id/current_bel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="start" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/securityCheck_vi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/current_belTab"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/button_grey"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingLeft="10dp"
+                    android:text="Security cheque  :" />
+
+
+                <TextView
+                    android:id="@+id/pen_bel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="right"
+                    android:paddingLeft="10dp"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/textPending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2.5"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingLeft="10dp"
+                    android:text="(Pending)" />
+
+            </LinearLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/securityCheck_vi"
+                android:nestedScrollingEnabled="false" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/securityCheck_vi"
+                android:gravity="center"
+                android:visibility="gone">
+
+
+                <TextView
+                    android:id="@+id/dash_board"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/button_co"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/dash_board"
+                    android:textColor="@color/black" />
+
+
+                <TextView
+                    android:id="@+id/sale_report"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_toRightOf="@id/dash_board"
+                    android:background="@drawable/button_seven"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/sale_report"
+                    android:textColor="@color/black" />
+
+
+                <TextView
+                    android:id="@+id/ledger"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_margin="20dp"
+                    android:layout_toRightOf="@id/sale_report"
+                    android:background="@drawable/button_two"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/ledger"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/stock_in_office"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/sale_report"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/button_three"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/STOCK_IN_OFFICE"
+                    android:textColor="@color/black" />
+
+
+                <TextView
+                    android:id="@+id/pending_order"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/sale_report"
+                    android:layout_margin="20dp"
+                    android:layout_toRightOf="@id/bt5"
+                    android:background="@drawable/button_four"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/PENDING_order"
+                    android:textColor="@color/black" />
+
+
+                <ImageView
+                    android:id="@+id/bt5"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/ledger"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_toRightOf="@id/stock_in_office"
+                    android:background="@drawable/button_five"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:paddingTop="2dp"
+                    android:paddingRight="5dp"
+                    android:paddingBottom="7dp"
+                    android:src="@drawable/coverwelcomee" />
+
+                <TextView
+                    android:id="@+id/courier_report"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/pending_order"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/button_six"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/COURIER"
+                    android:textColor="@color/black" />
+
+
+                <TextView
+                    android:id="@+id/sale_service"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/bt5"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_toRightOf="@id/courier_report"
+                    android:background="@drawable/button_eight"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/sale_service"
+                    android:textColor="@color/black" />
+
+
+                <TextView
+                    android:id="@+id/Dr_Note"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/pending_order"
+                    android:layout_margin="20dp"
+                    android:layout_toRightOf="@id/sale_service"
+                    android:background="@drawable/button_nine"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/dr_note"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/create_note"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/courier_report"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/button_ten"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/credit_note"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/cr_noteSuppl"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/sale_service"
+                    android:layout_marginTop="20dp"
+                    android:layout_toRightOf="@id/create_note"
+                    android:background="@drawable/button_eleven"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/cr_note_sup"
+                    android:textColor="@color/black" />
+
+
+                <TextView
+                    android:id="@+id/dr_NoteCust"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_below="@id/Dr_Note"
+                    android:layout_margin="20dp"
+                    android:layout_toRightOf="@id/cr_noteSuppl"
+                    android:background="@drawable/button_twelve"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/dr_note_cust"
+                    android:textColor="@color/black" />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+
+
+
+</RelativeLayout>

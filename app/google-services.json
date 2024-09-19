@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "818222029982",
+    "project_id": "ssspltd-fc4cd",
+    "storage_bucket": "ssspltd-fc4cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818222029982:android:59ac7ccdfa6eb681d72f8f",
+        "android_client_info": {
+          "package_name": "com.syber.ssspltd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "818222029982-g2mgum9p05dmj61ovtnrrhe2nmfs2oq7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWum2Xnu_G7tgQfrXeoPEe4mNf3Dg-dJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "818222029982-g2mgum9p05dmj61ovtnrrhe2nmfs2oq7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,204 @@
+package com.syber.ssspltd.activitys;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Lazy;
+import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.SharedPref;
+import com.syber.ssspltd.Utils.VolleySingleton;
+import com.syber.ssspltd.adapter.UsersTypeListAdapter;
+import com.syber.ssspltd.response.UsersTypeResponse.UsersTypeListResult;
+import com.syber.ssspltd.response.UsersTypeResponse.UsersTypePoojo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+public class registered_msg extends AppCompatActivity {
+    TextView msg_ok;
+    RecyclerView typeRecyclerview;
+    Context mContext = this;
+    UsersTypeListAdapter usersTypeListAdapter;
+   static List<UsersTypeListResult> UsersTyperDetails;
+    Type listType;
+    LinearLayoutManager linearLayoutManager;
+    public static Integer pos =-1;
+    public static String typePos="",praty_code="";
+    public static String postionSelected="";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_registered_msg);
+        msg_ok=findViewById(R.id.msg_ok);
+        SharedPref.init(mContext);
+//        Bundle bundle = new Bundle();
+//        bundle.putInt("position", SharedPref.read(SharedPref.DB,pos));
+        UsersTyperDetails=new ArrayList<>();
+
+        listType=new TypeToken<UsersTypePoojo>(){}.getType();
+            msg_ok.setOnClickListener(v -> {
+                SharedPref.write(SharedPref.DB, pos.toString());
+                SharedPref.write(SharedPref.LIST_TYPE, typePos);
+                SharedPref.write(SharedPref.PARTY_CODE, praty_code);
+                Log.e("typePos",typePos+"pos ::: "+pos+"pcode ::: "+praty_code);
+              //  Toast.makeText(mContext, typePos+"m", Toast.LENGTH_SHORT).show();
+                //    List<UsersTypeListResult> isSelected=UsersTyperDetails.stream().filter(p->p.isSelected()).collect(Collectors.toList());
+                         if (SharedPref.read(SharedPref.LIST_TYPE, "").equals("5") ) {
+                             SharedPref.write(SharedPref.BACK_BUTTON, "5");
+                             startActivity(new Intent(registered_msg.this, ChooseCategries.class));
+                             finish();
+                             SharedPref.write(SharedPref.IS_SUPPER_SELECTED, "true");
+                             Log.e("pos", typePos);
+                         } else if (SharedPref.read(SharedPref.LIST_TYPE, "").equals("2")) {
+                             startActivity(new Intent(registered_msg.this, MainActivity.class));
+                             SharedPref.read(SharedPref.PARTY_CODE, praty_code);
+                             SharedPref.write(SharedPref.DASHBOARD_TYPE, "Supplier");
+//                        SharedPref.write(SharedPref.TYPE,"Admin");
+                             Log.e("pos", typePos);
+                             Log.e("praty_code", praty_code);
+                             SharedPref.write(SharedPref.IS_SUPPER_SELECTED, "false");
+                         } else if (SharedPref.read(SharedPref.LIST_TYPE, "").equals("1")) {
+                             startActivity(new Intent(registered_msg.this, MainActivity.class));
+                             SharedPref.read(SharedPref.PARTY_CODE, praty_code);
+                             SharedPref.write(SharedPref.DASHBOARD_TYPE, "Customer");
+//                           SharedPref.write(SharedPref.TYPE,"Admin");
+                             SharedPref.write(SharedPref.IS_SUPPER_SELECTED, "false");
+                             Log.e("pos", typePos);
+                             Log.e("praty_code", praty_code);
+                         } else if (SharedPref.read(SharedPref.LIST_TYPE, "").equals("3")) {
+                             startActivity(new Intent(registered_msg.this, MainActivity.class));
+                             SharedPref.read(SharedPref.PARTY_CODE, praty_code);
+                             SharedPref.write(SharedPref.DASHBOARD_TYPE, "Other");
+//                           SharedPref.write(SharedPref.TYPE,"Admin");
+                             SharedPref.write(SharedPref.IS_SUPPER_SELECTED, "false");
+                             Log.e("pos", typePos);
+                             Log.e("praty_code", praty_code);
+                         }
+                         else if (SharedPref.read(SharedPref.LIST_TYPE,"").equals("")){
+                             Toast.makeText(mContext, "Nothing Selected", Toast.LENGTH_SHORT).show();
+                     }
+
+
+//                    }else
+//                        {
+//                            Log.e("pos","selected postion");
+//                        }
+//               else {
+//                    startActivity(new Intent(registered_msg.this, MainActivity.class));
+//                    SharedPref.read(SharedPref.PARTY_CODE,praty_code);
+//                    //SharedPref.write(SharedPref.DASHBOARD_TYPE,"Other");
+//                    SharedPref.write(SharedPref.TYPE,"Admin");
+//                    Log.e("pos",typePos);
+//                    Log.e("praty_code",praty_code);
+//                }
+            });
+
+
+        typeRecyclerview = findViewById(R.id.typeRecyclerview);
+        linearLayoutManager = new LinearLayoutManager(mContext);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        typeRecyclerview.setLayoutManager(linearLayoutManager);
+        usersTypeListAdapter = new UsersTypeListAdapter(mContext,UsersTyperDetails);
+        typeRecyclerview.setAdapter(usersTypeListAdapter);
+        if (Lazy.haveNetworkConnection(mContext)){
+            GetUsersTypeList();
+        }else {
+            networkConnetion3(mContext);
+        }
+
+
+    }
+
+    private void GetUsersTypeList() {
+        final ProgressDialog progressBar = new ProgressDialog(mContext);
+        progressBar.setTitle("Fetching Data");
+       // progressBar.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetUsersTypeList",
+                response -> {
+                    Log.e("Data", response);
+                    progressBar.dismiss();
+                    UsersTypePoojo pojo = new Gson().fromJson(response,listType);
+                    try {
+                        if (pojo.getResponseStatus()) {
+                            UsersTyperDetails.clear();
+                            Log.e("ListSize", pojo.getUsersTypeListResult().size() + "");
+                            UsersTyperDetails.addAll(pojo.getUsersTypeListResult());
+                            usersTypeListAdapter.notifyDataSetChanged();
+                        }
+                        else {
+                            AlertUtil.responseElse(mContext, "GetUsersTypeList ", pojo.getResponseMessage() + "");                        }
+                    }catch (Exception e){
+                        AlertUtil.responseExecption(mContext, "GetUsersTypeList ", e.toString());
+                    }
+
+                }, error -> AlertUtil.responseError(mContext, "GetUsersTypeList ", error.toString())) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String mob3 = SharedPref.read(SharedPref.USERMOBILE,"");
+                String str = "{\"MOBILENO\":\"" + mob3 + "\"}";
+                Log.e("str", str);
+                return str.getBytes();
+            }
+
+            public String getBodyContentType()
+            {
+                return "application/json; charset=utf-8";
+            }
+        };
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Alert");
+        builder.setMessage("Are you sure you want to exit?");
+        builder.setPositiveButton("OK", (dialog, which) -> finishAffinity());
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+    public void  networkConnetion3(Context mContext) {
+        final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
+        ImageView cross = dialogView.findViewById(R.id.cross);
+        TextView try_button = dialogView.findViewById(R.id.try_button);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.BottomSheetDialogTheme2);
+        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(mContext, R.style.RoundedDialog);
+        builder.setView(dialogView);
+        final androidx.appcompat.app.AlertDialog alertDialog = builder.create();
+        //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCancelable(false);
+        cross.setOnClickListener(v -> alertDialog.dismiss());
+        try_button.setOnClickListener(view -> {
+            GetUsersTypeList();
+            alertDialog.dismiss();
+        });
+        alertDialog.show();
+    }
+}

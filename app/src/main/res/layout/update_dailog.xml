@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFF"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:layout_marginEnd="30dp"
+    android:layout_marginStart="30dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_dialog"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:text="Welcome to SSSPLTD"
+        android:textColor="@color/black"
+        android:fontFamily="monospace"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="176dp"
+        android:layout_height="176dp"
+        android:gravity="center"
+        android:layout_gravity="center|top"
+        android:padding="35dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:src="@drawable/sss_logo"
+            android:layout_below="@+id/a"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Now we have new update"
+        android:textColor="@color/black"
+        android:visibility="visible"
+        android:textStyle="bold"
+        android:fontFamily="monospace"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:visibility="visible"
+        android:layout_marginTop="10dp"
+        android:fontFamily="monospace"
+        android:text="Get All the update with SSSPLTD"
+        android:gravity="center"
+        android:textColor="@color/red"/>
+
+    <TextView
+        android:id="@+id/submit"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/red_button"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:paddingLeft="30dp"
+        android:paddingTop="10dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="10dp"
+        android:text="Update Now"
+        android:textColor="#ffffff"
+
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_above="@+id/tv"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="7dp"
+        android:text="Skip"
+        android:id="@+id/skip"
+        android:visibility="visible"
+        android:textColor="#DA000000"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:text="Martios4 Online Solutions Pvt. Ltd."
+        android:textAllCaps="true"
+        android:textColor="@color/black" />
+</LinearLayout>

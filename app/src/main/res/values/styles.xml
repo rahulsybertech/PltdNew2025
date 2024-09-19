@@ -1,0 +1,87 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+      <!-- Base application theme. -->
+      <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+            <!-- Customize your theme here. -->
+            <item name="colorPrimary">@color/colorPrimary</item>
+            <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+            <item name="colorAccent">@color/colorAccent</item>
+      </style>
+
+      <style name="MyApp" parent="Theme.MaterialComponents" />
+
+      <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+            <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+      </style>
+
+      <style name="DialogThemeUpDown">
+            <item name="android:windowEnterAnimation">@anim/slide_up</item>
+            <item name="android:windowExitAnimation">@anim/slide_down</item>
+      </style>
+
+      <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+            <item name="android:textSize">14dp</item>
+      </style>
+
+
+      <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+            <item name="android:background">@android:color/white</item>
+      </style>
+
+      <style name="RoundedDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+            <item name="android:windowBackground">@drawable/all_outline</item>
+      </style>
+
+      <style name="NumberPickerStyle">
+            <item name="android:textSize">22dp</item>
+            <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+            <item name="android:colorControlNormal" tools:targetApi="lollipop">
+                  @color/colorPrimaryDark
+            </item>
+      </style>
+
+      <style name="BottomSheetDialogTheme2" parent="Theme.Design.BottomSheetDialog">
+            <item name="bottomSheetStyle">@style/BottomSheetStyle2</item>
+      </style>
+
+      <style name="BottomSheetStyle2" parent="Widget.Design.BottomSheet.Modal">
+            <item name="android:background">@android:color/transparent</item>
+      </style>
+
+      <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
+            <item name="cornerSize">50%</item>
+      </style>
+
+      <style name="BottomDialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
+            <item name="android:windowIsFloating">false</item>
+            <item name="android:statusBarColor">@android:color/transparent</item>
+            <item name="android:windowSoftInputMode">adjustResize</item>
+            <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
+      </style>
+
+      <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+            <item name="android:background">@android:color/transparent</item>
+      </style>
+
+      <style name="MyTransparentBottomSheetDialogTheme" parent="Theme.AppCompat.Light">
+            <item name="android:background">@android:color/transparent</item>
+            <item name="android:colorBackground">@android:color/transparent</item>
+      </style>
+
+      <style name="ShoppingList.BottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+            <item name="android:colorBackground">@android:color/transparent
+            </item> <!-- has no effect -->
+            <item name="android:backgroundDimAmount">0.3</item>
+      </style>
+
+      <style name="ThemeOverlay.App.BottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+            <item name="bottomSheetStyle">@style/ShoppingList.BottomSheetDialog</item>
+      </style>
+      <style name="LoginTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            <item name="boxStrokeColor">@color/colorPrimaryDark</item>
+            <item name="boxCornerRadiusBottomEnd">5dp</item>
+            <item name="boxCornerRadiusBottomStart">5dp</item>
+            <item name="boxCornerRadiusTopStart">5dp</item>
+            <item name="boxCornerRadiusTopEnd">5dp</item>
+            <item name="boxStrokeWidth">.5dp</item>
+      </style>
+</resources>

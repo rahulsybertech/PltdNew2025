@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_margin="6dp"
+        android:background="@drawable/all_outline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Invoice No       :"
+                    android:layout_weight="0"
+                    android:textSize="12dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:textColor="@color/red"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingStart="5dp"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:id="@+id/invoiceNo_debit"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bill Ref no        :"
+                    android:layout_weight="0"
+                    android:textSize="12dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="5dp"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:id="@+id/billRefNo_debit"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <LinearLayout
+                android:layout_weight="1.3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Date                  :"
+                    android:layout_weight="0"
+                    android:textSize="12dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingStart="5dp"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:id="@+id/date_debit"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Invoice Date:"
+                    android:layout_weight="0"
+                    android:textSize="12dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:id="@+id/invoice_datedebit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingStart="5dp"
+                    android:textSize="12dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Supplier name :"
+                android:layout_weight="0"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_marginTop="1dp"
+                android:textColor="@color/black"
+
+                />
+
+            <TextView
+                android:text=""
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:layout_weight="1"
+                android:textSize="12dp"
+                android:id="@+id/customName_debitNot"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/roboto_regular"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Net Amount     :"
+                android:layout_weight="0"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/roboto_regular"
+                android:layout_marginTop="1dp"
+                android:textColor="@color/black"
+
+                />
+
+            <TextView
+                android:id="@+id/netAmt_debit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:layout_weight="1"
+                android:textSize="12dp"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/roboto_regular"/>
+            <ImageView
+                android:id="@+id/plusClick"
+                android:src="@drawable/ic_down"
+                android:layout_alignParentRight="true"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/otp_line">
+            <!--            <TextView-->
+            <!--                android:textSize="12dp"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:text="Customer name"-->
+            <!--                android:padding="2dp"-->
+            <!--                android:background="@drawable/otp_line"-->
+            <!--                android:gravity="center"-->
+            <!--                android:textColor="@color/black"-->
+            <!--                android:fontFamily="@font/helvetica_regular"/>-->
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Item"
+                android:padding="2dp"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="2dp"
+                android:background="@drawable/otp_line"
+                android:text="Qty"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Amount"
+                android:padding="2dp"
+                android:background="@drawable/otp_line"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:visibility="gone"
+            android:id="@+id/debitNote_itemRecyler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+
+</RelativeLayout>

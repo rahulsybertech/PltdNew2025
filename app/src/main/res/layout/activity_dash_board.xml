@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activitys.DashBoardActivity">
+    <include layout="@layout/backbutton_toolbar"
+        android:id="@+id/l">
+
+    </include>
+
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll"
+        android:layout_below="@id/l"
+        android:layout_margin="6dp"
+        android:background="@drawable/all_outline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/otp_line">
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Current Balance:"
+                android:padding="10dp"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+            <TextView
+                android:id="@+id/currentBel"
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ll_2"
+            android:background="@drawable/otp_line"
+            >
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total pending order"
+                android:padding="10dp"
+                android:id="@+id/item_pending"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/gerrn"
+                android:fontFamily="@font/helvetica_regular"/>
+
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:id="@+id/Tol_PendingOrder"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+        </LinearLayout>
+
+            <RelativeLayout
+                android:layout_margin="10dp"
+                android:background="@drawable/otp_line"
+                android:id="@+id/reclyVisibility"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:id="@+id/pendingOrder_tit"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:text="Total pending order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/pendingOrder_tit"
+                android:background="@color/gray"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"/>
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:id="@+id/penDing"
+                android:layout_below="@id/pendingOrder_tit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/otp_line"
+                >
+                <TextView
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="BranchName"
+                    android:padding="10dp"
+                    android:background="@drawable/otp_line"
+                    android:gravity="center"
+                    android:fontFamily="@font/helvetica_regular"/>
+
+                <TextView
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="PendingAmt"
+                    android:padding="10dp"
+                    android:background="@drawable/otp_line"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/helvetica_regular"/>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_below="@id/penDing"
+                android:id="@+id/tolPendingOrder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+            </androidx.recyclerview.widget.RecyclerView>
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/otp_line"
+            >
+            <TextView
+                android:id="@+id/item_stock"
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total stock in office"
+                android:padding="10dp"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/gerrn"
+                android:fontFamily="@font/helvetica_regular"/>
+
+            <TextView
+                android:id="@+id/tol_stockOffice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/otp_line"
+                android:fontFamily="@font/helvetica_regular"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/otp_line"
+            android:id="@+id/reclyVisibilityTolStock"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:id="@+id/tolStock_tol"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:text="Stock In Office Branch Wise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/tolStock_tol"
+                android:background="@color/gray"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"/>
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:id="@+id/tolStock"
+                android:layout_below="@id/tolStock_tol"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/otp_line"
+                >
+                <TextView
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="BranchName"
+                    android:padding="10dp"
+                    android:background="@drawable/otp_line"
+                    android:gravity="center"
+                    android:fontFamily="@font/helvetica_regular"/>
+
+                <TextView
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="PendingAmt"
+                    android:padding="10dp"
+                    android:background="@drawable/otp_line"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/helvetica_regular"/>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_below="@id/tolStock"
+                android:id="@+id/tolStockOfficeOrder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/otp_line"
+            >
+            <TextView
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Grand Total"
+                android:padding="10dp"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+
+            <TextView
+                android:id="@+id/grandTotal"
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress_loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+    <include
+        android:id="@+id/supportChat"
+        layout="@layout/floating_button_layout"></include>
+
+
+</RelativeLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".activitys.BrandDetailsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/tool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/RoundedDialog">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:theme="@style/Widget.AppCompat.PopupMenu">
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_below="@id/tool"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:paddingBottom="10sp"
+                android:id="@+id/brand_img_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2"/>
+
+    </ScrollView>
+
+    <include
+        android:id="@+id/supportChat"
+        layout="@layout/floating_button_layout" />
+
+    <include
+        android:layout_centerInParent="true"
+        layout="@layout/progress_loader"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/include_progress"/>
+
+</RelativeLayout>

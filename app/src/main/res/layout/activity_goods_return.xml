@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activitys.GoodsReturnActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/RoundedDialog">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimaryDark"
+            android:theme="@style/Widget.AppCompat.PopupMenu">
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/toolbar_title"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:text="BRANCH"-->
+            <!--                android:textColor="@color/black"-->
+            <!--                android:textSize="18dp"-->
+            <!--                android:textStyle="bold" />-->
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
+
+<!--    <RelativeLayout-->
+<!--        android:id="@+id/layer_"-->
+<!--        android:gravity="center"-->
+<!--        android:background="@color/colorPrimary"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="40dp">-->
+<!--        <TextView-->
+<!--            android:textColor="@color/black"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="GR"-->
+<!--            android:textSize="20dp"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"/>-->
+<!--        <ImageView-->
+<!--            android:id="@+id/branch_backpress"-->
+<!--            android:padding="2dp"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_weight="0"-->
+<!--            android:src="@drawable/ic_baseline_keyboard_backspace"-->
+<!--            android:layout_width="40dp"-->
+<!--            android:layout_height="30dp"/>-->
+
+<!--    </RelativeLayout>-->
+
+
+
+    <LinearLayout
+        android:layout_below="@id/toolbar1"
+        android:id="@+id/layer"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:paddingLeft="7dp"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="@string/name"
+            android:textSize="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="@string/mobile_number"
+            android:textSize="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/GoodsReturnRecyclerview"
+        android:layout_below="@id/layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <include layout="@layout/floating_button_layout"
+        android:id="@+id/supportChat">
+    </include>
+
+    <include
+        android:layout_centerInParent="true"
+        layout="@layout/progress_loader"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/include_progress"/>
+
+
+
+
+
+
+
+
+</RelativeLayout>

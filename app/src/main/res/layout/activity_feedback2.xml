@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_bg"
+    tools:context=".activitys.FeedbackActivity2">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tool"
+        android:theme="@style/RoundedDialog">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:theme="@style/Widget.AppCompat.PopupMenu">
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/toolbar_title"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:text="BRANCH"-->
+            <!--                android:textColor="@color/black"-->
+            <!--                android:textSize="18dp"-->
+            <!--                android:textStyle="bold" />-->
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+    <View
+        android:id="@+id/too"
+        android:background="@color/colorGrey2"
+        android:layout_below="@id/tool"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"/>
+
+
+    <TextView
+        android:textStyle="bold"
+        android:fontFamily="@font/roboto_regular"
+        android:gravity="center"
+        android:layout_below="@id/too"
+        android:id="@+id/feedback_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/line2"
+        android:textColor="@color/black"
+        android:textSize="20dp" />
+
+
+
+
+    <TextView
+        android:textStyle="bold"
+        android:fontFamily="@font/roboto_regular"
+        android:gravity="center"
+        android:layout_below="@id/feedback_line"
+        android:id="@+id/feedback_f"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        android:textSize="20dp" />
+
+
+    <LinearLayout
+        android:id="@+id/star"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/feedback_f"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/star_one"
+            android:src="@drawable/ic_star_one"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+        <ImageView
+            android:id="@+id/star_two"
+            android:src="@drawable/ic_star_one"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+        <ImageView
+            android:id="@+id/star_three"
+            android:src="@drawable/ic_star_one"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+        <ImageView
+            android:id="@+id/star_four"
+            android:src="@drawable/ic_star_one"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+        <ImageView
+            android:id="@+id/star_five"
+            android:src="@drawable/ic_star_one"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+    </LinearLayout>
+
+
+
+    <View
+        android:id="@+id/ffff"
+        android:layout_marginTop="40dp"
+        android:background="@color/colorGrey2"
+        android:layout_below="@id/star"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"/>
+
+    <RelativeLayout
+        android:layout_below="@id/ffff"
+        android:background="@drawable/all_outline"
+        android:id="@+id/l"
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <TextView
+            android:id="@+id/feedback_text_change"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:hint="Tell us more....."
+            android:id="@+id/feedback_text"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:background="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </EditText>
+    </RelativeLayout>
+
+    <TextView
+        android:textSize="10dp"
+        android:paddingLeft="20dp"
+        android:layout_below="@id/l"
+        android:text="@string/line_feedback"
+        android:fontFamily="@font/roboto_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <RelativeLayout
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/shadow_button_layer_list"
+        android:id="@+id/bottom"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/feedbackSumbit"
+            android:textColorHint="@color/black"
+            android:gravity="center"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:hint="SUBMIT FEEDBACK"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </TextView>
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/supportChat"
+        layout="@layout/floating_button_layout"></include>
+
+
+</RelativeLayout>

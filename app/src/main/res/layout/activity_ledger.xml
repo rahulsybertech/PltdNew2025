@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/all_bg"
+    tools:context=".activitys.LedgerActivity">
+
+    <include
+        android:id="@+id/tool"
+        layout="@layout/ledger_toolbar" />
+
+    <LinearLayout
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/jjj"
+        android:layout_below="@id/current_bel_le"
+        android:id="@+id/ll"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_margin="1dp"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Particulars"
+            android:textColor="@color/black"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_marginBottom="1dp"
+            android:layout_marginTop="1dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Debit"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:layout_weight="1.4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:layout_weight="1.4"
+            android:background="@color/white"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Credit"
+            android:textColor="@color/black"
+            android:textSize="18dp" />
+
+
+    </LinearLayout>
+
+<LinearLayout
+    android:id="@+id/current_bel_le"
+    android:layout_below="@id/tool"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_marginTop="6sp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/current_bel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Opening Balance"
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:textColor="@color/black"
+            android:id="@+id/currentBal_Leg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:layout_toStartOf="@id/download_PDF"
+            android:layout_toEndOf="@+id/current_bel"
+            android:layout_toRightOf="@id/current_bel"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="15dp" />
+
+        <ImageView
+            android:padding="4dp"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/ic_download"
+            android:layout_alignParentRight="true"
+            android:id="@+id/download_PDF"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/ll"
+            android:id="@+id/Leger_reportRecy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:nestedScrollingEnabled="false"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+
+    <RelativeLayout
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/closingBal"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Closing Balance  "
+            android:textColor="@color/black"
+            android:textSize="15dp" />
+
+        <TextView
+            android:textColor="@color/black"
+            android:id="@+id/closingBal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="15dp" />
+    </RelativeLayout>
+
+    <include
+        android:layout_centerInParent="true"
+        layout="@layout/progress_loader"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/include_progress"/>
+
+    <include
+        android:id="@+id/supportChat"
+        layout="@layout/floating_button_layout">
+
+    </include>
+
+
+</RelativeLayout>

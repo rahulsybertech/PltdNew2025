@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/layer1"
+        android:layout_margin="6dp"
+        android:background="@drawable/all_outline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:padding="3dp"
+            android:layout_marginRight="50dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_margin="2dp"
+                android:layout_below="@id/header_cover_image"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/Img_show"
+                android:layout_width="50dp"
+                android:src="@drawable/ic_user"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:layout_marginStart="3dp"
+
+                />
+
+
+            <TextView
+                android:id="@+id/marketerName"
+                android:gravity="left|center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="kavi"
+                android:textAllCaps="true"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto_regular"
+
+                />
+            <TextView
+                android:id="@+id/marketerMob"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="999999999"
+                android:layout_weight="1"
+
+                android:fontFamily="@font/roboto_regular" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="15dp"
+        android:id="@+id/marketerConcat"
+        android:layout_centerInParent="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_call__"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>

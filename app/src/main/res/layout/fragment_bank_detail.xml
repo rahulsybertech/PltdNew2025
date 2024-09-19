@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/back"
+    android:orientation="vertical"
+    tools:context=".fragment.BankDetailFragment">
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_below="@+id/header_cover_image"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:elevation="5dp"
+        android:padding="20dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sss_logo"
+        app:civ_border_color="@color/red"
+        app:civ_border_width="3dp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" Account Name            :"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:layout_weight="1"
+                    android:id="@+id/sale_party"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/gerrn"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:id="@+id/dst_ret_mech"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Bank Name                   :"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:layout_weight="1"
+                    android:id="@+id/suplier"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/black"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Branch Name                :"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:layout_weight="1"
+                    android:id="@+id/item_no"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/black"
+                    />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="IFSC Code                     :"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:layout_weight="1"
+                    android:id="@+id/fisc_codw"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/black"
+                    />
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bank Account No         :"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:layout_weight="1"
+                    android:id="@+id/fin_year"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/black"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

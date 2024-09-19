@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/no_reg_login"
+    android:paddingBottom="10dp"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:textColor="@color/red"
+        android:id="@+id/alert1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="start"
+        android:padding="10dp"
+        android:text="@string/alert1"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
+
+    <ImageView
+        android:id="@+id/cancelNum"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/bg_white"
+        android:gravity="right"
+        android:src="@drawable/close_button"
+        android:text="@string/cancel"
+        android:textColor="@color/blue"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:ignore="RtlHardcoded" />
+
+    <TextView
+        android:layout_marginBottom="10dp"
+        android:id="@+id/old_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cancelNum"
+        android:layout_centerHorizontal="true"
+        android:gravity="start"
+        android:text="@string/loginType"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/old_number"
+        android:background="@color/black" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/old_number"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/text"
+        android:textColor="@color/red"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
+
+    <View
+        android:id="@+id/view"
+        android:background="@color/black"
+        android:layout_below="@id/text"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/loginRespons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+
+</RelativeLayout>

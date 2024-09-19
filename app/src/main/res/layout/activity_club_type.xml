@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activitys.clubtype.ClubTypeActivity">
+
+
+      <com.google.android.material.appbar.AppBarLayout
+          android:id="@+id/app_bar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:theme="@style/AppTheme.AppBarOverlay">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:title="Add Order" />
+
+      </com.google.android.material.appbar.AppBarLayout>
+
+      <!--      <tr.com.harunkor.gifviewplayer.GifMovieView-->
+      <!--          android:id="@+id/gifViewPlayer"-->
+      <!--          android:layout_width="match_parent"-->
+      <!--          android:layout_height="250dp"/>-->
+
+      <!--      <com.allattentionhere.autoplayvideos.AAH_CustomRecyclerView-->
+      <!--          android:id="@+id/rv_home"-->
+      <!--          android:layout_width="fill_parent"-->
+      <!--          android:layout_height="250dp"-->
+      <!--          android:layout_gravity="center" />-->
+      <androidx.core.widget.NestedScrollView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                  <ImageView
+                      android:id="@+id/dd"
+                      android:layout_width="match_parent"
+                      android:layout_height="400dp"
+                      android:adjustViewBounds="true"
+                      android:scaleType="fitXY" />
+
+                  <ImageView
+                      android:id="@+id/img"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:adjustViewBounds="true"
+                      android:scaleType="fitXY"
+
+                      />
+            </LinearLayout>
+      </androidx.core.widget.NestedScrollView>
+</LinearLayout>
+
+

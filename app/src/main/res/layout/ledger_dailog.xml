@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Filter"
+        android:id="@+id/filter"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textColor="@color/black"
+        android:textSize="18dp"/>
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/cancle_i"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_cross2"/>
+    <LinearLayout
+        android:background="@drawable/line"
+        android:layout_below="@+id/filter"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ll_price_range"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/min_max"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:textSize="18dp"
+                        android:gravity="center"
+                        android:text="From date"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+
+                    <TextView
+                        android:gravity="center"
+                        android:text="To date"
+                        android:textSize="18dp"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_below="@id/min_max"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:background="@color/light_pink"
+                        android:layout_margin="6dp"
+                        android:textSize="18dp"
+                        android:hint="Rs"
+                        android:inputType="number"
+                        android:id="@+id/ledgerDate"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"/>
+
+
+                    <TextView
+                        android:gravity="center"
+                        android:background="@color/light_pink"
+                        android:paddingLeft="10dp"
+                        android:layout_margin="6dp"
+                        android:hint="Rs"
+                        android:id="@+id/ledger_ToDate"
+                        android:textSize="18dp"
+                        android:layout_weight="1"
+                        android:inputType="number"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="50dp"
+                android:id="@+id/lay"
+                android:layout_below="@id/ll_price_range"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:checked="true"
+                    android:id="@+id/all_entry"
+                    android:layout_margin="3dp"
+                    android:textSize="20dp"
+                    android:text="All entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <CheckBox
+                    android:id="@+id/clear_entry"
+                    android:layout_margin="3dp"
+                    android:textSize="20dp"
+                    android:text="Clear Entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <CheckBox
+                    android:id="@+id/unclear_enter"
+                    android:layout_margin="3dp"
+                    android:textSize="20dp"
+                    android:text="Unclear entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_marginLeft="50dp"
+                android:layout_below="@id/lay"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:id="@+id/dr_entry"
+                    android:layout_margin="3dp"
+                    android:textSize="20dp"
+                    android:text="Only DR. Entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <CheckBox
+                    android:id="@+id/cr_entry"
+                    android:layout_margin="3dp"
+                    android:textSize="20dp"
+                    android:text="Only CR. Entry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+
+
+
+
+            <LinearLayout
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="20dp"
+                android:id="@+id/ll_bottom"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:textColor="@color/white"
+                    android:background="@color/gray"
+                    android:layout_margin="20dp"
+                    android:textSize="18dp"
+                    android:gravity="center"
+                    android:id="@+id/clear_all"
+                    android:text="Clear all"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"/>
+
+
+                <TextView
+                    android:id="@+id/apply"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_margin="20dp"
+                    android:layout_weight="1"
+                    android:background="@color/gray"
+                    android:gravity="center"
+                    android:text="Apply"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+            </LinearLayout>
+
+
+
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

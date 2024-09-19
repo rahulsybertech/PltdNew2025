@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:left="3dp" android:top="5dp" >
+        <shape>
+            <stroke android:color="#A0A2A3" android:width="1dp" />
+            <solid android:color="@android:color/darker_gray" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+    <!-- White foreground. -->
+    <item android:bottom="5dp" android:right="3dp">
+        <shape>
+            <stroke android:color="#A0A2A3" android:width="1dp" />
+            <solid android:color="#FAC9A1" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+</layer-list>

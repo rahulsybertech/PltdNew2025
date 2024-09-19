@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:layout_height="70dp">
+
+    <ImageView
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/sss_logo"
+        android:layout_weight="1"
+        android:layout_width="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_height="30dp"/>
+
+    <LinearLayout
+        android:id="@+id/home_id"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+<!--        <ImageView-->
+<!--            android:layout_marginLeft="10dp"-->
+<!--            android:padding="2dp"-->
+<!--            android:src="@drawable/sss_logo"-->
+<!--            android:layout_weight="1"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="50dp"/>-->
+
+        <androidx.appcompat.widget.Toolbar
+            android:visibility="visible"
+            android:id="@+id/backpressButton"
+            android:src="@drawable/ic_baseline_keyboard_backspace"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/black"
+            android:paddingLeft="6dp"
+            android:layout_weight="0"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+<!--        <TextView-->
+<!--            android:text="WELCOME"-->
+<!--            android:fontFamily="@font/roboto_regular"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:paddingLeft="6dp"-->
+<!--            android:layout_weight="0"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"/>-->
+
+
+
+        <TextView
+            android:singleLine="true"
+            android:visibility="visible"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/black"
+            android:paddingLeft="6dp"
+            android:id="@+id/adminName1"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/notification"
+            android:layout_gravity="center"
+            android:layout_weight="2.7"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"/>
+
+
+        <ImageView
+            android:id="@+id/calender"
+            android:src="@drawable/ic_calendar"
+            android:layout_gravity="center"
+            android:layout_weight="2.7"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"/>
+
+    </LinearLayout>
+
+
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="hello"
+        android:layout_below="@+id/home_id"
+        android:singleLine="true"
+        android:visibility="gone"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/black"
+        android:id="@+id/singleName"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="hello"
+        android:layout_below="@+id/home_id"
+        android:singleLine="true"
+        android:visibility="visible"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/black"
+        android:id="@+id/adminName"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

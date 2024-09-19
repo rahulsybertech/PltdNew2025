@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <color name="colorPrimary">#F37C7C</color>
+    <color name="colorPrimaryDark">#F37C7C</color>
+    <color name="colorPrimary1">#B0F37C7C</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="grey">#EFEEEE</color>
+    <color name="white">#ffffff</color>
+    <color name="colorPress">#88008577</color>
+    <color name="black">#0B0A0A</color>
+    <color name="colorGrey2">#DFDEDE</color>
+    <color name="creem">#EDEDE9</color>
+    <color name="all_bg">#ececec</color>
+    <color name="box_bg">#99ECECEC</color>
+    <color name="light_pink">#A6FFD5CC</color>
+    <color name="light_pink_bg">#D0FFEAE5</color>
+    <color name="sky_blue_dark">#2196F3</color>
+
+    <color name="colorYellow">#fff200</color>
+    <color name="yellow">#efb633</color>
+    <color name="red">#C61205</color>
+    <color name="light_red">#BCC61205</color>
+    <color name="gerrn">#3A923E</color>
+    <color name="colorDullBlack">#6b000000</color>
+    <color name="colorBlue">#002E5B</color>
+    <color name="eee">#37000000</color>
+    <color name="transperent">#00000000</color>
+    <color name="txt_color">#38393f</color>
+    <color name="sub_txt">#8f909e</color>
+    <color name="active_color">#ffb969</color>
+    <color name="inactive_color">#ffdeb8</color>
+    <color name="walkthrough_txt">#5a5b65</color>
+    <color name="sky_blue">#80bbfd</color>
+    <color name="view_line">#e2e2e2</color>
+    <color name="tab_select_txt">#6786ff</color>
+    <color name="tab_unselect_txt">#8f909e</color>
+    <color name="tab_txt_color">#797a7b</color>
+    <color name="actionbar_color">#141415</color>
+    <color name="blue">#6685ff</color>
+    <color name="green">#2bab1c</color>
+    <color name="drak_green">#117C04</color>
+    <color name="gray">#717273</color>
+    <color name="solid_gray">#575757</color>
+    <color name="inactive">#8f909e</color>
+    <color name="spinner_text">#2196F3</color>
+    <color name="parpal">#DE79EF</color>
+    <color name="toolbar_diamond">#D7E0EF</color>
+    <color name="toolbar_gold">#F8E28D</color>
+    <color name="toolbar_ssspltd">#ffffff</color>
+
+    <color name="color_1">#3C5568</color>
+    <color name="color_2">#C12318</color>
+    <color name="color_3">#043732</color>
+    <color name="color_4">#113A5A</color>
+    <color name="color_5">#2196F3</color>
+    <color name="color_6">#072135</color>
+    <color name="color_7">#373E65</color>
+    <color name="color_8">#333959</color>
+    <color name="color_9">#66B5F4</color>
+    <color name="color_10">#F2F2F7</color>
+    <color name="syc_blu">#C9E4FA</color>
+    <color name="color_11">#9055F8</color>
+    <color name="color_12">#116860</color>
+    <color name="color_20">#8DB2E5</color>
+    <color name="color_13">#215E58</color>
+    <color name="color_14">#52B3AA</color>
+    <color name="color_15">#131E1D</color>
+    <color name="location_color">#72BDB7</color>
+    <color name="back">#96B8D3</color>
+    <color name="tex_color">#322D2D</color>
+    <color name="jjj">#CFCECE</color>
+    <color name="light_gray">#EEEEEE</color>
+
+    <array name="array_dot_active">
+        <item>@color/active_color</item>
+        <item>@color/active_color</item>
+        <item>@color/active_color</item>
+        <item>@color/active_color</item>
+    </array>
+
+    <array name="array_dot_inactive">
+        <item>@color/inactive_color</item>
+        <item>@color/inactive_color</item>
+        <item>@color/inactive_color</item>
+        <item>@color/inactive_color</item>
+    </array>
+
+    <color name="color_par">#7B66FF</color>
+    <color name="green_bg">#66D8A7</color>
+
+
+    <color name="success_text">#4F8A10</color>
+    <color name="success_bg">#DFF2BF</color>
+    <color name="warning_text">#9F6000</color>
+    <color name="warning_bg">#FEEFB3</color>
+    <color name="error_text">#D8000C</color>
+    <color name="light_reg_bg">#B2F3757C</color>
+    <color name="error_bg">#FFD2D2</color>
+
+</resources>

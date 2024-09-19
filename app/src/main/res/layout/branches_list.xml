@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_white"
+    android:layout_margin="5dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/branchImg"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:padding="6dp"
+                    android:layout_gravity="center"
+                    android:scaleType="fitXY"
+                    android:layout_centerInParent="true"
+                    tools:src="@drawable/sss_logo" />
+
+    <TextView
+        android:gravity="center"
+        android:layout_below="@id/branchImg"
+        android:id="@+id/branchname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="12dp"
+        android:maxLines="2"
+        android:fontFamily="@font/roboto_medium"
+        tools:text="name"/>
+
+    </LinearLayout>

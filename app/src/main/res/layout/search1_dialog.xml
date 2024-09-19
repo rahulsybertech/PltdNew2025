@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:background="#FFF"
+    android:orientation="vertical">
+
+      <TextView
+          android:id="@+id/tv1"
+          android:layout_width="match_parent"
+          android:layout_height="200dp"
+          android:rotation="340"
+          android:gravity="center"
+          android:textAlignment="center"
+          android:textAllCaps="true"
+          android:textColor="#EEE"
+          android:textSize="140dp" />
+
+      <TextView
+          android:id="@+id/tv2"
+          android:layout_width="match_parent"
+          android:layout_height="200dp"
+          android:layout_below="@+id/tv1"
+          android:gravity="center"
+          android:rotation="340"
+          android:textAllCaps="true"
+          android:textColor="#EEE"
+          android:textSize="140dp" />
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="200dp"
+          android:layout_below="@+id/tv2"
+          android:id="@+id/tv3"
+          android:textAllCaps="true"
+          android:gravity="center"
+          android:textColor="#EEE"
+          android:rotation="340"
+          android:textSize="140dp" />
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="200dp"
+          android:layout_below="@+id/tv3"
+          android:layout_marginTop="0dp"
+          android:gravity="center"
+          android:rotation="340"
+          android:id="@+id/tv4"
+          android:textAllCaps="true"
+          android:textColor="#EEE"
+          android:textSize="140dp" />
+
+      <LinearLayout
+          android:id="@+id/ll"
+          android:layout_width="match_parent"
+          android:layout_height="40dp">
+
+            <ImageView
+                android:id="@+id/cancle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:src="@drawable/ic_baseline_close_24" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto_light"
+                android:gravity="center|start"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+      </LinearLayout>
+
+      <EditText
+          android:id="@+id/search"
+          android:layout_width="match_parent"
+          android:layout_height="40dp"
+          android:layout_below="@+id/ll"
+          android:layout_marginLeft="10dp"
+          android:layout_marginTop="10dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginBottom="10dp"
+          android:background="@drawable/otp_line"
+          android:drawableLeft="@drawable/menu_search_white_24dp"
+          android:drawablePadding="10dp"
+          android:fontFamily="@font/roboto_light"
+          android:gravity="center|left"
+          android:hint="Search by Name"
+          android:singleLine="true"
+          android:imeOptions="actionDone"
+          android:padding="9dp"
+          android:textColor="#90000000"
+          android:textColorHint="#90000000" />
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/dist_recycler"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_below="@+id/search"
+          android:background="@android:color/transparent" />
+      <!--    <com.agrawalsuneet.dotsloader.loaders.CircularDotsLoader-->
+      <!--        android:id="@+id/loading"-->
+      <!--        android:layout_width="wrap_content"-->
+      <!--        android:layout_height="wrap_content"-->
+      <!--        android:layout_centerInParent="true"-->
+      <!--        android:layout_marginBottom="30dp"-->
+      <!--        app:loader_animDur="300"-->
+      <!--        android:visibility="visible"-->
+      <!--        android:layout_gravity="center"-->
+      <!--        app:loader_circleRadius="6dp"-->
+      <!--        app:loader_defaultColor="@color/colorPrimaryDark"-->
+      <!--        app:loader_dotsDist="3dp"-->
+      <!--        app:loader_expandOnSelect="false"-->
+      <!--        app:loader_firstShadowColor="@color/red"-->
+      <!--        app:loader_secondShadowColor="@color/red"-->
+      <!--        app:loader_isSingleDir="false"-->
+      <!--        app:loader_noOfDots="6"-->
+      <!--        app:loader_selectedColor="@color/white"-->
+      <!--        app:loader_selectedRadius="10dp"-->
+      <!--        app:loader_showRunningShadow="true" />-->
+      <!--    <TextView-->
+      <!--        android:layout_width="match_parent"-->
+      <!--        android:layout_height="wrap_content"-->
+      <!--        android:id="@+id/no_data"-->
+      <!--        android:text="No Data Found!"-->
+      <!--        android:textColor="@color/black"-->
+      <!--        android:layout_centerInParent="true"-->
+      <!--        android:visibility="visible"-->
+      <!--        android:textSize="16dp"-->
+      <!--        android:gravity="center"-->
+      <!--        />-->
+
+</RelativeLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activitys.supplierorderform.OrderImageActivity">
+      <androidx.appcompat.widget.Toolbar
+          android:layout_width="50dp"
+          android:layout_height="50dp"
+          android:id="@+id/toolbar"
+          android:src="@drawable/ic_baseline_close_24"
+          />
+      <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="5dp"
+          android:src="@drawable/dotted_line"
+          android:id="@+id/dot"
+          android:layout_below="@+id/toolbar"/>
+
+      <!--   <com.jsibbold.zoomage.ZoomageView-->
+      <!--       android:layout_width="match_parent"-->
+      <!--       android:layout_height="match_parent"-->
+      <!--       android:layout_below="@+id/dot"-->
+      <!--       android:id="@+id/image"-->
+      <!--       />-->
+
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/gallery_recycler"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_below="@+id/dot"
+          android:layout_marginTop="10dp" />
+      <ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator
+          android:id="@+id/indicator"
+          app:spi_dotSize="15dp"
+          app:spi_dotSelectedSize="15dp"
+          android:layout_gravity="center"
+          app:spi_dotSelectedColor="@color/colorPrimaryDark"
+          app:spi_dotColor="@color/colorGrey2"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_centerInParent="true"
+          android:layout_marginBottom="10dp"
+          android:layout_alignParentBottom="true"/>
+</RelativeLayout>

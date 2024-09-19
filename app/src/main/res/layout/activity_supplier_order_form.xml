@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_ll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".activitys.supplierorderform.SupplierOrderFormActivity">
+
+      <com.google.android.material.appbar.AppBarLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:theme="@style/AppTheme.AppBarOverlay">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:title="Add Order" />
+
+      </com.google.android.material.appbar.AppBarLayout>
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:layout_above="@+id/ll4">
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
+                      android:padding="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                              <EditText
+                                  android:id="@+id/nick_name"
+                                  android:layout_width="130dp"
+                                  android:layout_height="40dp"
+                                  android:layout_marginTop="10dp"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_weight="1"
+                                  android:background="@drawable/otp_line_fade"
+                                  android:enabled="false"
+                                  android:fontFamily="monospace"
+                                  android:gravity="center"
+                                  android:imeOptions="actionNext"
+                                  android:maxLines="1"
+                                  android:padding="8dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="14sp" />
+
+                              <TextView
+                                  android:id="@+id/order_no"
+                                  android:layout_width="130dp"
+                                  android:layout_height="40dp"
+                                  android:hint="Order No."
+                                  android:background="@drawable/otp_line_fade"
+                                  android:layout_marginTop="10dp"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="monospace"
+                                  android:gravity="center"
+                                  android:imeOptions="actionNext"
+                                  android:maxLines="1"
+                                  android:padding="8dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="center|start"
+                                  android:singleLine="true"
+                                  android:text="@string/marketer1"
+                                  android:textColor="@color/black"
+                                  android:textSize="16sp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:background="@drawable/otp_line"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_height="wrap_content">
+
+                              <TextView
+                                  android:id="@+id/marketer"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:paddingStart="10dp"
+                                  android:singleLine="true"
+                                  android:layout_alignParentStart="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16sp"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_toStartOf="@id/clear_marketer"
+                                  android:visibility="visible" />
+
+
+                              <ImageView
+                                  android:id="@+id/clear_marketer"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:padding="7dp"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="center|start"
+                                  android:singleLine="true"
+                                  android:text="@string/sale_party"
+                                  android:textColor="@color/black"
+                                  android:textSize="16sp" />
+
+                              <TextView
+                                  android:id="@+id/avl_limit"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="10dp"
+                                  android:layout_marginTop="5dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="center|start"
+                                  android:singleLine="true"
+                                  android:textColor="@color/green"
+                                  android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:background="@drawable/otp_line"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_height="wrap_content">
+
+                              <TextView
+                                  android:id="@+id/sale_party"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:paddingStart="10dp"
+                                  android:singleLine="true"
+                                  android:layout_alignParentStart="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16sp"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_toStartOf="@id/clear_saleparty"
+                                  android:visibility="visible" />
+
+
+                              <ImageView
+                                  android:id="@+id/clear_saleparty"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:padding="7dp"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/ll_email_mobile"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="visible">
+
+                              <TextView
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:singleLine="true"
+                                  android:text="@string/sale_party_mobile"
+                                  android:textColor="@color/black"
+                                  android:textSize="16sp" />
+
+                              <TextView
+                                  android:id="@+id/sale_party_mobile"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:background="@drawable/otp_line_fade"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp"
+                                  android:visibility="visible"
+                                  />
+
+                              <TextView
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:singleLine="true"
+                                  android:text="@string/sale_party_email"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <TextView
+                                  android:id="@+id/sale_party_email"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:background="@drawable/otp_line_fade"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp"
+                                  android:visibility="visible" />
+                        </LinearLayout>
+
+
+
+                              <TextView
+                                  android:id="@+id/radio_subparty"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:checked="true"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/sub_party"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+
+
+
+
+                              <RelativeLayout
+                                  android:layout_width="match_parent"
+                                  android:background="@drawable/otp_line"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="10dp"
+                                  android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:id="@+id/sub_party"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="45dp"
+                                        android:layout_toStartOf="@+id/clear_subparty"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/roboto_light"
+                                        android:freezesText="true"
+                                        android:gravity="start|center"
+                                        android:paddingLeft="10dp"
+                                        android:singleLine="true"
+                                        android:textColor="@color/black"
+                                        android:textSize="16dp" />
+
+                                    <ImageView
+                                        android:id="@+id/clear_subparty"
+                                        android:layout_width="30dp"
+                                        android:layout_height="match_parent"
+                                        android:padding="7dp"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginEnd="5dp"
+                                        android:onClick="handleClear"
+                                        android:src="@drawable/ic_cross2"
+                                        app:tint="@color/red" />
+                              </RelativeLayout>
+
+
+
+                        <LinearLayout
+                            android:id="@+id/ll_radio_rubparty_remark"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                              <EditText
+                                  android:id="@+id/sub_party_remark"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="10dp"
+                                  android:layout_weight="1"
+                                  android:background="@drawable/otp_line"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="start|center"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <TextView
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/sub_party_mobile"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp"
+                                  android:visibility="gone" />
+
+                              <EditText
+                                  android:id="@+id/mobile_sub_party_remark"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="10dp"
+                                  android:layout_weight="1"
+                                  android:background="@drawable/otp_line"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="start|center"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp"
+                                  android:visibility="gone" />
+
+                        </LinearLayout>
+
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto_light"
+                            android:gravity="start|center"
+                            android:imeOptions="actionNext"
+                            android:saveEnabled="false"
+                            android:singleLine="true"
+                            android:text="@string/transport"
+                            android:textColor="@color/black"
+                            android:textSize="16dp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:background="@drawable/otp_line"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="wrap_content">
+
+
+                              <TextView
+                                  android:id="@+id/transport"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_toStartOf="@id/clear_transport"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="start|center"
+                                  android:imeOptions="actionNext"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+                              <ImageView
+                                  android:id="@+id/clear_transport"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:padding="7dp"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto_light"
+                            android:gravity="start|center"
+                            android:singleLine="true"
+                            android:text="@string/b_station"
+                            android:textColor="@color/black"
+                            android:textSize="16dp" />
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:background="@drawable/otp_line"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="wrap_content">
+
+
+                              <TextView
+                                  android:id="@+id/b_station"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_toStartOf="@id/clear_station"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="start|center"
+                                  android:imeOptions="actionNext"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <ImageView
+                                  android:id="@+id/clear_station"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:padding="7dp"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto_light"
+                            android:gravity="center|start"
+                            android:singleLine="true"
+                            android:text="@string/scheme"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:background="@drawable/otp_line"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="wrap_content">
+
+                              <TextView
+                                  android:id="@+id/scheme"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_toStartOf="@id/clear_scheme"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:imeOptions="actionNext"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+                              <ImageView
+                                  android:id="@+id/clear_scheme"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:padding="5dp"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+                        <LinearLayout
+                            android:id="@+id/redio_star_ll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="2dp"
+                            android:background="@drawable/otp_line"
+                            android:gravity="center"
+                            android:padding="7dp">
+
+                              <RadioGroup
+                                  android:id="@+id/radio_group"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="horizontal">
+
+                                    <RadioButton
+                                        android:id="@+id/stra_1"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:checked="true"
+                                        android:text="*"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                                    <RadioButton
+                                        android:id="@+id/stra_2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="**"
+                                        android:enabled="false"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                                    <RadioButton
+                                        android:id="@+id/stra_3"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="***"
+                                        android:enabled="false"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                              </RadioGroup>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_2star"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="2dp"
+                            android:background="@drawable/otp_line"
+                            android:gravity="center"
+                            android:padding="7dp"
+                            android:visibility="gone">
+
+                              <RadioGroup
+                                  android:id="@+id/two_star_readio_option"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="horizontal">
+
+                                    <RadioButton
+                                        android:id="@+id/radio_a"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:checked="true"
+                                        android:text="A"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                                    <RadioButton
+                                        android:id="@+id/radio_b"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="B"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                                    <RadioButton
+                                        android:id="@+id/radio_c"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="C"
+                                        android:textSize="20dp"></RadioButton>
+
+                                    <RadioButton
+                                        android:id="@+id/radio_d"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="D"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                              </RadioGroup>
+                        </LinearLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/iptl_pvt_marka"
+                            style="@style/LoginTextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:visibility="gone">
+
+                              <EditText
+                                  android:id="@+id/no_pvt_marka"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_marginLeft="2dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:hint="@string/pvt_marka"
+                                  android:imeOptions="actionNext"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textAllCaps="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/LoginTextInputLayoutStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:visibility="visible">
+
+                              <EditText
+                                  android:id="@+id/no_remark"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="70dp"
+                                  android:layout_marginLeft="2dp"
+                                  android:gravity="top|start"
+                                  android:hint="@string/dis"
+                                  android:imeOptions="actionDone"
+                                  android:maxWidth="70dp"
+                                  android:maxEms="3"
+                                  android:maxLength="150"
+                                  android:maxLines="3"
+                                  android:paddingLeft="10dp"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            android:id="@+id/attach_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|start"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto_light"
+                            android:freezesText="true"
+                            android:gravity="center"
+                            android:singleLine="true"
+                            android:text="Dispatch Date"
+                            android:textColor="@color/red"
+                            android:textSize="18dp"
+                            android:visibility="visible" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                              <LinearLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1">
+
+                                    <TextView
+                                        android:id="@+id/date"
+                                        android:layout_width="130dp"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line"
+                                        android:fontFamily="monospace"
+                                        android:gravity="center"
+                                        android:hint="Date From"
+                                        android:imeOptions="actionNext"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp" />
+
+                                    <TextView
+                                        android:id="@+id/set_date"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_weight="1.5"
+                                        android:drawableStart="@drawable/ic_baseline_calendar_today_24"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textSize="14sp" />
+                              </LinearLayout>
+
+                              <LinearLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1">
+
+                                    <TextView
+                                        android:id="@+id/date_to"
+                                        android:layout_width="130dp"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line"
+                                        android:fontFamily="monospace"
+                                        android:gravity="center"
+                                        android:hint="Date To"
+                                        android:imeOptions="actionNext"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp" />
+
+                                    <TextView
+                                        android:id="@+id/set_date_to"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_weight="1.5"
+                                        android:drawableStart="@drawable/ic_baseline_calendar_today_24"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textSize="14sp" />
+                              </LinearLayout>
+                        </LinearLayout>
+
+                        <include
+                            android:id="@+id/ll_row"
+                            layout="@layout/summery"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp">
+                              <Button
+                                  android:id="@+id/text_add_image"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:backgroundTint="@color/active_color"
+                                  android:drawableEnd="@drawable/ic_baseline_add_a_photo_24"
+                                  android:text="Add Image"
+                                  android:textColor="@color/white" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ll_img"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+                              <LinearLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="horizontal"
+                                  android:layout_marginEnd="20dp"
+                                  android:layout_marginStart="20dp">
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:background="@drawable/otp_line"
+                                        android:layout_weight="1">
+                                          <ImageView
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:id="@+id/placeholder1"
+                                              android:onClick="placeholderClick"
+                                              android:layout_gravity="center"
+                                              />
+                                          <ProgressBar
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:id="@+id/progress1"
+                                              android:visibility="gone"
+                                              android:layout_gravity="center"/>
+                                          <ImageView
+                                              android:id="@+id/image1"
+                                              android:layout_weight="1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:scaleType="fitXY"
+                                              android:padding="1dp"
+                                              android:visibility="visible" />
+                                          <ImageView
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:src="@drawable/cross_button"
+                                              android:layout_margin="12dp"
+                                              android:visibility="gone"
+                                              android:onClick="removeImage"
+                                              android:id="@+id/removeImage1"
+                                              app:tint="@color/error_text" />
+
+                                    </FrameLayout>
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:background="@drawable/otp_line"
+                                        android:layout_weight="1">
+                                          <ImageView
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:id="@+id/placeholder2"
+                                              android:onClick="placeholderClick"
+                                              android:layout_gravity="center"
+                                              />
+                                          <ProgressBar
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:id="@+id/progress2"
+                                              android:visibility="gone"
+                                              android:layout_gravity="center"/>
+                                          <ImageView
+                                              android:id="@+id/image2"
+                                              android:layout_weight="1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:scaleType="fitXY"
+                                              android:padding="1dp"
+                                              android:visibility="visible" />
+                                          <ImageView
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:src="@drawable/cross_button"
+                                              android:layout_margin="12dp"
+                                              android:visibility="gone"
+                                              android:onClick="removeImage"
+                                              android:id="@+id/removeImage2"
+                                              app:tint="@color/error_text" />
+
+                                    </FrameLayout>
+                              </LinearLayout>
+                              <LinearLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="horizontal"
+                                  android:id="@+id/ll_img1"
+                                  android:visibility="visible"
+                                  android:layout_marginEnd="20dp"
+                                  android:layout_marginStart="20dp">
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:background="@drawable/otp_line"
+                                        android:layout_weight="1">
+                                          <ImageView
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:id="@+id/placeholder3"
+                                              android:onClick="placeholderClick"
+                                              android:layout_gravity="center"
+                                              />
+                                          <ProgressBar
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:id="@+id/progress3"
+                                              android:visibility="gone"
+                                              android:layout_gravity="center"/>
+                                          <ImageView
+                                              android:id="@+id/image3"
+                                              android:layout_weight="1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:scaleType="fitXY"
+                                              android:visibility="visible" />
+                                          <ImageView
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:src="@drawable/cross_button"
+                                              android:layout_margin="12dp"
+                                              android:visibility="gone"
+                                              android:onClick="removeImage"
+                                              android:id="@+id/removeImage3"
+                                              app:tint="@color/error_text" />
+
+                                    </FrameLayout>
+
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_weight="1"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:background="@drawable/otp_line">
+                                          <ImageView
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:id="@+id/placeholder4"
+                                              android:onClick="placeholderClick"
+                                              android:layout_gravity="center"
+                                              />
+                                          <ProgressBar
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:id="@+id/progress4"
+                                              android:visibility="gone"
+                                              android:layout_gravity="center"/>
+                                          <ImageView
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:scaleType="fitXY"
+                                              android:id="@+id/image4"
+                                              android:visibility="visible"
+                                              />
+                                          <ImageView
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:src="@drawable/cross_button"
+                                              android:layout_margin="12dp"
+                                              android:visibility="gone"
+                                              android:onClick="removeImage"
+                                              android:id="@+id/removeImage4"
+                                              app:tint="@color/error_text" />
+                                    </FrameLayout>
+
+                              </LinearLayout>
+                              <LinearLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:visibility="visible"
+                                  android:weightSum="1"
+                                  android:layout_marginEnd="20dp"
+                                  android:layout_marginStart="20dp">
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:background="@drawable/otp_line"
+                                        android:layout_weight="1">
+                                          <ImageView
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:id="@+id/placeholder5"
+                                              android:onClick="placeholderClick"
+                                              android:layout_gravity="center"
+                                              />
+                                          <ProgressBar
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:id="@+id/progress5"
+                                              android:visibility="gone"
+                                              android:layout_gravity="center"/>
+                                          <ImageView
+                                              android:id="@+id/image5"
+                                              android:layout_weight="1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:scaleType="fitXY"
+                                              android:padding="1dp"
+                                              android:visibility="visible" />
+                                          <ImageView
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:src="@drawable/cross_button"
+                                              android:layout_margin="12dp"
+                                              android:visibility="gone"
+                                              android:onClick="removeImage"
+                                              android:id="@+id/removeImage5"
+                                              app:tint="@color/error_text" />
+
+                                    </FrameLayout>
+
+
+
+                              </LinearLayout>
+                        </LinearLayout>
+                  </LinearLayout>
+
+            </ScrollView>
+
+            <LinearLayout
+                android:id="@+id/ll4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                  <TextView
+                      android:id="@+id/total"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:background="@color/white"
+                      android:fontFamily="@font/roboto_medium"
+                      android:gravity="center"
+                      android:text="00"
+                      android:textAllCaps="false"
+                      android:textColor="#000"
+                      android:textSize="19sp"
+                      android:visibility="gone" />
+
+                  <Button
+                      android:id="@+id/place_order"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:background="@drawable/btnn"
+                      android:fontFamily="@font/roboto_medium"
+                      android:text="Place Your Order"
+                      android:textAllCaps="false"
+                      android:textColor="#fff"
+                      android:textSize="19sp" />
+            </LinearLayout>
+      </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ll_2"
+        android:background="@drawable/otp_line"
+        >
+        <TextView
+            android:textSize="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total pending order"
+            android:padding="10dp"
+            android:id="@+id/BranchName_pending"
+            android:background="@drawable/otp_line"
+            android:gravity="center"
+            android:textColor="@color/gerrn"
+            android:fontFamily="@font/helvetica_regular"/>
+
+        <TextView
+            android:textSize="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="50,00,000"
+            android:padding="10dp"
+            android:id="@+id/PendingAmt"
+            android:background="@drawable/otp_line"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:fontFamily="@font/helvetica_regular"/>
+    </LinearLayout>
+
+
+
+</RelativeLayout>

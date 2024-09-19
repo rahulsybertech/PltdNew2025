@@ -1,0 +1,195 @@
+<resources>
+      <string name="app_name">SSSPLTD</string>
+      <string name="home">HOME</string>
+      <!-- TODO: Remove or change this placeholder text -->
+      <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+      <string name="line2">SHARE YOUR FEEDBACK WITH US</string>
+      <string name="line_feedback">Your word makes SSSPLTD a better place. You are the Influencer </string>
+
+
+      <string name="marketer">MARKETER</string>
+      <string name="BILLING">BILLING</string>
+      <string name="ACCOUNT">ACCOUNTS</string>
+      <string name="GODOWN_PACKING">GODOWN PACKING</string>
+
+      <string name="profile">PROFILE </string>
+      <string name="branch">BRANCH </string>
+      <string name="bank_details">BANK DETAILS</string>
+      <string name="about_us">ABOUT US</string>
+      <string name="feedback">FEEDBACK</string>
+      <string name="faq">FAQ</string>
+      <string name="logout">LOGOUT</string>
+      <string name="line_6">More than 2000 customers.</string>
+      <string name="line_7">More than 5000 suppliers.</string>
+      <string name="line_8">Highest discount with lower commission.</string>
+      <string name="line_9"> cheap cost with latest quality product .</string>
+      <string name="line_10">SMS facilty  for all transaction. </string>
+      <string name="line_11">Bill E-mail facility</string>
+      <string name="line_12">Mobile Application</string>
+      <string name="line_13">Unique bank code to each customer for payment.</string>
+      <string name="line_14">Unique Centralised payment system to supplier form H.O.</string>
+      <string name="line_15">Transparancy</string>
+      <string name="line_16">Starting import and Export of goods .</string>
+      <string name="call_feedback">Call Feedback</string>
+      <string name="cancel">Cancel</string>
+      <string name="payment_feedback">Payment  Confirmation Feedback</string>
+      <string name="goods_feed">Goods Dispatch Feedback</string>
+      <string name="overall_application">Overall Application</string>
+      <string name="comments">Comments</string>
+      <string name="motto">11
+I used the following steps to successfully debug over wifi connection. I recommend this solution to everybody experiencing problems using integrated solutions like Android WiFi ADB plugin. In my case it failed to keep the Wifi connection to my device after unplugging USB. The following solution overcomes this problem.
+    The tricky part comes when unplugging the USB connection. In my case both connections are closed immediately! This may not be the case for all users. For me this was the reason that I could not use Android WiFi ADB plugin for android studio. I solved the problem by manually reconnecting the Wifi after unplugging usb by</string>
+
+
+      <string name="location">View Location on Map   </string>
+      <string name="department">Department</string>
+
+      <string name="name">NAME</string>
+      <string name="mobile_number">MOBILE NUMBER</string>
+      <string name="reset">RESET</string>
+      <string name="filter">FILTER</string>
+      <string name="all">ALL</string>
+      <string name="tick">Tick</string>
+      <string name="un_tick">UnTick</string>
+
+      <string name="try_again">Try Again</string>
+
+
+      <string name="account_name">Account Name</string>
+      <string name="bank_name">Bank Name</string>
+      <string name="branch_name">Branch Name</string>
+      <string name="ifsc_code">IFSC Code</string>
+      <string name="bank_account_no">Bank Account No.</string>
+      <string name="select_financial_year">Select Financial Year</string>
+
+      <string name="email">EMAIL</string>
+      <string name="party_code">PARTY CODE</string>
+      <string name="fin_year">FIN YEAR</string>
+      <string name="submit">SUBMIT</string>
+
+      <string name="date_from">Date Form</string>
+      <string name="date_to">Date To</string>
+      <string name="current_bel">Current Balance :</string>
+      <string name="sale_report">SALE REPORT</string>
+      <string name="dash_board">DASH BOARD</string>
+      <string name="sale_service">SALE SERVICE</string>
+      <string name="ledger">LEDGER</string>
+      <string name="STOCK_IN_OFFICE">STOCK IN OFFICE</string>
+      <string name="PENDING_order">PENDING ORDER</string>
+      <string name="dr_note">DR NOTE</string>
+      <string name="credit_note">CREDIT NOTE</string>
+      <string name="cr_note_sup">CR NOTE SUPPLIER</string>
+      <string name="dr_note_cust">DR NOTE CUSTOMER</string>
+      <string name="adda">ADDA</string>
+      <string name="COURIER">COURIER</string>
+      <string name="PAY">PAY</string>
+      <string name="more">MORE</string>
+      <string name="GALLERY">GALLERY</string>
+      <string name="mobile">Enter Your Mobile Number</string>
+      <string name="user">Please select the appropriate type below</string>
+      <string name="otp_line">Please enter the otp sent to your</string>
+      <string name="otp">mobile number</string>
+      <string name="reg_msg">Youre not registered.
+Please wait for the admin to approve your form</string>
+      <string name="map_key" translatable="false">AIzaSyATdrPQ0R4ioPN6pybdg4zVzKddoMPq9DE</string>
+
+      <string name="login_msgReg">This mobile number is not registered. Please contact Saraogi Super Sales PVT LTD for more details</string>
+      <string name="title_activity_maps">Map</string>
+      <string name="line_1">Welcome to Saraogi Super Sales – a name you can TRUST as your B2B partner in the apparel industry.</string>
+      <string name="about">Innovation</string>
+      <string name="about1">Versatility</string>
+      <string name="about2">High Standards</string>
+      <string name="about3">We adopt a customer-centric approach in all our dealings!</string>
+      <string name="about4">Our Services</string>
+      <string name="about5">We provide in-house, multipronged services to our customers making us your one-stop destination for all your end-to-end B2B garment sourcing and supply solutions.</string>
+      <string name="about6">Consultancy</string>
+      <string name="about7">Discover a world of opportunities</string>
+      <string name="about8">Financial Support</string>
+      <string name="about9">Don’t let money problems hinder your business ventures</string>
+      <string name="about10">SSS Technology</string>
+      <string name="about11">Revolutionize the way you do your business</string>
+      <string name="about12">Hospitality</string>
+      <string name="about13">Business meets comfort</string>
+
+      <string name="que_1">1.App k andr apna financial year kaise change krte hai?</string>
+      <string name="ans_1">apne APP ko open kriye front page per upar right hand side corner per CALENDAR bna hua hai uspar click kriye or apna financial year select kar ke submit kr dijiye.</string>
+      <string name="que_2">2.online payment krne k liye bank details kaise dekhe ?</string>
+      <string name="ans_2">APP ke front page per right hand side niche ki taraf MORE ka option diya hua hai usi per click kre or dekhiye vahan per BANK DETAILS ka box bna hua hai usi per click kre apko apki bank detail dekhegi or easily aap payment kr skte hai.</string>
+      <string name="que_3">3.mai apne stock ka tracking and delivery kaise check kru ?</string>
+      <string name="ans_3">SORRY ; aap apne stock ka TRACKING and DELIVERY is APP ke through nhi check kar sakte hai uske liye apko SSS OFFICE mai call krna pdega.</string>
+      <string name="que_4">4.app ko ek contact no se use krk dusare contact no se bhi use kr skte h kya?</string>
+      <string name="ans_4">NO ; SSS APP ko ek hi CONTACT NO se USE kiya jaa sakta hai.</string>
+      <string name="que_5">5.ek contact no se multiple phone m app use kr skte hai kya ?</string>
+      <string name="ans_5">YES ;  SSS APP ko ek CONTACT NO se MULTIPLE PHONE mai APP USE kr sakte hai.</string>
+      <string name="que_6">6.ledger report k ander mai CLEAR or UNCLEAR entry kaise check kru ?</string>
+      <string name="ans_6">Front page per ek LEDGER ka option arha hai us per click kriye apka ledger open ho jayega or usi ledger mai aap sbse uper right hand side corner wale icon par click kriye fir usme select kr dijiye CLEAR ENTRY or UNCLEAR ENTRY fir niche option diya hua hai APPLY us per click ker dijiye apki report open ho jayegi.</string>
+      <string name="que_7">7.sss sale bill kaise dekha jata hai ?</string>
+      <string name="ans_7">
+Front page per ek SALE REPORT ka option arha hai us per click kriye apka sale report open hojaega usme particular koi ek SALE BILL NO dekhiye or usk SALE BILL NO KE LINk per click kr dijiye apka SALE BILL OPEN ho jayega.
+</string>
+      <string name="que_8">8.supplier ka purchase bill kaise dekh skte hai?</string>
+      <string name="ans_8">Front page per  SALE REPORT ka option arha hai us per click kriye apki sale report open ho jane k baad usme particular koi ek SALE BILL NO ka column dekhiye us column ke ander down arrow per click kriye click karte hi report open hogi jisme apko PURCHASE NO dikhega fir uske PURCHASE NO KE LINK per click ker dijiye apko apke SUPPLIER ka PURCHASE BILL dikh jayega.</string>
+      <string name="que_9">9.Sale report ko BRAND WISE, TRANSPORT WISE kaise dekh skte hai ?</string>
+      <string name="ans_9">Front page per SALE REPORT ke option ko click kriye apka sale report open ho jayega uske uper right hand side corner per filer par click kriye fir usme select kr dijiye BRAND NAME or TRANSPORT fir niche diye  APPLY us per click ker dijiye apki report open ho jayegi.</string>
+
+      <string name="permission_rationale">Location permission is needed for core functionality</string>
+      <string name="permission_denied_explanation">Permission was denied, but is needed for core
+        functionality.</string>
+      <string name="settings">Settings</string>
+      <string name="ok">OK</string>
+      <string name="request_location_updates">Request location updates</string>
+      <string name="remove_location_updates">Remove location updates</string>
+      <string name="location_updated">Location Updated: %1$s</string>
+      <string name="alert">Not Registered Try Login With</string>
+      <string name="alert1">Alert</string>
+      <string name="text">Select the given Accounts to login</string>
+      <string name="loginType">Entered Number</string>
+      <string name="login_text2">is not registered with us</string>
+      <string name="text_type"> Not Registered</string>
+      <string name="text2_type"> Try Login With</string>
+      <string name="dashboard_title">Payment DashBoard</string>
+      <string name="dashboard_title2">Avg Days (Bill Clear):-</string>
+      <string name="graph">Graph</string>
+      <string name="list_til">List Details</string>
+      <string name="text1">Limit Particulars</string>
+      <string name="amount">Amount</string>
+      <string name="your_limit">Your Limit</string>
+      <string name="tem_limit">Temporary Limit</string>
+      <string name="vvp_limit">Security Limit</string>
+      <string name="bg">B.G</string>
+      <string name="total_limit">Total Limit</string>
+      <string name="balanceTillDate">Balance Till Date </string>
+      <string name="interest">Interest</string>
+      <string name="discount">Discount</string>
+      <string name="avaialbleLimit">Available Limit</string>
+      <string name="stockinOffice">Stock in Office</string>
+      <string name="Pendingorder">Pending order</string>
+
+      <string name="sad_emoji"><span style='font-size:200px;'>&#128543;</span></string>
+      <string name="happy_emoji"><span style='font-size:200px;'>&#128522;</span></string>
+      <string name="sale_party">Sale Party <font color='#D81B60'>*</font> </string>
+      <string name="sale_party_mobile">Sale Party Mobile No. <font color='#D81B60'></font> </string>
+      <string name="sale_party_email">Sale Party Email<font color='#D81B60'></font> </string>
+      <string name="sub_party">Sub Party <font color='#D81B60'>*</font> </string>
+      <string name="sub_party_mobile">Sub Party Mobile No. </string>
+      <string name="transport">Transport <font color='#D81B60'>*</font> </string>
+      <string name="b_station">B.Station </string>
+      <string name="pvt_marka">Pvt Marka <font color='#D81B60'>*</font> </string>
+      <string name="rate">Rate <font color='#D81B60'>*</font> </string>
+      <string name="amt">Amt <font color='#D81B60'>*</font> </string>
+      <string name="part">Particular <font color='#D81B60'>*</font> </string>
+      <string name="entry_type">Entry Type</string>
+      <string name="scheme">Scheme</string>
+      <string name="remark">Remark</string>
+      <string name="fresh_entry">Fresh Entry</string>
+      <string name="purchase">Purchase</string>
+      <string name="dis">Description</string>
+      <string name="type">Type</string>
+      <string name="item">Item <font color='#D81B60'>*</font> </string>
+      <string name="qty">Qty <font color='#D81B60'>*</font> </string>
+      <string name="amount1">Amount <font color='#D81B60'>*</font></string>
+      <string name="marketer1">Marketer <font color='#D81B60'>*</font> </string>
+
+</resources>

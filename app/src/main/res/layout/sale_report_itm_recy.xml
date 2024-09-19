@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ll_2"
+        android:background="@drawable/otp_line"
+        >
+        <TextView
+            android:textSize="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="1"
+            android:padding="2dp"
+            android:id="@+id/salePuchaseNo"
+            android:background="@drawable/otp_line"
+            android:gravity="center"
+            android:textColor="@color/red"
+            android:fontFamily="@font/helvetica_regular"/>
+
+        <TextView
+            android:textSize="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="abc"
+            android:padding="2dp"
+            android:id="@+id/saleSupplier"
+            android:background="@drawable/otp_line"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:fontFamily="@font/helvetica_regular"/>
+
+        <TextView
+            android:textSize="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:gravity="center"
+            android:text="1"
+            android:padding="2dp"
+            android:background="@drawable/otp_line"
+            android:id="@+id/salePCS"
+            android:textColor="@color/black"
+            android:fontFamily="@font/helvetica_regular"/>
+        <TextView
+            android:textSize="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="200"
+            android:padding="2dp"
+            android:background="@drawable/otp_line"
+            android:id="@+id/saleAmount"                                android:textColor="@color/black"
+            android:fontFamily="@font/helvetica_regular"/>
+    </LinearLayout>
+
+</RelativeLayout>

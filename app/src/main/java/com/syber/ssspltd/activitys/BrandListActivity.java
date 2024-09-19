@@ -1,0 +1,154 @@
+package com.syber.ssspltd.activitys;
+
+import static com.syber.ssspltd.activitys.Const.BRANDNAME;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.reflect.TypeToken;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Lazy;
+import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.SharedPref;
+import com.syber.ssspltd.Utils.VolleySingleton;
+import com.syber.ssspltd.adapter.BrandListAdapter;
+import com.syber.ssspltd.databinding.ActivityBrandListBinding;
+import com.syber.ssspltd.response.brand.BrandInsertingRequestDatum;
+import com.syber.ssspltd.response.brand.BrandsPojo;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class BrandListActivity extends AppCompatActivity {
+    Context mContext = this;
+    Type listType;
+    public static List<BrandInsertingRequestDatum>brandsList;
+    BrandListAdapter beBrandListAdapter;
+    RecyclerView recyclerView;
+    ActivityBrandListBinding binding;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding=ActivityBrandListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.supportChat.supportFab.setOnClickListener(v ->
+                Lazy.openDialog(mContext));
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(getIntent().getStringExtra(BRANDNAME));
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        recyclerView = findViewById(R.id.brand_recyclerview);
+        brandsList = new ArrayList<>();
+        listType = new TypeToken<BrandsPojo>(){}.getType();
+
+        beBrandListAdapter = new BrandListAdapter(mContext,brandsList);
+        recyclerView.setAdapter(beBrandListAdapter);
+
+//        int x=this. getResources().getDisplayMetrics().heightPixels*1/2;
+//        recyclerView.setLayoutParams(new LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, x));
+
+        if (Lazy.haveNetworkConnection(mContext)){
+            GetBranands(getIntent().getStringExtra("branch_id"));
+        }else {
+            networkConnetion3(mContext);
+        }
+
+
+
+    }
+
+    private void GetBranands(String branchId) {
+      binding.includeProgress.progress.setVisibility(View.VISIBLE);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetBrandMasterDetails",
+                response -> {
+                    Log.e("Data", response);
+                   binding.includeProgress.progress.setVisibility(View.GONE);
+                    BrandsPojo pojo = new Gson().fromJson(response,listType);
+                    try {
+                        if (pojo.getResponseStatus()){
+                            brandsList.clear();
+                            brandsList.addAll(pojo.getBrandInsertingRequestData());
+                            beBrandListAdapter.notifyDataSetChanged();
+                        }
+                        else {
+                            AlertUtil.responseElse(mContext, "GetBrandMasterDetails ", pojo.getResponseMessage() + "");
+                        }
+                    }catch (JsonIOException e){
+                        AlertUtil.responseExecption(mContext, "GetBrandMasterDetails ", e.toString());
+                    }
+                }, error -> AlertUtil.responseError(mContext, "GetBrandMasterDetails ", error.toString())) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                return headers;
+            }
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String str = "{\"BranchID\":\"" + branchId + "\"}";
+                Log.e("str", str);
+                return str.getBytes();
+            }
+
+            public String getBodyContentType()
+            {
+                return "application/json; charset=utf-8";
+            }
+        };
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    public void  networkConnetion3(Context mContext) {
+
+        final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
+        ImageView cross = dialogView.findViewById(R.id.cross);
+        TextView try_button = dialogView.findViewById(R.id.try_button);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.BottomSheetDialogTheme2);
+        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(mContext, R.style.RoundedDialog);
+
+        builder.setView(dialogView);
+        final androidx.appcompat.app.AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCancelable(false);
+        cross.setOnClickListener(v -> alertDialog.dismiss());
+        try_button.setOnClickListener(view -> {
+            GetBranands(getIntent().getStringExtra("branch_id"));
+            alertDialog.dismiss();
+        });
+        alertDialog.show();
+    }
+}

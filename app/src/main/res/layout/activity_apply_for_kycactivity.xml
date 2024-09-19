@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".activitys.ApplyForKYCActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/tool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/RoundedDialog">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:theme="@style/Widget.AppCompat.PopupMenu">
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/toolbar_title"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:text="BRANCH"-->
+            <!--                android:textColor="@color/black"-->
+            <!--                android:textSize="18dp"-->
+            <!--                android:textStyle="bold" />-->
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tool">
+
+        <RelativeLayout
+            android:id="@+id/ll_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
+                app:cardBackgroundColor="@color/cardview_shadow_end_color"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="5dp"
+                android:src="@drawable/kyc"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="2dp" />
+
+
+            <RelativeLayout
+                android:id="@+id/SaveKYCDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="2dp"
+                    app:cardBackgroundColor="@color/cardview_shadow_end_color"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="30dp"
+                        android:orientation="vertical"
+                        android:padding="24dp">
+
+                        <TextView
+                            android:gravity="center"
+                            android:id="@+id/textCompleteKyc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/mavenpro_regular"
+                            android:padding="2dp"
+                            android:text="Aadhaar"
+                            android:textColor="@color/gray"
+                            android:textSize="18dp" />
+
+
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+            </RelativeLayout>
+
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_below="@id/SaveKYCDetails"
+                android:id="@+id/ll_aadhaar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
+                app:cardBackgroundColor="@color/cardview_shadow_end_color"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_white"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/mavenpro_regular"
+                            android:padding="2dp"
+                            android:text="Aadhaar"
+                            android:textColor="@color/gray"
+                            android:textSize="18dp" />
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0"
+                            android:src="@drawable/aadhaar" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_marginRight="1dp"
+                            android:layout_weight="1"
+                            android:paddingTop="5dp">
+
+                            <TextView
+                                android:id="@+id/txt_adhar_front"
+                                android:layout_width="match_parent"
+                                android:layout_height="45dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerInParent="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:layout_toStartOf="@+id/remove_front"
+                                android:gravity="center"
+                                android:text="Aadhaar Front\n"
+                                android:textColor="@color/gray"
+                                android:textSize="18dp" />
+
+                            <ImageView
+                                android:id="@+id/remove_front"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerInParent="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:src="@drawable/ic_cancel"
+                                android:visibility="gone" />
+
+                            <ImageView
+                                android:id="@+id/image_adhar_front"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_below="@+id/txt_adhar_front"
+                                android:scaleType="fitXY"
+                                android:src="@color/light_gray" />
+
+                            <ImageView
+                                android:id="@+id/gallery_adhar_front"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_alignParentBottom="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:layout_toStartOf="@+id/camera_adhar_front"
+                                android:src="@drawable/ic_baseline_image_24"
+                                app:tint="@color/gray" />
+
+                            <ImageView
+                                android:id="@+id/camera_adhar_front"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentBottom="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:src="@drawable/ic_photo_camera_black_48dp"
+                                app:tint="@color/gray" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_weight="1"
+                            android:paddingTop="5dp">
+
+                            <TextView
+                                android:id="@+id/txt_adhar_back"
+                                android:layout_width="match_parent"
+                                android:layout_height="45dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerInParent="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:layout_toStartOf="@+id/remove_back"
+                                android:gravity="center"
+                                android:text="Aadhaar Back\n"
+                                android:textColor="@color/gray"
+                                android:textSize="18dp" />
+
+                            <ImageView
+                                android:id="@+id/remove_back"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerInParent="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:src="@drawable/ic_cancel"
+                                android:visibility="gone" />
+
+                            <ImageView
+                                android:id="@+id/image_adhar_back"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_below="@+id/txt_adhar_back"
+                                android:scaleType="fitXY"
+                                android:src="@color/light_gray" />
+
+                            <ImageView
+                                android:id="@+id/gallery_adhar_back"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_alignParentBottom="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:layout_toStartOf="@+id/camera_adhar_back"
+                                android:src="@drawable/ic_baseline_image_24"
+                                app:tint="@color/gray" />
+
+                            <ImageView
+                                android:id="@+id/camera_adhar_back"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentBottom="true"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:src="@drawable/ic_photo_camera_black_48dp"
+                                app:tint="@color/gray" />
+
+                        </RelativeLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ll_pancard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_aadhaar"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
+                app:cardBackgroundColor="@color/cardview_shadow_end_color"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="5dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="201dp"
+                    android:layout_margin="4dp"
+                    android:paddingTop="5dp">
+
+                    <TextView
+                        android:id="@+id/txt_pancard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_toStartOf="@+id/remove_pan"
+                        android:text="Pancard\n"
+                        android:textColor="@color/gray"
+                        android:textSize="18dp" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="2dp"
+                        android:layout_weight="0"
+                        android:src="@drawable/pancard" />
+
+                    <ImageView
+                        android:id="@+id/remove_pan"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_margin="2dp"
+                        android:src="@drawable/ic_cancel"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:id="@+id/image_pancard"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/txt_pancard"
+                        android:scaleType="fitXY"
+                        android:src="@color/light_gray" />
+
+                    <ImageView
+                        android:id="@+id/gallery_pancard"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_toStartOf="@+id/camera_pancard"
+                        android:src="@drawable/ic_baseline_image_24"
+                        app:tint="@color/gray" />
+
+                    <ImageView
+                        android:id="@+id/camera_pancard"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:src="@drawable/ic_photo_camera_black_48dp"
+                        app:tint="@color/gray" />
+
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ll_passportSize"
+                android:layout_below="@id/ll_pancard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
+                app:cardBackgroundColor="@color/cardview_shadow_end_color"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="5dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="201dp"
+                    android:layout_margin="4dp"
+                    android:paddingTop="5dp">
+
+                    <TextView
+                        android:id="@+id/txt_passport_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_toStartOf="@+id/remove_pasport_img"
+                        android:text="Paspost Size Photo"
+                        android:textColor="@color/gray"
+                        android:textSize="18dp" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_weight="0"
+                        android:src="@drawable/profile_kyc" />
+                    <ImageView
+                        android:id="@+id/remove_pasport_img"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:visibility="gone"
+                        android:layout_marginBottom="2dp"
+                        android:src="@drawable/ic_cancel" />
+
+                    <ImageView
+                        android:id="@+id/image_pasport_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/txt_passport_img"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:scaleType="fitXY"
+                        android:src="@color/light_gray" />
+
+                    <ImageView
+                        android:id="@+id/gallery_pasport"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toStartOf="@+id/camera_pasport"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="2dp"
+                        app:tint="@color/gray"
+                        android:src="@drawable/ic_baseline_image_24" />
+                    <ImageView
+                        android:id="@+id/camera_pasport"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="2dp"
+                        app:tint="@color/gray"
+                        android:src="@drawable/ic_photo_camera_black_48dp" />
+
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_below="@id/ll_passportSize"
+                android:id="@+id/kycSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="100dp"
+                android:layout_weight="1"
+                android:background="@drawable/red_button"
+                android:gravity="center"
+                android:text="SUBMIT"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/KYCDetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tool">
+
+        <TextView
+            android:id="@+id/adharCardtext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Upload Aadhaar Card"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/aadhaarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/adharCardtext"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:text="Front"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/aadhaarBackText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/aadhaarText"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:text="Back"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/setFrontText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/adharCardtext"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_toRightOf="@id/aadhaarText"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            tools:text="Front" />
+
+        <TextView
+            android:id="@+id/setBackText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/aadhaarText"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_toRightOf="@id/aadhaarText"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            tools:text="Back" />
+
+        <TextView
+            android:id="@+id/panCardText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/setBackText"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Upload PAN Card"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/setPanCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/panCardText"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            tools:text="PanCard" />
+
+        <TextView
+            android:id="@+id/passportText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/setPanCard"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Upload Passport Size image"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/setPassport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/passportText"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            tools:text="passportSize" />
+
+
+    </RelativeLayout>
+
+    <include layout="@layout/floating_button_layout"
+        android:id="@+id/supportChat">
+    </include>
+
+</RelativeLayout>

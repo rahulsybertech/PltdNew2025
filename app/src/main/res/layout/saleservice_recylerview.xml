@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <LinearLayout
+        android:layout_margin="6dp"
+        android:background="@drawable/all_outline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sale Bill No    :"
+                    android:layout_weight="0"
+                    android:textSize="12dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:textColor="@color/red"
+                    android:text="abc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="5dp"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:id="@+id/saleSer_billNo"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+            </LinearLayout>
+
+<!--            <LinearLayout-->
+<!--                android:layout_weight="1"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+
+
+
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Booking Station : "-->
+<!--                    android:layout_weight="0"-->
+<!--                    android:textSize="12dp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:fontFamily="@font/roboto_regular"-->
+<!--                    android:layout_marginTop="1dp"-->
+<!--                    android:textColor="@color/black"-->
+
+<!--                    />-->
+
+<!--                <TextView-->
+<!--                    android:text="abc"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:paddingStart="5dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:textSize="12dp"-->
+<!--                    android:id="@+id/bookingStation_saleSer"-->
+<!--                    android:layout_marginTop="2dp"-->
+<!--                    android:fontFamily="@font/roboto_regular"-->
+<!--                    />-->
+
+
+
+<!--            </LinearLayout>-->
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <LinearLayout
+
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date                :"
+                    android:layout_weight="0"
+                    android:textSize="12dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_regular"
+                    android:layout_marginTop="1dp"
+                    android:textColor="@color/black"
+
+                    />
+
+                <TextView
+                    android:text="10/06/2020"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="5dp"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:id="@+id/date_saleSer"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    />
+            </LinearLayout>
+
+            <!--            <LinearLayout-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content">-->
+
+
+
+
+            <!--                <TextView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:text="Transport :"-->
+            <!--                    android:layout_weight="0"-->
+            <!--                    android:textSize="12dp"-->
+            <!--                    android:textStyle="bold"-->
+            <!--                    android:fontFamily="@font/roboto_regular"-->
+            <!--                    android:layout_marginTop="1dp"-->
+            <!--                    android:textColor="@color/black"-->
+
+            <!--                    />-->
+
+            <!--                <TextView-->
+            <!--                    android:text="20/08/2020"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:paddingStart="5dp"-->
+            <!--                    android:layout_weight="1"-->
+            <!--                    android:textSize="12dp"-->
+            <!--                    android:id="@+id/date"-->
+            <!--                    android:layout_marginTop="2dp"-->
+            <!--                    android:fontFamily="@font/roboto_regular"-->
+            <!--                    />-->
+            <!--            </LinearLayout>-->
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/otp_line">
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sub-party"
+                android:padding="2dp"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Customer name"
+                android:padding="2dp"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="2dp"
+                android:background="@drawable/otp_line"
+                android:text="Net amount"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+            <!--            <TextView-->
+            <!--                android:textSize="12dp"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:gravity="center"-->
+            <!--                android:text="Amount"-->
+            <!--                android:padding="2dp"-->
+            <!--                android:background="@drawable/otp_line"-->
+            <!--                android:textColor="@color/black"-->
+            <!--                android:fontFamily="@font/helvetica_regular"/>-->
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ll_2"
+            android:background="@drawable/otp_line"
+            >
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="1"
+                android:padding="2dp"
+                android:id="@+id/subParty_saleSer"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="abc"
+                android:padding="2dp"
+                android:id="@+id/Customer_saleSer"
+                android:background="@drawable/otp_line"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+
+            <TextView
+                android:textSize="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="2dp"
+                android:background="@drawable/otp_line"
+                android:id="@+id/netAmt_saleSer"
+                android:textColor="@color/black"
+                android:fontFamily="@font/helvetica_regular"/>
+            <!--            <TextView-->
+            <!--                android:textSize="12dp"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:gravity="center"-->
+            <!--                android:text="200"-->
+            <!--                android:padding="2dp"-->
+            <!--                android:background="@drawable/otp_line"-->
+            <!--                android:id="@+id/qty"                                android:textColor="@color/black"-->
+            <!--                android:fontFamily="@font/helvetica_regular"/>-->
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>

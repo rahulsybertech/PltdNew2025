@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="40sp"
+    tools:context=".activitys.CustomerReviewsActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tool"
+        android:theme="@style/RoundedDialog">
+      <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:theme="@style/Widget.AppCompat.PopupMenu">
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="4000+ Customers"
+              android:layout_gravity="center"
+              android:textColor="@color/black"
+              android:textSize="22dp"
+              android:id="@+id/toolbar_title" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_below="@id/tool">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/img"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:src="@drawable/sss_handshake" />
+
+            <RelativeLayout
+                android:id="@+id/rl_rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_white"
+                android:padding="10dp">
+
+
+                <TextView
+                    android:id="@+id/textRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="3dp"
+                    android:text="Average Ratings"
+                    android:textColor="@color/black"
+                    android:textSize="18dp" />
+
+                <com.chaek.android.RatingBar
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textRating"
+                    android:layout_marginTop="15dp"
+                    app:rating_flag="TEN"
+                    app:rating_star_color="@color/blue"
+                    app:rating_star_empty_color="#8e7d7d"
+                    app:rating_star_height="20dp"
+                    app:rating_star_margin="5dp"
+                    app:rating_star_src="@drawable/default_star"
+                    app:rating_star_width="20dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textRating"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="10dp"
+                    android:padding="3dp"
+                    android:text="4.6"
+                    android:textColor="@color/blue"
+                    android:textSize="18dp" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_white"
+                android:gravity="center"
+                android:padding="15dp"
+                android:text="SSS है जहाँ Transprency है वहाँ |"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="20dp" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_below="@id/rl_rating"
+                android:layout_marginTop="10dp"
+                android:background="@color/eee" />
+
+            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                android:id="@+id/youtube_player_view"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@+id/view"
+                app:autoPlay="false" />
+
+            <TextView
+                android:id="@+id/comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/youtube_player_view"
+                android:padding="10dp"
+                android:text="Reviews/comments"
+                android:textColor="@color/blue"
+                android:textSize="18dp" />
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/youtube_player_view"-->
+<!--                android:layout_alignParentRight="true"-->
+<!--                android:padding="10dp"-->
+<!--                android:text="5-6 only"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="18dp"-->
+<!--                android:visibility="visible" />-->
+
+
+            <WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:layout_below="@id/comments" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/blenk_text"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"/>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <include
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        layout="@layout/progress_loader"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/include_progress"/>
+
+
+    <include layout="@layout/floating_button_layout"
+        android:id="@+id/supportChat">
+    </include>
+
+</RelativeLayout>
