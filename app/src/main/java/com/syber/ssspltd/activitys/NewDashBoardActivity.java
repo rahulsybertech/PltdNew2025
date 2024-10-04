@@ -1,5 +1,11 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_DASHBOARD_DETAILS_PENDING_ORDER;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_DASHBOARD_DETAIL_GRAPH;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_DASHBOARD__DEATILS_BALANCE_INTREST_DISCOUNT;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_DASHBOARD__DEATILS_BALANCE_TILL_DATE;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_DASHBOARD__DEATILS_STOCK_IN_OFFICE;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -57,7 +63,9 @@ import java.lang.reflect.Type;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NewDashBoardActivity extends AppCompatActivity {
 
@@ -247,13 +255,16 @@ public class NewDashBoardActivity extends AppCompatActivity {
         // binding.scrollView.setSmoothScrollingEnabled(true);
         String  newUrl = "http://app.ssspltd.com/apipltd/GetDashboardDetail_Graph";
         String oldUrl = "http://app.ssspltd.com/apipltd/GetDashboardDetails";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, newUrl,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DASHBOARD_DETAIL_GRAPH,
                 response -> {
+
+                    Log.i("TaG", "URL --" + GET_DASHBOARD_DETAIL_GRAPH);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         Log.e("DashBoardRespo", response);
+                        progressBar.dismiss();
                         if (jsonObject.getBoolean("ResponseStatus") == true) {
-                            progressBar.dismiss();
+
                             String stockinOffice = jsonObject.getString("StockinOffice");
                             String pending_order = jsonObject.getString("Pendingorder");
                             String avaialbleLimit = jsonObject.getString("AvaialbleLimit");
@@ -430,7 +441,7 @@ public class NewDashBoardActivity extends AppCompatActivity {
                             } else {
                                 binding.tempLimit.setText("(+) " + jsonObject.optString("TemporaryLimit"));
                                 binding.viewTemLimit.setVisibility(View.VISIBLE);
-                                binding.llTemLimit.setVisibility(View.VISIBLE);
+//                                binding.llTemLimit.setVisibility(View.VISIBLE);
                             }
                             String int_dis_m = jsonObject.optString("Interest").equalsIgnoreCase("") ? "0" : jsonObject.optString("Interest");
                             String discount_m = jsonObject.optString("Discount").equalsIgnoreCase("") ? "0" : jsonObject.optString("Discount");
@@ -544,6 +555,12 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return str.getBytes();
             }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
 
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
@@ -590,7 +607,7 @@ public class NewDashBoardActivity extends AppCompatActivity {
 
     private void GetBalanceTillDate() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetDashboardDetails_BalanceTillDate",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DASHBOARD__DEATILS_BALANCE_TILL_DATE,
                 response -> {
                     //  Log.e("Data", response);
                     binding.includeProgress.progress.setVisibility(View.GONE);
@@ -627,6 +644,13 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return str.getBytes();
             }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -637,7 +661,7 @@ public class NewDashBoardActivity extends AppCompatActivity {
 
     private void GetStockInOffice() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetDashboardDetails_StockInOffice",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DASHBOARD__DEATILS_STOCK_IN_OFFICE,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -675,6 +699,13 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return str.getBytes();
             }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -684,7 +715,7 @@ public class NewDashBoardActivity extends AppCompatActivity {
 
     private void GetPendingOrder() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetDashboardDetails_PendingOrder",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DASHBOARD_DETAILS_PENDING_ORDER,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -724,6 +755,13 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return str.getBytes();
             }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -737,7 +775,7 @@ public class NewDashBoardActivity extends AppCompatActivity {
 
     private void GetInterest_Discount(String datakey) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetDashboardDetails_Interest_Discount",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DASHBOARD__DEATILS_BALANCE_INTREST_DISCOUNT,
                 response -> {
                      Log.e("DataDis", response);
                     binding.includeProgress.progress.setVisibility(View.GONE);
@@ -784,6 +822,13 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"ACCOUNTID\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"DATAKEY\":\"" + datakey + "\"}";
                 Log.e("Disstr", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {

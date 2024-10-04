@@ -1,5 +1,8 @@
 package com.syber.ssspltd.fragment;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_BANNER_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_SECURITY_CHECK_REPORT;
+
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -44,7 +47,9 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class HomeFragment extends Fragment {
@@ -206,7 +211,7 @@ public class HomeFragment extends Fragment {
 //        final ProgressDialog progressBar = new ProgressDialog(getContext());
 //        progressBar.setTitle(" Loading ");
 //        progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetBannerListNew",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_BANNER_LIST,
                 response -> {
                     Log.e("Data", response);
                     try {
@@ -255,6 +260,13 @@ public class HomeFragment extends Fragment {
                 Log.e("str", str);
                 return str.getBytes();
             }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
 
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
@@ -269,7 +281,7 @@ public class HomeFragment extends Fragment {
 //        final ProgressDialog progressBar = new ProgressDialog(getContext());
 //        progressBar.setTitle(" GENERATE OTP");
 //        progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetSecurityCheckReport",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SECURITY_CHECK_REPORT,
                 response -> {
                     Log.e("SecurityCheckRespo", response);
                     try {
@@ -370,6 +382,13 @@ public class HomeFragment extends Fragment {
                 String str = "{\"MOBILENO\":\"" + mob + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("straff", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {

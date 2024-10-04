@@ -2,6 +2,7 @@ package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_COMPLETE_LEDGER_PDF;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_LEDGER_REPORT_WITH_BALANCE;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -218,7 +219,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
 
     private void GetLedgerReport(String formDate, String toDate, String status, String tick, String db_name, String ledger_type, boolean isisFilterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetLedgerReportWithBalance",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_LEDGER_REPORT_WITH_BALANCE,
                 response -> {
                     Log.e("Data", response);
                     LedgerReportPojo pojo = new Gson().fromJson(response, listType);

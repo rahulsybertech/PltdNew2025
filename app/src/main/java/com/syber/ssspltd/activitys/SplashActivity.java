@@ -81,11 +81,12 @@ public class SplashActivity extends AppCompatActivity {
     }
     private void getClubType() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, CLUB_TYPE_BY_ACCOUNT_ID, response -> {
+            Log.e("Api Cat ", "Url --> " + CLUB_TYPE_BY_ACCOUNT_ID);
             Log.e("Api Cat ", response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getBoolean("ResponseStatus")) {
-
+                    Log.i("TaG","clubType ====> " + SharedPref.read(SharedPref.clubType,""));
                     if (SharedPref.read(SharedPref.clubType,"").equals(jsonObject.getString("ClubType"))){
                         checkold();
                     }else {
@@ -97,13 +98,20 @@ public class SplashActivity extends AppCompatActivity {
                                 jsonObject.getString("ClubType").equalsIgnoreCase(""))) {
                                 responseSuccess(mContext, "Click here to Switch Club type to Normal", jsonObject.getString("ClubType"));
                         }
-                        else if (jsonObject.getString("ClubType").equalsIgnoreCase("SSSPLTD") || jsonObject.getString("ClubType").equalsIgnoreCase("N/A") || jsonObject.getString("ClubType").equalsIgnoreCase("NA") || jsonObject.getString("ClubType").equalsIgnoreCase("")) {
+                        else if (   jsonObject.getString("ClubType").equalsIgnoreCase("SSSPLTD") ||
+                                    jsonObject.getString("ClubType").equalsIgnoreCase("N/A") ||
+                                    jsonObject.getString("ClubType").equalsIgnoreCase("NA") ||
+                                    jsonObject.getString("ClubType").equalsIgnoreCase("")
+                                ) {
+                            Log.i("TaG","11111111111111111111111111");
                                 SharedPref.write(SharedPref.clubType, jsonObject.getString("ClubType"));
                                 SharedPref.write(SharedPref.noClubType,"true");
                                 PackageManager pm0 = getPackageManager();
                                 pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                                 pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                                 pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+
+                                checkold();
 
                             } else {
                                 responseSuccess(mContext, jsonObject.getString("ResponseMessage"), jsonObject.getString("ClubType"));
@@ -126,7 +134,7 @@ public class SplashActivity extends AppCompatActivity {
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE,"") + "\",\"AccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\"}";
 //                String str = "{\"AccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\"}";
-                Log.e("strrr",str);
+                Log.e("strrr", "body request --> " + str);
                 return str.getBytes();
             }
             public String getBodyContentType() {
@@ -223,6 +231,7 @@ public class SplashActivity extends AppCompatActivity {
         Log.e("ChackMobile", SharedPref.read(SharedPref.USERMOBILE, ""));
         StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetAppVersion",
                 response -> {
+                    Log.i("TaG","URL -->" + "http://app.ssspltd.com/apipltd/GetAppVersion" );
                     Log.e("res", response);
                     try {
                         JSONObject ob = new JSONObject(response);
@@ -302,25 +311,50 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void goToNext() {
-        if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") && SharedPref.read(SharedPref.isLogin, "").equals("true") && SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("true")) {
+        Log.i("TaG","goToNext --> " + SharedPref.read(SharedPref.USERMOBILE, "") +
+                " == " + SharedPref.read(SharedPref.isLogin, "") + " == " +
+                SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "") + " == " +
+                SharedPref.read(SharedPref.IS_SUPPER_SELECTED, "") + " == " +
+                SharedPref.read(SharedPref.WHERE_TO_GO, ""));
+
+        if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") &&
+                SharedPref.read(SharedPref.isLogin, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("true")) {
             startActivity(new Intent(mContext, MainActivity.class));
             finish();
-        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") && SharedPref.read(SharedPref.isLogin, "").equals("true") && SharedPref.read(SharedPref.IS_SUPPER_SELECTED, "").equals("true") && SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("true")) {
+        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") &&
+                SharedPref.read(SharedPref.isLogin, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_SUPPER_SELECTED, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("true")) {
             startActivity(new Intent(mContext, MainActivity.class));
             finish();
-        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") && SharedPref.read(SharedPref.isLogin, "").equals("true") && SharedPref.read(SharedPref.IS_SUPPER_SELECTED, "").equals("true") && SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("")) {
+        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") &&
+                SharedPref.read(SharedPref.isLogin, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_SUPPER_SELECTED, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("")) {
             startActivity(new Intent(mContext, ChooseCategries.class));
             finish();
-        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") && SharedPref.read(SharedPref.isLogin, "").equals("true") && SharedPref.read(SharedPref.IS_SUPPER_SELECTED, "").equals("false") && SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("")) {
+        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") &&
+                SharedPref.read(SharedPref.isLogin, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_SUPPER_SELECTED, "").equals("false") &&
+                SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("")) {
             startActivity(new Intent(mContext, MainActivity.class));
             finish();
-        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") && SharedPref.read(SharedPref.isLogin, "").equals("true") && SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("") && SharedPref.read(SharedPref.WHERE_TO_GO, "").equals("choose_cat")) {
+        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") &&
+                SharedPref.read(SharedPref.isLogin, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("") &&
+                SharedPref.read(SharedPref.WHERE_TO_GO, "").equals("choose_cat")) {
             startActivity(new Intent(mContext, ChooseCategries.class));
             finish();
-        } else if (SharedPref.read(SharedPref.isLogin, "").equals("true") && SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("") && SharedPref.read(SharedPref.WHERE_TO_GO, "").equals("reg_msg")) {
+        } else if (SharedPref.read(SharedPref.isLogin, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("") &&
+                SharedPref.read(SharedPref.WHERE_TO_GO, "").equals("reg_msg")) {
             startActivity(new Intent(mContext, registered_msg.class));
             finish();
-        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") && SharedPref.read(SharedPref.isLogin, "").equals("true") && SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("") && SharedPref.read(SharedPref.WHERE_TO_GO, "").equals("main_act")) {
+        } else if (!SharedPref.read(SharedPref.USERMOBILE, "").equals("") &&
+                SharedPref.read(SharedPref.isLogin, "").equals("true") &&
+                SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "").equals("") &&
+                SharedPref.read(SharedPref.WHERE_TO_GO, "").equals("main_act")) {
             startActivity(new Intent(mContext, MainActivity.class));
             finish();
         } else {

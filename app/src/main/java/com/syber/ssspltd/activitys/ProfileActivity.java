@@ -1,5 +1,8 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_PROFILR_DEATILS;
+import static com.syber.ssspltd.Constants.NewErpUrls.UPDATE_POSTAGE_STATUS;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -46,6 +49,8 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity  {
 
@@ -147,9 +152,10 @@ public class ProfileActivity extends AppCompatActivity  {
 
     private void GetProfileDetails() {
       binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetProfileDetails",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_PROFILR_DEATILS,
                 response -> {
                     Log.e("Data", response);
+                    Log.e("TaG", "URL --->" + GET_PROFILR_DEATILS);
                     binding.includeProgress.progress.setVisibility(View.GONE);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
@@ -181,6 +187,13 @@ public class ProfileActivity extends AppCompatActivity  {
                 String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE,"") + "\",\"PartyCode\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"")+ "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType()
@@ -270,9 +283,10 @@ public class ProfileActivity extends AppCompatActivity  {
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("Updating Status");
         progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/UpdatePostageStatus",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, UPDATE_POSTAGE_STATUS,
                 response -> {
                     Log.e("Data", response);
+                    Log.i("TaG","URL -->" + UPDATE_POSTAGE_STATUS);
                     progressBar.dismiss();
                     try {
                         JSONObject jsonObject = new JSONObject(response);
@@ -300,6 +314,12 @@ public class ProfileActivity extends AppCompatActivity  {
                 String str = "{\"PartyCode\":\"" + partyCode + "\",\"Postage\":\"" + postegeStatus + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {

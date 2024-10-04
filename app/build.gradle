@@ -13,6 +13,17 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            def date = new Date().format("dd-MMM-yy")
+            def projectName = rootProject.name
+            def variantName = variant.name
+
+            def newApkName = "${projectName}_NEW-${variantName}-${date}.apk"
+            outputFileName = newApkName
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11

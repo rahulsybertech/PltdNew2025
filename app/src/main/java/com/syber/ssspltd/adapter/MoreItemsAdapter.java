@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.activitys.AboutUsActivity;
 import com.syber.ssspltd.activitys.BankDetailActivity;
@@ -108,6 +110,7 @@ public class MoreItemsAdapter extends RecyclerView.Adapter<MoreItemsAdapter.MyVi
                 alertDialog.setConfirmClickListener(sweetAlertDialog -> {
                     String s = SharedPref.read(SharedPref.clubType,"");
                     SharedPref.clear();
+                    Log.i("TaG","after logout -=-=-=-=> " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                     Intent logout = new Intent(context, LoginPage.class);
                     logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(logout);
@@ -117,6 +120,8 @@ public class MoreItemsAdapter extends RecyclerView.Adapter<MoreItemsAdapter.MyVi
                 });
                 alertDialog.setCancelClickListener(SweetAlertDialog::dismissWithAnimation);
                 alertDialog.show();
+            } else if (lists.getOnClickId().equals("8")) {
+                Lazy.openDialog(context);
             }
         });
 

@@ -39,8 +39,11 @@ public class NewErpUrls {
     public static String GET_DASHBOARD__DEATILS_STOCK_IN_OFFICE = BASE_URL + "GetDashboardDetails_StockInOffice";
     public static String GET_DASHBOARD__DEATILS_BALANCE_TILL_DATE = BASE_URL + "GetDashboardDetails_BalanceTillDate";
     public static String GET_DASHBOARD__DEATILS_BALANCE_INTREST_DISCOUNT = BASE_URL + "GetDashboardDetails_Interest_Discount";
-    public static String GET_DASHBOARD__DEATILS_BALANCE_STOCK_IN_OFFICE = BASE_URL + "GetDashboardDetails_StockInOffice";
+    public static String GET_DASHBOARD_DETAILS_PENDING_ORDER = BASE_URL + "GetDashboardDetails_PendingOrder";
     public static String GET_LEDGER_REPORT_WITH_BALANCE = BASE_URL + "GetLedgerReportWithBalance";
     public static String GET_LEDGER_REPORT = BASE_URL + "GetLedgerReport";
     public static String GET_FILTER_LIST_NEW = BASE_URL + "GetFilterListNew";
+    public static String GET_SECURITY_CHECK_REPORT = BASE_URL + "GetSecurityCheckReport";
+    public static String GET_BANNER_LIST = BASE_URL + "GetBannerListNew";
+    public static String GET_DASHBOARD_DETAIL_GRAPH = BASE_URL + "GetDashboardDetail_Graph";
   }

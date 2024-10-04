@@ -1,5 +1,10 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
+import static com.syber.ssspltd.Utils.SharedPref.ACCCESS_TOKEN;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +14,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +41,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class registered_msg extends AppCompatActivity {
     TextView msg_ok;
@@ -49,6 +57,7 @@ public class registered_msg extends AppCompatActivity {
     public static String typePos="",praty_code="";
     public static String postionSelected="";
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +69,7 @@ public class registered_msg extends AppCompatActivity {
         UsersTyperDetails=new ArrayList<>();
 
         listType=new TypeToken<UsersTypePoojo>(){}.getType();
+        Log.i("TaG","listType Initialized<><><>><>> " + listType.getTypeName()  + " == " +listType);
             msg_ok.setOnClickListener(v -> {
                 SharedPref.write(SharedPref.DB, pos.toString());
                 SharedPref.write(SharedPref.LIST_TYPE, typePos);
@@ -137,11 +147,14 @@ public class registered_msg extends AppCompatActivity {
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("Fetching Data");
        // progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetUsersTypeList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_TYPE_LIST,
                 response -> {
+                    Log.i("TaG","URl --> " + GET_USER_TYPE_LIST);
                     Log.e("Data", response);
+
                     progressBar.dismiss();
                     UsersTypePoojo pojo = new Gson().fromJson(response,listType);
+                    Log.i("TaG","pojo --->" + pojo.getResponseStatus());
                     try {
                         if (pojo.getResponseStatus()) {
                             UsersTyperDetails.clear();
@@ -150,8 +163,11 @@ public class registered_msg extends AppCompatActivity {
                             usersTypeListAdapter.notifyDataSetChanged();
                         }
                         else {
-                            AlertUtil.responseElse(mContext, "GetUsersTypeList ", pojo.getResponseMessage() + "");                        }
+                            Log.i("TaG","pojo else");
+                            AlertUtil.responseElse(mContext, "GetUsersTypeList ", pojo.getResponseMessage() + "");
+                        }
                     }catch (Exception e){
+                        Log.i("TaG","get exception -==-=-=-=" + e);
                         AlertUtil.responseExecption(mContext, "GetUsersTypeList ", e.toString());
                     }
 
@@ -159,9 +175,23 @@ public class registered_msg extends AppCompatActivity {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE,"");
-                String str = "{\"MOBILENO\":\"" + mob3 + "\"}";
+                String str = "{\"mobileno\":\"" + mob3 + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                Map<String, String> header = new HashMap<>();
+                String auth = "Bearer " + SharedPref.read(ACCCESS_TOKEN,"");
+                header.put("Authorization", auth );
+
+
+
+
+                return header;
+
             }
 
             public String getBodyContentType()

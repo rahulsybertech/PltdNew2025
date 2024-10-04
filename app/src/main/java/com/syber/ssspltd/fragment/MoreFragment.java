@@ -25,11 +25,11 @@ public class MoreFragment extends Fragment {
     MoreItems moreItems;
     MoreItemsAdapter moreItemsAdapter;
 
-    String[] item_name = {"Profile","Branches","Bank Details","About Us","Feedback","FAQ","Logout"};
-    String[] item_id = {"1", "2", "3", "4","5","6","7"};
+    String[] item_name = {"Profile","Branches","Bank Details","About Us","Feedback","FAQ","Logout","Contact Us"};
+    String[] item_id = {"1", "2", "3", "4","5","6","7","8"};
     Integer item_Img[] = {R.drawable.profile,
             R.drawable.office, R.drawable.bank, R.drawable.information, R.drawable.rating, R.drawable.faq,
-            R.drawable.logout};
+            R.drawable.logout, R.drawable.ic_support};
 
     RecyclerView recyclerView;
 

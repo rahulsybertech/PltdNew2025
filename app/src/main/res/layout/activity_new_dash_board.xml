@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     tools:context=".activitys.NewDashBoardActivity">
 
     <include layout = "@layout/backbutton_toolbar"
@@ -11,7 +12,7 @@
     </include>
 
     <RelativeLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_below="@id/tool"
         android:id="@+id/layout_Gone"
         android:layout_width="match_parent"
@@ -171,7 +172,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <TextView
                             android:layout_width="match_parent"
