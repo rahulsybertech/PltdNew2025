@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import com.google.gson.Gson;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.adapter.supplierformadapter.OrderImageAdapter;
 import com.syber.ssspltd.response.SupplierOrderReport.OrderDetail;
+
+import java.util.Collections;
 
 import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
 
@@ -62,15 +65,22 @@ public class OrderImageActivity extends AppCompatActivity {
             product = (OrderDetail) extra.getSerializableExtra("img");
         }
         Log.e("immm",new Gson().toJson(product.getImageList()));
-         galleryAdapter = new OrderImageAdapter(mContext, product.getImageList());
-        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(mContext);
-        linearLayoutManager2.setOrientation(GridLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(linearLayoutManager2);
-        recyclerView.setAdapter(galleryAdapter);
-        snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(recyclerView);
-        ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.indicator);
-        recyclerIndicator.attachToRecyclerView(recyclerView);
+        if ( (product.getImageList() != null)) {
+            galleryAdapter = new OrderImageAdapter(mContext, (product.getImageList() != null) ? product.getImageList() : Collections.emptyList());
+            LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(mContext);
+            linearLayoutManager2.setOrientation(GridLayoutManager.HORIZONTAL);
+            recyclerView.setLayoutManager(linearLayoutManager2);
+            recyclerView.setAdapter(galleryAdapter);
+            snapHelper = new LinearSnapHelper();
+            snapHelper.attachToRecyclerView(recyclerView);
+            ScrollingPagerIndicator recyclerIndicator = findViewById(R.id.indicator);
+            recyclerIndicator.attachToRecyclerView(recyclerView);
+        } else {
+            Toast.makeText(this, "Image Not Available", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+
     }
 
     @Override

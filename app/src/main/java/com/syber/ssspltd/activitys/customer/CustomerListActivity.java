@@ -1,7 +1,8 @@
 package com.syber.ssspltd.activitys.customer;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.BANK_DETAILS;
-import static com.syber.ssspltd.Constants.URLConstants.blackList;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_BLACK_LIST_NAME;
+import static com.syber.ssspltd.Constants.NewErpUrls.blackList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -113,10 +114,12 @@ public class CustomerListActivity extends AppCompatActivity {
     }
     private void getCustomerList() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, BANK_DETAILS,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_BLACK_LIST_NAME,
                 response -> {
-                    Log.e("Data", response);
+//                    Log.e("Data", response);
                     binding.includeProgress.progress.setVisibility(View.GONE);
+                    Log.i("TaG","url ---" + GET_BLACK_LIST_NAME);
+                    Log.i("TaG","response ---> " + response);
                     CustomerListPojo pojo = new Gson().fromJson(response,listType);
                     try {
                         if (pojo.getResponseStatus()){

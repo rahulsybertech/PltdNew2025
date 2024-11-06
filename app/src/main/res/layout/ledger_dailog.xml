@@ -75,7 +75,7 @@
                         android:textSize="18dp"
                         android:hint="Rs"
                         android:inputType="number"
-                        android:id="@+id/ledgerDate"
+                        android:id="@+id/ledger_FromDate"
                         android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"/>

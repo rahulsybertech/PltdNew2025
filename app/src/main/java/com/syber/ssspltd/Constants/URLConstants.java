@@ -1,7 +1,7 @@
 package com.syber.ssspltd.Constants;
 
 public class URLConstants {
-    static String domainApp = "http://app.ssspltd.com";
+/*    static String domainApp = "http://app.ssspltd.com";
     static String domain = "https://api.ssspltd.com";
     public static String apiControllerApp = "/apipltd";
     public static String apiController = "/apiQuick";
@@ -24,6 +24,6 @@ public class URLConstants {
     public static String CLUB_TYPE_DETAILS = base_url_app + "/ClubTypeDetail";
     public static String CLUB_TYPE_DETAILS_OBJECT = base_url_app + "/ClubTypeDetails";
     public static String CLUB_TYPE_BY_ACCOUNT_ID = base_url_app + "/ClubTypeByAccountID";
-    public static String blackList ="http://app.ssspltd.com/apipltd/BlackListedName";
+    public static String blackList ="http://app.ssspltd.com/apipltd/BlackListedName";*/
 
 }

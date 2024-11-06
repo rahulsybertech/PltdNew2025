@@ -78,15 +78,17 @@ public class AlertUtil {
                 .show();
     }
 
-    public static void loadingDialog(Context context,boolean isShow) {
+    public static SweetAlertDialog loadingDialog(Context context) {
         SweetAlertDialog pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         pDialog.setTitleText("Loading");
         pDialog.setCancelable(false);
-//        if (!isShow)
-//        pDialog.dismissWithAnimation();
-//        else
-            pDialog.show();
+
+        return pDialog;
+        /*if (!isShow)
+        pDialog.dismissWithAnimation();
+        else
+            pDialog.show();*/
     }
 
     public static void  deleteDialog(Context context){

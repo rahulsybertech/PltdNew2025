@@ -1,22 +1,22 @@
 package com.syber.ssspltd.activitys.supplierorderform;
 
-import static com.syber.ssspltd.Constants.URLConstants.ITEM_LIST;
-import static com.syber.ssspltd.Constants.URLConstants.MARKETER_LIST;
-import static com.syber.ssspltd.Constants.URLConstants.NICK_NAME;
-import static com.syber.ssspltd.Constants.URLConstants.ORDER_NO;
-import static com.syber.ssspltd.Constants.URLConstants.PCS_TYPE;
-import static com.syber.ssspltd.Constants.URLConstants.SALE_PARTY;
-import static com.syber.ssspltd.Constants.URLConstants.SAVE_ORDER;
-import static com.syber.ssspltd.Constants.URLConstants.SCHEME_LIST;
-import static com.syber.ssspltd.Constants.URLConstants.STATION_LIST;
-import static com.syber.ssspltd.Constants.URLConstants.SUB_PARTY;
-import static com.syber.ssspltd.Constants.URLConstants.TRANSPORT;
-import static com.syber.ssspltd.Constants.URLConstants.TRANSPORT_LIST;
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.ITEM_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.MARKETER_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.NICK_NAME;
+import static com.syber.ssspltd.Constants.NewErpUrls.ORDER_NO;
+import static com.syber.ssspltd.Constants.NewErpUrls.PCS_TYPE;
+import static com.syber.ssspltd.Constants.NewErpUrls.SALE_PARTY;
+import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
+import static com.syber.ssspltd.Constants.NewErpUrls.SCHEME_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.STATION_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.SUB_PARTY;
+import static com.syber.ssspltd.Constants.NewErpUrls.TRANSPORT;
+import static com.syber.ssspltd.Constants.NewErpUrls.TRANSPORT_LIST;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,6 +38,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -58,6 +59,7 @@ import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.CurrentDateTime;
 import com.syber.ssspltd.Utils.MyProgress;
 import com.syber.ssspltd.Utils.SharedPref;
+import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.activitys.MainActivity;
 import com.syber.ssspltd.adapter.supplierformadapter.ItemAdapter;
@@ -65,6 +67,7 @@ import com.syber.ssspltd.adapter.supplierformadapter.MarketerAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.SalePartyAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.SchmeAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.StationAdapter;
+import com.syber.ssspltd.adapter.supplierformadapter.StatusAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.SubPartyAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.TransportAdapter;
 import com.syber.ssspltd.databinding.ActivitySupplierOrderFormBinding;
@@ -87,6 +90,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -97,8 +101,6 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
-
 public class SupplierOrderFormActivity extends AppCompatActivity implements OnClick, DatePickerDialog.OnDateSetListener {
 
     ActivitySupplierOrderFormBinding binding;
@@ -106,7 +108,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     static Uri imgUri;
     static Bitmap bitmap;
     String img_string, img_string2, img_string3, img_string4, img_string5;
-    private Context mContext = this;
+    private final Context mContext = this;
     String dateFlag = "";
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
 
@@ -265,6 +267,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         dialog.setContentView(dialogView);
         ImageView fromCamera = dialogView.findViewById(R.id.from_camera);
         ImageView fromGallery = dialogView.findViewById(R.id.from_gallery);
+
         fromCamera.setOnClickListener(v -> {
             dialog.cancel();
             if (ReqCode == 101) {
@@ -734,6 +737,39 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     }
 
+    private void statusListDialog(final String title, final ArrayList<String> statusList) {
+        sDialog = new Dialog(mContext);
+        sDialog.setContentView(R.layout.search_dialog);
+
+        sDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        sDialog.setCancelable(true);
+        TextView titile = sDialog.findViewById(R.id.title);
+        titile.setText(title);
+        RecyclerView recyclerView = sDialog.findViewById(R.id.dist_recycler);
+        EditText search = sDialog.findViewById(R.id.search);
+        search.setVisibility(View.GONE);
+
+        if (!statusList.isEmpty()) {
+            sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+        }
+
+        sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
+
+        StatusAdapter statusAdapter = new StatusAdapter(this, statusList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(statusAdapter);
+
+        int maxHeight   = 600;
+        int itemHeight  = 100;
+        int totalHeight = Math.min(statusList.size() * itemHeight, maxHeight);
+
+        ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+        params.height = totalHeight;
+        recyclerView.setLayoutParams(params);
+
+        sDialog.show();
+    }
 
     private void subPartyDialog(final String title) {
         sDialog = new Dialog(mContext);
@@ -748,11 +784,9 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         }
         sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
         if (subdata.size() > 0) {
-
             filterSubParty(sbData);
-        } else {
-            getSubParty(selectedAccountId);
         }
+
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -987,7 +1021,6 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         recyclerView.setAdapter(salePartyAdapter);
     }
 
-
     void filterSubParty(ArrayList<SubpartyModel> bc) {
         subPartyAdapter = new SubPartyAdapter(this, bc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -1021,10 +1054,9 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         recyclerView.setAdapter(stationAdapter);
     }
 
-
     private void geNickName() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, NICK_NAME, response -> {
-            Log.e("getNickNameResponse", response);
+            Log.i("TaG", "Response " + NICK_NAME  +"---> " + response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
 //                JSONObject js = jsonObject.getJSONObject("data");
@@ -1052,8 +1084,14 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"SupplierAccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\"}";
-                Log.e("str", str);
+                Log.i("TaG", "Request " + NICK_NAME  +"---> " + str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1069,7 +1107,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void getOrderCodeSr(final String marketerName) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ORDER_NO, response -> {
-            Log.e("getOrderCodeSrres", response);
+
+            Log.i("TaG", "Response " + ORDER_NO  +"---> " + response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
 //                JSONObject js = jsonObject.getJSONObject("data");
@@ -1089,8 +1128,16 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"MarketerName\":\"" + marketerName + "\"}";
-                Log.e("str", str);
+
+                Log.i("TaG", "Request " + ORDER_NO  +"---> " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1106,7 +1153,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void getMarketer(final String SupplierAccountID) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, MARKETER_LIST, response -> {
-            Log.e("getMarketerRespo", response);
+            Log.i("TaG", "Response " + MARKETER_LIST  +"---> " + response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 JSONArray jsonArray2 = jsonObject.getJSONArray("Marketerlist");
@@ -1118,6 +1165,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     marketerModel = new MarketerModel(marketerName, mCode);
                     marketerModelList.add(marketerModel);
                 }
+
                 marketerAdapter.notifyDataSetChanged();
             } catch (Exception e) {
                 Log.e("Exce", e.toString());
@@ -1130,8 +1178,16 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"SupplierAccountID\":\"" + SupplierAccountID + "\"}";
-                Log.e("str", str);
+
+                Log.i("TaG", "Request " +  MARKETER_LIST + "---> " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1148,7 +1204,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         final MyProgress myProgress = new MyProgress(this);
         myProgress.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
-            Log.e("getSalePartyRes", response);
+            Util.getInstance().logLargeString("TaG", "Response " + url + " -=-=-=>" + response);
             myProgress.dismiss();
             try {
                 JSONObject jsonObject = new JSONObject(response);
@@ -1174,9 +1230,17 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             public byte[] getBody() throws AuthFailureError {
 //                String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE, "") + "\",\"Filter\":\"" + "selected" + "\"}";
                 String str = "{}";
-                Log.e("str", str + "");
+                Log.i("TaG", "Request " + url + " -=-=-=>" + str);
+
                 return str.getBytes();
 
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1194,7 +1258,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void getTransportDetails(final String supplierAccountId, final String accountId, final String subpartyId) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, TRANSPORT, response -> {
-            Log.e("getSubPartyDatares", response);
+            Log.i("TaG", "Response " + TRANSPORT  +"---> " + response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getString("ResponseStatus").equals("true")) {
@@ -1221,9 +1285,23 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
-                String str = "{\"SupplierAccountID\":\"" + supplierAccountId + "\",\"AccountID\":\"" + accountId + "\",\"SubPartyID\":\"" + subpartyId + "\"}";
-                Log.e("str", str);
-                return str.getBytes();
+                JSONObject jsonBody = new JSONObject();
+                try {
+                    jsonBody.put("AccountID", accountId);
+                    jsonBody.put("SupplierAccountID", supplierAccountId);
+                    jsonBody.put("SubPartyID", subpartyId);
+                    Log.i("TaG", "Request " + TRANSPORT  +"---> " + jsonBody);
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1239,7 +1317,9 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void getSubParty(final String accountId) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, SUB_PARTY, response -> {
-            Log.e("getSubPartyRespo", response);
+
+            Log.i("TaG", "Response " + SUB_PARTY  +"---> " + response);
+
             try {
                 subpartyModelList.clear();
                 JSONObject jsonObject = new JSONObject(response);
@@ -1262,8 +1342,15 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"AccountID\":\"" + accountId + "\"}";
-                Log.e("str", str);
+                Log.i("TaG", "Request " + SUB_PARTY  +"---> " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1275,7 +1362,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void getTransport() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, TRANSPORT_LIST, response -> {
-            Log.e("resGetTD", response);
+            Log.i("TaG", "Response " + TRANSPORT_LIST  +"---> " + response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 JSONArray jsonArray = jsonObject.getJSONArray("transportNames");
@@ -1296,20 +1383,38 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         }, error -> {
             Toast.makeText(mContext, error.getMessage() + "", Toast.LENGTH_LONG).show();
             Log.e("Volly ", error.getMessage() + "");
-        });
-//        {
-//            @Override
-//            public byte[] getBody() throws AuthFailureError {
-//                String str = "{\"saleparty\":\"" + sale_party + "\",\"subparty\":\"" + sub_party + "\"}";
-//                Log.e("str", str);
-//                return str.getBytes();
-//            }
-//
-//            public String getBodyContentType() {
-//                return "application/json; charset=utf-8";
-//            }
-//
-//        };
+        })
+        {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+
+                JSONObject jsonBody = new JSONObject();
+                try {
+
+                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
+
+                    Log.i("TaG", "Request " + TRANSPORT_LIST  +"---> " + jsonBody);
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                Log.e("str", "transport header =-=-=" + headers + "\n" );
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
         RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(retryPolicy);
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
@@ -1318,7 +1423,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void getStation() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, STATION_LIST, response -> {
-            Log.e("getStationRespo", response);
+            Log.i("TaG", "Response " + STATION_LIST  +"---> " + response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 JSONArray jsonArray2 = jsonObject.getJSONArray("stationName");
@@ -1326,7 +1431,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                 for (int i = 0; i < jsonArray2.length(); i++) {
                     JSONObject ob2 = jsonArray2.getJSONObject(i);
                     String s_name = ob2.optString("StationName");
-                    Log.e("s_name", s_name);
+                    //Log.e("s_name", s_name);
                     stationModel = new StationModel(s_name);
                     stationModelList.add(stationModel);
                 }
@@ -1338,20 +1443,34 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         }, error -> {
             Toast.makeText(mContext, error.getMessage() + "", Toast.LENGTH_LONG).show();
             Log.e("Volly ", error.getMessage() + "");
-        });
-//        {
-//            @Override
-//            public byte[] getBody() throws AuthFailureError {
-//                String str = "{\"saleparty\":\"" + sale_party + "\",\"subparty\":\"" + sub_party + "\"}";
-//                Log.e("str", str);
-//                return str.getBytes();
-//            }
-//
-//            public String getBodyContentType() {
-//                return "application/json; charset=utf-8";
-//            }
+        })
+        {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject jsonBody = new JSONObject();
+                try {
 
-        //  };
+                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
+
+                    Log.i("TaG", "Request " + STATION_LIST  +"---> " + jsonBody);
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+          };
         RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(retryPolicy);
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
@@ -1361,7 +1480,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void getScheme() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, SCHEME_LIST, response -> {
-            Log.e("getSchemeRes", response);
+            Log.i("TaG", "Response " + SCHEME_LIST  +"---> " + response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 JSONArray jsonArray = jsonObject.getJSONArray("SchemeName");
@@ -1384,8 +1503,15 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"SupplierAccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\"}";
-                Log.e("str", str);
+                Log.i("TaG", "Request " + SCHEME_LIST  +"---> " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1397,7 +1523,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void getItem() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ITEM_LIST, response -> {
-            Log.e("res", response);
+            Log.i("TaG", "Response " + ITEM_LIST  +"---> " + response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 JSONArray jsonArray = jsonObject.getJSONArray("ItemName");
@@ -1409,32 +1535,53 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     itemModelList.add(itemModel);
                 }
                 itemAdapter.notifyDataSetChanged();
-
             } catch (Exception e) {
-                Log.e("Exce", e.toString());
+                Log.e("Exception", e.toString());
             }
-
         }, error -> {
             Toast.makeText(mContext, "Poor Network Connection", Toast.LENGTH_LONG).show();
-            Log.e("Volly ", error.getMessage() + "");
+            Log.e("Volley Error", error.getMessage());
         }) {
+
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> map = new HashMap<>();
-                Log.e("Post Data:::", String.valueOf(map));
-                return map;
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    JSONObject jsonBody = new JSONObject();
+
+                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, "")); // Use the exact value from Postman
+
+                    Log.i("TaG", "Request " + ITEM_LIST  +"---> " + jsonBody);
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (Exception e) {
+                    throw new RuntimeException("Body creation error: " + e.toString());
+                }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("accept", "*/*");
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                Log.e("Headers", "Authorization Header = " + headers);
+                return headers;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
             }
         };
+
         stringRequest.setShouldCache(true);
         RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(retryPolicy);
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
-
     }
 
     private void getPcsType(String SupplierAccountID, final String ORDERTYPE) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, PCS_TYPE, response -> {
-            Log.e("getPcsTyperes", response);
+            Log.i("TaG", "Response " + PCS_TYPE  +"---> " + response);
             try {
 
                 JSONObject jsonObject = new JSONObject(response);
@@ -1460,8 +1607,15 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
                 String str = "{\"SupplierAccountID\":\"" + SupplierAccountID + "\"" +
                         ",\"ORDERTYPE\":\"" + ORDERTYPE + "\"}";
-                Log.e("getPcsTypestr", str);
+                Log.i("TaG", "Request " + PCS_TYPE  +"---> " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1504,6 +1658,11 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         getOrderCodeSr(marketerModel.getMarketerName());
         binding.clearMarketer.setVisibility(View.VISIBLE);
         binding.marketer.setError(null, null);
+    }
+
+    public void setStatus(String status) {
+        sDialog.dismiss();
+        binding.tvStatus.setText(status);
     }
 
     @Override
@@ -1690,6 +1849,16 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.llRow.item.setOnClickListener(v -> itemDialog("Select Item"));
         binding.scheme.setOnClickListener(v -> schmeDialog("Select Scheme"));
 
+
+        ArrayList<String> statusOptions    = new ArrayList<>(Arrays.asList("PENDING", "HOLD"));
+        binding.tvStatus.setText("PENDING");
+        binding.tvStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                statusListDialog("Select Status", statusOptions);
+            }
+        });
+
     }
 
     private void handleEditInit() {
@@ -1846,8 +2015,9 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     private void SendData() {
         final MyProgress progress = new MyProgress(mContext);
         progress.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, SAVE_ORDER, response -> {
-            Log.e("Send Data", response);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, SAVE_ORDER,
+                response -> {
+            Log.i("TaG", "Response " + SAVE_ORDER  +"---> " + response);
             progress.dismiss();
             try {
                 JSONObject jsonObject = new JSONObject(response);
@@ -1877,38 +2047,19 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             }
         }, error -> new AlertDialog.Builder(mContext).setMessage("Try again.. Somthing went wrong").setPositiveButton("Retry", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
+                progress.dismiss();
                 SendData();
             }
         }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show()) {
             @Override
             public byte[] getBody() throws AuthFailureError {
-                ;
-                final String img, img2, img3, img4, img5;
-                if (img_string != null) {
-                    img = img_string;
-                } else {
-                    img = "";
-                }
-                if (img_string2 != null) {
-                    img2 = img_string2;
-                } else {
-                    img2 = "";
-                }
-                if (img_string3 != null) {
-                    img3 = img_string3;
-                } else {
-                    img3 = "";
-                }
-                if (img_string4 != null) {
-                    img4 = img_string4;
-                } else {
-                    img4 = "";
-                }
-                if (img_string5 != null) {
-                    img5 = img_string5;
-                } else {
-                    img5 = "";
-                }
+                progress.dismiss();
+                String img  = img_string != null ? Base64.encodeToString(img_string.getBytes(), Base64.NO_WRAP) : "";
+                String img2 = img_string2 != null ? Base64.encodeToString(img_string2.getBytes(), Base64.NO_WRAP) : "";
+                String img3 = img_string3 != null ? Base64.encodeToString(img_string3.getBytes(), Base64.NO_WRAP) : "";
+                String img4 = img_string4 != null ? Base64.encodeToString(img_string4.getBytes(), Base64.NO_WRAP) : "";
+                String img5 = img_string5 != null ? Base64.encodeToString(img_string5.getBytes(), Base64.NO_WRAP) : "";
+
                 String SubPartyID = selectedSubPartyId==null?binding.subParty.getText().toString():selectedSubPartyId;
                 String str = "{\"AccountID\":\"" + selectedAccountId + "\"" +
                         ",\"SupplierAccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\"" +
@@ -1929,14 +2080,25 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                         ",\"ItemName\":\"" + binding.llRow.item.getText().toString() + "\"" +
                         ",\"Qty\":\"" + binding.llRow.qty.getText().toString() + "\"" +
                         ",\"Amount\":\"" + binding.llRow.amount.getText().toString() + "\"" +
+                        ",\"OrderStatus\":\"" + binding.tvStatus.getText() + "\"" +
                         ",\"Image1\":\"" + img + "\"" +
                         ",\"Image2\":\"" + img2 + "\"" +
                         ",\"Image3\":\"" + img3 + "\"" +
                         ",\"Image4\":\"" + img4 + "\"" +
                         ",\"Image5\":\"" + img5 + "\"" + "}";
-                Log.e("sentStr", str);
+
+                Log.i("TaG", "Request " + SAVE_ORDER  +"---> " + str);
+
                 return str.getBytes();
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
 
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";

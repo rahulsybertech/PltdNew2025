@@ -50,41 +50,62 @@ public class EntryTypeAdapter extends RecyclerView.Adapter<EntryTypeAdapter.MyVi
 
         final EntryType datum = filterListDetails.get(position);
         holder.filter.setText(datum.getEntryTypeName().equals("") ? "Without Branch" : datum.getEntryTypeName());
-        holder.filter.setChecked(lastSelectedPosition == position);
+//        holder.filter.setChecked(lastSelectedPosition == position);
         Log.e("lastSelectedPosition",lastSelectedPosition+"");
-        if (lastSelectedPosition== position ){
+        /*if (lastSelectedPosition== position ){
             datum.setSelected(true);
         }else {
             datum.setSelected(false);
+        }*/
+        if (datum.isSelected()) {
+            holder.filter.setChecked(true);
+        } else {
+            holder.filter.setChecked(false);
         }
-//        if (datum.isSelected()) {
-//            holder.filter.setChecked(true);
-//        } else {
-//            holder.filter.setChecked(false);
-//        }
-//        holder.filter.setTag(position);
+        holder.filter.setTag(position);
 
 //
         holder.filter.setOnClickListener(v -> {
           Integer pos = (Integer) holder.filter.getTag();
-            EntryType productDetails1 = filterListDetails.get(position);
+            EntryType productDetails1 = filterListDetails.get(pos);
             if (productDetails1.isSelected()) {
-                lastSelectedPosition = -1;
-              //  productDetails1.setSelected(false);
+                //lastSelectedPosition = -1;
+                productDetails1.setSelected(false);
                 holder.filter.setChecked(false);
                 holder.filter.setTag(position);
-                List<EntryType> sis = filterListDetails.stream().filter(EntryType :: isSelected).collect(Collectors.toList());
-                LedgerActivity.count_entry.setText("0");
-                Log.e("ss",new Gson().toJson(sis));
+                try{
+                    List<EntryType> sis = filterListDetails.stream().filter(EntryType :: isSelected).collect(Collectors.toList());
+                    Log.i("TaG","1111========>" + sis);
+                    LedgerActivity.count_entry.setText(sis.size() + "");
+                   /* if(sis.isEmpty()) {
+                        LedgerActivity.count_entry.setVisibility(View.GONE);
+                    } else {
+                        LedgerActivity.count_entry.setVisibility(View.VISIBLE);
+                    }*/
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+//                Log.e("ss",new Gson().toJson(sis));
              //   onCheckChange.onCheckChangeReferesh();
             } else {
-                lastSelectedPosition = position;
-               // productDetails1.setSelected(true);
+//                lastSelectedPosition = position;
+                productDetails1.setSelected(true);
                 holder.filter.setChecked(true);
                 holder.filter.setTag(position);
-                List<EntryType> sis = filterListDetails.stream().filter(EntryType :: isSelected).collect(Collectors.toList());
-                LedgerActivity.count_entry.setText("1");
-                Log.e("sis",new Gson().toJson(sis));
+                try{
+                    List<EntryType> sis = filterListDetails.stream().filter(EntryType :: isSelected).collect(Collectors.toList());
+                    Log.i("TaG","22222========>" + sis);
+                    LedgerActivity.count_entry.setText(sis.size() + "");
+                    /*if(sis.isEmpty()) {
+                        LedgerActivity.count_entry.setVisibility(View.GONE);
+                    } else {
+                        LedgerActivity.count_entry.setVisibility(View.VISIBLE);
+                    }*/
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+//                Log.e("sis",new Gson().toJson(sis));
              //   onCheckChange.onCheckChangeReferesh();
                // LedgerActivity.tick_filter = "1";
             }

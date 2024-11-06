@@ -1,5 +1,10 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_DETAIL_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_SALE_REPORT;
+
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
@@ -79,7 +84,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -267,7 +274,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
 
     private void GetSaleReport(String branch, String supplier, String subparty, String transport, String form_date, String to_date, String db_name,boolean isFillterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetSaleReport",
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SALE_REPORT,
                 response -> {
                     Log.e("GetSaleReportData", response);
                     saleReportDetails.clear();
@@ -345,6 +352,13 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 Log.e("str", str);
                 return str.getBytes();
             }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                    return headers;
+                }
 
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
@@ -714,7 +728,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 isSub_PartyPlace = false;
                 issuppPlace = false;
                 istransportPlace = false;
-                getFilters(FilterTypeSaleReport.BRANCH);
+                //getFilters(FilterTypeSaleReport.BRANCH);
             }
         });
         saleFilter_SubParty.setOnClickListener(v -> {
@@ -745,7 +759,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 isDatePressed = false;
                 issuppPlace = false;
                 istransportPlace = false;
-                getFilters(FilterTypeSaleReport.SUB_PARTY);
+                //getFilters(FilterTypeSaleReport.SUB_PARTY);
             }
         });
         saleFilter_SuppNikName.setOnClickListener(new View.OnClickListener() {
@@ -777,7 +791,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                     isSub_PartyPlace = false;
                     isDatePressed = false;
                     istransportPlace = false;
-                    getFilters(FilterTypeSaleReport.BRAND_NAME);
+                    //getFilters(FilterTypeSaleReport.BRAND_NAME);
                 }
             }
         });
@@ -808,7 +822,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 isSub_PartyPlace = false;
                 issuppPlace = false;
                 isDatePressed = false;
-                getFilters(FilterTypeSaleReport.TRANSPORT);
+                //getFilters(FilterTypeSaleReport.TRANSPORT);
             }
         });
 
@@ -843,9 +857,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         .collect(Collectors.toList()),
                 SharedPref.read(SharedPref.DB_NAME, "")
         );
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterListNew", response -> {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_LIST_NEW, response -> {
             SaleReportPojo pojo = new Gson().fromJson(response, branchType);
          //   Log.e("getFilterRespo",response);
+            Log.i("TaG","url " + Request.Method.POST + " =--=-=> " + GET_FILTER_LIST_NEW);
+            Log.i("TaG","response -=-=-=-=-=-=--=-=> " + pojo);
             if (pojo.getResponseStatus()) {
                 progressBar.setVisibility(View.GONE);
                 nodata.setVisibility(View.GONE);
@@ -1023,7 +1039,15 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             public byte[] getBody() throws AuthFailureError {
                 String str = new Gson().toJson(request);
                 Log.e("str", str);
+                Log.i("TaG","Request -=-=-=> " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1478,7 +1502,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     }
 
     private void BranchDetail(final String keyType) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
               //      Log.e("Data", response);
                     FilterListPojo pojo = new Gson().fromJson(response, listType2);
@@ -1497,6 +1521,13 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 return str.getBytes();
             }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -1505,7 +1536,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     }
 
     private void SubpartyDetail(final String keyType) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                //     Log.e("Data", response);
                     com.syber.ssspltd.response.SubpartyListRespo.FilterListPojo pojo = new Gson().fromJson(response, subpartyListType);
@@ -1527,6 +1558,13 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 return str.getBytes();
             }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -1535,7 +1573,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     }
 
     private void SupplerDetail(final String keyType) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                   //  Log.e("Data", response);
                     com.syber.ssspltd.response.SupplierListPojo.FilterListPojo pojo = new Gson().fromJson(response, supList);
@@ -1554,6 +1592,13 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 return str.getBytes();
             }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -1562,7 +1607,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     }
 
     private void TransportDetail(final String keyType) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                     Log.e("Data", response);
                     com.syber.ssspltd.response.TransportListRespo.FilterListPojo pojo = new Gson().fromJson(response, transList);
@@ -1581,6 +1626,13 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 return str.getBytes();
             }
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -1590,16 +1642,56 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
 
     public void onDateSet(com.tsongkha.spinnerdatepicker.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         Calendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+
         if (flag.equals("from")) {
+            // Set the "from" date
             saleDate.setText(simpleDateFormat.format(calendar.getTime()));
-            if (simpleDateFormat.format(calendar.getTime()).equals(CurrentDateTime.getCurrentDateDDMMYYY())){
+
+            // If the selected "from" date is today, set the "to" date as the same
+            if (simpleDateFormat.format(calendar.getTime()).equals(CurrentDateTime.getCurrentDateDDMMYYY())) {
                 sale_ToDate.setText(saleDate.getText().toString());
             }
+
+            // Check if "from" date is after "to" date
+            Calendar toDateCalendar = Calendar.getInstance();
+            try {
+                toDateCalendar.setTime(simpleDateFormat2.parse(sale_ToDate.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (calendar.after(toDateCalendar)) {
+                sale_ToDate.setText(saleDate.getText().toString()); // Set "to" date same as "from" date
+            }
+
         } else if (flag.equals("to")) {
+            // Set the "to" date
             sale_ToDate.setText(simpleDateFormat2.format(calendar.getTime()));
+
+            // Check if "to" date is before "from" date
+            Calendar fromDateCalendar = Calendar.getInstance();
+            try {
+                fromDateCalendar.setTime(simpleDateFormat.parse(saleDate.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (calendar.before(fromDateCalendar)) {
+                saleDate.setText(sale_ToDate.getText().toString()); // Set "from" date same as "to" date
+            }
         }
 
+        isFilterShowing = false;
+        filterStack.clear();
+
+        countbrand.setText("0");
+        countbranch.setText("0");
+        countsub_party.setText("0");
+        counttransport.setText("0");
+
+        getFilters(FilterTypeSaleReport.SALE_REPORT);
     }
+
 
     @VisibleForTesting
     void showDate(int year1, int monthOfYear1, int dayOfMonth1, int year2, int monthOfYear2, int dayOfMonth2, int spinnerTheme) {

@@ -3,13 +3,13 @@ package com.syber.ssspltd.activitys;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_COMPLETE_LEDGER_PDF;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_LEDGER_REPORT_WITH_BALANCE;
+import static com.syber.ssspltd.Utils.AlertUtil.loadingDialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,6 +59,7 @@ import com.syber.ssspltd.adapter.LedgerReportAdapter;
 import com.syber.ssspltd.databinding.ActivityLedgerBinding;
 import com.syber.ssspltd.response.LedgerReportResponse.LedgerReportPojo;
 import com.syber.ssspltd.response.LedgerReportResponse.LedgerReportResult;
+import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
@@ -79,6 +80,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class LedgerActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, FilterCallback, OnCheckChange {
 
     private ActivityLedgerBinding binding;
@@ -88,7 +91,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
     LinearLayout llRange;
     Type listType;
     LinearLayoutManager linearLayoutManager;
-    TextView ledgerDate, ledger_ToDate;
+    TextView ledger_FromDate, ledger_ToDate;
     CheckBox all_entry, clear_entry, unclear_entry, dr_entry, cr_entry;
     String led_formDate = "null", led_toDate = "null", status = "null", tick = "null", dnNAME = SharedPref.read(SharedPref.DB_NAME, "");
     SimpleDateFormat simpleDateFormat;
@@ -127,6 +130,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
     TextView textDate;
     String pdfFromDate,pdfToDate;
     Dialog dialog;
+    SweetAlertDialog loader = null;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -134,6 +138,8 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
         super.onCreate(savedInstanceState);
         binding = ActivityLedgerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        loader = loadingDialog(this);
 
         binding.supportChat.supportFab.setOnClickListener(v -> Lazy.openDialog(mContext));
         ImageView backImage = findViewById(R.id.back3);
@@ -201,6 +207,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             // ACCORDING TO FILTER
             Intent intent = getIntent();
             if (intent != null) {
+                loader.show();
                 if (intent.getStringExtra("ledgerDate") != null || intent.getStringExtra("ledger_ToDate") != null) {
                     GetCompleteLedgerPDF(intent.getStringExtra("ledgerDate"),
                             intent.getStringExtra("ledger_ToDate"), intent.getStringExtra("entry")
@@ -222,6 +229,8 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_LEDGER_REPORT_WITH_BALANCE,
                 response -> {
                     Log.e("Data", response);
+                    Log.i("TaG","URl ----> " + GET_LEDGER_REPORT_WITH_BALANCE);
+                    Log.i("TaG","RESPONSE ----> " + response);
                     LedgerReportPojo pojo = new Gson().fromJson(response, listType);
                     LedgerReportDetails.clear();
                     try {
@@ -329,6 +338,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FROMDATE\":\"" + formDate + "\",\"TODATE\":\"" + toDate + "\",\"Status\":\"" + status + "\"" +
                         ",\"AVGDATE\":\"" + "null" + "\",\"TICK\":\"" + tick + "\",\"DBNAME\":\"" + db_name + "\",\"LEDGERTYPE\":\"" + ledger_type + "\"}";
                 Log.e("str", str);
+                Log.i("TaG", "request --=-==> " + str);
                 return str.getBytes();
             }
             public String getBodyContentType() {
@@ -347,6 +357,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                 response -> {
                     Log.e("LedgerPdfResponse", response);
                     try {
+                        loader.dismissWithAnimation();
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.getBoolean("ResponseStatus")) {
                             String download_pdf = jsonObject.optString("CompletePDF");
@@ -361,28 +372,29 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
 
                     }
                 }, error -> {
-            AlertUtil.responseError(mContext, "GetCompleteLedgerPDF ", error.toString());
-            // progressBar.cancel();
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
-                return headers;
-            }
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                String mob = SharedPref.read(SharedPref.USERMOBILE, "");
-                String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FROMDATE\":\"" + formDate + "\",\"TODATE\":\"" + toDate + "\",\"Status\":\"" + status + "\"" +
-                        ",\"AVGDATE\":\"" + "null" + "\",\"TICK\":\"" + tick + "\",\"DBNAME\":\"" + db_name + "\",\"LEDGERTYPE\":\"" + ledger_type + "\"}";
-                Log.e("LedgerPdfStr", str);
-                return str.getBytes();
-            }
+                        loader.dismissWithAnimation();
+                        AlertUtil.responseError(mContext, "GetCompleteLedgerPDF ", error.toString());
+                        // progressBar.cancel();
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<>();
+                            headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                            return headers;
+                        }
+                        @Override
+                        public byte[] getBody() throws AuthFailureError {
+                            String mob = SharedPref.read(SharedPref.USERMOBILE, "");
+                            String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FROMDATE\":\"" + formDate + "\",\"TODATE\":\"" + toDate + "\",\"Status\":\"" + status + "\"" +
+                                    ",\"AVGDATE\":\"" + "null" + "\",\"TICK\":\"" + tick + "\",\"DBNAME\":\"" + db_name + "\",\"LEDGERTYPE\":\"" + ledger_type + "\"}";
+                            Log.e("LedgerPdfStr", str);
+                            return str.getBytes();
+                        }
 
-            public String getBodyContentType() {
-                return "application/json; charset=utf-8";
-            }
-        };
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+                    };
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
@@ -391,19 +403,19 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             all_entry.setChecked(true);
             clear_entry.setChecked(false);
             unclear_entry.setChecked(false);
-            isClearEntryCheckrd = false;
-            isUnclearEntryCheckrd = false;
+            isClearEntryCheckrd     = false;
+            isUnclearEntryCheckrd   = false;
         } else if (isClearEntryCheckrd) {
             all_entry.setChecked(false);
             clear_entry.setChecked(true);
             unclear_entry.setChecked(false);
-            isAllEntryCheckrd = false;
-            isUnclearEntryCheckrd = false;
+            isAllEntryCheckrd       = false;
+            isUnclearEntryCheckrd   = false;
         } else if (isUnclearEntryCheckrd) {
             all_entry.setChecked(false);
             clear_entry.setChecked(false);
             unclear_entry.setChecked(true);
-            isAllEntryCheckrd = false;
+            isAllEntryCheckrd   = false;
             isClearEntryCheckrd = false;
         }
     }
@@ -441,29 +453,33 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
         });
 
 
-        adjustmentFilter = dialog.findViewById(R.id.adjustmentFilter);
-        entryFilter = dialog.findViewById(R.id.entryFilter);
-        accountFilter = dialog.findViewById(R.id.accountFilter);
-        ledgerFilter_Date = dialog.findViewById(R.id.ledgerFilter_Date);
-        progressBar = dialog.findViewById(R.id.progress);
-        nodata = dialog.findViewById(R.id.no_data);
-        ledger_Recy = dialog.findViewById(R.id.ledger_Recy);
-        llRange = dialog.findViewById(R.id.ll_price_range);
+
+        adjustmentFilter    = dialog.findViewById(R.id.adjustmentFilter);
+        entryFilter         = dialog.findViewById(R.id.entryFilter);
+        accountFilter       = dialog.findViewById(R.id.accountFilter);
+        ledgerFilter_Date   = dialog.findViewById(R.id.ledgerFilter_Date);
+        progressBar         = dialog.findViewById(R.id.progress);
+        nodata              = dialog.findViewById(R.id.no_data);
+        ledger_Recy         = dialog.findViewById(R.id.ledger_Recy);
+        llRange             = dialog.findViewById(R.id.ll_price_range);
+        ledger_FromDate     = dialog.findViewById(R.id.ledger_FromDate);
+        ledger_ToDate       = dialog.findViewById(R.id.ledger_ToDate);
+        count_aduj          = dialog.findViewById(R.id.count_aduj);
+        count_account       = dialog.findViewById(R.id.count_account);
+        count_entry         = dialog.findViewById(R.id.count_entry);
+        simpleDateFormat    = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+        simpleDateFormat2   = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+
         ledgerFilter_Date.setBackgroundColor(getResources().getColor(R.color.light_pink));
-        ledgerDate = dialog.findViewById(R.id.ledgerDate);
-        ledger_ToDate = dialog.findViewById(R.id.ledger_ToDate);
 
-        count_aduj = dialog.findViewById(R.id.count_aduj);
-        count_account = dialog.findViewById(R.id.count_account);
-        count_entry = dialog.findViewById(R.id.count_entry);
-        simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        simpleDateFormat2 = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-
-
+        Log.i("TaG","00000000000000000000");
         if (led_formDate.equals("null") && led_toDate.equals("null")) {
-            ledgerDate.setText(StartDate_filter);
+            Log.i("TaG","11111111111111111111111111111111");
+            ledger_FromDate.setText(StartDate_filter);
             ledger_ToDate.setText(Enddate_filter);
-        } else {
+        }
+        else {
+            Log.i("TaG","2222222222222222222222");
             SimpleDateFormat spf = new SimpleDateFormat("dd/MM/yyyy");
             Date newDate = null;
             Date newDate1 = null;
@@ -477,17 +493,19 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             //spf = new SimpleDateFormat("dd/MM/yyyy");
             led_formDate = spf.format(newDate);
             led_toDate = spf.format(newDate1);
-            ledgerDate.setText(led_formDate);
+            Log.i("TaG","date selected 2 -=-=-=-=-=-=-=-=-=-=-=>");
+
+            ledger_FromDate.setText(led_formDate);
             ledger_ToDate.setText(led_toDate);
         }
 
-        ledgerDate.setOnClickListener(v -> {
+        ledger_FromDate.setOnClickListener(v -> {
             // Log.e("selected_default_yr",SharedPref.read(SharedPref.selected_default_yr,"")+"tytrty");
             //   Log.e("cx", CurrentDateTime.getCurrentDateDDMMYYY());
             flag = "from";
             // StartDate_filter = ledgerDate.getText().toString();
             if (SharedPref.read(SharedPref.FY_StartDate, "").equals("")) {
-                StartDate_filter = ledgerDate.getText().toString();
+                StartDate_filter = ledger_FromDate.getText().toString();
             } else {
                 StartDate_filter = SharedPref.read(SharedPref.FY_StartDate, "");
 
@@ -521,7 +539,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             flag = "to";
             // StartDate_filter = "01/04/2020";
 
-            StartDate_filter = ledgerDate.getText().toString();
+            StartDate_filter = ledger_FromDate.getText().toString();
             //  StartDate_filter = ledgerDate.getText().toString();
             //  Enddate_filter = ledger_ToDate.getText().toString();
             if (!SharedPref.read(SharedPref.selected_default_yr, "").equals("2022-23"))
@@ -551,25 +569,29 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             filterStack.clear();
             // ledgerDate.setText(SharedPref.read(SharedPref.START_DATE, ""));
             // ledger_ToDate.setText(SharedPref.read(SharedPref.END_DATE, ""));
+            /*count_aduj.setVisibility(View.GONE);
+            count_account.setVisibility(View.GONE);
+            count_entry.setVisibility(View.GONE);*/
+
             count_aduj.setText("0");
             count_account.setText("0");
             count_entry.setText("0");
             Log.e("selected_default_yr",SharedPref.read(SharedPref.selected_default_yr, ""));
             if (SharedPref.read(SharedPref.selected_default_yr, "").equals("23-24")) {
-                ledgerDate.setText("01/04/2023");
+                ledger_FromDate.setText("01/04/2023");
                 ledger_ToDate.setText(CurrentDateTime.getCurrentDateDDMMYYY());
             }
             else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("22-23")) {
-                ledgerDate.setText("01/04/2022");
+                ledger_FromDate.setText("01/04/2022");
                 ledger_ToDate.setText("31/03/2023");
             } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("21-22")) {
-                ledgerDate.setText("01/04/2021");
+                ledger_FromDate.setText("01/04/2021");
                 ledger_ToDate.setText("31/03/2022");
             } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("20-21")) {
-                ledgerDate.setText("01/04/2020");
+                ledger_FromDate.setText("01/04/2020");
                 ledger_ToDate.setText("31/03/2021");
             }else {
-                ledgerDate.setText("01/04/2023");
+                ledger_FromDate.setText("01/04/2024");
                 ledger_ToDate.setText(CurrentDateTime.getCurrentDateDDMMYYY());
             }
             getFilters(FilterType.CLEAR);
@@ -588,7 +610,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
         apply.setOnClickListener(v -> {
             isFilterShowing = false;
             //Brand
-            StartDate_filter = ledgerDate.getText().toString();
+            StartDate_filter = ledger_FromDate.getText().toString();
             Enddate_filter = ledger_ToDate.getText().toString();
             Count = count_aduj.getText().toString();
             Count3 = count_account.getText().toString();
@@ -607,6 +629,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             StartDate_filter = spf.format(newDate);
             Enddate_filter = spf.format(newDate1);
 
+            Log.i("TaG","selected adjustmentTypeList values =-=-=-=-=-=-=-= >>> " + adjustmentTypeList);
             List<AdjustmentType> isSelected = adjustmentTypeList.stream().filter(p -> p.isSelected()).collect(Collectors.toList());
             String brand_array;
             if (isSelected.size() > 0) {
@@ -637,12 +660,13 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                     tickforPdf = sbb1;
                     Log.e("sbb", sbb);
                 } catch (Exception ignored) {
-
+                    ignored.printStackTrace();
                 }
             } else {
                 adjustment = "null";
                 tickforPdf = "null";
             }
+            Log.i("TaG","selected accountTypeList values =-=-=-=-=-=-=-= >>> " + accountTypeList);
             List<AccountType> isSelected1 = accountTypeList.stream().filter(p -> p.isSelected()).collect(Collectors.toList());
             String accountArray;
 
@@ -661,10 +685,12 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                     account = sbb;
                   //  Log.e("account_name", sbb);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
                 account = "null";
             }
+            Log.i("TaG","selected values =-=-=-=-=-=-=-= >>> " + entryTypeList);
             List<EntryType> isSelected2 = entryTypeList.stream().filter(p -> p.isSelected()).collect(Collectors.toList());
             String entryType_array;
             if (isSelected2.size() > 0) {
@@ -683,7 +709,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
 
                   //  Log.e("supplier_list", sbb);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             } else {
                 entry = "null";
@@ -692,11 +718,14 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             //  GetLedgerReport(ledgerDate.getText().toString(), ledger_ToDate.getText().toString(), entry,adjustment, dnNAME, account);
             SimpleDateFormat sdformat = new SimpleDateFormat("dd/MM/yyyy");
             try {
-                Date d1 = sdformat.parse(ledgerDate.getText().toString());
+                Date d1 = sdformat.parse(ledger_FromDate.getText().toString());
                 Date d2 = sdformat.parse(ledger_ToDate.getText().toString());
+
+                Log.i("TaG","selected filtered values -=-=-=-=-=> " + entry + " = = " + account + " = = " + adjustment);
+
                 if (d1.compareTo(d2) < 0 || d1.compareTo(d2) == 0) {
                     startActivity(new Intent(mContext, LedgerActivity.class)
-                            .putExtra("ledgerDate", ledgerDate.getText().toString())
+                            .putExtra("ledgerDate", ledger_FromDate.getText().toString())
                             .putExtra("ledger_ToDate", ledger_ToDate.getText().toString())
                             .putExtra("entry", entry)
                             .putExtra("account", account)
@@ -713,8 +742,8 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             }
         });
 
-        ledgerDate.setBackground(getResources().getDrawable(R.drawable.selected_button));
-        ledgerDate.setTextColor(getResources().getColor(R.color.white));
+        ledger_FromDate.setBackground(getResources().getDrawable(R.drawable.selected_button));
+        ledger_FromDate.setTextColor(getResources().getColor(R.color.white));
         ledger_ToDate.setBackground(getResources().getDrawable(R.drawable.selected_button));
         ledger_ToDate.setTextColor(getResources().getColor(R.color.white));
 
@@ -749,6 +778,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             isAdjustmentPlace = true;
             adjustmentFilter.setBackground(getResources().getDrawable(R.drawable.selected_button));
             adjustmentFilter.setTextColor(getResources().getColor(R.color.white));
+
 //            keyTypeList = "BRANCH";
 //            Log.e("filter", keyTypeList);
 //             if (isDatePressed || isAccountPlace || isEntryPlace) {
@@ -768,7 +798,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             isAccountPlace = false;
             isEntryPlace = false;
             // }
-            getFilters(FilterType.ADJUSTMENT);
+            //getFilters(FilterType.ADJUSTMENT);
         });
         entryFilter.setOnClickListener(v -> {
             isEntryPlace = true;
@@ -793,7 +823,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             isAdjustmentPlace = false;
             isAccountPlace = false;
             // }
-            getFilters(FilterType.ENTRY);
+            //getFilters(FilterType.ENTRY);
         });
         accountFilter.setOnClickListener(v -> {
             isAccountPlace = true;
@@ -816,7 +846,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             isAdjustmentPlace = false;
             isEntryPlace = false;
             // }
-            getFilters(FilterType.ACCOUNT);
+            //getFilters(FilterType.ACCOUNT);
         });
 
         dialog.setOnKeyListener((dialog, keyCode, event) -> {
@@ -828,6 +858,9 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
         });
         //   getSIze(getIntent().getStringExtra("d_code"),false);
         dialog.show();
+        getFilters(FilterType.ADJUSTMENT);
+        getFilters(FilterType.ENTRY);
+        getFilters(FilterType.ACCOUNT);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -835,26 +868,29 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
         progressBar.setVisibility(View.VISIBLE);
         LedgerFilterRequest request;
         request = new LedgerFilterRequest(
-                ledgerDate.getText().toString(), ledger_ToDate.getText().toString(), "LEDGERREPORT",
+                ledger_FromDate.getText().toString(),
+                ledger_ToDate.getText().toString(),
+                "LEDGERREPORT",
                 SharedPref.read(SharedPref.PARTY_CODE, ""),
-                accountTypeList.stream()
-                        .filter(e -> e.isSelected() && filterStack.contains(FilterType.ACCOUNT))
+                accountTypeList.stream().filter(e -> e.isSelected() && filterStack.contains(FilterType.ACCOUNT))
                         .collect(Collectors.toList()),
-                entryTypeList.stream()
-                        .filter(e -> e.isSelected() && filterStack.contains(FilterType.ENTRY))
+
+                entryTypeList.stream().filter(e -> e.isSelected() && filterStack.contains(FilterType.ENTRY))
                         .collect(Collectors.toList()),
-                adjustmentTypeList.stream()
-                        .filter(e -> e.isSelected() && filterStack.contains(FilterType.ADJUSTMENT))
+
+                adjustmentTypeList.stream().filter(e -> e.isSelected() && filterStack.contains(FilterType.ADJUSTMENT))
                         .collect(Collectors.toList()),
+
                 SharedPref.read(SharedPref.DB_NAME, "")
         );
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_LIST_NEW, response -> {
            // Log.e("Data", response);
             LedgerPogo pojo = new Gson().fromJson(response, adjustmentType);
-            count_aduj.setText(pojo.getmAdjustmentTypeCount());
+            Log.i("TaG","response==-=-=-=->" + response);
+           /* count_aduj.setText(pojo.getmAdjustmentTypeCount());
             count_entry.setText(pojo.getmEntryTypeCount());
-            count_account.setText(pojo.getmAccountTypeCount());
+            count_account.setText(pojo.getmAccountTypeCount());*/
             Log.e("mFilterType",mFilterType+"");
             Log.e("filterStack",filterStack+"");
             if (pojo.getResponseStatus()) {
@@ -863,7 +899,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                 switch (mFilterType) {
                     case ADJUSTMENT:
                         List<AdjustmentType> prevAdjustmentList = new ArrayList<>(adjustmentTypeList);
-                        List<AdjustmentType> size = prevAdjustmentList.stream()
+                        List<AdjustmentType> selectedPreAdjFilterList = prevAdjustmentList.stream()
                                 .filter(e -> e.isSelected() && filterStack.contains(FilterType.ADJUSTMENT))
                                 .collect(Collectors.toList());
                     //    Log.e("size", size.size() + "");
@@ -871,9 +907,20 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                         adjustmentTypeList.clear();
                         if (!filterStack.contains(mFilterType) || ledgerPogo == null || ledgerPogo.getAdjustmentType() == null || ledgerPogo.getAdjustmentType().isEmpty()) {
                             adjustmentTypeList.addAll(pojo.getAdjustmentType());
-                            count_aduj.setText("0");
+
+                            try{
+                                count_aduj.setText(selectedPreAdjFilterList.size());
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+
                         } else {
-                            count_aduj.setText(size.size() + "");
+                            try{
+                                count_aduj.setText(selectedPreAdjFilterList.size());
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             ledgerPogo.getAdjustmentType().forEach(adjustment -> {
                                 prevAdjustmentList.forEach(adjustment1 -> {
                                     if (adjustment.getAdjustmentName().equals(adjustment1.getAdjustmentName())) {
@@ -889,7 +936,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                         break;
                     case ACCOUNT:
                         List<AccountType> prevAccountList = new ArrayList<>(accountTypeList);
-                        List<AccountType> size1 = prevAccountList.stream()
+                        List<AccountType> selectedAccountList = prevAccountList.stream()
                                 .filter(e -> e.isSelected() && filterStack.contains(FilterType.ACCOUNT))
                                 .collect(Collectors.toList());
                         //Log.e("size", size1.size() + "");
@@ -898,10 +945,14 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                         if (!filterStack.contains(mFilterType) || ledgerPogo == null || ledgerPogo.getAccountType() == null || ledgerPogo.getAccountType().isEmpty()) {
                             accountTypeList.addAll(pojo.getAccountType());
                           //  Log.e("if","if");
-                            count_account.setText(size1.size() + "");
+                            try{
+
+                                count_account.setText(selectedAccountList.size());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         } else {
                           //  Log.e("else","else");
-                            count_account.setText(size1.size() + "");
                             Log.e("getAccountType", new Gson().toJson( ledgerPogo.getAccountType()));
                             Log.e("prevAccountList", new Gson().toJson(prevAccountList));
                             ledgerPogo.getAccountType().forEach(account -> {
@@ -912,6 +963,11 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                                 });
                             });
                             accountTypeList.addAll(prevAccountList);
+                            try{
+                                count_account.setText(selectedAccountList.size());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             // accountTypeList.addAll(ledgerPogo.getAccountType());
                         }
                         accountTypeAdapter.notifyDataSetChanged();
@@ -919,7 +975,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                     case ENTRY:
                         List<EntryType> prevEntryList = new ArrayList<>(entryTypeList);
                       //  Log.e("prevEntryList", new Gson().toJson(prevEntryList));
-                        List<EntryType> size11 = prevEntryList.stream()
+                        List<EntryType> selectedEntryList = prevEntryList.stream()
                                 .filter(e -> e.isSelected() && filterStack.contains(FilterType.ENTRY))
                                 .collect(Collectors.toList());
                         entryTypeList.clear();
@@ -927,6 +983,11 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                             entryTypeList.addAll(pojo.getEntryType());
                             onCheckChangeReferesh();
                             Log.e("pojo",new Gson().toJson(pojo.getEntryType()));
+                            try{
+                                count_entry.setText(selectedEntryList.size());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                           //  count_entry.setText( "0");
                         //    Toast.makeText(mContext, "if", Toast.LENGTH_SHORT).show();
                         } else {
@@ -940,6 +1001,11 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                                 });
                             });
                             entryTypeList.addAll(prevEntryList);
+                            try{
+                                count_entry.setText(selectedEntryList.size());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             // entryTypeList.addAll(ledgerPogo.getEntryType());
                          //   Log.e("entryTypestaftrclearels", new Gson().toJson(entryTypeList));
                         }
@@ -975,6 +1041,11 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             }
             // }
         }, error -> {
+
+            Log.i("TaG","token exception1-=-=-=-=-=>" + error.networkResponse.allHeaders);
+            Log.i("TaG","token exception2-=-=-=-=-=>" + error.networkResponse.data);
+            Log.i("TaG","token exception3-=-=-=-=-=>" + error.networkResponse.statusCode);
+
             progressBar.setVisibility(View.GONE);
             nodata.setVisibility(View.VISIBLE);
             adjustmentTypeList.clear();
@@ -987,8 +1058,18 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = new Gson().toJson(request);
+                Log.i("TaG","-=-=-=-=-=-=-=-=> request =-=-=-=" + str);
               //  Log.e("str", str);
                 return str.getBytes();
+            }
+
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN ,""));
+
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -998,17 +1079,63 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
-    public void onDateSet(com.tsongkha.spinnerdatepicker.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         Calendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+
         if (flag.equals("from")) {
-            ledgerDate.setText(simpleDateFormat.format(calendar.getTime()));
+            // Set the "from" date
+            ledger_FromDate.setText(simpleDateFormat.format(calendar.getTime()));
+
+            // If the selected "from" date is today, set the "to" date as the same
             if (simpleDateFormat.format(calendar.getTime()).equals(CurrentDateTime.getCurrentDateDDMMYYY())) {
-                ledger_ToDate.setText(ledgerDate.getText().toString());
+                ledger_ToDate.setText(ledger_FromDate.getText().toString());
             }
+
+            // Check if "from" date is after "to" date
+            Calendar toDateCalendar = Calendar.getInstance();
+            try {
+                toDateCalendar.setTime(simpleDateFormat2.parse(ledger_ToDate.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (calendar.after(toDateCalendar)) {
+                ledger_ToDate.setText(ledger_FromDate.getText().toString()); // Set "to" date same as "from" date
+            }
+
         } else if (flag.equals("to")) {
+            // Set the "to" date
             ledger_ToDate.setText(simpleDateFormat2.format(calendar.getTime()));
+
+            // Check if "to" date is before "from" date
+            Calendar fromDateCalendar = Calendar.getInstance();
+            try {
+                fromDateCalendar.setTime(simpleDateFormat.parse(ledger_FromDate.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (calendar.before(fromDateCalendar)) {
+                ledger_FromDate.setText(ledger_ToDate.getText().toString()); // Set "from" date same as "to" date
+            }
         }
+
+        isFilterShowing = false;
+        filterStack.clear();
+
+        count_aduj.setText("0");
+        count_account.setText("0");
+        count_entry.setText("0");
+
+        filterChanged(FilterType.DATE);
+
+        /*getFilters(FilterType.ADJUSTMENT);
+        getFilters(FilterType.ENTRY);
+        getFilters(FilterType.ACCOUNT);*/
+
+        getFilters(FilterType.LEDGER);
     }
+
     @VisibleForTesting
     void showDate(int year1, int monthOfYear1, int dayOfMonth1, int year2, int monthOfYear2, int dayOfMonth2, int spinnerTheme) {
         new SpinnerDatePickerDialogBuilder()
@@ -1076,7 +1203,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
     public void onCheckChangeReferesh() {
         EntryTypeAdapter.lastSelectedPosition = -1;
         entryTypeAdapter.notifyDataSetChanged();
-        count_entry.setText("0");
+        //count_entry.setText("0");
        //  Log.e("check", "call");
     }
 }

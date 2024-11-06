@@ -204,7 +204,7 @@
 
 
                         <TextView
-                            android:id="@+id/ledgerDate"
+                            android:id="@+id/ledger_FromDate"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
                             android:layout_margin="6dp"
@@ -275,7 +275,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/red_button"
                         android:gravity="center"
-                        android:text="Clear all"
+                        android:text="Reset"
                         android:textColor="@color/white"
                         android:textSize="18dp" />
 

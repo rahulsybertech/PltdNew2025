@@ -25,6 +25,7 @@ import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.databinding.ActivityBankDetailBinding;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,25 +62,35 @@ public class BankDetailActivity extends AppCompatActivity {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, BANK_DETAILS,
                 response -> {
-            Log.e("response",response);
+//            Log.e("response",response);
+            Log.i("TaG","url -=-=-= " + BANK_DETAILS);
+            Log.i("TaG","response -=-= -= -= " + response);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
+
                         if (jsonObject.getBoolean("ResponseStatus")) {
                             binding.includeProgress.progress.setVisibility(View.GONE);
-                            JSONObject TotalCustomer = jsonObject.getJSONObject("BankDetailsResult");
-                            binding.bankAccountNo.setText(TotalCustomer.optString("BankAccountNo"));
-                            binding.accountName.setText(TotalCustomer.optString("AccountName"));
-                            binding.bankName.setText(TotalCustomer.optString("BankName"));
-                            binding.branchName.setText(TotalCustomer.optString("BranchName"));
-                            binding.ifscCode.setText(TotalCustomer.optString("IFSC_Code"));
+
+                            JSONArray bankDetailsArray = jsonObject.getJSONArray("BankDetailsResult");
+
+                            if (bankDetailsArray.length() > 0) {
+                                JSONObject TotalCustomer = bankDetailsArray.getJSONObject(0);
+
+                                binding.bankAccountNo.setText(TotalCustomer.optString("BankAccountNo"));
+                                binding.accountName.setText(TotalCustomer.optString("AccountName"));
+                                binding.bankName.setText(TotalCustomer.optString("BankName"));
+                                binding.branchName.setText(TotalCustomer.optString("BranchName"));
+                                binding.ifscCode.setText(TotalCustomer.optString("IFSC_Code"));
+                            }
                         } else {
-                            AlertUtil.responseElse(mContext, "GetBankDetails ", jsonObject.getJSONObject("ResponseMessage") + "");
+                            AlertUtil.responseElse(mContext, "GetBankDetails ", jsonObject.optString("ResponseMessage"));
                             binding.includeProgress.progress.setVisibility(View.GONE);
-                         }
+                        }
                     } catch (JSONException e) {
                         AlertUtil.responseExecption(mContext, "GetBankDetails ", e.toString());
-                            e.printStackTrace();
+                        e.printStackTrace();
                     }
+
                 }, error ->{
                         AlertUtil.responseError(mContext, "GetBankDetails ", error.toString());
 
@@ -102,7 +113,8 @@ public class BankDetailActivity extends AppCompatActivity {
                 }
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE,"");
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"PartyCode\":\"" + partyCode + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
-                Log.e("str", str);
+//                Log.e("str", str);
+                Log.i("TaG","request -=-=-==-=-=-=> " + str);
                 return str.getBytes();
             }
 

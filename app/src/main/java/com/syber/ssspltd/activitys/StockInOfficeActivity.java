@@ -1,5 +1,10 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_DETAIL_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_STOCK_IN_OFFICE_REPORT;
+
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +33,7 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
+import com.syber.ssspltd.NewFilterResponse.FilterType;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.CurrentDateTime;
 import com.syber.ssspltd.Interface.FilterChangedStockInOffice;
@@ -68,8 +74,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -213,9 +221,11 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
 
     private void GetStockInOfficeReport(String branch, String subParty, String supplier, String form_Date, String to_Date, String db_name, boolean isFilterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetStockInOfficeReport",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_STOCK_IN_OFFICE_REPORT,
                 response -> {
                     Log.e("StockInOfficeRespo", response);
+                    Log.i("TaG","Url 5 -=-=-=-==" + GET_STOCK_IN_OFFICE_REPORT);
+                    Log.i("TaG","response5 -=-=-=-= " + response);
                     StockInOfficePojo pojo = new Gson().fromJson(response, listType);
                     try {
                         if (pojo.getResponseStatus()) {
@@ -283,7 +293,14 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                 Object a = null;
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"PartyCode\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FromDate\":\"" + form_Date + "\",\"ToDate\":\"" + to_Date + "\",\"Branch\":\"" + branch + "\",\"Subparty\":\"" + subParty + "\",\"SUPPLIERS\":\"" + supplier + "\",\"DBNAME\":\"" + db_name + "\"}";
                 Log.e("StockInOfcstr", str);
+                Log.e("TaG", "request 5 -=-=- =" + str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -633,7 +650,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                 isSubPartyPlace = false;
                 isSuppNPlace = false;
 
-                getFilters(FilterTypeStockInOffice.BRANCH);
+                //getFilters(FilterTypeStockInOffice.BRANCH);
             }
         });
         pendingFilter_SubParty.setOnClickListener(v -> {
@@ -661,7 +678,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                 isDatePressed = false;
                 isBranchPlace = false;
                 isSuppNPlace = false;
-                getFilters(FilterTypeStockInOffice.SUB_PARTY);
+                //getFilters(FilterTypeStockInOffice.SUB_PARTY);
             }
         });
         pendingFilter_SuppNikName.setOnClickListener(v -> {
@@ -689,7 +706,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                 isDatePressed = false;
                 isBranchPlace = false;
                 isSubPartyPlace = false;
-                getFilters(FilterTypeStockInOffice.BRAND_NAME);
+                //getFilters(FilterTypeStockInOffice.BRAND_NAME);
             }
         });
         dialog.setOnKeyListener((dialog, keyCode, event) -> {
@@ -722,12 +739,14 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                 SharedPref.read(SharedPref.DB_NAME, "")
         );
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterListNew", response -> {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_LIST_NEW, response -> {
             Log.e("Data", response);
             StockInOffPojo pojo = new Gson().fromJson(response, branch_Type);
 //            countbranch.setText( pojo.getBranch());
 //            countsub_party.setText( pojo.getSubParty());
 //            countbrand.setText( pojo.getBrand());
+            Log.i("TaG","Url 4 -=-=-=-==" + GET_FILTER_LIST_NEW);
+            Log.i("TaG","response4 -=-=-=-= " + response);
             if (pojo.getResponseStatus()) {
                 progressBar.setVisibility(View.GONE);
                 nodata.setVisibility(View.GONE);
@@ -864,7 +883,15 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
             public byte[] getBody() throws AuthFailureError {
                 String str = new Gson().toJson(request);
                 Log.e("str", str);
+                Log.e("TaG", "request 4 -=-=-=- " + str );
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1239,9 +1266,11 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
 
     private void BranchDetail(final String keyType) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                     Log.e("Data", response);
+                    Log.i("TaG","Url 3 -=-=-=-==" + GET_FILTER_DETAIL_LIST);
+                    Log.i("TaG","response3 -=-=-=-= " + response);
                     FilterListPojo pojo = new Gson().fromJson(response, branchType);
                     if (pojo.getResponseStatus()) {
                         branchList.clear();
@@ -1254,7 +1283,15 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "STOCKINOFFICE" + "\"}";
                 Log.e("str", str);
+                Log.i("TaG", "request3 -=-=-= " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1266,9 +1303,11 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
 
     private void SubpartyDetail(final String keyType) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                     Log.e("Data", response);
+                    Log.i("TaG","Url 2 -=-=-=-==" + GET_FILTER_DETAIL_LIST);
+                    Log.i("TaG","response2 -=-=-=-= " + response);
                     com.syber.ssspltd.response.PendingOrdBranchRespo.Sup_PartyRespo.FilterListPojo pojo = new Gson().fromJson(response, subpartyListType);
                     if (pojo.getResponseStatus()) {
                         subpartyList.clear();
@@ -1282,7 +1321,15 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "STOCKINOFFICE" + "\"}";
                 Log.e("str", str);
+                Log.i("TaG","request 2 -=-=-=-= " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1293,9 +1340,11 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
     }
 
     private void SupplerDetail(final String keyType) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                     Log.e("Data", response);
+                    Log.i("TaG","Url1--==-=-=--=-" + GET_FILTER_DETAIL_LIST);
+                    Log.i("TaG","response1--==-=-=--=-" + response);
                     com.syber.ssspltd.response.PendingOrdBranchRespo.SupplierRespo.FilterListPojo pojo = new Gson().fromJson(response, supList);
                     if (pojo.getResponseStatus()) {
                         supplierList.clear();
@@ -1309,7 +1358,16 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "STOCKINOFFICE" + "\"}";
                 Log.e("str", str);
+                Log.i("TaG","Request1======" + str);
                 return str.getBytes();
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1321,16 +1379,51 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
 
     public void onDateSet(com.tsongkha.spinnerdatepicker.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         Calendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+
         if (flag.equals("from")) {
             stockDate.setText(simpleDateFormat.format(calendar.getTime()));
-            if (simpleDateFormat.format(calendar.getTime()).equals(CurrentDateTime.getCurrentDateDDMMYYY())) {
+
+            // Check if "from" date is after "to" date
+            Calendar toDateCalendar = Calendar.getInstance();
+            try {
+                toDateCalendar.setTime(simpleDateFormat2.parse(stock_ToDate.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (calendar.after(toDateCalendar)) {
                 stock_ToDate.setText(stockDate.getText().toString());
             }
         } else if (flag.equals("to")) {
             stock_ToDate.setText(simpleDateFormat2.format(calendar.getTime()));
+
+            // Check if "to" date is before "from" date
+            Calendar fromDateCalendar = Calendar.getInstance();
+            try {
+                fromDateCalendar.setTime(simpleDateFormat.parse(stockDate.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (calendar.before(fromDateCalendar)) {
+                stockDate.setText(stock_ToDate.getText().toString());
+            }
         }
 
+        isFilterShowing = false;
+        filterStack.clear();
+
+        countbranch.setText("0");
+        countsub_party.setText("0");
+        countbrand.setText("0");
+
+        filterChangedStockInOffice(FilterTypeStockInOffice.DATE);
+        /*getFilters(FilterTypeStockInOffice.BRANCH);
+        getFilters(FilterTypeStockInOffice.SUB_PARTY);
+        getFilters(FilterTypeStockInOffice.BRAND_NAME);*/
+        getFilters(FilterTypeStockInOffice.STOCK_IN_OFFICE_REPORT);
     }
+
 
     @VisibleForTesting
     void showDate(int year1, int monthOfYear1, int dayOfMonth1, int year2, int monthOfYear2, int dayOfMonth2, int spinnerTheme) {

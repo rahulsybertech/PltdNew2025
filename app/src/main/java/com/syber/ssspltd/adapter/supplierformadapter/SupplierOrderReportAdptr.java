@@ -1,6 +1,6 @@
 package com.syber.ssspltd.adapter.supplierformadapter;
 
-import static com.syber.ssspltd.Constants.URLConstants.UPDATE_ORDER_STATUS;
+import static com.syber.ssspltd.Constants.NewErpUrls.UPDATE_ORDER_STATUS;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -106,7 +106,7 @@ public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrder
         holder.confirm.setVisibility(View.INVISIBLE);
 }
 
-        if (datum.getImageList().isEmpty()) {
+        if (datum.getImageList() != null && datum.getImageList().isEmpty()) {
             holder.viewImage.setVisibility(View.INVISIBLE);
         } else {
             holder.viewImage.setVisibility(View.VISIBLE);

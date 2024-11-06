@@ -1,8 +1,8 @@
 package com.syber.ssspltd.activitys.clubtype;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.CLUB_TYPE_BY_ACOUNT_ID;
-import static com.syber.ssspltd.Constants.URLConstants.CLUB_TYPE_DETAILS;
-import static com.syber.ssspltd.Constants.URLConstants.CLUB_TYPE_DETAILS_OBJECT;
+import static com.syber.ssspltd.Constants.NewErpUrls.CLUB_TYPE_DETAILS;
+import static com.syber.ssspltd.Constants.NewErpUrls.CLUB_TYPE_DETAILS_OBJECT;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

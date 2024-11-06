@@ -53,6 +53,7 @@ import com.syber.ssspltd.fragment.MoreFragment;
 import com.syber.ssspltd.fragment.NewGalleryFragment;
 import com.syber.ssspltd.response.FinanacialYearListRespon.FYearList;
 import com.syber.ssspltd.response.FinanacialYearListRespon.FYearListResult;
+import com.syber.ssspltd.response.FyResponse;
 import com.syber.ssspltd.response.ModelClass.RowItem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -63,8 +64,11 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FY_YEAR_LIST;
 import static com.syber.ssspltd.activitys.registered_msg.UsersTyperDetails;
 
 public class MainActivity extends AppCompatActivity implements TopicClickListener, View.OnTouchListener {
@@ -438,8 +442,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         // ViewGroup viewGroup = findViewById(android.R.id.content);
         //final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this,R.style.RoundedDialog);
 
-        final View dialogView = LayoutInflater.from(this).inflate(R.layout.my_dialog,
-                findViewById(R.id.dialog));
+        final View dialogView = LayoutInflater.from(this).inflate(R.layout.my_dialog, findViewById(R.id.dialog));
         dialogView.setClickable(false);
         ImageView cancel_button = dialogView.findViewById(R.id.cancel_button);
         Button sumbitYear = dialogView.findViewById(R.id.sumbitYear);
@@ -571,13 +574,16 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void GetFYearList() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFYearList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FY_YEAR_LIST,
                 response -> {
                     Log.e("Data", response);
                     //JSONObject jsonObject = new JSONObject(response);
                     FYearList pojo = new Gson().fromJson(response, fYearType);
                     fYearListResults.clear();
                     if (pojo.getResponseStatus()) {
+                        FyResponse resp = new FyResponse(response); // this resp in test
+
+
                         for (int i = 0; i < pojo.getFYearListResult().size(); i++) {
                             Log.e("defult_db",pojo.getFYearListResult().get(i).getmDEFAULTDB());
                             if (SharedPref.read(SharedPref.selected_default_yr, "").equals(pojo.getFYearListResult().get(i).getFYEAR())) {
@@ -600,7 +606,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                             }
                         }
                         fYearListResults.addAll(pojo.getFYearListResult());
-                        //fYearAdapter.notifyDataSetChanged();
+                        if (fYearAdapter != null) fYearAdapter.notifyDataSetChanged();
 
                     }
 
@@ -614,6 +620,14 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                 Log.e("str", str);
                 return str.getBytes();
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
 
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";

@@ -266,8 +266,6 @@
                                   android:visibility="visible" />
                         </LinearLayout>
 
-
-
                               <TextView
                                   android:id="@+id/radio_subparty"
                                   android:layout_width="match_parent"
@@ -282,10 +280,6 @@
                                   android:text="@string/sub_party"
                                   android:textColor="@color/black"
                                   android:textSize="16dp" />
-
-
-
-
 
                               <RelativeLayout
                                   android:layout_width="match_parent"
@@ -379,8 +373,6 @@
 
                         </LinearLayout>
 
-
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -395,7 +387,6 @@
                             android:text="@string/transport"
                             android:textColor="@color/black"
                             android:textSize="16dp" />
-
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:background="@drawable/otp_line"
@@ -527,13 +518,53 @@
                         </RelativeLayout>
 
 
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto_light"
+                            android:gravity="center|start"
+                            android:singleLine="true"
+                            android:text="@string/status"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:background="@drawable/otp_line"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="wrap_content">
 
+                              <TextView
+                                  android:id="@+id/tvStatus"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:hint="Status"
+                                  android:gravity="center|start"
+                                  android:imeOptions="actionNext"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
 
+                              <ImageView
+                                  android:id="@+id/ivStatus"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:padding="5dp"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:src="@drawable/ic_baseline_arrow_drop_down_24"
+                                  app:tint="@color/black" />
 
-
-
-
-
+                        </RelativeLayout>
 
                         <LinearLayout
                             android:id="@+id/redio_star_ll"

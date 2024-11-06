@@ -643,7 +643,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                     isDatePressed = false;
                     isNoPlace = false;
                     isbillNoPlace = false;
-                    getFilters(FilterTypeCourierReport.COURIER_NAME);
+                    //getFilters(FilterTypeCourierReport.COURIER_NAME);
                 }
             }
         });
@@ -672,7 +672,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                     isDatePressed = false;
                     isNamePlace = false;
                     isbillNoPlace = false;
-                    getFilters(FilterTypeCourierReport.COURIER_NO);
+                    //getFilters(FilterTypeCourierReport.COURIER_NO);
                 }
             }
         });
@@ -701,7 +701,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                     isDatePressed = false;
                     isNamePlace = false;
                     isNoPlace = false;
-                    getFilters(FilterTypeCourierReport.SALE_BILL_NO);
+                    //getFilters(FilterTypeCourierReport.SALE_BILL_NO);
                 }
             }
         });
@@ -1352,16 +1352,58 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
 
     public void onDateSet(com.tsongkha.spinnerdatepicker.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         Calendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+
         if (flag.equals("from")) {
+            // Set the "from" date
             formDate.setText(simpleDateFormat.format(calendar.getTime()));
+
+            // If the selected "from" date is today, set the "to" date as the same
             if (simpleDateFormat.format(calendar.getTime()).equals(CurrentDateTime.getCurrentDateDDMMYYY())) {
                 todate.setText(formDate.getText().toString());
             }
+
+            // Check if "from" date is after "to" date
+            Calendar toDateCalendar = Calendar.getInstance();
+            try {
+                toDateCalendar.setTime(simpleDateFormat2.parse(todate.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (calendar.after(toDateCalendar)) {
+                todate.setText(formDate.getText().toString()); // Set "to" date same as "from" date
+            }
+
         } else if (flag.equals("to")) {
+            // Set the "to" date
             todate.setText(simpleDateFormat2.format(calendar.getTime()));
+
+            // Check if "to" date is before "from" date
+            Calendar fromDateCalendar = Calendar.getInstance();
+            try {
+                fromDateCalendar.setTime(simpleDateFormat.parse(formDate.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (calendar.before(fromDateCalendar)) {
+                formDate.setText(todate.getText().toString()); // Set "from" date same as "to" date
+            }
         }
 
+        isFilterShowing = false;
+        filterStack.clear();
+
+        count_Cname.setText("0");
+        count_CNo.setText("0");
+        count_CBill_No.setText("0");
+
+        /*getFilters(FilterTypeCourierReport.COURIER_NAME);
+        getFilters(FilterTypeCourierReport.COURIER_NO);
+        getFilters(FilterTypeCourierReport.SALE_BILL_NO);*/
+        getFilters(FilterTypeCourierReport.COURIER_REPORT);
     }
+
 
     @VisibleForTesting
     void showDate(int year1, int monthOfYear1, int dayOfMonth1, int year2, int monthOfYear2, int dayOfMonth2, int spinnerTheme) {

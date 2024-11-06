@@ -61,6 +61,11 @@ public class AccountTypeAdapter extends RecyclerView.Adapter<AccountTypeAdapter.
                 holder.filter.setTag(position);
                 List<AccountType> sis = filterListDetails.stream().filter(AccountType :: isSelected).collect(Collectors.toList());
                 LedgerActivity.count_account.setText(sis.size()+"");
+               /* if(sis.isEmpty()) {
+                    LedgerActivity.count_account.setVisibility(View.GONE);
+                } else {
+                    LedgerActivity.count_account.setVisibility(View.VISIBLE);
+                }*/
 
             } else {
                 productDetails1.setSelected(true);
@@ -68,6 +73,11 @@ public class AccountTypeAdapter extends RecyclerView.Adapter<AccountTypeAdapter.
                 holder.filter.setTag(position);
                 List<AccountType> sis = filterListDetails.stream().filter(AccountType :: isSelected).collect(Collectors.toList());
                 LedgerActivity.count_account.setText(sis.size()+"");
+                /*if(sis.isEmpty()) {
+                    LedgerActivity.count_account.setVisibility(View.GONE);
+                } else {
+                    LedgerActivity.count_account.setVisibility(View.VISIBLE);
+                }*/
             }
             filterCallback.filterChanged(FilterType.ACCOUNT);
             notifyDataSetChanged();

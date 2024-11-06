@@ -30,7 +30,7 @@
             />
     </LinearLayout>
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:layout_below="@+id/ll"
         android:id="@+id/search"
         android:layout_width="match_parent"
@@ -42,17 +42,21 @@
         android:fontFamily="@font/roboto_light"
         android:drawableLeft="@drawable/menu_search_white_24dp"
         android:padding="9dp"
+        android:maxLines="1"
+        android:singleLine="true"
         android:gravity="center|left"
         android:drawablePadding="10dp"
         android:textColorHint="#90000000"
         android:textColor="#90000000"
         android:layout_marginTop="10dp"
         android:hint="Search by Name" />
-<ProgressBar
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/my_progress"
-    android:layout_centerInParent="true"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/my_progress"
+        android:layout_centerInParent="true"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

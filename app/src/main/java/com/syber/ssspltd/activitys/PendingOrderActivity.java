@@ -1,5 +1,10 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_DETAIL_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_PENDING_ORDER_REPORT;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -70,8 +75,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -100,7 +107,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
     SimpleDateFormat simpleDateFormat2;
     String flag = "";
     String Count = "",Count2 = "",Count3 = "";
-    public  static TextView countbranch,countsub_party,countbrand;
+    public static TextView countbranch,countsub_party,countbrand;
     boolean isFilterShowing = false;
 
     PendingOrderPojo pendingOrderPojo;
@@ -160,6 +167,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         branch_List = new ArrayList<>();
         subPartyList = new ArrayList<>();
         brandList = new ArrayList<>();
+        brandList = new ArrayList<>();
 
         filterBranchAdap = new FilterBranchAdap(mContext, branch_List,this);
         filterSubPartyAdap = new FilterSubPartyAdap(mContext, subPartyList,this);
@@ -211,9 +219,11 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
 
     private void GetPendingOrderReport(String branch, String subParty, String supplier, String form_Date, String to_Date, String db_name,boolean isisFilterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetPendingOrderReport",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_PENDING_ORDER_REPORT,
                 response -> {
-                    Log.e("Data", response);
+//                    Log.e("Data", response);
+                    Log.i("TaG","URL1 ------->" + GET_PENDING_ORDER_REPORT);
+                    Log.i("TaG","response ------->" + response);
                     PendingOrderPoojo pojo = new Gson().fromJson(response, listType);
                     pendingOrderDetails.clear();
                     try {
@@ -285,6 +295,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"PartyCode\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"Status\":\"" + "PENDING" + "\",\"FromDate\":\"" + form_Date + "\",\"ToDate\":\"" + to_Date + "\",\"Branch\":\"" + branch + "\",\"Subparty\":\"" + subParty + "\",\"SUPPLIERS\":\"" + supplier + "\",\"DBNAME\":\"" + db_name + "\"}";
                 Log.e("str", str);
+                Log.i("TaG", "request ---=-=-=" + str);
                 return str.getBytes();
             }
 
@@ -746,8 +757,10 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                         .collect(Collectors.toList()),
                 SharedPref.read(SharedPref.DB_NAME,"")
         );
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterListNew", response -> {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_LIST_NEW, response -> {
             Log.e("Data", response);
+            Log.i("TaG","URL2 ------->" + GET_FILTER_LIST_NEW);
+            Log.i("TaG","response2 ------->" + response);
             PendingOrderPojo pojo = new Gson().fromJson(response, branch_Type);
             if (pojo.getResponseStatus()) {
                 progressBar.setVisibility(View.GONE);
@@ -880,6 +893,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
             public byte[] getBody() throws AuthFailureError {
                 String str = new Gson().toJson(request);
                 Log.e("str", str);
+                Log.e("TaG", "request 2 -=-=-==- " + str);
                 return str.getBytes();
             }
             public String getBodyContentType() {
@@ -1246,11 +1260,13 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
 //        final ProgressDialog progressBar = new ProgressDialog(mContext);
 //        progressBar.setTitle("Fetching Data");
 //        progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.e("Data", response);
+                        Log.i("TaG","URL3 ------->" + GET_FILTER_DETAIL_LIST);
+                        Log.i("TaG","response3 ------->" + response);
 //                        progressBar.dismiss();
 //                        Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                         FilterListPojo pojo = new Gson().fromJson(response, branchType);
@@ -1275,7 +1291,15 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 // String otpp = otp.getText().toString();
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "PENDINGORDER" + "\"}";
                 Log.e("str", str);
+                Log.e("TaG", "request 3 --=-=-=" + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1289,11 +1313,14 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
 //        final ProgressDialog progressBar = new ProgressDialog(mContext);
 //        progressBar.setTitle("Fetching Data");
 //        progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.e("Data", response);
+
+                        Log.i("TaG","URL4 ------->" + GET_FILTER_DETAIL_LIST);
+                        Log.i("TaG","response4 ------->" + response);
 //                        progressBar.dismiss();
 //                        Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                         com.syber.ssspltd.response.PendingOrdBranchRespo.Sup_PartyRespo.FilterListPojo pojo = new Gson().fromJson(response, subpartyListType);
@@ -1318,7 +1345,15 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 // String otpp = otp.getText().toString();
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "PENDINGORDER" + "\"}";
                 Log.e("str", str);
+                Log.e("TaG", "request 4 -=-=-=" + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1332,11 +1367,13 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
 //        final ProgressDialog progressBar = new ProgressDialog(mContext);
 //        progressBar.setTitle("Fetching Data");
 //        progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.e("Data", response);
+                        Log.i("TaG","URL5 ------->" + GET_FILTER_DETAIL_LIST);
+                        Log.i("TaG","response5 ------->" + response);
 //                        progressBar.dismiss();
 //                        Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                         com.syber.ssspltd.response.PendingOrdBranchRespo.SupplierRespo.FilterListPojo pojo = new Gson().fromJson(response, supList);
@@ -1362,7 +1399,15 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 // String otpp = otp.getText().toString();
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "PENDINGORDER" + "\"}";
                 Log.e("str", str);
+                Log.e("TaG", "request 5 -=-=-=-=" + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {

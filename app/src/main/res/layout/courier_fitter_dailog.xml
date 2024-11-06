@@ -265,7 +265,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/red_button"
                     android:gravity="center"
-                    android:text="Clear all"
+                    android:text="Reset"
                     android:textColor="@color/white"
                     android:textSize="18dp" />
 

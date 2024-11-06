@@ -1,6 +1,7 @@
 package com.syber.ssspltd.activitys.supplierorderform;
 
-import static com.syber.ssspltd.Constants.URLConstants.ORDER_REPORT;
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.ORDER_REPORT;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +28,10 @@ import com.syber.ssspltd.response.SupplierOrderReport.SupplierReportPojo;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class SupplierReportActivity extends AppCompatActivity implements RefreshOrderReport {
     private ActivitySupplierReportBinding binding;
@@ -45,35 +49,35 @@ public class SupplierReportActivity extends AppCompatActivity implements Refresh
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         orderDetailList = new ArrayList<>();
         orderListData = new ArrayList<>();
         listType1 = new TypeToken<SupplierReportPojo>() {
         }.getType();
 //        binding.btnPending.setBackgroundColor(getResources().getColor(R.color.green));
-        binding.btnConfirm.setBackgroundColor(getResources().getColor(R.color.green));
-        binding.btnHold.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
+        binding.btnConfirm.setBackgroundColor(getColor(R.color.green));
+        binding.btnHold.setBackgroundColor(getColor(R.color.colorPrimary1));
         supplierOrderReportAdptr = new SupplierOrderReportAdptr(this, orderDetailList, this);
         binding.recyclerView.setAdapter(supplierOrderReportAdptr);
         binding.btnPending.setOnClickListener(v -> {
                     getPending("APPROVAL PENDING",false);
-                    binding.btnPending.setBackgroundColor(getResources().getColor(R.color.green));
-                    binding.btnConfirm.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
-                    binding.btnHold.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
+                    binding.btnPending.setBackgroundColor(getColor(R.color.green));
+                    binding.btnConfirm.setBackgroundColor(getColor(R.color.colorPrimary1));
+                    binding.btnHold.setBackgroundColor(getColor(R.color.colorPrimary1));
                 }
         );
         binding.btnConfirm.setOnClickListener(v -> {
             getPending("CONFIRM",false);
-            binding.btnConfirm.setBackgroundColor(getResources().getColor(R.color.green));
-            binding.btnPending.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
-            binding.btnHold.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
+            binding.btnConfirm.setBackgroundColor(getColor(R.color.green));
+            binding.btnPending.setBackgroundColor(getColor(R.color.colorPrimary1));
+            binding.btnHold.setBackgroundColor(getColor(R.color.colorPrimary1));
         });
         binding.btnHold.setOnClickListener(v -> {
             getPending("HOLD",false);
-            binding.btnHold.setBackgroundColor(getResources().getColor(R.color.green));
-            binding.btnPending.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
-            binding.btnConfirm.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
+            binding.btnHold.setBackgroundColor(getColor(R.color.green));
+            binding.btnPending.setBackgroundColor(getColor(R.color.colorPrimary1));
+            binding.btnConfirm.setBackgroundColor(getColor(R.color.colorPrimary1));
         });
 //        getPending("APPROVAL PENDING");
         getPending("CONFIRM",true);
@@ -85,6 +89,7 @@ public class SupplierReportActivity extends AppCompatActivity implements Refresh
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ORDER_REPORT, response -> {
 //            loading.setVisibility(View.GONE);
             Log.e("pendingRespo", response);
+            Log.e("TaG", "url -=-=" + ORDER_REPORT);
             try {
                 SupplierReportPojo pojo = new Gson().fromJson(response, listType1);
                 orderDetailList.clear();
@@ -100,9 +105,9 @@ public class SupplierReportActivity extends AppCompatActivity implements Refresh
                     binding.includeProgress.noData.setVisibility(View.VISIBLE);
                     if (isFirstTIme) {
                         getPending("HOLD",false);
-                        binding.btnHold.setBackgroundColor(getResources().getColor(R.color.green));
-                        binding.btnPending.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
-                        binding.btnConfirm.setBackgroundColor(getResources().getColor(R.color.colorPrimary1));
+                        binding.btnHold.setBackgroundColor(getColor(R.color.green));
+                        binding.btnPending.setBackgroundColor(getColor(R.color.colorPrimary1));
+                        binding.btnConfirm.setBackgroundColor(getColor(R.color.colorPrimary1));
                     }
 //                    AlertUtil.responseElse(this, "Pending Order ", pojo.getResponseMessage() + "");
 //                    noData.setVisibility(View.VISIBLE);
@@ -140,6 +145,13 @@ public class SupplierReportActivity extends AppCompatActivity implements Refresh
                         ",\"OrderStatus\":\"" + status + "\"}";
                 Log.e("str1", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {

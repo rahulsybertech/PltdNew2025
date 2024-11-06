@@ -75,6 +75,8 @@
                             android:freezesText="true"
                             android:fontFamily="@font/roboto_light"
                             android:hint="@string/item"
+                            android:textColor="@color/black"
+                            android:paddingStart="10dp"
                             android:imeOptions="actionNext"
                             android:inputType="text"
                             android:textSize="13dp">

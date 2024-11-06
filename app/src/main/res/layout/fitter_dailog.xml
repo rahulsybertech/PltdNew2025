@@ -294,7 +294,7 @@
                     android:textSize="18dp"
                     android:gravity="center"
                     android:id="@+id/clear_all"
-                    android:text="Clear all"
+                    android:text="Reset"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"/>

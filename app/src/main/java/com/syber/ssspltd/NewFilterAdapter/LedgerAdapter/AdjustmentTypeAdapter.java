@@ -61,13 +61,24 @@ public class AdjustmentTypeAdapter extends RecyclerView.Adapter<AdjustmentTypeAd
                 holder.filter.setTag(position);
                 List<AdjustmentType> sis = filterListDetails.stream().filter(AdjustmentType :: isSelected).collect(Collectors.toList());
                 LedgerActivity.count_aduj.setText(sis.size()+"");
+               /* if(sis.isEmpty()) {
+                    LedgerActivity.count_aduj.setVisibility(View.GONE);
+                } else {
+                    LedgerActivity.count_aduj.setVisibility(View.VISIBLE);
+                }*/
             } else {
                 productDetails1.setSelected(true);
                 holder.filter.setChecked(true);
                 holder.filter.setTag(position);
                 List<AdjustmentType> sis = filterListDetails.stream().filter(AdjustmentType :: isSelected).collect(Collectors.toList());
                 LedgerActivity.count_aduj.setText(sis.size()+"");
+                /*if(sis.isEmpty()) {
+                    LedgerActivity.count_aduj.setVisibility(View.GONE);
+                } else {
+                    LedgerActivity.count_aduj.setVisibility(View.VISIBLE);
+                }*/
             }
+
             filterCallback.filterChanged(FilterType.ADJUSTMENT);
             //notifyDataSetChanged();
         });

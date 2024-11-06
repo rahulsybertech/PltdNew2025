@@ -1,7 +1,9 @@
 package com.syber.ssspltd.activitys;
 
-import static com.syber.ssspltd.Constants.URLConstants.CLUB_TYPE_BY_ACCOUNT_ID;
-import static com.syber.ssspltd.Constants.URLConstants.CLUB_TYPE_DETAILS_OBJECT;
+
+
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.CLUB_TYPE_BY_ACOUNT_ID;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -38,6 +40,9 @@ import com.syber.ssspltd.activitys.clubtype.ClubTypeActivity;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
@@ -69,7 +74,7 @@ public class SplashActivity extends AppCompatActivity {
 //        Log.e("USERMOBILE",SharedPref.read(SharedPref.USERMOBILE,""));
 
         if (Lazy.haveNetworkConnection(mContext)) {
-//            checkold();
+            checkold();
            if (!SharedPref.read(SharedPref.PARTY_CODE,"").equals("")) {
                getClubType();
            }else {
@@ -80,8 +85,9 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
     private void getClubType() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, CLUB_TYPE_BY_ACCOUNT_ID, response -> {
-            Log.e("Api Cat ", "Url --> " + CLUB_TYPE_BY_ACCOUNT_ID);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, CLUB_TYPE_BY_ACOUNT_ID,
+                response -> {
+            Log.e("Api Cat ", "Url --> " + CLUB_TYPE_BY_ACOUNT_ID);
             Log.e("Api Cat ", response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
@@ -137,6 +143,14 @@ public class SplashActivity extends AppCompatActivity {
                 Log.e("strrr", "body request --> " + str);
                 return str.getBytes();
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
