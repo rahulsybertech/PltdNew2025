@@ -1,6 +1,7 @@
 package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_COURIER_REPORT;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_DETAIL_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_PENDING_ORDER_REPORT;
@@ -297,6 +298,15 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 Log.e("str", str);
                 Log.i("TaG", "request ---=-=-=" + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+
+                Log.i("TaG","GetCourierReport header : URl " + GET_COURIER_REPORT + " " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -895,6 +905,14 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 Log.e("str", str);
                 Log.e("TaG", "request 2 -=-=-==- " + str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+
+                Log.i("TaG","GetCourierReport header : URl " + GET_COURIER_REPORT + " " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                return headers;
             }
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";

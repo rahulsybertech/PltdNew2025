@@ -1,5 +1,8 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_SALE_AND_SERVICE_REPORT;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,7 +33,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SaleService extends AppCompatActivity {
     Context mContext = this;
@@ -74,7 +79,7 @@ public class SaleService extends AppCompatActivity {
 
     private void GetSaleServiceReport() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetSaleServiceReport",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SALE_AND_SERVICE_REPORT,
                 response -> {
                     Log.e("Data", response);
                     SaleServicePojo pojo = new Gson().fromJson(response, listType);
@@ -105,6 +110,13 @@ public class SaleService extends AppCompatActivity {
 
                 Log.e("str", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {

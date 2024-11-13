@@ -1,6 +1,8 @@
 package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_COURIER_REPORT;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_DETAIL_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -215,9 +217,11 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_COURIER_REPORT,
                 new Response.Listener<String>() {
+
+
                     @Override
                     public void onResponse(String response) {
-                        Log.e("Data", response);
+                        Log.i("TaG","GetCourierReport resp : URl " + GET_COURIER_REPORT + " " + response);
                         CourierReportPoojo pojo = new Gson().fromJson(response, listType);
                         courierDetails.clear();
                         try {
@@ -283,10 +287,13 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
             binding.includeProgress.progress.setVisibility(View.GONE);
             binding.includeProgress.noData.setVisibility(View.VISIBLE);
         }) {
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+
+                Log.i("TaG","GetCourierReport header : URl " + GET_COURIER_REPORT + " " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
                 return headers;
             }
             @Override
@@ -296,7 +303,8 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                 // String otpp = otp.getText().toString();
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"PartyCode\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FromDate\":\"" + form_Date + "\",\"ToDate\":\"" + to_date + "\",\"CourierName\":\"" + courierName + "\"" +
                         ",\"CourierNumber\":\"" + courierNo + "\",\"SaleBillNumber\":\"" + courierBill_no + "\",\"DBNAME\":\"" + db_name + "\"}";
-                Log.e("str", str);
+                Log.i("TaG","GetCourierReport req : URl " + GET_COURIER_REPORT + " " + str);
+
                 return str.getBytes();
             }
 
@@ -735,8 +743,8 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                         .collect(Collectors.toList()),
                 SharedPref.read(SharedPref.DB_NAME, "")
         );
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterListNew", response -> {
-            Log.e("Data", response);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_LIST_NEW, response -> {
+            Log.i("TaG","GetCourierReport res : URl1 " + GET_FILTER_LIST_NEW + " " + response);
             CourierReportPojo pojo = new Gson().fromJson(response, courierNameType1);
 
             if (pojo.getResponseStatus()) {
@@ -869,7 +877,15 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
             public byte[] getBody() throws AuthFailureError {
                 String str = new Gson().toJson(request);
                 Log.e("str", str);
+                Log.i("TaG","GetCourierReport req : URl1 " + GET_FILTER_LIST_NEW + " " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1247,11 +1263,12 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
 
 
     private void courierNameDetail(final String keyType) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("Data", response);
+
+                        Log.i("TaG","GetCourierReport rsp : URl2 " + GET_FILTER_DETAIL_LIST + " " + response);
                         FilterListPojo pojo = new Gson().fromJson(response, courierNameType);
                         if (pojo.getResponseStatus()) {
                             courierNameList.clear();
@@ -1272,8 +1289,14 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
                 // String otpp = otp.getText().toString();
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "COURIERREPORT" + "\"}";
-                Log.e("str", str);
+                Log.i("TaG","GetCourierReport req : URl2 " + GET_FILTER_DETAIL_LIST + " " + str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1284,11 +1307,11 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
     }
 
     private void CourierNoDetail(final String keyType) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("Data", response);
+                        Log.i("TaG","GetCourierReport rsp : URl3 " + GET_FILTER_DETAIL_LIST + " " + response);
                         com.syber.ssspltd.response.CourierNameRespons.CourierNoRespo.FilterListPojo pojo = new Gson().fromJson(response, courierNoType);
                         if (pojo.getResponseStatus()) {
                             courierNoList.clear();
@@ -1305,8 +1328,15 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "COURIERREPORT" + "\"}";
-                Log.e("str", str);
+                Log.i("TaG","GetCourierReport req : URl3 " + GET_FILTER_DETAIL_LIST + " " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -1317,11 +1347,11 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
     }
 
     private void CourierBillNoDetail(final String keyType) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetFilterDetailList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("Data", response);
+                        Log.i("TaG","GetCourierReport res : URl4 " + GET_FILTER_DETAIL_LIST + " " + response);
                         com.syber.ssspltd.response.CourierNameRespons.CourierBillNoRespo.FilterListPojo pojo = new Gson().fromJson(response, courierBillNoType);
                         if (pojo.getResponseStatus()) {
                             courierBillNoList.clear();
@@ -1339,8 +1369,15 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "COURIERREPORT" + "\"}";
-                Log.e("str", str);
+
+                Log.i("TaG","GetCourierReport req : URl4 " + GET_FILTER_DETAIL_LIST + " " + str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                return headers;
             }
 
             public String getBodyContentType() {
