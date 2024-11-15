@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -566,10 +567,10 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return "application/json; charset=utf-8";
             }
         };
-//        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-//                80000,
-//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
@@ -610,6 +611,7 @@ public class NewDashBoardActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DASHBOARD__DEATILS_BALANCE_TILL_DATE,
                 response -> {
                     //  Log.e("Data", response);
+                    Log.i("TaG",GET_DASHBOARD__DEATILS_BALANCE_TILL_DATE + "=========" + response);
                     binding.includeProgress.progress.setVisibility(View.GONE);
                     //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show()
                     BalanceTillDatePojo pojo = new Gson().fromJson(response, listType);
@@ -639,7 +641,11 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 //  String mob = SharedPref.read(SharedPref.USERMOBILE,"");
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
                 // String otpp = otp.getText().toString();
-                String str = "{\"MOBILENO\":\"" + mob3 + "\",\"ACCOUNTID\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\"}";
+                /*{
+                    "PartyID": "TET697" // partyCode
+                }*/
+
+                String str = "{\"MOBILENO\":\"" + mob3 +"\",\"PartyID\":\"" +  SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"ACCOUNTID\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
             }
@@ -655,6 +661,10 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return "application/json; charset=utf-8";
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
@@ -710,6 +720,10 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return "application/json; charset=utf-8";
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
@@ -720,6 +734,7 @@ public class NewDashBoardActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         //   Log.e("Data", response);
+                        Log.i("TaG",GET_DASHBOARD_DETAILS_PENDING_ORDER + "=========" + response);
                         binding.includeProgress.progress.setVisibility(View.GONE);
                         //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show()
                         PendingOrderPojoDash pojo = new Gson().fromJson(response, listType_pending);
@@ -766,10 +781,11 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return "application/json; charset=utf-8";
             }
         };
-//        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-//                70000,
-//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
@@ -835,6 +851,10 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 return "application/json; charset=utf-8";
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 

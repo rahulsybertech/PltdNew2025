@@ -5,7 +5,6 @@ public class NewErpUrls {
     public static String API_CONTROLLER                                         = "api/PltdApp/";
     public static String BASE_URL                                               = DOMAIN + API_CONTROLLER;
     public static String LOGIN                                                  = BASE_URL + "CheckMobileNo";
-    public static String BLACK_LIST                                             = BASE_URL + "GetBlackListedName";
     public static String CHECK_OTP                                              = BASE_URL + "CheckOTP";
     public static String CLUB_TYPE_BY_ACOUNT_ID                                 = BASE_URL + "GetClubTypeByAccountId";
     public static String CLUB_TYPE_DETAILS                                      = BASE_URL + "GetClubTypeDetail";
@@ -47,6 +46,33 @@ public class NewErpUrls {
     public static String GET_BANNER_LIST                                        = BASE_URL + "GetBannerListNew";
     public static String GET_DASHBOARD_DETAIL_GRAPH                             = BASE_URL + "GetDashboardDetail_Graph";
     public static String GET_BLACK_LIST_NAME                                    = BASE_URL + "GetBlackListedName";
+
+
+
+    public static String GET_COUPON_DETAILS                                     = BASE_URL + "GetCouponDetails";
+    public static String GET_KYC_INFO                                           = BASE_URL + "GetKYCinfo";
+    public static String ADD_FEEDBACK                                           = BASE_URL + "AddFeedback";
+    public static String SAVE_NEW_USER_DETAILS                                  = BASE_URL + "SaveNewUserDetails";
+    public static String VERIFY_REFERRAL                                        = BASE_URL + "VerifyReferral";
+    public static String GET_PLTD_VERSION                                       = BASE_URL + "GetPltdVersion";
+    public static String GET_IMAGE_LIST_DETAILS_APP                             = BASE_URL + "GetImageListDetailsApp";
+
+    // Below apis is not working with new base url need checking
+
+//    public static String GET_ALL_EVENT_IMAGE                                    = BASE_URL + "GetAllEventImages";
+    public static String GET_ALL_EVENT_IMAGE                                    = "http://App.ssspltd.com/apipltd/GetAllEventImages";
+
+//    public static String GET_BRAND_MASTER_DETAIL                                = BASE_URL + "GetBrandMasterDetails";
+    public static String GET_BRAND_MASTER_DETAIL                                = "http://app.ssspltd.com/apipltd/GetBrandMasterDetails";
+
+//    public static String GET_APP_VERSION                                        = BASE_URL + "GetAppVersion";
+    public static String GET_APP_VERSION                                        = "http://app.ssspltd.com/apipltd/GetAppVersion";
+
+//    public static String GET_YEAR_WISE_ALL_IMAGES                               = BASE_URL + "GetYearWiseAllImages";
+    public static String GET_YEAR_WISE_ALL_IMAGES                               = "http://app.ssspltd.com/apipltd/GetYearWiseAllImages";
+
+    //    public static String GET_ALL_YEAR_WISE_EVENT_IMAGE                          = BASE_URL + "GetAllYearWiseEventImages";
+    public static String GET_ALL_YEAR_WISE_EVENT_IMAGE                          = "http://app.ssspltd.com/apipltd/GetAllYearWiseEventImages";
 
 
 

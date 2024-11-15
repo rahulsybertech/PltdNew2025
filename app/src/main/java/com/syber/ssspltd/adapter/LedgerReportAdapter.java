@@ -78,6 +78,7 @@ public class LedgerReportAdapter extends RecyclerView.Adapter<LedgerReportAdapte
             holder.ledger_debit.setText("");
         }
             holder.ledger_decri.setOnClickListener(v -> {
+                Log.i("TaG","ledger report pdf -=-=-=-=-=-=-=-=>" + datum.getPDFPath());
                 if (!datum.getPDFPath().equals(""))
                 {
                     mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)

@@ -1,5 +1,7 @@
 package com.syber.ssspltd.fragment;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_IMAGE_LIST_DETAILS_APP;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
@@ -28,7 +30,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class GrelleyFragment extends Fragment {
@@ -56,13 +60,13 @@ public class GrelleyFragment extends Fragment {
     private void GetImageList() {
 //        final ProgressDialog progressBar = new ProgressDialog(getContext());
 //        progressBar.setTitle("Fetching Data");
-//        progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetImageListDetailsApp",
+//        progressBar.show(); // "http://app.ssspltd.com/apipltd/GetImageListDetailsApp" old url
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_IMAGE_LIST_DETAILS_APP,
                 new Response.Listener<String>() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onResponse(String response) {
-                        Log.e("Data", response);
+                        Log.e("Data", GET_IMAGE_LIST_DETAILS_APP + " --> " + response);
                        // progressBar.dismiss();
                         //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show()
                         GalleryPojo pojo = new Gson().fromJson(response,listType);
@@ -86,6 +90,12 @@ public class GrelleyFragment extends Fragment {
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
             public String getBodyContentType()
             {

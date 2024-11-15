@@ -24,7 +24,7 @@ public class FYearAdapter extends RecyclerView.Adapter<FYearAdapter.MyViewHolder
     private List<FYearListResult> fYearListDetails;
     private final TopicClickListener topicClickListener;
     private String db_name;
-    int lastSelectedPosition= Integer.parseInt(SharedPref.read(SharedPref.default_db,"2"));
+    int lastSelectedPosition= Integer.parseInt(SharedPref.read(SharedPref.default_db,"-1"));
 
     public FYearAdapter(Context mContext, List<FYearListResult> detailList, TopicClickListener topicClickListener) {
         this.mContext = mContext;
@@ -42,21 +42,26 @@ public class FYearAdapter extends RecyclerView.Adapter<FYearAdapter.MyViewHolder
 
         final FYearListResult datum = fYearListDetails.get(position);
         holder.fyear_check.setText(datum.getFYEAR());
-       holder.fyear_check.setChecked(lastSelectedPosition == position);
-//       if (SharedPref.read(SharedPref.selected_default_yr,"").equals("")) {
-//           MainActivity.def_db = position + "";
-//           MainActivity.set_year = fYearListDetails.get(position).getFYEAR();
-//           MainActivity.db_name = fYearListDetails.get(position).getDBNAME();
-//           MainActivity.selectedYr = fYearListDetails.get(position).getFYEAR();
-//           Log.e("year", fYearListDetails.get(position).getFYEAR());
-//           MainActivity.fy_StartDate = fYearListDetails.get(position).getmFY_StartDate();
-//           MainActivity.fy_EndDate = fYearListDetails.get(position).getmFY_EndDate();
-//       }
-////        M ainActivity.fy_StartDate=fYearListDetails.get(position).getmFY_StartDate();
-//        MainActivity.fy_EndDate=fYearListDetails.get(position).getmFY_EndDate();
-//       if (datum.getmDEFAULTDB().equals("True")){
-//           holder.fyear_check.setChecked(true);
-//       }
+       if(lastSelectedPosition == -1) {
+           String defaultFY = fYearListDetails.get(position).getmDEFAULTDB();
+           holder.fyear_check.setChecked(defaultFY.equals(datum.getFYEAR()));
+       } else {
+           holder.fyear_check.setChecked(lastSelectedPosition == position);
+       }
+       /*if (SharedPref.read(SharedPref.selected_default_yr,"").equals("")) {
+           MainActivity.def_db = position + "";
+           MainActivity.set_year = fYearListDetails.get(position).getFYEAR();
+           MainActivity.db_name = fYearListDetails.get(position).getDBNAME();
+           MainActivity.selectedYr = fYearListDetails.get(position).getFYEAR();
+           Log.e("year", fYearListDetails.get(position).getFYEAR());
+           MainActivity.fy_StartDate = fYearListDetails.get(position).getmFY_StartDate();
+           MainActivity.fy_EndDate = fYearListDetails.get(position).getmFY_EndDate();
+       }
+//        M ainActivity.fy_StartDate=fYearListDetails.get(position).getmFY_StartDate();
+        MainActivity.fy_EndDate=fYearListDetails.get(position).getmFY_EndDate();
+       if (datum.getmDEFAULTDB().equals("True")){
+           holder.fyear_check.setChecked(true);
+       }*/
 
 
     }

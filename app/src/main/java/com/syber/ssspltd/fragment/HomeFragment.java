@@ -3,6 +3,7 @@ package com.syber.ssspltd.fragment;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_BANNER_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_SECURITY_CHECK_REPORT;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -278,12 +279,15 @@ public class HomeFragment extends Fragment {
 
     public  void GetSecurityCheckReport(Context context) {
        // Toast.makeText(context, "goodtogo", Toast.LENGTH_SHORT).show();
-//        final ProgressDialog progressBar = new ProgressDialog(getContext());
-//        progressBar.setTitle(" GENERATE OTP");
-//        progressBar.show();
+        final ProgressDialog progressBar = new ProgressDialog(getContext());
+//        progressBar.setTitle("Data Fetching ...");
+        progressBar.setMessage("Please wait...");
+        progressBar.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SECURITY_CHECK_REPORT,
                 response -> {
+                    progressBar.cancel();
                     Log.e("SecurityCheckRespo", response);
+                    Log.i("TaG","resp----->" + GET_SECURITY_CHECK_REPORT + " " + response);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.getBoolean("ResponseStatus")) {
@@ -328,7 +332,12 @@ public class HomeFragment extends Fragment {
                                 JSONObject ob = securityCheck.getJSONObject(i);
                                 String Count = ob.optString("Count");
                                 String CurrentBalance = ob.optString("CurrentBalance");
-                                current_bel.setText(CurrentBalance.equals("")?"0":CurrentBalance);
+                                if (CurrentBalance != null) {
+                                    current_bel.setText(CurrentBalance.equals("")?"0":CurrentBalance);
+                                } else {
+                                    current_bel.setText("0");
+                                }
+
                                 SharedPref.write(SharedPref.Current_Bal,CurrentBalance);
                                 Log.e("name", Count);
                                 pen_bel.setText(Count);
@@ -367,13 +376,16 @@ public class HomeFragment extends Fragment {
                             }
                             //   chooseCatagriesAdp.notifyDataSetChanged();
                         } else {
+                            current_bel.setText("0");
                            // Toast.makeText(context, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
+                        current_bel.setText("0");
                         e.printStackTrace();
                     }
                 }, error -> {
-                    // progressBar.cancel();
+                    current_bel.setText("0");
+                     progressBar.cancel();
                 }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
@@ -381,6 +393,7 @@ public class HomeFragment extends Fragment {
                 // String mob=mobile_no_otp.getText().toString();
                 String str = "{\"MOBILENO\":\"" + mob + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("straff", str);
+                Log.i("TaG","req----->" + GET_SECURITY_CHECK_REPORT + " " + str);
                 return str.getBytes();
             }
 

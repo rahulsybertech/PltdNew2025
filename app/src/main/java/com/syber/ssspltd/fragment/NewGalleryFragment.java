@@ -1,5 +1,7 @@
 package com.syber.ssspltd.fragment;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_ALL_EVENT_IMAGE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -33,6 +35,8 @@ import com.syber.ssspltd.response.NewGalleryResponse.NewGalleryPojo;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class NewGalleryFragment extends Fragment {
@@ -68,12 +72,12 @@ public class NewGalleryFragment extends Fragment {
 
     private void GetImageList() {
         progressBar.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://App.ssspltd.com/apipltd/GetAllEventImages",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_ALL_EVENT_IMAGE,
                 new Response.Listener<String>() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onResponse(String response) {
-                        Log.e("Data", response);
+                        Log.e("Data",GET_ALL_EVENT_IMAGE + " ===== " + response);
                         progressBar.setVisibility(View.GONE);
                         //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show()
                         NewGalleryPojo pojo = new Gson().fromJson(response,listType);
@@ -98,6 +102,12 @@ public class NewGalleryFragment extends Fragment {
                 String str = "{}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
             public String getBodyContentType()
             {

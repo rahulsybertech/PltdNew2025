@@ -1,5 +1,7 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_KYC_INFO;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -33,6 +35,8 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -350,9 +354,10 @@ public class ApplyForKYCActivity extends AppCompatActivity {
         pDialog.getProgressHelper().setBarColor( Color.parseColor("#A5DC86"));
         pDialog.setTitleText("Fetching KYC details\nPlease wait...");
         pDialog.setCancelable(false);
-        pDialog.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetKYCinfo",
+        pDialog.show(); //"http://app.ssspltd.com/apipltd/GetKYCinfo" old url
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_KYC_INFO,
                 response -> {
+            Log.i("TaG",GET_KYC_INFO + "======" + response);
             pDialog.cancel();
                     try {
                         JSONObject jsonObject = new JSONObject(response);
@@ -406,6 +411,12 @@ public class ApplyForKYCActivity extends AppCompatActivity {
                 Log.e("str", str);
 
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {

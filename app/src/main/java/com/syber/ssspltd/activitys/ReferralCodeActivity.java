@@ -1,5 +1,7 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.VERIFY_REFERRAL;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -22,6 +24,9 @@ import com.syber.ssspltd.Utils.VolleySingleton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ReferralCodeActivity extends AppCompatActivity {
     Context mContext = this;
     EditText referralCode_number;
@@ -39,9 +44,9 @@ public class ReferralCodeActivity extends AppCompatActivity {
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("REFERRAL");
         progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/VerifyReferral",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, VERIFY_REFERRAL,
                 response -> {
-                    Log.e("Data", response);
+                    Log.e("Data", VERIFY_REFERRAL + " ======= "  + response);
                     progressBar.dismiss();
                     //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                     try {
@@ -76,6 +81,13 @@ public class ReferralCodeActivity extends AppCompatActivity {
                 String str = "{\"REFERRAL\":\"" + mob + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {

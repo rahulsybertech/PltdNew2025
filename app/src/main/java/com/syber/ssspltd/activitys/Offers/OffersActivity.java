@@ -1,5 +1,7 @@
 package com.syber.ssspltd.activitys.Offers;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_COUPON_DETAILS;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,7 +36,9 @@ import com.syber.ssspltd.response.Offers.OffersPojo;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OffersActivity extends AppCompatActivity {
     ActivityOffersBinding binding;
@@ -72,10 +76,10 @@ public class OffersActivity extends AppCompatActivity {
         final ProgressDialog progressBar = new ProgressDialog(mContext);
 //        progressBar.setTitle("Fetching Data");
 //        progressBar.show();
-        binding.spinKit.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetCouponDetails",
+        binding.spinKit.setVisibility(View.VISIBLE);// "http://app.ssspltd.com/apipltd/GetCouponDetails" old url
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_COUPON_DETAILS,
                 response -> {
-                    Log.e("Data", response);
+                    Log.e("Data", GET_COUPON_DETAILS + " ===== " + response);
                     //progressBar.dismiss();
                     //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show()
                     OffersPojo pojo = new Gson().fromJson(response,listType);
@@ -100,6 +104,12 @@ public class OffersActivity extends AppCompatActivity {
                 String str = "{\"MOBILENO\":\"" + mob + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType()

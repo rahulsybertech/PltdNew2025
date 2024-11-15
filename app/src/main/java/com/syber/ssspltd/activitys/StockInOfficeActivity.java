@@ -46,6 +46,7 @@ import com.syber.ssspltd.NewFilter.PendingOrder.FilterStockInOff.SubParty;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
+import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.SaleReportFilter.FilterTypeSaleReport;
 import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.StockInOff.FilterBranch_SAdap;
 import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.StockInOff.FilterBrand_SAdap;
 import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.StockInOff.FilterSubParty_SAdap;
@@ -165,7 +166,13 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                             intent.getStringExtra("subparty"), intent.getStringExtra("supplier")
                             , intent.getStringExtra("stockDate"), intent.getStringExtra("stock_ToDate"), dbNAME, true);
                 } else {
-                    GetStockInOfficeReport(banch, subparty, supplier, stock_formDate, stock_toDate, dbNAME, false);
+                    if (isSetFYDate()) {
+                        GetStockInOfficeReport(banch, subparty, supplier, StartDate_filter, Enddate_filter, dbNAME, false);
+
+                    }else {
+                        GetStockInOfficeReport(banch, subparty, supplier, StartDate_filter, Enddate_filter, dbNAME, false);
+                    }
+
                 }
             } else {
 
@@ -219,6 +226,30 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
         SupplerDetail("SUPPLIER");
     }
 
+    private Boolean isSetFYDate() {
+        if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
+            StartDate_filter = "01/04/2024";
+            Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-2024")) {
+            StartDate_filter = "01/04/2023";
+            Enddate_filter = "31/03/2024";
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2022-2023")) {
+            StartDate_filter = "01/04/2022";
+            Enddate_filter = "31/03/2023";
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2021-2022")) {
+            StartDate_filter = "01/04/2021";
+            Enddate_filter = "31/03/2022";
+        }  else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
+            StartDate_filter = "01/04/2020";
+            Enddate_filter = "31/03/2021";
+        } else {
+            return false;
+
+        }
+        return true;
+    }
+
+
     private void GetStockInOfficeReport(String branch, String subParty, String supplier, String form_Date, String to_Date, String db_name, boolean isFilterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_STOCK_IN_OFFICE_REPORT,
@@ -234,18 +265,32 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                             stockInOfficeDetails.clear();
                             stockInOfficeDetails.addAll(pojo.getStockInOfficeReportResult());
                             stockInOfficeAdapter.notifyDataSetChanged();
-                            StartDate_filter = pojo.getmDefaultStartDate();
-                            Enddate_filter = pojo.getmDefaultEndDate();
+
+                            if(isSetFYDate() == false){
+                                StartDate_filter = pojo.getmDefaultStartDate();
+                                Enddate_filter = pojo.getmDefaultEndDate();
+                            }
+
                             // Enddate_filter = pojo.getEnddate();
                             SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
                             SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
                             if (!isFilterApplied) {
 
                                 binding.tool.textDate.setVisibility(View.VISIBLE);
-                                binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                                    binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                } else {
+                                    binding.tool.textDate.setText("");
+                                }
+
                             } else {
                                 binding.tool.textDate.setVisibility(View.VISIBLE);
-                                binding.tool.textDate.setText(form_Date + " To " + to_Date);
+                                if(form_Date != null && to_Date != null && !form_Date.isEmpty() && !to_Date.isEmpty()) {
+
+                                    binding.tool.textDate.setText(form_Date + " To " + to_Date);
+                                }else {
+                                    binding.tool.textDate.setText("");
+                                }
                             }
 
 
@@ -264,10 +309,18 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                         } else {
                             if (!isFilterApplied) {
                                 binding.tool.textDate.setVisibility(View.VISIBLE);
-                                binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                                    binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                }else {
+                                    binding.tool.textDate.setText("");
+                                }
                             } else {
                                 binding.tool.textDate.setVisibility(View.VISIBLE);
-                                binding.tool.textDate.setText(form_Date + " To " + to_Date);
+                                if(form_Date != null && to_Date != null && !form_Date.isEmpty() && !to_Date.isEmpty()) {
+                                    binding.tool.textDate.setText(form_Date + " To " + to_Date);
+                                }else {
+                                    binding.tool.textDate.setText("");
+                                }
                             }
 
                             StartDate_filter = pojo.getmDefaultStartDate();
@@ -717,6 +770,10 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
             return true;
         });
         dialog.show();
+
+        getFilters(FilterTypeStockInOffice.BRANCH);
+        getFilters(FilterTypeStockInOffice.SUB_PARTY);
+        getFilters(FilterTypeStockInOffice.BRAND_NAME);
     }
 
 

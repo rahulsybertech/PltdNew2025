@@ -4,6 +4,8 @@ package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
 import static com.syber.ssspltd.Constants.NewErpUrls.CLUB_TYPE_BY_ACOUNT_ID;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_APP_VERSION;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_PLTD_VERSION;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -125,7 +127,9 @@ public class SplashActivity extends AppCompatActivity {
                         }
 
                 } else {
-                    Toast.makeText(mContext, jsonObject.getString("ResponseMessage")+"", Toast.LENGTH_SHORT).show();
+                    if(!jsonObject.getString("ResponseMessage").isEmpty()) {
+                        Toast.makeText(mContext, jsonObject.getString("ResponseMessage")+"", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } catch (Exception e) {
                 Log.e("Exce3rrr", e.toString());
@@ -205,10 +209,10 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void check() {
-        Log.e("ChackMobile", SharedPref.read(SharedPref.USERMOBILE, ""));
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetPltdVersion",
+        Log.e("ChackMobile", SharedPref.read(SharedPref.USERMOBILE, ""));//"http://app.ssspltd.com/apipltd/GetPltdVersion" old url
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_PLTD_VERSION,
                 response -> {
-                    Log.e("res", response);
+                    Log.e("res", GET_PLTD_VERSION + " ========= " + response);
                     try {
                         JSONObject ob = new JSONObject(response);
                         String SoftVersion = "10";
@@ -234,6 +238,13 @@ public class SplashActivity extends AppCompatActivity {
                 Log.e("str", SharedPref.read(SharedPref.USERMOBILE, "") + "djsghgcb");
                 return str.getBytes();
             }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -243,10 +254,10 @@ public class SplashActivity extends AppCompatActivity {
 
     private void checkold() {
         Log.e("ChackMobile", SharedPref.read(SharedPref.USERMOBILE, ""));
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetAppVersion",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_APP_VERSION,
                 response -> {
-                    Log.i("TaG","URL -->" + "http://app.ssspltd.com/apipltd/GetAppVersion" );
-                    Log.e("res", response);
+                    Log.i("TaG","URL -->" + GET_APP_VERSION );
+                    Log.e("res", GET_APP_VERSION + "  " + response);
                     try {
                         JSONObject ob = new JSONObject(response);
                         int ver = Integer.parseInt(ob.optString("AppVersion"));
@@ -273,6 +284,12 @@ public class SplashActivity extends AppCompatActivity {
                 String str = "{\"DATAKEY\":\"" + "ssspltd" + "\"}";
                 Log.e("str", SharedPref.read(SharedPref.USERMOBILE, "") + "djsghgcb");
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";

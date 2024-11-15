@@ -77,7 +77,7 @@ public class DR_Note_Customer extends AppCompatActivity {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DEBIT_NOTE_TO_CUSTOMER_REPORT,
                 response -> {
-            Log.e("response",response);
+            Log.e("response", GET_DEBIT_NOTE_TO_CUSTOMER_REPORT + "=======" + response);
 
                     DNToCustomerPojo pojo = new Gson().fromJson(response,listType);
                     try {

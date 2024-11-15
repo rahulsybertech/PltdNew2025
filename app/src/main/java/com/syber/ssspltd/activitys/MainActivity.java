@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_FY_YEAR_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
 import static com.syber.ssspltd.activitys.registered_msg.UsersTyperDetails;
 
 public class MainActivity extends AppCompatActivity implements TopicClickListener, View.OnTouchListener {
@@ -375,9 +376,10 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("Fetching Data");
         // progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetUsersTypeList",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_TYPE_LIST,
                 response -> {
                     Log.e("response", response);
+                    Log.i("TaG","res ==================> " + GET_USER_TYPE_LIST + " " +response);
                     try {
 
 
@@ -426,7 +428,15 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                 // String otpp = otp.getText().toString();
                 String str = "{\"MOBILENO\":\"" + mob3 + "\"}";
                 Log.e("str", str);
+                Log.i("TaG","req ==================> " + GET_USER_TYPE_LIST + " " +str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -576,7 +586,9 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
     private void GetFYearList() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FY_YEAR_LIST,
                 response -> {
-                    Log.e("Data", response);
+                    //Log.e("Data", response);
+
+                    Log.i("TaG","res ==================> " + GET_FY_YEAR_LIST + " " +response);
                     //JSONObject jsonObject = new JSONObject(response);
                     FYearList pojo = new Gson().fromJson(response, fYearType);
                     fYearListResults.clear();
@@ -594,7 +606,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                                 Log.e("slecteYr", SharedPref.read(SharedPref.selected_default_yr, "") + i);
 
                                 break;
-                            } else if (pojo.getFYearListResult().get(i).getmDEFAULTDB().equals("True")) {
+                            } else if (pojo.getFYearListResult().get(i).getmDEFAULTDB().equals(pojo.getFYearListResult().get(i).getFYEAR())) {
                                 Log.e("defult_db_secound",pojo.getFYearListResult().get(i).getmDEFAULTDB());
                                 pojo.getFYearListResult().get(i).setChecked(true);
                                 SharedPref.write(SharedPref.default_db, i + "");
@@ -618,6 +630,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                 // String otpp = otp.getText().toString();
                 String str = "{\"MOBILENO\":\"" + mob + "\"}";
                 Log.e("str", str);
+                Log.i("TaG","req ==================> " + GET_FY_YEAR_LIST + " " +str);
                 return str.getBytes();
             }
 

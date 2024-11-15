@@ -74,7 +74,7 @@ public class DrNoteActivity extends AppCompatActivity {
     private void GetDebitNoteReport() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DEBIT_NOTE_REPORT, response -> {
-            Log.e("Data", response);
+            Log.e("Data", GET_DEBIT_NOTE_REPORT  + "========" + response);
 
             DebitNotePojo pojo = new Gson().fromJson(response, listType);
             try {

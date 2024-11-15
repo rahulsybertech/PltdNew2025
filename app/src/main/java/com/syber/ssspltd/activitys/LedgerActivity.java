@@ -169,7 +169,13 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                             intent.getStringExtra("ledger_ToDate"), intent.getStringExtra("entry")
                             , intent.getStringExtra("adjustment"), dnNAME, intent.getStringExtra("account"), true);
                 } else {
-                    GetLedgerReport(led_formDate, led_toDate, "", adjustment, dnNAME, account, false);
+                    if (isSetFYDate()) {
+                        GetLedgerReport(StartDate_filter, Enddate_filter, "", adjustment, dnNAME, account, false);
+
+                    }else {
+                        GetLedgerReport(led_formDate, led_toDate, "", adjustment, dnNAME, account, false);
+
+                    }
                 }
             } else {
 
@@ -207,11 +213,14 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             // ACCORDING TO FILTER
             Intent intent = getIntent();
             if (intent != null) {
-                loader.show();
                 if (intent.getStringExtra("ledgerDate") != null || intent.getStringExtra("ledger_ToDate") != null) {
-                    GetCompleteLedgerPDF(intent.getStringExtra("ledgerDate"),
-                            intent.getStringExtra("ledger_ToDate"), intent.getStringExtra("entry")
-                            , intent.getStringExtra("adjustment"), dnNAME, intent.getStringExtra("account"));
+                    GetCompleteLedgerPDF(   intent.getStringExtra("ledgerDate"),
+                                            intent.getStringExtra("ledger_ToDate"),
+                                            intent.getStringExtra("entry"),
+                                            intent.getStringExtra("adjustment"),
+                                            dnNAME,
+                                            intent.getStringExtra("account")
+                                        );
                 } else {
                     GetCompleteLedgerPDF(led_formDate, led_toDate, "", adjustment, dnNAME, account);
                 }
@@ -222,6 +231,29 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
 //            NORMAL|| ALL WITHOUT FILTER
         //    GetCompleteLedgerPDF();
         });
+    }
+
+    private Boolean isSetFYDate() {
+        if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
+            StartDate_filter = "01/04/2024";
+            Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-2024")) {
+            StartDate_filter = "01/04/2023";
+            Enddate_filter = "31/03/2024";
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2022-2023")) {
+            StartDate_filter = "01/04/2022";
+            Enddate_filter = "31/03/2023";
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2021-2022")) {
+            StartDate_filter = "01/04/2021";
+            Enddate_filter = "31/03/2022";
+        }  else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
+            StartDate_filter = "01/04/2020";
+            Enddate_filter = "31/03/2021";
+        } else {
+            return false;
+
+        }
+        return true;
     }
 
     private void GetLedgerReport(String formDate, String toDate, String status, String tick, String db_name, String ledger_type, boolean isisFilterApplied) {
@@ -245,20 +277,35 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                         ledgerReportAdapter.notifyDataSetChanged();
                         binding.currentBalLeg.setVisibility(View.VISIBLE);
                         //  StartDate_filter = pojo.getStartDate();
-                        StartDate_filter = pojo.getmDefaultStartDate();
-                        Enddate_filter = pojo.getmDefaultEndDate();
+
+                        if(isSetFYDate() == false) {
+                            StartDate_filter = pojo.getmDefaultStartDate();
+                            Enddate_filter = pojo.getmDefaultEndDate();
+                        }
+
+
+                        /*StartDate_filter = pojo.getmDefaultStartDate();
+                        Enddate_filter = pojo.getmDefaultEndDate();*/
                         // Enddate_filter = pojo.getEnddate();
                         SharedPref.write(SharedPref.END_DATE, pojo.getEnddate());
                         SharedPref.write(SharedPref.START_DATE, pojo.getStartDate());
                         if (!isisFilterApplied) {
                             textDate.setVisibility(View.VISIBLE);
-                            textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                            if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                                textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                            } else {
+                                textDate.setText("");
+                            }
                             pdfFromDate = pojo.getmDefaultStartDate();
                             pdfToDate = pojo.getmDefaultEndDate();
                            // Log.e("pdfFromDate",pdfFromDate);
                         } else {
                             textDate.setVisibility(View.VISIBLE);
-                            textDate.setText(formDate + " To " + toDate);
+                            if(formDate != null && toDate != null && !formDate.isEmpty() && !toDate.isEmpty()) {
+                                textDate.setText(formDate + " To " + toDate);
+                            }else {
+                                textDate.setText("");
+                            }
                             pdfFromDate = formDate;
                             pdfToDate = toDate;
                          //   Log.e("formDate",formDate);
@@ -281,22 +328,33 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                     } else {
                         if (!isisFilterApplied) {
                             textDate.setVisibility(View.VISIBLE);
-                            textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                            if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                                textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                            }else {
+                                textDate.setText("");
+                            }
                         } else {
                             textDate.setVisibility(View.VISIBLE);
-                            textDate.setText(formDate + " To " + toDate);
+                            if(formDate != null && toDate != null && !formDate.isEmpty() && !toDate.isEmpty()) {
+                                textDate.setText(formDate + " To " + toDate);
+                            }else {
+                                textDate.setText("");
+                            }
                         }
-                        if (SharedPref.read(SharedPref.selected_default_yr, "").equals("23-24")) {
-                            StartDate_filter = "01/04/2023";
+                        Log.i("TaG","ledger fy data -===========================>" + SharedPref.read(SharedPref.selected_default_yr, ""));
+                        if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
+                            StartDate_filter = "01/04/2024";
                             Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
-                        }
-                        else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("22-23")) {
+                        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-2024")) {
+                            StartDate_filter = "01/04/2023";
+                            Enddate_filter = "31/03/2024";
+                        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2022-2023")) {
                             StartDate_filter = "01/04/2022";
                             Enddate_filter = "31/03/2023";
-                        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("21-22")) {
+                        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2021-2022")) {
                             StartDate_filter = "01/04/2021";
                             Enddate_filter = "31/03/2022";
-                        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("20-21")) {
+                        }  else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
                             StartDate_filter = "01/04/2020";
                             Enddate_filter = "31/03/2021";
                         } else {
@@ -330,6 +388,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                Log.i("TaG", "token --=-==> " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
                 return headers;
             }
             @Override
@@ -353,11 +412,13 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
     }
 
     public  void GetCompleteLedgerPDF(String formDate, String toDate, String status, String tick, String db_name, String ledger_type) {
+        loader.show();
+        Log.i("TaG","GetCompleteLedgerPDF   call");
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_COMPLETE_LEDGER_PDF,
                 response -> {
                     Log.e("LedgerPdfResponse", response);
+                    loader.dismiss();
                     try {
-                        loader.dismissWithAnimation();
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.getBoolean("ResponseStatus")) {
                             String download_pdf = jsonObject.optString("CompletePDF");
@@ -372,7 +433,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
 
                     }
                 }, error -> {
-                        loader.dismissWithAnimation();
+                        loader.dismiss();
                         AlertUtil.responseError(mContext, "GetCompleteLedgerPDF ", error.toString());
                         // progressBar.cancel();
                     }) {
@@ -395,6 +456,10 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                             return "application/json; charset=utf-8";
                         }
                     };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
@@ -635,7 +700,6 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             if (isSelected.size() > 0) {
                 StringBuilder sb = new StringBuilder();
                 StringBuilder sb1 = new StringBuilder();
-
                 brand_array = new Gson().toJson(isSelected);
                 try {
                     JSONArray jsonArray = new JSONArray(brand_array);

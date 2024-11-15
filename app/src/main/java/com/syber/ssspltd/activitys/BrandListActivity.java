@@ -1,5 +1,6 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_BRAND_MASTER_DETAIL;
 import static com.syber.ssspltd.activitys.Const.BRANDNAME;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.SharedPref;
+import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.BrandListAdapter;
 import com.syber.ssspltd.databinding.ActivityBrandListBinding;
@@ -84,9 +86,10 @@ public class BrandListActivity extends AppCompatActivity {
 
     private void GetBranands(String branchId) {
       binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetBrandMasterDetails",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_BRAND_MASTER_DETAIL,
                 response -> {
                     Log.e("Data", response);
+                    Util.getInstance().logLargeString("TaG","====>" + response);
                    binding.includeProgress.progress.setVisibility(View.GONE);
                     BrandsPojo pojo = new Gson().fromJson(response,listType);
                     try {

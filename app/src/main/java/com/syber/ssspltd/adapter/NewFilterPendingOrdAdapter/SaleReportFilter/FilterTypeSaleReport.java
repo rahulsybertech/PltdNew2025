@@ -7,5 +7,6 @@ public enum FilterTypeSaleReport {
     SUB_PARTY,
     TRANSPORT,
     SALE_REPORT,
+    SUPPLIER,
     CLEAR
 }

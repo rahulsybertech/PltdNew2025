@@ -203,7 +203,12 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                             intent.getStringExtra("courierNo"), intent.getStringExtra("courierBill_no")
                             , intent.getStringExtra("formDate"), intent.getStringExtra("todate"), dbNAME, true);
                 } else {
-                    GetCourierReport(courierName, courierNo, courierBill_no, form_date, to_Date, dbNAME, false);
+
+                    if (isSetFYDate()) {
+                        GetCourierReport(courierName, courierNo, courierBill_no, StartDate_filter, Enddate_filter, dbNAME, false);
+                    }else {
+                        GetCourierReport(courierName, courierNo, courierBill_no, form_date, to_Date, dbNAME, false);
+                    }
                 }
             } else {
 
@@ -211,6 +216,30 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
         } else {
             networkConnetion3(mContext);
         }
+    }
+
+
+    private Boolean isSetFYDate() {
+        if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
+            StartDate_filter = "01/04/2024";
+            Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-2024")) {
+            StartDate_filter = "01/04/2023";
+            Enddate_filter = "31/03/2024";
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2022-2023")) {
+            StartDate_filter = "01/04/2022";
+            Enddate_filter = "31/03/2023";
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2021-2022")) {
+            StartDate_filter = "01/04/2021";
+            Enddate_filter = "31/03/2022";
+        }  else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
+            StartDate_filter = "01/04/2020";
+            Enddate_filter = "31/03/2021";
+        } else {
+            return false;
+
+        }
+        return true;
     }
 
     private void GetCourierReport(String courierName, String courierNo, String courierBill_no, String form_Date, String to_date, String db_name, boolean isisFilterApplied) {
@@ -230,19 +259,30 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                                 binding.includeProgress.noData.setVisibility(View.GONE);
                                 courierDetails.addAll(pojo.getCourierReportResult());
                                 courierAdapter.notifyDataSetChanged();
-                                StartDate_filter = pojo.getmDefaultStartDate();
-                                Enddate_filter = pojo.getmDefaultEndDate();
+
+                                if(isSetFYDate() == false) {
+                                    StartDate_filter = pojo.getmDefaultStartDate();
+                                    Enddate_filter = pojo.getmDefaultEndDate();
+                                }
+
                                 // Enddate_filter = pojo.getEnddate();
                                 SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
                                 SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
 
                                 Log.e("dateFilter", pojo.getmStartDate());
                                 if (!isisFilterApplied) {
-                                    binding.tool.textDate.setVisibility(View.VISIBLE);
-                                    binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                    binding.tool.textDate.setVisibility(View.VISIBLE);if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                                        binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                    } else {
+                                        binding.tool.textDate.setText("");
+                                    }
                                 } else {
                                     binding.tool.textDate.setVisibility(View.VISIBLE);
-                                    binding.tool.textDate.setText(form_Date + " To " + to_date);
+                                    if(form_Date != null && to_date != null && !form_Date.isEmpty() && !to_date.isEmpty()) {
+                                        binding.tool.textDate.setText(form_Date + " To " + to_date);
+                                    }else {
+                                        binding.tool.textDate.setText("");
+                                    }
                                 }
 //                            binding.tool.textDate.setVisibility(View.VISIBLE);
 //                            binding.tool.textDate.setText(pojo.getmDefaultStartDate()+" To "+pojo.getmDefaultEndDate());
@@ -263,10 +303,18 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                             } else {
                                 if (!isisFilterApplied) {
                                     binding.tool.textDate.setVisibility(View.VISIBLE);
-                                    binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                    binding.tool.textDate.setVisibility(View.VISIBLE);if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                                        binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                    } else {
+                                        binding.tool.textDate.setText("");
+                                    }
                                 } else {
                                     binding.tool.textDate.setVisibility(View.VISIBLE);
-                                    binding.tool.textDate.setText(form_Date + " To " + to_date);
+                                    if(form_Date != null && to_date != null && !form_Date.isEmpty() && !to_date.isEmpty()) {
+                                        binding.tool.textDate.setText(form_Date + " To " + to_date);
+                                    }else {
+                                        binding.tool.textDate.setText("");
+                                    }
                                 }
                                 StartDate_filter = pojo.getmDefaultStartDate();
                                 Enddate_filter = pojo.getmDefaultEndDate();
@@ -723,6 +771,10 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
         });
         //   getSIze(getIntent().getStringExtra("d_code"),false);
         dialog.show();
+
+        getFilters(FilterTypeCourierReport.COURIER_NAME);
+        getFilters(FilterTypeCourierReport.COURIER_NO);
+        getFilters(FilterTypeCourierReport.SALE_BILL_NO);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

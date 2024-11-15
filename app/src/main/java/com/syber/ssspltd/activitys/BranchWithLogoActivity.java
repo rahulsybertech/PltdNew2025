@@ -30,6 +30,7 @@ import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.SharedPref;
+import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.BrancheWithLogoAdapter;
 import com.syber.ssspltd.databinding.ActivityBranchWithLogoBinding;
@@ -86,7 +87,8 @@ public class BranchWithLogoActivity extends AppCompatActivity {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_BRANCHES,
                 response -> {
-                    Log.e("Data", response);
+                    Log.e("TaG", "Url " + GET_BRANCHES);
+                    Util.getInstance().logLargeString("TaG",response);
                     binding.includeProgress.progress.setVisibility(View.GONE);
                     BranchesPojo pojo = new Gson().fromJson(response,listType);
                     try {
@@ -115,6 +117,7 @@ public class BranchWithLogoActivity extends AppCompatActivity {
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE,"");
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("str", str);
+                Log.i("TaG","req   =====" + GET_BRANCHES + " " + str);
                 return str.getBytes();
             }
             public String getBodyContentType()

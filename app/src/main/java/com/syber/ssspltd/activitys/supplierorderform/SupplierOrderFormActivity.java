@@ -111,6 +111,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     private final Context mContext = this;
     String dateFlag = "";
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+    private Boolean isPlacedOrderBtnEnabled = true;
 
 
     ArrayList<MarketerModel> marketerModelList, marketerData;
@@ -194,7 +195,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 //        getTransportDetails(SharedPref.read(SharedPref.PARTY_CODE,""), accountId, "SELF");
 //        getScheme(accountId);
         getPcsType(SharedPref.read(SharedPref.PARTY_CODE, ""), selectedSuperStar);
-        getStation();
+        //getStation();
 
 
         binding.placeholder1.setImageResource(R.drawable.ic_baseline_add_a_photo_blue);
@@ -204,8 +205,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.placeholder5.setImageResource(R.drawable.ic_baseline_add_a_photo_blue);
 
 //        dattAhead(CurrentDateTime.getCurrentDateString());
-        binding.date.setText(CurrentDateTime.getCurrentDateStringDDMMYYYY());
-        dattAhead(CurrentDateTime.getCurrentDateStringDDMMYYYY());
+//        binding.date.setText(CurrentDateTime.getCurrentDateStringDDMMYYYY());
+//        dattAhead(CurrentDateTime.getCurrentDateStringDDMMYYYY());
 //        binding.dateTo.setText(CurrentDateTime.getCurrentDateStringDDMMYYYY());
 
         handleEditInit();
@@ -978,8 +979,6 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
         if (sdata.size() > 0) {
             filterStation(stData);
-        } else {
-            getStation();
         }
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -1004,7 +1003,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         stationAdapter = new StationAdapter(this, stationModelList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(stationAdapter);
-        getStation();
+        if (selectedAccountId != null && !selectedAccountId.isEmpty()) getStation();
         sDialog.show();
     }
 
@@ -1218,6 +1217,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     salepartyModelList.add(salepartyModel);
 
                 }
+                getStation();
                 salePartyAdapter.notifyDataSetChanged();
             } catch (Exception e) {
                 Log.e("Exce", e.toString());
@@ -1450,7 +1450,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                 JSONObject jsonBody = new JSONObject();
                 try {
 
-                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
+//                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
+                    jsonBody.put("SupplierAccountID", selectedAccountId);
 
                     Log.i("TaG", "Request " + STATION_LIST  +"---> " + jsonBody);
                     return jsonBody.toString().getBytes("utf-8");
@@ -1740,6 +1741,11 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             binding.dateTo.setText(simpleDateFormat.format(calendar.getTime()));
         }
 
+        if (!binding.date.getText().toString().isEmpty() && !binding.dateTo.getText().toString().isEmpty()) {
+            binding.date.setError(null);
+            binding.dateTo.setError(null);
+        }
+
     }
 
     public String dattAhead(String date) {
@@ -1812,8 +1818,11 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void handleClickListner() {
         binding.placeOrder.setOnClickListener(v -> {
-            if (validate())
+            if (validate() && isPlacedOrderBtnEnabled) {
+                isPlacedOrderBtnEnabled = false;
                 SendData();
+            }
+
         });
         binding.image1.setOnClickListener(v -> BottomSheet(101));
         binding.image2.setOnClickListener(v -> BottomSheet(102));
@@ -1918,20 +1927,51 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.setDateTo.setOnClickListener(view -> {
             dateFlag = "to";
             String ddd = binding.date.getText().toString();
-            StringTokenizer tokens = new StringTokenizer(ddd, "/");
-            String dd = tokens.nextToken();// this will contain "Fruit"
-            String mm = tokens.nextToken();
-            String yy = tokens.nextToken();
-            showDate(Integer.parseInt(yy), Integer.parseInt(mm) - 1, Integer.parseInt(dd) + 3, R.style.NumberPickerStyle);
+            try{
+                int day, month, year;
+
+                if (ddd.isEmpty()) {
+                    Calendar calendar = Calendar.getInstance();
+                    day = calendar.get(Calendar.DAY_OF_MONTH);
+                    month = calendar.get(Calendar.MONTH);
+                    year = calendar.get(Calendar.YEAR);
+                } else {
+                    StringTokenizer tokens = new StringTokenizer(ddd, "/");
+                    day = Integer.parseInt(tokens.nextToken());
+                    month = Integer.parseInt(tokens.nextToken());
+                    year = Integer.parseInt(tokens.nextToken());
+                }
+
+                showDate(year, month-1, day + 3 , R.style.NumberPickerStyle);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         });
+
         binding.dateTo.setOnClickListener(view -> {
             dateFlag = "to";
             String ddd = binding.date.getText().toString();
-            StringTokenizer tokens = new StringTokenizer(ddd, "/");
-            String dd = tokens.nextToken();// this will contain "Fruit"
-            String mm = tokens.nextToken();
-            String yy = tokens.nextToken();
-            showDate(Integer.parseInt(yy), Integer.parseInt(mm) - 1, Integer.parseInt(dd), R.style.NumberPickerStyle);
+
+            try{
+                int day, month, year;
+
+                if (ddd.isEmpty()) {
+                    Calendar calendar = Calendar.getInstance();
+                    day = calendar.get(Calendar.DAY_OF_MONTH);
+                    month = calendar.get(Calendar.MONTH);
+                    year = calendar.get(Calendar.YEAR);
+                } else {
+                    StringTokenizer tokens = new StringTokenizer(ddd, "/");
+                    day = Integer.parseInt(tokens.nextToken());
+                    month = Integer.parseInt(tokens.nextToken());
+                    year = Integer.parseInt(tokens.nextToken());
+                }
+
+                showDate(year, month, day + 3 , R.style.NumberPickerStyle);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -2008,6 +2048,14 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             binding.llRow.qty.requestFocus();
             temp=false;
 //          binding.scroll.smoothScrollTo(binding.llRow.amount.getScrollX(),binding.llRow.amount.getScrollY());
+        } else  if (binding.date.getText().toString().isEmpty() ) {
+            binding.date.setError("Can't be empty");
+            temp=false;
+//          binding.scroll.smoothScrollTo(binding.llRow.amount.getScrollX(),binding.llRow.amount.getScrollY());
+        } else  if (binding.dateTo.getText().toString().isEmpty() ) {
+            binding.dateTo.setError("Can't be empty");
+            temp=false;
+//          binding.scroll.smoothScrollTo(binding.llRow.amount.getScrollX(),binding.llRow.amount.getScrollY());
         }
         return temp;
     }
@@ -2017,8 +2065,10 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         progress.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, SAVE_ORDER,
                 response -> {
-            Log.i("TaG", "Response " + SAVE_ORDER  +"---> " + response);
+            Util.getInstance().logLargeString("TaG","Response " + SAVE_ORDER  +"---> " + response);
+//            Log.i("TaG", "Response " + SAVE_ORDER  +"---> " + response);
             progress.dismiss();
+            isPlacedOrderBtnEnabled = true;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getInt("ResponseCode")==200) {
@@ -2043,14 +2093,21 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     new AlertDialog.Builder(mContext).setMessage(jsonObject.getString("ResponseMessage") + "").setPositiveButton("Retry", (arg0, arg1) -> SendData()).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show();
                 }
             } catch (JSONException e) {
+
                 e.printStackTrace();
             }
-        }, error -> new AlertDialog.Builder(mContext).setMessage("Try again.. Somthing went wrong").setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-                progress.dismiss();
-                SendData();
-            }
-        }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show()) {
+        }, error -> {
+
+            isPlacedOrderBtnEnabled = true;
+            new AlertDialog.Builder(mContext).setMessage("Try again.. Somthing went wrong").setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                    progress.dismiss();
+                    SendData();
+                }
+            }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show();
+        })
+
+                 {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 progress.dismiss();
@@ -2088,6 +2145,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                         ",\"Image5\":\"" + img5 + "\"" + "}";
 
                 Log.i("TaG", "Request " + SAVE_ORDER  +"---> " + str);
+                Util.getInstance().logLargeString("TaG","Request " + SAVE_ORDER  +"---> " + str);
 
                 return str.getBytes();
             }

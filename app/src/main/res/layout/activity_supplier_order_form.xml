@@ -225,6 +225,7 @@
                                   android:layout_height="45dp"
                                   android:layout_marginStart="2dp"
                                   android:layout_marginTop="5dp"
+                                  android:inputType="numberPassword"
                                   android:background="@drawable/otp_line_fade"
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
@@ -255,6 +256,7 @@
                                   android:layout_height="45dp"
                                   android:layout_marginLeft="2dp"
                                   android:layout_marginTop="5dp"
+                                  android:inputType="textPassword"
                                   android:background="@drawable/otp_line_fade"
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
@@ -742,10 +744,12 @@
                             android:visibility="visible" />
 
                         <LinearLayout
+                            android:id="@+id/llDispatchDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
                               <LinearLayout
+                                  android:id="@+id/llFromDate"
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
                                   android:layout_weight="1">
@@ -780,6 +784,7 @@
                               </LinearLayout>
 
                               <LinearLayout
+                                  android:id="@+id/llToDate"
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
                                   android:layout_weight="1">

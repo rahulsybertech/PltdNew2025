@@ -63,7 +63,7 @@ public class Lazy {
     }
 
     public static String amountFormat(String amt){
-        DecimalFormat formatter = new DecimalFormat("#,##,###.00");
+        DecimalFormat formatter = new DecimalFormat("#,##0.0#");
         String formatedAmt =  formatter.format(Double.parseDouble(amt));
         return formatedAmt;
     }

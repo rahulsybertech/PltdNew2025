@@ -192,7 +192,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 } else {
 
                  //   Log.e("isFilterDate_false", "isFilterDate_false");
-                    GetSaleReport(banch, supplier, subparty, transport, sale_formDate, sale_toDate, dbNAME, false);
+                    if (isSetFYDate()) {
+                        GetSaleReport(banch, supplier, subparty, transport, StartDate_filter, Enddate_filter, dbNAME, false);
+                    }else {
+                        GetSaleReport(banch, supplier, subparty, transport, sale_formDate, sale_toDate, dbNAME, false);
+                    }
                 }
             }else {
 
@@ -272,6 +276,29 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         alertDialog.show();
     }
 
+    private Boolean isSetFYDate() {
+        if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
+            StartDate_filter = "01/04/2024";
+            Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-2024")) {
+            StartDate_filter = "01/04/2023";
+            Enddate_filter = "31/03/2024";
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2022-2023")) {
+            StartDate_filter = "01/04/2022";
+            Enddate_filter = "31/03/2023";
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2021-2022")) {
+            StartDate_filter = "01/04/2021";
+            Enddate_filter = "31/03/2022";
+        }  else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
+            StartDate_filter = "01/04/2020";
+            Enddate_filter = "31/03/2021";
+        } else {
+            return false;
+
+        }
+        return true;
+    }
+
     private void GetSaleReport(String branch, String supplier, String subparty, String transport, String form_date, String to_date, String db_name,boolean isFillterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
             StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SALE_REPORT,
@@ -285,8 +312,12 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                             binding.includeProgress.noData.setVisibility(View.GONE);
                             saleReportDetails.addAll(pojo.getSaleReportResult());
                             saleReportAdapter.notifyDataSetChanged();
-                            StartDate_filter = pojo.getmDefaultStartDate();
-                            Enddate_filter = pojo.getmDefaultEndDate();
+
+                            if(isSetFYDate() == false) {
+                                StartDate_filter = pojo.getmDefaultStartDate();
+                                Enddate_filter = pojo.getmDefaultEndDate();
+                            }
+
                             // Enddate_filter = pojo.getEnddate();
                             SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
                             SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
@@ -294,10 +325,18 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
 
                             if (!isFillterApplied) {
                                 binding.l.textDate.setVisibility(View.VISIBLE);
-                                binding.l.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                if(pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                                    binding.l.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                } else {
+                                    binding.l.textDate.setText("");
+                                }
                             } else {
                                 binding.l.textDate.setVisibility(View.VISIBLE);
-                                binding.l.textDate.setText(form_date + " To " + to_date);
+                                if (form_date != null && to_date != null && !form_date.isEmpty() && !to_date.isEmpty()) {
+                                    binding.l.textDate.setText(form_date + " To " + to_date);
+                                } else {
+                                    binding.l.textDate.setText("");
+                                }
                             }
 
                             //  Log.e("dateFilter", pojo.getmStartDate());
@@ -318,10 +357,18 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         } else {
                             if (!isFillterApplied) {
                                 binding.l.textDate.setVisibility(View.VISIBLE);
-                                binding.l.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                if(pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                                    binding.l.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                                } else {
+                                    binding.l.textDate.setText("");
+                                }
                             } else {
                                 binding.l.textDate.setVisibility(View.VISIBLE);
-                                binding.l.textDate.setText(form_date + " To " + to_date);
+                                if (form_date != null && to_date != null && !form_date.isEmpty() && !to_date.isEmpty()) {
+                                    binding.l.textDate.setText(form_date + " To " + to_date);
+                                } else {
+                                    binding.l.textDate.setText("");
+                                }
                             }
                             StartDate_filter = pojo.getmDefaultStartDate();
                             Enddate_filter = pojo.getmDefaultEndDate();
@@ -834,6 +881,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             return true;
         });
         dialog.show();
+
+        getFilters(FilterTypeSaleReport.BRANCH);
+        getFilters(FilterTypeSaleReport.SUB_PARTY);
+        getFilters(FilterTypeSaleReport.TRANSPORT);
+        getFilters(FilterTypeSaleReport.BRAND_NAME);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -861,12 +913,13 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             SaleReportPojo pojo = new Gson().fromJson(response, branchType);
          //   Log.e("getFilterRespo",response);
             Log.i("TaG","url " + Request.Method.POST + " =--=-=> " + GET_FILTER_LIST_NEW);
-            Log.i("TaG","response -=-=-=-=-=-=--=-=> " + pojo);
+            Log.i("TaG","response -=-=-=-=-=-=--=-=> " + response);
             if (pojo.getResponseStatus()) {
                 progressBar.setVisibility(View.GONE);
                 nodata.setVisibility(View.GONE);
                 Log.e("mFilterType",mFilterType+"");
                 Log.e("filterStack",filterStack+"");
+                Log.e("keyTypeList",keyTypeList+"");
 
                 switch (mFilterType) {
                     case BRANCH:
@@ -975,6 +1028,10 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                             // entryTypeList.addAll(ledgerPogo.getEntryType());
                         }
                         filterTesnportAdpter.notifyDataSetChanged();
+
+                        break;
+
+                    case SUPPLIER:
 
                         break;
                     case CLEAR:

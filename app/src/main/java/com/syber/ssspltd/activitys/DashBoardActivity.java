@@ -1,5 +1,10 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_DASHBOARD_ALL_DATA;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_PENDING_ORDER_BRANCH_WISE;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_STOCK_IN_OFFICE_BRANCH_WISE;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,7 +44,9 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DashBoardActivity extends AppCompatActivity {
     Context mContext = this;
@@ -132,11 +139,12 @@ public class DashBoardActivity extends AppCompatActivity {
     }
   boolean DashboardAllData() {
       binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetDashboardAllData",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DASHBOARD_ALL_DATA,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.e("Data", response);
+                        Log.i("TaG","resp -===============>" + GET_DASHBOARD_ALL_DATA + " " + response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (jsonObject.getBoolean("ResponseStatus") == true) {
@@ -175,8 +183,16 @@ public class DashBoardActivity extends AppCompatActivity {
                 String mob2 = SharedPref.read(SharedPref.USERMOBILE, "");
                 String str = "{\"MOBILENO\":\"" + mob2 + "\",\"ACCOUNTID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"")+ "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
 
+                Log.i("TaG","req -===============>" + GET_DASHBOARD_ALL_DATA + " " + str);
                 Log.e("str", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType() {
@@ -194,11 +210,12 @@ public class DashBoardActivity extends AppCompatActivity {
 
 
     private void GetPendingOrderBranchWise() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetPendingOrderBranchWise",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_PENDING_ORDER_BRANCH_WISE,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.e("Data", response);
+                        Log.i("TaG","res -===============>" + GET_PENDING_ORDER_BRANCH_WISE + " " + response);
                         PendingOrderBWPojo pojo = new Gson().fromJson(response,listType);
                         if (pojo.getResponseStatus()){
                             totalPendingOrderDetails.clear();
@@ -221,7 +238,15 @@ public class DashBoardActivity extends AppCompatActivity {
                 Object a = null;
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"ACCOUNTID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("str", str);
+                Log.i("TaG","req -===============>" + GET_PENDING_ORDER_BRANCH_WISE + " " + str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
             }
 
             public String getBodyContentType()
@@ -229,17 +254,22 @@ public class DashBoardActivity extends AppCompatActivity {
                 return "application/json; charset=utf-8";
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
 
     private void GetStockInOfficeBranchWise() {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetStockInOfficeBranchWise",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_STOCK_IN_OFFICE_BRANCH_WISE,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.e("Data", response);
+                        Log.i("TaG","res -===============>" + GET_STOCK_IN_OFFICE_BRANCH_WISE + " " + response);
                         //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show()
                         StockInOfficeBWPojo pojo = new Gson().fromJson(response,listType2);
                         if (pojo.getResponseStatus()){
@@ -261,14 +291,27 @@ public class DashBoardActivity extends AppCompatActivity {
                 Object a = null;
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"ACCOUNTID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("str", str);
+                Log.i("TaG","req -===============>" + GET_STOCK_IN_OFFICE_BRANCH_WISE + " " + str);
                 return str.getBytes();
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                return headers;
+            }
+
 
             public String getBodyContentType()
             {
                 return "application/json; charset=utf-8";
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                20000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
     public void  networkConnetion3(Context mContext) {

@@ -32,7 +32,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
     RemotePDFViewPager remotePDFViewPager;
     LinearLayout linear_layout_pdf;
     String pdfUrl;
-    ImageView share,downloadPdf;
+    ImageView share,downloadPdf, ivBack;
     ProgressBar progressBar;
 
     Toolbar toolbar;
@@ -43,6 +43,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf_view);
         progressBar = findViewById(R.id.progress);
+        ivBack = findViewById(R.id.ivBack);
         progressBar.setVisibility(View.VISIBLE);
 //        toolbar = findViewById(R.id.toolbar);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -57,6 +58,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
 
         share = findViewById(R.id.share);
         downloadPdf = findViewById(R.id.download);
+        ivBack.setOnClickListener(v -> onBackPressed());
         share.setOnClickListener(v->sharePDF());
         downloadPdf.setOnClickListener(v-> FileDownloader.downloadPDF(this,pdfUrl));
         linear_layout_pdf = findViewById(R.id.linear_layout_pdf);
@@ -91,7 +93,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
 
     @Override
     public void onFailure(Exception e) {
-        AlertUtil.responseExecption(this,"PDF Error",e.toString());
+        AlertUtil.responseExecption(this,"PDF Error","PDF Not Found");
         progressBar.setVisibility(View.GONE);
 
     }

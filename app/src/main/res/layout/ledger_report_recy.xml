@@ -12,13 +12,15 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_grey_corner">
 
         <RelativeLayout
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:paddingStart="10dp"
             android:layout_weight="1"
+            android:background="@drawable/bg_grey_corner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -96,6 +98,7 @@
             app:autoSizeTextType="none"
             android:textSize="12sp"
             android:id="@+id/ledger_credit"
+            android:background="@drawable/bg_grey_corner"
             android:gravity="center"
             android:layout_weight="1.4"
             android:layout_width="match_parent"

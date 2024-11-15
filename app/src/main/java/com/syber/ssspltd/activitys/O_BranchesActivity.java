@@ -1,5 +1,9 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_BRANCHES;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_BRANCHES_GODOWN_PACKING;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,7 +42,9 @@ import com.syber.ssspltd.response.BranchesResponse.BranchesResult;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class O_BranchesActivity extends AppCompatActivity {
 
@@ -84,9 +90,9 @@ public class O_BranchesActivity extends AppCompatActivity {
 
     private void GetBranches() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetBranches",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_BRANCHES,
                 response -> {
-                    Log.e("Data", response);
+                    Log.e("Data", GET_BRANCHES  + "===="  +response);
                    binding.includeProgress.progress.setVisibility(View.GONE);
                     BranchesPojo pojo = new Gson().fromJson(response,listType);
                     try {
@@ -105,13 +111,20 @@ public class O_BranchesActivity extends AppCompatActivity {
                 }, error ->
             AlertUtil.responseError(mContext, "GetBranches ", error.toString()))
                 {
-            @Override
+            /*@Override
             public byte[] getBody() throws AuthFailureError {
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE,"");
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
-            }
+            }*/
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                    return headers;
+                }
 
             public String getBodyContentType()
             {

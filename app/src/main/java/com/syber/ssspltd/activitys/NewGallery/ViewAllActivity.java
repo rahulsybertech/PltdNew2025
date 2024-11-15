@@ -1,5 +1,6 @@
 package com.syber.ssspltd.activitys.NewGallery;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_YEAR_WISE_ALL_IMAGES;
 import static com.syber.ssspltd.activitys.Const.EVENTID;
 import static com.syber.ssspltd.activitys.Const.EVENTNAME;
 
@@ -27,6 +28,7 @@ import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.NewGalleryAdap.ViewAllAdapter;
 import com.syber.ssspltd.databinding.ActivityViewAllBinding;
@@ -35,6 +37,8 @@ import com.syber.ssspltd.response.NewGalleryResponse.ViewAll.ViewAllPojo;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ViewAllActivity extends AppCompatActivity {
     private ActivityViewAllBinding binding;
@@ -75,9 +79,9 @@ public class ViewAllActivity extends AppCompatActivity {
 
     private void GetImageList() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetYearWiseAllImages",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_YEAR_WISE_ALL_IMAGES,
                 response -> {
-                    Log.e("Data", response);
+                    Log.e("Data", GET_YEAR_WISE_ALL_IMAGES + " === " + response);
                     binding.includeProgress.progress.setVisibility(View.GONE);
                     ViewAllPojo pojo = new Gson().fromJson(response,listType);
                     try {
@@ -97,6 +101,12 @@ public class ViewAllActivity extends AppCompatActivity {
                 String str = "{\"EventID\":\"" + getIntent().getStringExtra(EVENTID) + "\",\"YearID\":\"" + getIntent().getStringExtra("year_id") + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
             public String getBodyContentType()
             {

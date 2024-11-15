@@ -1,5 +1,8 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_NEW_USER_DETAILS;
+import static com.syber.ssspltd.Constants.NewErpUrls.VERIFY_REFERRAL;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -45,8 +48,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class GST_NumberActivity extends AppCompatActivity {
     private ActivityGstNumberBinding binding;
@@ -155,10 +160,10 @@ public class GST_NumberActivity extends AppCompatActivity {
     private void getGST_PAN(String mob,String referal,String gst,String name,String latitude,String longitude,String add_result,String firmName) {
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("Loading....");
-        progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/SaveNewUserDetails",
+        progressBar.show();//"http://app.ssspltd.com/apipltd/SaveNewUserDetails" old url
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, SAVE_NEW_USER_DETAILS,
                 response -> {
-                    Log.e("response", response);
+                    Log.e("response", SAVE_NEW_USER_DETAILS + " ======== " + response);
                     progressBar.dismiss();
                     //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                     try {
@@ -197,7 +202,12 @@ public class GST_NumberActivity extends AppCompatActivity {
                 Log.e("str", str);
                 return str.getBytes();
             }
-
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -290,10 +300,10 @@ public class GST_NumberActivity extends AppCompatActivity {
     private void REFERRAL(String referal) {
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("REFERRAL");
-        progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/VerifyReferral",
+        progressBar.show();//"http://app.ssspltd.com/apipltd/VerifyReferral" old url
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, VERIFY_REFERRAL,
                 response -> {
-                    Log.e("Data", response);
+                    Log.e("Data", VERIFY_REFERRAL + " ======== " + response);
                     progressBar.dismiss();
                     //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                     try {
@@ -326,6 +336,13 @@ public class GST_NumberActivity extends AppCompatActivity {
                 String str = "{\"REFERRAL\":\"" + referal + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {

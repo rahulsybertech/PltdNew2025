@@ -20,6 +20,7 @@ import com.syber.ssspltd.Interface.RefreshOrderReport;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.SharedPref;
+import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.supplierformadapter.SupplierOrderReportAdptr;
 import com.syber.ssspltd.databinding.ActivitySupplierReportBinding;
@@ -89,6 +90,7 @@ public class SupplierReportActivity extends AppCompatActivity implements Refresh
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ORDER_REPORT, response -> {
 //            loading.setVisibility(View.GONE);
             Log.e("pendingRespo", response);
+            Util.getInstance().logLargeString("TaG",response);
             Log.e("TaG", "url -=-=" + ORDER_REPORT);
             try {
                 SupplierReportPojo pojo = new Gson().fromJson(response, listType1);

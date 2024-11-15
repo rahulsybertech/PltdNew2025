@@ -10,20 +10,32 @@
           android:layout_height="wrap_content"
           >
 
-            <RelativeLayout
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/rl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+
+                  <androidx.appcompat.widget.AppCompatImageView
+                      android:id="@+id/ivBack"
+                      android:layout_width="32dp"
+                      android:layout_height="?attr/actionBarSize"
+                      android:src="@drawable/ic_back_arrow"
+                      />
 
                   <androidx.appcompat.widget.Toolbar
                       android:id="@+id/toolbar"
-                      android:layout_width="match_parent"
+                      android:layout_width="wrap_content"
                       android:layout_height="?attr/actionBarSize"
                       android:background="?attr/colorPrimary"
-
                       app:title="PDF Viewer"
                       app:titleTextColor="@color/white" />
 
+                  <View
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                        android:layout_weight="1"/>
 
                   <ImageView
                       android:id="@+id/share"
@@ -49,8 +61,7 @@
                       android:src="@drawable/baseline_download_24"
                       android:visibility="visible" />
 
-
-            </RelativeLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
       </com.google.android.material.appbar.AppBarLayout>
 

@@ -1,5 +1,7 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.ADD_FEEDBACK;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -32,6 +34,9 @@ import com.syber.ssspltd.Utils.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FeedbackActivity2 extends AppCompatActivity {
     Context mContext = this;
@@ -194,9 +199,9 @@ public class FeedbackActivity2 extends AppCompatActivity {
     }
 
     boolean AddFeedback() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/AddFeedback",
-                response -> {
-                    Log.e("Data", response);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, ADD_FEEDBACK,
+                response -> {//"http://app.ssspltd.com/apipltd/AddFeedback" old url
+                    Log.e("Data", ADD_FEEDBACK + " ====== " +  response);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.getBoolean("ResponseStatus") == true) {
@@ -220,6 +225,13 @@ public class FeedbackActivity2 extends AppCompatActivity {
                 String str = "{\"MOBILENO\":\"" + mob2 + "\",\"ACCOUNTID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\",\"STAR\":\"" + noOfStar + "\",\"REMARKS\":\"" + setText_change.getText().toString() + "\",\"Device\":\"" + "Android" +"\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
             }
 
             public String getBodyContentType() {

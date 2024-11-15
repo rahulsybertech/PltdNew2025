@@ -1,5 +1,6 @@
 package com.syber.ssspltd.activitys.NewGallery;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_ALL_YEAR_WISE_EVENT_IMAGE;
 import static com.syber.ssspltd.activitys.Const.EVENTID;
 import static com.syber.ssspltd.activitys.Const.EVENTNAME;
 
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
@@ -26,6 +28,7 @@ import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.NewGalleryAdap.YearAdap.YearListAdapter;
 import com.syber.ssspltd.databinding.ActivityViewMoreBinding;
@@ -34,6 +37,8 @@ import com.syber.ssspltd.response.NewGalleryResponse.YearGallery.YearGalleryPojo
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ViewMoreActivity extends AppCompatActivity {
     YearListAdapter yearAdapter;
@@ -77,10 +82,10 @@ public class ViewMoreActivity extends AppCompatActivity {
 
     private void GetImageList() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://app.ssspltd.com/apipltd/GetAllYearWiseEventImages",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_ALL_YEAR_WISE_EVENT_IMAGE,
                 response -> {
             binding.includeProgress.progress.setVisibility(View.GONE);
-                    Log.e("Data", response);
+                    Log.e("Data", GET_ALL_YEAR_WISE_EVENT_IMAGE + " ======= " + response);
                     YearGalleryPojo pojo = new Gson().fromJson(response,listType);
                     try {
                         if (pojo.getResponseStatus()) {
@@ -112,6 +117,13 @@ public class ViewMoreActivity extends AppCompatActivity {
                 String str = "{\"EventID\":\"" + getIntent().getStringExtra(EVENTID) + "\"}";
                 Log.e("str", str);
                 return str.getBytes();
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                Log.i("TaG", "token --=-==> " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                return headers;
             }
             public String getBodyContentType()
             {
