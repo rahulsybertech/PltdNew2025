@@ -2,7 +2,6 @@ package com.syber.ssspltd.adapter.DNToCustomerAdap;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +18,12 @@ import com.syber.ssspltd.R;
 import com.syber.ssspltd.activitys.ViewPDFActivity;
 import com.syber.ssspltd.response.DNToCustomerResponse.DebitNoteToCustomerReportResult;
 
-
 import java.util.List;
 
-public class DNToCustomerAdapter extends RecyclerView.Adapter<DNToCustomerAdapter.MyViewHolder>{
+public class DNToCustomerAdapter extends RecyclerView.Adapter<DNToCustomerAdapter.MyViewHolder> {
+    boolean setTrue = false;
     private Context mContext;
     private List<DebitNoteToCustomerReportResult> DebitNoteToCustomerDetails;
-    boolean setTrue=false;
 
     public DNToCustomerAdapter(Context mContext, List<DebitNoteToCustomerReportResult> detailList) {
         this.mContext = mContext;
@@ -42,7 +40,7 @@ public class DNToCustomerAdapter extends RecyclerView.Adapter<DNToCustomerAdapte
     public void onBindViewHolder(DNToCustomerAdapter.MyViewHolder holder, final int position) {
 
         final DebitNoteToCustomerReportResult datum = DebitNoteToCustomerDetails.get(position);
-        Log.e("data", String.valueOf(DebitNoteToCustomerDetails.get(position)));
+        Log.e("data_dnCustomer", String.valueOf(DebitNoteToCustomerDetails.get(position)));
         holder.invoiceNo_dnCustomer.setText(datum.getBillNo());
         holder.bill_refNo_dnCustomer.setText(datum.getSaleBillNo());
         holder.date_dnCustomer.setText(datum.getDate());
@@ -50,35 +48,28 @@ public class DNToCustomerAdapter extends RecyclerView.Adapter<DNToCustomerAdapte
         holder.invoice_datednCustomer.setText(datum.getSaleBillDate());
         holder.netAmt.setText(datum.getNetAmt());
         holder.invoiceNo_dnCustomer.setOnClickListener(v -> {
-            if (!datum.getPDFPath().equals(""))
-            {
+            if (!datum.getPDFPath().equals("")) {
                 mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
                         .putExtra("pdfUrl", datum.getPDFPath()));
-            }
-            else {
+            } else {
                 Toast.makeText(mContext, "PDF Not Available", Toast.LENGTH_SHORT).show();
             }
         });
 
-        if (datum.getPDFPath().equals(""))
-        {
+        if (datum.getPDFPath().equals("")) {
             holder.invoiceNo_dnCustomer.setTextColor(mContext.getResources().getColor(R.color.solid_gray));
 
-        }
-        else
-        {
+        } else {
             holder.invoiceNo_dnCustomer.setTextColor(mContext.getResources().getColor(R.color.light_red));
 
         }
 
         holder.plusClick.setOnClickListener(v -> {
-            if (setTrue==false) {
+            if (setTrue == false) {
                 holder.dncustomer_itemRecyler.setVisibility(View.VISIBLE);
                 holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_expand_less_24));
                 setTrue = true;
-            }
-            else if (setTrue==true)
-            {
+            } else if (setTrue == true) {
                 holder.dncustomer_itemRecyler.setVisibility(View.GONE);
                 holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_down));
                 setTrue = false;
@@ -90,9 +81,8 @@ public class DNToCustomerAdapter extends RecyclerView.Adapter<DNToCustomerAdapte
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         holder.dncustomer_itemRecyler.setLayoutManager(linearLayoutManager);
-        DNToCustomerItemAdapter finanacialYearListAdapter = new DNToCustomerItemAdapter(mContext,datum.getItemsDetailsData());
+        DNToCustomerItemAdapter finanacialYearListAdapter = new DNToCustomerItemAdapter(mContext, datum.getItemsDetailsData());
         holder.dncustomer_itemRecyler.setAdapter(finanacialYearListAdapter);
-
 
 
     }
@@ -106,7 +96,7 @@ public class DNToCustomerAdapter extends RecyclerView.Adapter<DNToCustomerAdapte
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView invoiceNo_dnCustomer,bill_refNo_dnCustomer,date_dnCustomer,invoice_datednCustomer,supplier_dnCustomer;
+        TextView invoiceNo_dnCustomer, bill_refNo_dnCustomer, date_dnCustomer, invoice_datednCustomer, supplier_dnCustomer;
         RecyclerView dncustomer_itemRecyler;
         ImageView plusClick;
         TextView netAmt;

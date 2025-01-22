@@ -24,9 +24,9 @@ import java.util.List;
 
 public class SaleReportAdapter extends RecyclerView.Adapter<SaleReportAdapter.MyViewHolder> {
 
+    boolean setTrue = false;
     private Context mContext;
     private List<SaleReportResult> saleReportDetails;
-    boolean setTrue=false;
 
     public SaleReportAdapter(Context mContext, List<SaleReportResult> detailList) {
         this.mContext = mContext;
@@ -49,43 +49,37 @@ public class SaleReportAdapter extends RecyclerView.Adapter<SaleReportAdapter.My
         holder.saleTransport.setText(datum.getTransport());
         holder.saleLR_Date.setText(datum.getLRDate());
         holder.netAmt_sale.setText(datum.getSAmount());
-        if (datum.getPackingVideoURL().equals("")||datum.getPackingVideoURL().equalsIgnoreCase("null")){
+        if (datum.getPackingVideoURL().equals("") || datum.getPackingVideoURL().equalsIgnoreCase("null")) {
             holder.videoLink.setVisibility(View.GONE);
-        }else {
+        } else {
             holder.videoLink.setVisibility(View.VISIBLE);
         }
-   // holder.videoLink.setText(datum.getPackingVideoURL().equals("")?"NA":datum.getPackingVideoURL());
-        if (datum.getBiltyNo().equals(""))
-        {
+        // holder.videoLink.setText(datum.getPackingVideoURL().equals("")?"NA":datum.getPackingVideoURL());
+        if (datum.getBiltyNo().equals("")) {
             holder.saleBiltyNo.setText("--");
             //holder.saleLR_Date.setText("-");
 
-        }
-        else {
+        } else {
             holder.saleBiltyNo.setText(datum.getBiltyNo());
-           // holder.saleLR_Date.setText(datum.getLRDate());
+            // holder.saleLR_Date.setText(datum.getLRDate());
         }
 
         holder.saleBillNo.setOnClickListener(v -> {
 
-            if (!datum.getBillNo().equals(""))
-            {
+            if (!datum.getBillNo().equals("")) {
                 mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
                         .putExtra("pdfUrl", datum.getPDFPath()));
-            }
-            else {
+            } else {
                 Toast.makeText(mContext, "No PDF File Available", Toast.LENGTH_SHORT).show();
             }
 
         });
         holder.saleBiltyNo.setOnClickListener(v -> {
 
-            if (!datum.getBiltyNo().equals(""))
-            {
+            if (!datum.getBiltyNo().equals("")) {
                 mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
                         .putExtra("pdfUrl", datum.getBiltyPDFPath()));
-            }
-            else {
+            } else {
                 Toast.makeText(mContext, "No PDF File Available", Toast.LENGTH_SHORT).show();
             }
 
@@ -93,7 +87,7 @@ public class SaleReportAdapter extends RecyclerView.Adapter<SaleReportAdapter.My
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         holder.reclerItem.setLayoutManager(linearLayoutManager);
-        SaleReportItemAdapter finanacialYearListAdapter = new SaleReportItemAdapter(mContext,datum.getSaleReportSecondaryData());
+        SaleReportItemAdapter finanacialYearListAdapter = new SaleReportItemAdapter(mContext, datum.getSaleReportSecondaryData());
         holder.reclerItem.setAdapter(finanacialYearListAdapter);
         holder.videoLink.setOnClickListener(view -> {
 
@@ -104,14 +98,12 @@ public class SaleReportAdapter extends RecyclerView.Adapter<SaleReportAdapter.My
         });
 //        holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_down));
 
-        if (datum.isOpenItem()==true)
-        {
+        if (datum.isOpenItem() == true) {
             holder.reclerItem.setVisibility(View.VISIBLE);
             datum.setOpenItem(true);
             holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_arrow_drop_up_24));
 
-        }
-        else {
+        } else {
             holder.reclerItem.setVisibility(View.GONE);
             datum.setOpenItem(false);
             holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_arrow_drop_down_24));
@@ -121,36 +113,34 @@ public class SaleReportAdapter extends RecyclerView.Adapter<SaleReportAdapter.My
         holder.plusClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (datum.isOpenItem()==true) {
+                if (datum.isOpenItem() == true) {
                     holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_arrow_drop_down_24));
                     holder.reclerItem.setVisibility(View.GONE);
-                   datum.setOpenItem(false);
-                }
-                else if (datum.isOpenItem()==false)
-                {
+                    datum.setOpenItem(false);
+                } else if (datum.isOpenItem() == false) {
                     holder.reclerItem.setVisibility(View.VISIBLE);
                     datum.setOpenItem(true);
                     holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_arrow_drop_up_24));
 
                 }
-                                                                                                                                        }
+            }
         });
     }
 
 
     @Override
     public int getItemCount() {
-        Log.e("Size",saleReportDetails.size()+"");
+        Log.e("Size", saleReportDetails.size() + "");
         return saleReportDetails.size();
     }
 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView saleBillNo,saleSubParty,saleDate,saleTransport,saleBiltyNo,saleLR_Date,netAmt_sale,videoLink;
-        LinearLayout ll_sup,videoLinkLL;
+        TextView saleBillNo, saleSubParty, saleDate, saleTransport, saleBiltyNo, saleLR_Date, netAmt_sale, videoLink;
+        LinearLayout ll_sup, videoLinkLL;
         ImageView plusClick;
-        TextView dr_amt,bal_name;
+        TextView dr_amt, bal_name;
         RecyclerView reclerItem;
 
         public MyViewHolder(View itemView) {
@@ -160,7 +150,7 @@ public class SaleReportAdapter extends RecyclerView.Adapter<SaleReportAdapter.My
             saleBillNo = itemView.findViewById(R.id.saleBillNo);
             saleSubParty = itemView.findViewById(R.id.saleSubParty);
             saleDate = itemView.findViewById(R.id.saleDate);
-            saleTransport=itemView.findViewById(R.id.saleTransport);
+            saleTransport = itemView.findViewById(R.id.saleTransport);
             saleBiltyNo = itemView.findViewById(R.id.saleBiltyNo);
             saleLR_Date = itemView.findViewById(R.id.saleLR_Date);
             netAmt_sale = itemView.findViewById(R.id.netAmt_sale);

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+
 public class SharedPref {
 
     private static SharedPreferences mSharedPref;
@@ -67,10 +69,11 @@ public class SharedPref {
     public  static  final String SELECTED_FY_DATA   ="selected_fy_data";
 
 
+
     public static void init(Context context)
     {
         if(mSharedPref == null)
-            mSharedPref = context.getSharedPreferences(context.getPackageName(), Activity.MODE_PRIVATE);
+            mSharedPref = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
     }
 
     public static String read(String key, String defValue) {
@@ -113,5 +116,43 @@ public class SharedPref {
         editor.putString("acadmicData3",selfDetails);
         editor.commit();
     }
+
+    // upgrading in future version
+//    public static SharedPreferences getSharedPreferences(Context context){
+//        return context.getSharedPreferences(context.getPackageName(),Context.MODE_PRIVATE);
+//    }
+
+//    public static void setPreference(Context context, String key, String val) {
+//        SharedPreferences settings = SharedPref.getSharedPreferences(context);
+//        SharedPreferences.Editor editor = settings.edit();
+//        editor.putString(key, val);
+//        editor.commit();
+//    }
+
+//    public static void setPreference(Context context, String key, Object val) {
+//        SharedPreferences settings = SharedPref.getSharedPreferences(context);
+//        SharedPreferences.Editor editor = settings.edit();
+//        Gson gson = new Gson();
+//        String json = gson.toJson(val);
+//        editor.putString(key, json);
+//        editor.commit();
+//    }
+
+//    public static void setPreference(Context context, String key, boolean val) {
+//        SharedPreferences settings = SharedPref.getSharedPreferences(context);
+//        SharedPreferences.Editor editor = settings.edit();
+//        editor.putBoolean(key, val);
+//        editor.commit();
+//    }
+
+//    public static String getPreference(Context context, String key) {
+//        mSharedPref = SharedPref.getSharedPreferences(context);
+//        return mSharedPref.getString(key, "");
+//    }
+
+//    public static boolean getPreference_boolean(Context context, String key) {
+//        mSharedPref = SharedPref.getSharedPreferences(context);
+//        return mSharedPref.getBoolean(key, false);
+//    }
 
 }

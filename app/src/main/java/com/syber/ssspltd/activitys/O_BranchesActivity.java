@@ -2,16 +2,7 @@ package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_BRANCHES;
-import static com.syber.ssspltd.Constants.NewErpUrls.GET_BRANCHES_GODOWN_PACKING;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -21,24 +12,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
-import com.syber.ssspltd.Utils.AlertUtil;
-import com.syber.ssspltd.Utils.Lazy;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.BranchesAdapter;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.databinding.ActivityOBranchesBinding;
 import com.syber.ssspltd.response.BranchesResponse.BranchesPojo;
 import com.syber.ssspltd.response.BranchesResponse.BranchesResult;
+
+import org.json.JSONException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -61,7 +59,7 @@ public class O_BranchesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityOBranchesBinding.inflate(getLayoutInflater());
+        binding = ActivityOBranchesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.supportChat.supportFab.setOnClickListener(v ->
                 Lazy.openDialog(mContext));
@@ -75,14 +73,14 @@ public class O_BranchesActivity extends AppCompatActivity {
         listType = new TypeToken<BranchesPojo>() {
         }.getType();
 
-        linearLayoutManager = new GridLayoutManager(mContext,3);
+        linearLayoutManager = new GridLayoutManager(mContext, 3);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.branchRecyclerview.setLayoutManager(linearLayoutManager);
         branchesAdapter = new BranchesAdapter(mContext, branchrsDetails);
         binding.branchRecyclerview.setAdapter(branchesAdapter);
-        if (Lazy.haveNetworkConnection(mContext)){
+        if (Lazy.haveNetworkConnection(mContext)) {
             GetBranches();
-        }else {
+        } else {
             networkConnetion3(mContext);
         }
 
@@ -90,27 +88,31 @@ public class O_BranchesActivity extends AppCompatActivity {
 
     private void GetBranches() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_BRANCHES,
-                response -> {
-                    Log.e("Data", GET_BRANCHES  + "===="  +response);
-                   binding.includeProgress.progress.setVisibility(View.GONE);
-                    BranchesPojo pojo = new Gson().fromJson(response,listType);
-                    try {
-                        if (pojo.getResponseStatus()){
-                            branchrsDetails.clear();
-                            branchrsDetails.addAll(pojo.getBranchesResult());
-                            branchesAdapter.notifyDataSetChanged();
-                        }
-                        else {
-                            AlertUtil.responseElse(mContext, "GetBranches ", pojo.getResponseMessage() + "");
-                        }
-                    }catch (Exception e){
-                        AlertUtil.responseExecption(mContext, "GetBranches ", e.toString());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_BRANCHES, response -> {
+            Log.e("Data", GET_BRANCHES + "====" + response);
+            binding.includeProgress.progress.setVisibility(View.GONE);
+            BranchesPojo pojo = new Gson().fromJson(response, listType);
+            try {
+                if (pojo.getResponseStatus()) {
+                    branchrsDetails.clear();
+                    branchrsDetails.addAll(pojo.getBranchesResult());
+                    branchesAdapter.notifyDataSetChanged();
+                } else {
+                    AlertUtil.responseElse(mContext, "GetBranches ", pojo.getResponseMessage() + "");
+                }
+            } catch (Exception e) {
+                AlertUtil.responseExecption(mContext, "GetBranches ", e.toString());
 
-                    }
-                }, error ->
-            AlertUtil.responseError(mContext, "GetBranches ", error.toString()))
-                {
+            }
+        }, error ->
+        {
+            try {
+                Constants.convertByteToString(mContext, "GetBranches ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        ) {
             /*@Override
             public byte[] getBody() throws AuthFailureError {
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE,"");
@@ -119,15 +121,14 @@ public class O_BranchesActivity extends AppCompatActivity {
                 return str.getBytes();
             }*/
 
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<>();
-                    headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
-                    return headers;
-                }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
 
-            public String getBodyContentType()
-            {
+            public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
         };
@@ -143,14 +144,14 @@ public class O_BranchesActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void  networkConnetion3(Context mContext) {
+    public void networkConnetion3(Context mContext) {
 
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
         ImageView cross = dialogView.findViewById(R.id.cross);

@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
-import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.activitys.ChooseCategries;
 import com.syber.ssspltd.activitys.MainActivity;
 import com.syber.ssspltd.response.ModelClass.RowItem;
@@ -18,9 +17,6 @@ import com.syber.ssspltd.response.ModelClass.RowItem;
 import java.util.List;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
-
-
-
     private Context mContext;
     private List<RowItem> rowItem;
 
@@ -38,27 +34,24 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     @Override
     public void onBindViewHolder(CustomAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
+
         final RowItem datum = rowItem.get(position);
         holder.textViewName.setText(datum.getmName());
         holder.itemView.setOnClickListener(v -> {
             ((MainActivity) mContext).setListRecyler(rowItem.get(position));
 //            SharedPref.write(SharedPref.PARTY_CODE,datum.getmPartyCode());
-            ChooseCategries.partyCode=rowItem.get(position).getmPartyCode();
+            ChooseCategries.partyCode = rowItem.get(position).getmPartyCode();
         });
 
-        if (datum.getmUserType().equals("5"))
-        {
+        if (datum.getmUserType().equals("5")) {
             holder.textViewName.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             holder.textViewName.setVisibility(View.VISIBLE);
         }
 
 //        if (rowItem != null) {
 //            holder.textViewName.setText(datum.getmName());
 //        }
-
 
 
     }

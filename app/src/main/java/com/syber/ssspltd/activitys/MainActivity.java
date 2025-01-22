@@ -1,25 +1,15 @@
 package com.syber.ssspltd.activitys;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_FY_YEAR_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
+import static com.syber.ssspltd.activitys.registered_msg.UsersTyperDetails;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,21 +18,32 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.Interface.TopicClickListener;
-import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.CustomAdapters.CustomAdapter;
@@ -55,8 +56,6 @@ import com.syber.ssspltd.response.FinanacialYearListRespon.FYearList;
 import com.syber.ssspltd.response.FinanacialYearListRespon.FYearListResult;
 import com.syber.ssspltd.response.FyResponse;
 import com.syber.ssspltd.response.ModelClass.RowItem;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,11 +67,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.syber.ssspltd.Constants.NewErpUrls.GET_FY_YEAR_LIST;
-import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
-import static com.syber.ssspltd.activitys.registered_msg.UsersTyperDetails;
-
 public class MainActivity extends AppCompatActivity implements TopicClickListener, View.OnTouchListener {
+    public static RecyclerView ListRescyler;
+    public static String db_name = "A7", set_year, selectedYr = "2023-24", fy_StartDate, fy_EndDate, def_db;
+    private static String checked = "";
     //ShadowGenerator shadowGenerator;
     ImageView popup;
     TextView home, tv3, more, tv5;
@@ -81,44 +79,37 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
     Context mContext = this;
     LinearLayoutManager linearLayoutManager;
     String psrty;
-    private int positionFromBack;
     ArrayList<FYearListResult> fYearListResults = new ArrayList<>();
     // FinanacialYearListAdapter finanacialYearListAdapter;
     FYearAdapter fYearAdapter;
-    private static String checked = "";
     int _xDelta;
     int _yDelta;
     float dX, dY;
     AlertDialog alertDialog;
-
-
     Boolean isOnePressed = false, isThirdPlace = false, isforthPlace = false;
     Boolean check_one = false, check_two = false;
     Calendar c;
     DatePickerDialog dpd;
     FrameLayout frameLayout;
     String frg_type = "0";
-    private Dialog sDialog;
     RecyclerView mainRecy_List;
     HomeNameAdapter homeNameAdapter;
     CustomAdapter adapter;
     List<RowItem> rowItemList;
-    public static RecyclerView ListRescyler;
     Type listType, fYearType;
     TextView adminName, singleName;
     RelativeLayout spVisility;
     Toolbar backpressButton;
     boolean isRecyclerOpen = false;
     RecyclerView financial_year;
-    public static String db_name="A7" , set_year, selectedYr ="2023-24", fy_StartDate, fy_EndDate,def_db;
     FrameLayout rll;
     TextView title;
     RelativeLayout rl;
     FloatingActionButton support_fab;
     int lastAction;
     ImageView sssLogo;
-
-
+    private int positionFromBack;
+    private Dialog sDialog;
 
     //    ArrayList<UsersTypeListResult>usersTypeList ;
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -127,14 +118,17 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPref.init(mContext);
         sssLogo = findViewById(R.id.sss_logo);
 
 //        Toast.makeText(mContext, SharedPref.read(SharedPref.PARTY_CODE,""), Toast.LENGTH_SHORT).show();
-        if (SharedPref.read(SharedPref.clubType,"").equalsIgnoreCase("DIAMOND")){
+
+
+        if (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("DIAMOND")) {
             sssLogo.setImageDrawable(getDrawable(R.mipmap.ic_launcher__new_diamond));
-        } else if (SharedPref.read(SharedPref.clubType,"").equalsIgnoreCase("GOLD")) {
+        } else if (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("GOLD")) {
             sssLogo.setImageDrawable(getDrawable(R.mipmap.ic_launcher__new_gold));
-        }else {
+        } else {
             sssLogo.setImageDrawable(getDrawable(R.mipmap.ic_launcher_sss_logo));
         }
 
@@ -142,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         backpressButton = findViewById(R.id.backpressButton);
         setSupportActionBar(backpressButton);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        SharedPref.init(mContext);
+
         title = findViewById(R.id.title);
         rl = findViewById(R.id.rl);
         support_fab = findViewById(R.id.support_fab);
@@ -151,8 +145,6 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                 Lazy.openDialog(mContext)
 
         );
-
-
 
         if (SharedPref.read(SharedPref.IS_BACK_VISIBLE, "").equals("true")) {
             backpressButton.setVisibility(View.VISIBLE);
@@ -184,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         ListRescyler.setLayoutManager(linearLayoutManager);
+
         adapter = new CustomAdapter(mContext, rowItemList);
         ListRescyler.setAdapter(adapter);
         adminName = findViewById(R.id.adminName);
@@ -349,14 +342,13 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
             }
 
         });
-        if (Lazy.haveNetworkConnection(mContext)){
+        if (Lazy.haveNetworkConnection(mContext)) {
             GetUsersTypeList();
             GetFYearList();
-        }else {
+        } else {
             networkConnetion3(mContext);
         }
-       // showPermissionDialog();
-
+        // showPermissionDialog();
 
 
 //        }
@@ -376,48 +368,46 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("Fetching Data");
         // progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_TYPE_LIST,
-                response -> {
-                    Log.e("response", response);
-                    Log.i("TaG","res ==================> " + GET_USER_TYPE_LIST + " " +response);
-                    try {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_TYPE_LIST, response -> {
+            Log.e("response", response);
+            Log.i("TaG", "res ==================> " + GET_USER_TYPE_LIST + " " + response);
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getBoolean("ResponseStatus")) {
 
+                    JSONArray BankListData = jsonObject.getJSONArray("UsersTypeListResult");
+                    Log.e("UsersTypeListResult", BankListData + "");
+                    rowItemList.clear();
+                    for (int i = 0; i < BankListData.length(); i++) {
+                        JSONObject ob = BankListData.getJSONObject(i);
+                        String name = ob.optString("Name");
+                        psrty = ob.optString("PartyCode");
+                        String sn = ob.optString("SRNO");
+                        String mobNo = ob.optString("UserType");
+                        Log.e("name", name);
+                        Log.e("partycode", psrty);
+                        if (!mobNo.equals("5")) {
 
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.getBoolean("ResponseStatus") == true) {
-
-                            JSONArray BankListData = jsonObject.getJSONArray("UsersTypeListResult");
-                            Log.e("UsersTypeListResult", BankListData + "");
-                            rowItemList.clear();
-                            for (int i = 0; i < BankListData.length(); i++) {
-                                JSONObject ob = BankListData.getJSONObject(i);
-                                String name = ob.optString("Name");
-                                psrty = ob.optString("PartyCode");
-                                String sn = ob.optString("SRNO");
-                                String mobNo = ob.optString("UserType");
-                                Log.e("name", name);
-                                Log.e("partycode", psrty);
-                                if (!mobNo.equals("5")) {
-
-                                    rowItemList.add(new RowItem(name, psrty, sn, mobNo));
-                                }
+                            rowItemList.add(new RowItem(name, psrty, sn, mobNo));
+                        }
 
 //                                    SharedPref.write(SharedPref.PARTY_CODE,psrty);
-                                // supplierListResult = new SupplierListResult(name);
-
-                            }
-                            if (rowItemList.size() == 1) {
-                                adminName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                            }
-
-                            adapter.notifyDataSetChanged();
-                        } else {
-
-                        }
-                    } catch (Exception e) {
+                        // supplierListResult = new SupplierListResult(name);
 
                     }
-                }, error -> {
+                    if (rowItemList.size() == 1) {
+                        adminName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    }
+
+                    adapter.notifyDataSetChanged();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            System.out.println("Error_Checking_Abhinav " + new Gson().toJson(error.networkResponse.headers));
+            System.out.println("Error_Checking_Abhinav 2 " + new Gson().toJson(error.networkResponse.data));
+            System.out.println("Error_Checking_Abhinav 3 " + error.getMessage());
             networkConnetion3(mContext);
 
         }) {
@@ -428,13 +418,14 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                 // String otpp = otp.getText().toString();
                 String str = "{\"MOBILENO\":\"" + mob3 + "\"}";
                 Log.e("str", str);
-                Log.i("TaG","req ==================> " + GET_USER_TYPE_LIST + " " +str);
+                Log.i("TaG", "req ==================> " + GET_USER_TYPE_LIST + " " + str);
                 return str.getBytes();
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
+                //need_to_change
                 headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
@@ -469,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         final AlertDialog alertDialog = builder.create();
 
         sumbitYear.setOnClickListener(v -> {
-          //  List<FYearListResult> fYearListResultList=new ArrayList<>();
+            //  List<FYearListResult> fYearListResultList=new ArrayList<>();
 //            Log.e("FYearListResult",fYearListResults.size()+"0");
 //            fYearListResults.forEach(e->{
 //              Log.e("FYearListResult",e.isChecked()+"0");
@@ -478,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
             SharedPref.write(SharedPref.default_db, def_db);
             SharedPref.write(SharedPref.DB_NAME, db_name);
             SharedPref.write(SharedPref.SET_YEAR, set_year);
-            Log.e("dh",db_name+"null");
+            Log.e("dh", db_name + "null");
             SharedPref.write(SharedPref.selected_default_yr, selectedYr);
             SharedPref.write(SharedPref.FY_StartDate, fy_StartDate);
             SharedPref.write(SharedPref.FY_EndDate, fy_EndDate);
@@ -588,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                 response -> {
                     //Log.e("Data", response);
 
-                    Log.i("TaG","res ==================> " + GET_FY_YEAR_LIST + " " +response);
+                    Log.i("TaG", "res ==================> " + GET_FY_YEAR_LIST + " " + response);
                     //JSONObject jsonObject = new JSONObject(response);
                     FYearList pojo = new Gson().fromJson(response, fYearType);
                     fYearListResults.clear();
@@ -597,22 +588,22 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
 
 
                         for (int i = 0; i < pojo.getFYearListResult().size(); i++) {
-                            Log.e("defult_db",pojo.getFYearListResult().get(i).getmDEFAULTDB());
+                            Log.e("defult_db", pojo.getFYearListResult().get(i).getmDEFAULTDB());
                             if (SharedPref.read(SharedPref.selected_default_yr, "").equals(pojo.getFYearListResult().get(i).getFYEAR())) {
                                 SharedPref.write(SharedPref.default_db, i + "");
                                 SharedPref.write(SharedPref.selected_default_yr, pojo.getFYearListResult().get(i).getFYEAR());
-                                SharedPref.write(SharedPref.FY_StartDate,pojo.getFYearListResult().get(i).getmFY_StartDate());
-                                SharedPref.write(SharedPref.FY_EndDate,pojo.getFYearListResult().get(i).getmFY_EndDate());
+                                SharedPref.write(SharedPref.FY_StartDate, pojo.getFYearListResult().get(i).getmFY_StartDate());
+                                SharedPref.write(SharedPref.FY_EndDate, pojo.getFYearListResult().get(i).getmFY_EndDate());
                                 Log.e("slecteYr", SharedPref.read(SharedPref.selected_default_yr, "") + i);
 
                                 break;
                             } else if (pojo.getFYearListResult().get(i).getmDEFAULTDB().equals(pojo.getFYearListResult().get(i).getFYEAR())) {
-                                Log.e("defult_db_secound",pojo.getFYearListResult().get(i).getmDEFAULTDB());
+                                Log.e("defult_db_secound", pojo.getFYearListResult().get(i).getmDEFAULTDB());
                                 pojo.getFYearListResult().get(i).setChecked(true);
                                 SharedPref.write(SharedPref.default_db, i + "");
                                 SharedPref.write(SharedPref.selected_default_yr, pojo.getFYearListResult().get(i).getFYEAR());
-                                SharedPref.write(SharedPref.FY_StartDate,pojo.getFYearListResult().get(i).getmFY_StartDate());
-                                SharedPref.write(SharedPref.FY_EndDate,pojo.getFYearListResult().get(i).getmFY_EndDate());
+                                SharedPref.write(SharedPref.FY_StartDate, pojo.getFYearListResult().get(i).getmFY_StartDate());
+                                SharedPref.write(SharedPref.FY_EndDate, pojo.getFYearListResult().get(i).getmFY_EndDate());
                                 Log.e("slecteYr", SharedPref.read(SharedPref.selected_default_yr, "") + i);
                                 break;
                             }
@@ -630,7 +621,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                 // String otpp = otp.getText().toString();
                 String str = "{\"MOBILENO\":\"" + mob + "\"}";
                 Log.e("str", str);
-                Log.i("TaG","req ==================> " + GET_FY_YEAR_LIST + " " +str);
+                Log.i("TaG", "req ==================> " + GET_FY_YEAR_LIST + " " + str);
                 return str.getBytes();
             }
 
@@ -700,8 +691,8 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         return true;
     }
 
-    public void  networkConnetion3(Context mContext) {
-
+    public void networkConnetion3(Context mContext) {
+//abhinav_poor_connection
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
         ImageView cross = dialogView.findViewById(R.id.cross);
         TextView try_button = dialogView.findViewById(R.id.try_button);
@@ -744,7 +735,6 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
 //            }
 //        }
 //    }
-
 
 
 }

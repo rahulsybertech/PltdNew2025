@@ -1,246 +1,246 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/container"
     tools:context=".activitys.MainActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/ll">
 
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:id="@+id/title"
-        android:visibility="gone"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:text="Title"
-        android:textSize="18dp"
-        />
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:id="@+id/rl"
-        android:visibility="visible"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/sss_logo"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="5dp"
-            android:src="@drawable/sss_logo" />
-
-            <!--        <ImageView-->
-            <!--            android:layout_marginLeft="10dp"-->
-            <!--            android:padding="2dp"-->
-            <!--            android:src="@drawable/sss_logo"-->
-            <!--            android:layout_weight="1"-->
-            <!--        android:layout_width="match_parent"-->
-            <!--        android:layout_height="50dp"/>-->
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/backpressButton"
-            android:layout_width="100dp"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_weight="0"
-            android:fontFamily="@font/roboto_regular"
-            android:paddingLeft="6dp"
-            android:src="@drawable/ic_baseline_keyboard_backspace"
-            android:textColor="@color/black"
-            android:visibility="visible" />
-
-            <!--        <TextView-->
-            <!--            android:text="WELCOME"-->
-            <!--            android:fontFamily="@font/roboto_regular"-->
-            <!--            android:textColor="@color/black"-->
-            <!--            android:paddingLeft="6dp"-->
-            <!--            android:layout_weight="0"-->
-            <!--            android:layout_width="wrap_content"-->
-            <!--            android:layout_height="wrap_content"/>-->
-
+      <LinearLayout
+          android:id="@+id/ll"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
 
 
             <TextView
-                android:singleLine="true"
-                android:visibility="visible"
-                android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/black"
-                android:paddingLeft="6dp"
-                android:id="@+id/adminName1"
-                android:layout_weight="1"
+                android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="?attr/actionBarSize"
+                android:gravity="center"
+                android:text="Title"
+                android:textColor="@color/black"
+                android:textSize="18dp"
+                android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/notification"
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:layout_weight="2.7" />
+            <RelativeLayout
+                android:id="@+id/rl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="visible">
 
+                  <ImageView
+                      android:id="@+id/sss_logo"
+                      android:layout_width="48dp"
+                      android:layout_height="48dp"
+                      android:layout_alignParentTop="true"
+                      android:layout_centerInParent="true"
+                      android:layout_marginTop="5dp"
+                      android:src="@drawable/sss_logo" />
 
-        <ImageView
-            android:id="@+id/calender"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_calendar" />
+                  <!--        <ImageView-->
+                  <!--            android:layout_marginLeft="10dp"-->
+                  <!--            android:padding="2dp"-->
+                  <!--            android:src="@drawable/sss_logo"-->
+                  <!--            android:layout_weight="1"-->
+                  <!--        android:layout_width="match_parent"-->
+                  <!--        android:layout_height="50dp"/>-->
 
-        <TextView
-            android:paddingStart="10dp"
-            android:layout_below="@+id/sss_logo"
-            android:singleLine="true"
-            android:visibility="gone"
-            android:layout_marginTop="10dp"
-            android:gravity="center|start"
-            android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/black"
-            android:id="@+id/singleName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                  <androidx.appcompat.widget.Toolbar
+                      android:id="@+id/backpressButton"
+                      android:layout_width="100dp"
+                      android:layout_height="?attr/actionBarSize"
+                      android:layout_weight="0"
+                      android:fontFamily="@font/roboto_regular"
+                      android:paddingLeft="6dp"
+                      android:src="@drawable/ic_baseline_keyboard_backspace"
+                      android:textColor="@color/black"
+                      android:visibility="visible" />
 
-        <TextView
-            android:id="@+id/adminName"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/sss_logo"
-            android:fontFamily="@font/roboto_regular"
-            android:gravity="center|start"
-            android:paddingStart="10dp"
-            android:singleLine="true"
-            android:textColor="@color/black"
-            android:visibility="visible" />
-
-    </RelativeLayout>
-    </LinearLayout>
-    <View
-        android:background="@color/jjj"
-        android:id="@+id/tv"
-        android:layout_below="@id/ll"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"/>
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_nav"
-        android:layout_below="@id/tv"></FrameLayout>
+                  <!--        <TextView-->
+                  <!--            android:text="WELCOME"-->
+                  <!--            android:fontFamily="@font/roboto_regular"-->
+                  <!--            android:textColor="@color/black"-->
+                  <!--            android:paddingLeft="6dp"-->
+                  <!--            android:layout_weight="0"-->
+                  <!--            android:layout_width="wrap_content"-->
+                  <!--            android:layout_height="wrap_content"/>-->
 
 
+                  <TextView
+                      android:id="@+id/adminName1"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:fontFamily="@font/roboto_regular"
+                      android:paddingLeft="6dp"
+                      android:singleLine="true"
+                      android:textColor="@color/black"
+                      android:visibility="visible" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/bottom_nav"
-        android:visibility="visible"
-        android:layout_alignParentBottom="true">
-
-        <TextView
-
-            android:layout_margin="8dp"
-            android:background="@drawable/shadow_button_layer_list"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:fontFamily="@font/roboto_regular"
-            android:textSize="12sp"
-            android:layout_marginTop="4dp"
-            android:drawableTint="@color/colorPrimaryDark"
-            android:id="@+id/home1"
-            android:layout_marginBottom="2dp"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:text="@string/home"
-            android:layout_weight="1" />
-        <TextView
-            android:background="@drawable/shadow_button_layer_list"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:id="@+id/home3"
-            android:gravity="center"
-            android:fontFamily="@font/roboto_regular"
-            android:textSize="12sp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="2dp"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:drawableTint="@color/colorPrimaryDark"
-            android:text="@string/GALLERY"
-            android:layout_weight="1"
-            android:layout_margin="8dp"/>
-        <TextView
-            android:padding="3dp"
-            android:background="@drawable/shadow_button_layer_list"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:id="@+id/home4"
-            android:gravity="center"
-            android:fontFamily="@font/roboto_regular"
-            android:textSize="12sp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="2dp"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:drawableTint="@color/colorPrimaryDark"
-            android:text="@string/more"
-            android:layout_weight="1"
-           android:layout_margin="8dp"/>
-    </LinearLayout>
+                  <ImageView
+                      android:id="@+id/notification"
+                      android:layout_width="match_parent"
+                      android:layout_height="25dp"
+                      android:layout_gravity="center"
+                      android:layout_weight="2.7" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ListRescyler"
-        android:layout_below="@id/tv"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </androidx.recyclerview.widget.RecyclerView>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_below="@+id/ListRescyler"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:id="@+id/rll"/>
-    <!--    <com.mlsdev.animatedrv.AnimatedRecyclerView-->
-<!--        android:layout_below="@id/tool"-->
-<!--        android:id="@+id/dashboard_recycler"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        app:animationDuration="600"-->
-<!--        app:layoutAnimation="@anim/layout_animation_from_bottom"-->
-<!--        app:layoutManagerOrientation="vertical"-->
-<!--        app:layoutManagerReverse="false"-->
-<!--        app:layoutManagerType="linear" />-->
+                  <ImageView
+                      android:id="@+id/calender"
+                      android:layout_width="32dp"
+                      android:layout_height="32dp"
+                      android:layout_alignParentEnd="true"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginEnd="10dp"
+                      android:src="@drawable/ic_calendar" />
+
+                  <TextView
+                      android:id="@+id/singleName"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_below="@+id/sss_logo"
+                      android:layout_marginTop="10dp"
+                      android:fontFamily="@font/roboto_regular"
+                      android:gravity="center|start"
+                      android:paddingStart="10dp"
+                      android:singleLine="true"
+                      android:textColor="@color/black"
+                      android:visibility="gone" />
+
+                  <TextView
+                      android:id="@+id/adminName"
+                      android:layout_width="match_parent"
+                      android:layout_height="40dp"
+                      android:layout_below="@+id/sss_logo"
+                      android:fontFamily="@font/roboto_regular"
+                      android:gravity="center|start"
+                      android:paddingStart="10dp"
+                      android:singleLine="true"
+                      android:textColor="@color/black"
+                      android:visibility="visible" />
+
+            </RelativeLayout>
+      </LinearLayout>
+
+      <View
+          android:id="@+id/tv"
+          android:layout_width="match_parent"
+          android:layout_height="2dp"
+          android:layout_below="@id/ll"
+          android:background="@color/jjj" />
+
+      <FrameLayout
+          android:id="@+id/fragment_container"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_above="@+id/bottom_nav"
+          android:layout_below="@id/tv" />
+
+      <LinearLayout
+          android:id="@+id/bottom_nav"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentBottom="true"
+          android:visibility="visible">
+
+            <TextView
+                android:id="@+id/home1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/shadow_button_layer_list"
+                android:drawableTint="@color/colorPrimaryDark"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:text="@string/home"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/home3"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/shadow_button_layer_list"
+                android:drawableTint="@color/colorPrimaryDark"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:text="@string/GALLERY"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/home4"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/shadow_button_layer_list"
+                android:drawableTint="@color/colorPrimaryDark"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="@string/more"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+      </LinearLayout>
 
 
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:layout_below="@id/tool"-->
-<!--        android:id="@+id/dashboard_recycler"-->
-<!--        android:layout_marginTop="15dp"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/ListRescyler"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@id/tv"
+          android:visibility="gone"/>
 
-<!--    </androidx.recyclerview.widget.RecyclerView>-->
+      <FrameLayout
+          android:id="@+id/rll"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_below="@+id/ListRescyler"
+          android:visibility="gone" />
+      <!--    <com.mlsdev.animatedrv.AnimatedRecyclerView-->
+      <!--        android:layout_below="@id/tool"-->
+      <!--        android:id="@+id/dashboard_recycler"-->
+      <!--        android:layout_width="match_parent"-->
+      <!--        android:layout_height="match_parent"-->
+      <!--        app:animationDuration="600"-->
+      <!--        app:layoutAnimation="@anim/layout_animation_from_bottom"-->
+      <!--        app:layoutManagerOrientation="vertical"-->
+      <!--        app:layoutManagerReverse="false"-->
+      <!--        app:layoutManagerType="linear" />-->
 
-    <include
-        android:id="@+id/supportChat"
-        layout="@layout/floating_button_layout">
 
-    </include>
+      <!--    <androidx.recyclerview.widget.RecyclerView-->
+      <!--        android:layout_below="@id/tool"-->
+      <!--        android:id="@+id/dashboard_recycler"-->
+      <!--        android:layout_marginTop="15dp"-->
+      <!--        android:layout_width="match_parent"-->
+      <!--        android:layout_height="match_parent">-->
+
+      <!--    </androidx.recyclerview.widget.RecyclerView>-->
+
+      <include
+          android:id="@+id/supportChat"
+          layout="@layout/floating_button_layout">
+
+      </include>
 
 </RelativeLayout>

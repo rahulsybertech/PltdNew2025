@@ -63,4 +63,14 @@
         android:layout_below="@+id/search"
         android:id="@+id/dist_recycler"/>
 
+    <TextView
+        android:id="@+id/transportNoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/black"
+        android:layout_centerInParent="true"
+        android:visibility="visible"/>
+
 </RelativeLayout>

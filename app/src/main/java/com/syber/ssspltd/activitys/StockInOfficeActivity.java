@@ -5,13 +5,6 @@ import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_DETAIL_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_STOCK_IN_OFFICE_REPORT;
 
-import androidx.annotation.RequiresApi;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -30,23 +23,31 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
-import com.syber.ssspltd.NewFilterResponse.FilterType;
-import com.syber.ssspltd.Utils.AlertUtil;
-import com.syber.ssspltd.Utils.CurrentDateTime;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.Interface.FilterChangedStockInOffice;
-import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterStockInOff.Branch;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterStockInOff.Brand;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterStockInOff.FilterStockInORequest;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterStockInOff.StockInOffPojo;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterStockInOff.SubParty;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.CurrentDateTime;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
-import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.SaleReportFilter.FilterTypeSaleReport;
 import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.StockInOff.FilterBranch_SAdap;
 import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.StockInOff.FilterBrand_SAdap;
 import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.StockInOff.FilterSubParty_SAdap;
@@ -60,12 +61,11 @@ import com.syber.ssspltd.response.PendingOrdBranchRespo.FilterListPojo;
 import com.syber.ssspltd.response.PendingOrdBranchRespo.FilterListResult;
 import com.syber.ssspltd.response.StockInOfficeReportRespo.StockInOfficePojo;
 import com.syber.ssspltd.response.StockInOfficeReportRespo.StockInOfficeReportResult;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -84,14 +84,13 @@ import java.util.stream.Collectors;
 
 public class StockInOfficeActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, FilterChangedStockInOffice {
 
+    public static TextView countbranch, countsub_party, countbrand;
     Context mContext = this;
     RecyclerView stockInOfficeRecy;
     StockInOfficeAdapter stockInOfficeAdapter;
     List<StockInOfficeReportResult> stockInOfficeDetails;
     Type listType;
     LinearLayoutManager linearLayoutManager;
-    private ActivityStockInOfficeBinding binding;
-
     String banch = "null", subparty = "null", supplier = "null", stock_formDate = "null", stock_toDate = "null", dbNAME = SharedPref.read(SharedPref.DB_NAME, "");
     Boolean isDatePressed = false, isBranchPlace = false, isSubPartyPlace = false, isSuppNPlace = false, isTransportPlace = false;
     TextView pendingFilter_Date, pendingFilter_Branch, pendingFilter_SubParty, pendingFilter_SuppNikName, nodata;
@@ -111,15 +110,12 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
     TextView stockDate, stock_ToDate;
     String flag = "";
     String Count = "", Count2 = "", Count3 = "";
-    public static TextView countbranch, countsub_party, countbrand;
     boolean isFilterShowing = false;
     Dialog dialog;
-    // boolean isbranchPlace=false,isSub_PartyPlace=false, isBrandPlace=false;
-
     FilterBranch_SAdap filterBranch_sAdap;
+    // boolean isbranchPlace=false,isSub_PartyPlace=false, isBrandPlace=false;
     FilterSubParty_SAdap filterSubParty_sAdap;
     FilterBrand_SAdap filterBrand_sAdap;
-
     List<Branch> branch_List;
     List<SubParty> subParty_List;
     List<Brand> brand_List;
@@ -128,7 +124,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
     Type branch_Type, subParty_Type, brand_type;
     ProgressBar progressBar;
     String StartDate_filter, Enddate_filter;
-
+    private ActivityStockInOfficeBinding binding;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -169,7 +165,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                     if (isSetFYDate()) {
                         GetStockInOfficeReport(banch, subparty, supplier, StartDate_filter, Enddate_filter, dbNAME, false);
 
-                    }else {
+                    } else {
                         GetStockInOfficeReport(banch, subparty, supplier, StartDate_filter, Enddate_filter, dbNAME, false);
                     }
 
@@ -239,7 +235,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
         } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2021-2022")) {
             StartDate_filter = "01/04/2021";
             Enddate_filter = "31/03/2022";
-        }  else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
             StartDate_filter = "01/04/2020";
             Enddate_filter = "31/03/2021";
         } else {
@@ -252,89 +248,93 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
 
     private void GetStockInOfficeReport(String branch, String subParty, String supplier, String form_Date, String to_Date, String db_name, boolean isFilterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_STOCK_IN_OFFICE_REPORT,
-                response -> {
-                    Log.e("StockInOfficeRespo", response);
-                    Log.i("TaG","Url 5 -=-=-=-==" + GET_STOCK_IN_OFFICE_REPORT);
-                    Log.i("TaG","response5 -=-=-=-= " + response);
-                    StockInOfficePojo pojo = new Gson().fromJson(response, listType);
-                    try {
-                        if (pojo.getResponseStatus()) {
-                            binding.includeProgress.progress.setVisibility(View.GONE);
-                            binding.includeProgress.noData.setVisibility(View.GONE);
-                            stockInOfficeDetails.clear();
-                            stockInOfficeDetails.addAll(pojo.getStockInOfficeReportResult());
-                            stockInOfficeAdapter.notifyDataSetChanged();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_STOCK_IN_OFFICE_REPORT, response -> {
+            Log.e("StockInOfficeRespo", response);
+            Log.i("TaG", "Url 5 -=-=-=-==" + GET_STOCK_IN_OFFICE_REPORT);
+            Log.i("TaG", "response5 -=-=-=-= " + response);
+            StockInOfficePojo pojo = new Gson().fromJson(response, listType);
+            try {
+                if (pojo.getResponseStatus()) {
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.GONE);
+                    stockInOfficeDetails.clear();
+                    stockInOfficeDetails.addAll(pojo.getStockInOfficeReportResult());
+                    stockInOfficeAdapter.notifyDataSetChanged();
 
-                            if(isSetFYDate() == false){
-                                StartDate_filter = pojo.getmDefaultStartDate();
-                                Enddate_filter = pojo.getmDefaultEndDate();
-                            }
-
-                            // Enddate_filter = pojo.getEnddate();
-                            SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
-                            SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
-                            if (!isFilterApplied) {
-
-                                binding.tool.textDate.setVisibility(View.VISIBLE);
-                                if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
-                                    binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
-                                } else {
-                                    binding.tool.textDate.setText("");
-                                }
-
-                            } else {
-                                binding.tool.textDate.setVisibility(View.VISIBLE);
-                                if(form_Date != null && to_Date != null && !form_Date.isEmpty() && !to_Date.isEmpty()) {
-
-                                    binding.tool.textDate.setText(form_Date + " To " + to_Date);
-                                }else {
-                                    binding.tool.textDate.setText("");
-                                }
-                            }
-
-
-                            SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
-                            Date newDateFilter = null;
-                            Date newDateFilter_to = null;
-                            try {
-                                newDateFilter = date.parse(StartDate_filter);
-                                newDateFilter_to = date.parse(Enddate_filter);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            date = new SimpleDateFormat("dd/MM/yyyy");
-                            StartDate_filter = date.format(newDateFilter);
-                            Enddate_filter = date.format(newDateFilter_to);
-                        } else {
-                            if (!isFilterApplied) {
-                                binding.tool.textDate.setVisibility(View.VISIBLE);
-                                if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
-                                    binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
-                                }else {
-                                    binding.tool.textDate.setText("");
-                                }
-                            } else {
-                                binding.tool.textDate.setVisibility(View.VISIBLE);
-                                if(form_Date != null && to_Date != null && !form_Date.isEmpty() && !to_Date.isEmpty()) {
-                                    binding.tool.textDate.setText(form_Date + " To " + to_Date);
-                                }else {
-                                    binding.tool.textDate.setText("");
-                                }
-                            }
-
-                            StartDate_filter = pojo.getmDefaultStartDate();
-                            Enddate_filter = pojo.getmDefaultEndDate();
-                            stockInOfficeAdapter.notifyDataSetChanged();
-                            binding.includeProgress.progress.setVisibility(View.GONE);
-                            binding.includeProgress.noData.setVisibility(View.VISIBLE);
-                            AlertUtil.responseElse(mContext, "GetStockInOfficeReport ", pojo.getResponseMessage() + "");
-                        }
-                    } catch (Exception e) {
-                        AlertUtil.responseExecption(mContext, "GetStockInOfficeReport ", e.toString());
+                    if (isSetFYDate() == false) {
+                        StartDate_filter = pojo.getmDefaultStartDate();
+                        Enddate_filter = pojo.getmDefaultEndDate();
                     }
-                }, error -> {
-            AlertUtil.responseError(mContext, "GetStockInOfficeReport ", error.toString());
+
+                    // Enddate_filter = pojo.getEnddate();
+                    SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
+                    SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
+                    if (!isFilterApplied) {
+
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                            binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                        } else {
+                            binding.tool.textDate.setText("");
+                        }
+
+                    } else {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        if (form_Date != null && to_Date != null && !form_Date.isEmpty() && !to_Date.isEmpty()) {
+
+                            binding.tool.textDate.setText(form_Date + " To " + to_Date);
+                        } else {
+                            binding.tool.textDate.setText("");
+                        }
+                    }
+
+
+                    SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
+                    Date newDateFilter = null;
+                    Date newDateFilter_to = null;
+                    try {
+                        newDateFilter = date.parse(StartDate_filter);
+                        newDateFilter_to = date.parse(Enddate_filter);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    date = new SimpleDateFormat("dd/MM/yyyy");
+                    StartDate_filter = date.format(newDateFilter);
+                    Enddate_filter = date.format(newDateFilter_to);
+                } else {
+                    binding.tool.download.setVisibility(View.GONE);
+                    if (!isFilterApplied) {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                            binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                        } else {
+                            binding.tool.textDate.setText("");
+                        }
+                    } else {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        if (form_Date != null && to_Date != null && !form_Date.isEmpty() && !to_Date.isEmpty()) {
+                            binding.tool.textDate.setText(form_Date + " To " + to_Date);
+                        } else {
+                            binding.tool.textDate.setText("");
+                        }
+                    }
+
+                    StartDate_filter = pojo.getmDefaultStartDate();
+                    Enddate_filter = pojo.getmDefaultEndDate();
+                    stockInOfficeAdapter.notifyDataSetChanged();
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.VISIBLE);
+                    AlertUtil.responseElse(mContext, "GetStockInOfficeReport ", pojo.getResponseMessage() + "");
+                }
+            } catch (Exception e) {
+                AlertUtil.responseExecption(mContext, "GetStockInOfficeReport ", e.toString());
+            }
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, "GetStockInOfficeReport ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
             binding.includeProgress.progress.setVisibility(View.GONE);
             binding.includeProgress.noData.setVisibility(View.VISIBLE);
         }) {
@@ -349,10 +349,11 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
                 Log.e("TaG", "request 5 -=-=- =" + str);
                 return str.getBytes();
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                headers.put("Authorization", Constants.SettingHeader());
                 return headers;
             }
 
@@ -802,8 +803,8 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
 //            countbranch.setText( pojo.getBranch());
 //            countsub_party.setText( pojo.getSubParty());
 //            countbrand.setText( pojo.getBrand());
-            Log.i("TaG","Url 4 -=-=-=-==" + GET_FILTER_LIST_NEW);
-            Log.i("TaG","response4 -=-=-=-= " + response);
+            Log.i("TaG", "Url 4 -=-=-=-==" + GET_FILTER_LIST_NEW);
+            Log.i("TaG", "response4 -=-=-=-= " + response);
             if (pojo.getResponseStatus()) {
                 progressBar.setVisibility(View.GONE);
                 nodata.setVisibility(View.GONE);
@@ -940,7 +941,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
             public byte[] getBody() throws AuthFailureError {
                 String str = new Gson().toJson(request);
                 Log.e("str", str);
-                Log.e("TaG", "request 4 -=-=-=- " + str );
+                Log.e("TaG", "request 4 -=-=-=- " + str);
                 return str.getBytes();
             }
 
@@ -1326,8 +1327,8 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                     Log.e("Data", response);
-                    Log.i("TaG","Url 3 -=-=-=-==" + GET_FILTER_DETAIL_LIST);
-                    Log.i("TaG","response3 -=-=-=-= " + response);
+                    Log.i("TaG", "Url 3 -=-=-=-==" + GET_FILTER_DETAIL_LIST);
+                    Log.i("TaG", "response3 -=-=-=-= " + response);
                     FilterListPojo pojo = new Gson().fromJson(response, branchType);
                     if (pojo.getResponseStatus()) {
                         branchList.clear();
@@ -1363,8 +1364,8 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                     Log.e("Data", response);
-                    Log.i("TaG","Url 2 -=-=-=-==" + GET_FILTER_DETAIL_LIST);
-                    Log.i("TaG","response2 -=-=-=-= " + response);
+                    Log.i("TaG", "Url 2 -=-=-=-==" + GET_FILTER_DETAIL_LIST);
+                    Log.i("TaG", "response2 -=-=-=-= " + response);
                     com.syber.ssspltd.response.PendingOrdBranchRespo.Sup_PartyRespo.FilterListPojo pojo = new Gson().fromJson(response, subpartyListType);
                     if (pojo.getResponseStatus()) {
                         subpartyList.clear();
@@ -1378,7 +1379,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "STOCKINOFFICE" + "\"}";
                 Log.e("str", str);
-                Log.i("TaG","request 2 -=-=-=-= " + str);
+                Log.i("TaG", "request 2 -=-=-=-= " + str);
                 return str.getBytes();
             }
 
@@ -1400,8 +1401,8 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
                     Log.e("Data", response);
-                    Log.i("TaG","Url1--==-=-=--=-" + GET_FILTER_DETAIL_LIST);
-                    Log.i("TaG","response1--==-=-=--=-" + response);
+                    Log.i("TaG", "Url1--==-=-=--=-" + GET_FILTER_DETAIL_LIST);
+                    Log.i("TaG", "response1--==-=-=--=-" + response);
                     com.syber.ssspltd.response.PendingOrdBranchRespo.SupplierRespo.FilterListPojo pojo = new Gson().fromJson(response, supList);
                     if (pojo.getResponseStatus()) {
                         supplierList.clear();
@@ -1415,7 +1416,7 @@ public class StockInOfficeActivity extends AppCompatActivity implements DatePick
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "STOCKINOFFICE" + "\"}";
                 Log.e("str", str);
-                Log.i("TaG","Request1======" + str);
+                Log.i("TaG", "Request1======" + str);
                 return str.getBytes();
 
             }

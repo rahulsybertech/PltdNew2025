@@ -24,7 +24,6 @@ import com.syber.ssspltd.activitys.FeedbackActivity2;
 import com.syber.ssspltd.activitys.LoginPage;
 import com.syber.ssspltd.activitys.O_BranchesActivity;
 import com.syber.ssspltd.activitys.ProfileActivity;
-import com.syber.ssspltd.activitys.clubtype.ClubTypeActivity;
 import com.syber.ssspltd.response.MoreItems;
 
 import java.util.List;
@@ -64,9 +63,9 @@ public class MoreItemsAdapter extends RecyclerView.Adapter<MoreItemsAdapter.MyVi
         holder.titleText.setText(lists.getName());
         holder.itemView.setOnClickListener(v -> {
             if (lists.getOnClickId().equals("1")) {
-                if (!SharedPref.read(SharedPref.USER_TYPE,"").equals("new")) {
+                if (!SharedPref.read(SharedPref.USER_TYPE, "").equals("new")) {
                     context.startActivity(new Intent(context, ProfileActivity.class));
-                }else {
+                } else {
                     SweetAlertDialog alertDialog = new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
                     alertDialog.setConfirmButtonBackgroundColor(Color.parseColor("#FF725E"));
                     alertDialog.setTitleText("Alert!");
@@ -85,10 +84,10 @@ public class MoreItemsAdapter extends RecyclerView.Adapter<MoreItemsAdapter.MyVi
             } else if (lists.getOnClickId().equals("5")) {
                 context.startActivity(new Intent(context, FeedbackActivity2.class));
             } else if (lists.getOnClickId().equals("6")) {
-                if (!SharedPref.read(SharedPref.USER_TYPE,"").equals("new")) {
+                if (!SharedPref.read(SharedPref.USER_TYPE, "").equals("new")) {
 
                     context.startActivity(new Intent(context, FAQActivity.class));
-                }else {
+                } else {
                     SweetAlertDialog alertDialog = new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
                     alertDialog.setConfirmButtonBackgroundColor(Color.parseColor("#FF725E"));
                     alertDialog.setTitleText("Alert!");
@@ -108,14 +107,14 @@ public class MoreItemsAdapter extends RecyclerView.Adapter<MoreItemsAdapter.MyVi
                 alertDialog.setCancelText("No");
                 alertDialog.showCancelButton(true);
                 alertDialog.setConfirmClickListener(sweetAlertDialog -> {
-                    String s = SharedPref.read(SharedPref.clubType,"");
+                    String s = SharedPref.read(SharedPref.clubType, "");
                     SharedPref.clear();
-                    Log.i("TaG","after logout -=-=-=-=> " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                    SharedPref.write(SharedPref.clubType, s);
+                    Log.i("TaG", "after logout -=-=-=-=> " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                     Intent logout = new Intent(context, LoginPage.class);
                     logout.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(logout);
                     ((Activity) context).finish();
-                    SharedPref.write(SharedPref.clubType,s);
                     sweetAlertDialog.dismissWithAnimation();
                 });
                 alertDialog.setCancelClickListener(SweetAlertDialog::dismissWithAnimation);

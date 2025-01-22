@@ -41,6 +41,7 @@ public class SubPartyAdapter extends RecyclerView.Adapter<SubPartyAdapter.MyView
         final SubpartyModel product;
         product = data.get(position);
         holder.name.setText(product.getName());
+        System.out.println("PRINTING_SUB_PARTY " + product.getName());
 
         if (position % 2 == 0) {
             holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
@@ -73,7 +74,5 @@ public class SubPartyAdapter extends RecyclerView.Adapter<SubPartyAdapter.MyView
             itemView.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSubParty(data.get(getAbsoluteAdapterPosition())));
 
         }
-
-
     }
 }

@@ -1,6 +1,7 @@
 package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.CHECK_OTP;
+import static com.syber.ssspltd.Constants.NewErpUrls.CHECK_OTP_GO;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
 
 import android.app.AlertDialog;
@@ -20,15 +21,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.poovam.pinedittextfield.SquarePinField;
-import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.response.UsersTypeResponse.UsersTypePoojo;
@@ -46,7 +46,7 @@ public class OTPActivity extends AppCompatActivity {
     Context mContext = this;
     SquarePinField enter_otp;
     Type listType;
-    TextView resend_otp,number_show;
+    TextView resend_otp, number_show;
     AlertDialog dialog;
 
     @Override
@@ -58,6 +58,7 @@ public class OTPActivity extends AppCompatActivity {
         resend_otp = findViewById(R.id.resend_otp);
         number_show = findViewById(R.id.number_show);
         SharedPref.init(mContext);
+
 
         Log.e("reg_status", getIntent().getStringExtra("reg_status"));
 
@@ -71,12 +72,12 @@ public class OTPActivity extends AppCompatActivity {
                 Toast.makeText(OTPActivity.this, "Invalid OTP", Toast.LENGTH_SHORT).show();
             }
         });
-        number_show.setText(SharedPref.read(SharedPref.USERMOBILE,""));
+        number_show.setText(SharedPref.read(SharedPref.USERMOBILE, ""));
 
         resend_otp.setOnClickListener(v -> ResendOTPDialog());
-        if (Lazy.haveNetworkConnection(mContext)){
+        if (Lazy.haveNetworkConnection(mContext)) {
 
-        }else {
+        } else {
             networkConnetion3(mContext);
         }
     }
@@ -127,6 +128,7 @@ public class OTPActivity extends AppCompatActivity {
                 Log.e("str", str);
                 return str.getBytes();
             }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -139,42 +141,40 @@ public class OTPActivity extends AppCompatActivity {
 //        progressBar.setTitle("GENERATE OTP");
 //        progressBar.show();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, CHECK_OTP,
-                response -> {
-                    Log.e("OtpRespo", response);
-                   // progressBar.dismiss();
-                    // Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.getBoolean("ResponseStatus")) {
-                            Log.e("ResponseStatus", jsonObject.getBoolean("ResponseStatus") + "");
-                            Toast.makeText(mContext, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
-                            String StartDate = jsonObject.getString("StartDate");
-                            String EndDate = jsonObject.getString("EndDate");
-                            SharedPref.write(SharedPref.FY_StartDate, StartDate);
-                            SharedPref.write(SharedPref.FY_EndDate, EndDate);
-                            SharedPref.write(SharedPref.ACCCESS_TOKEN,jsonObject.getString("AccessToken"));
-                            // finish();
-                            SharedPref.write(SharedPref.isLogin, "true");
-                            if (getIntent().getStringExtra("reg_status").equals("NOTUSER")) {
-                                SharedPref.write(SharedPref.USER_TYPE, "new");
-                                startActivity(new Intent(mContext, GST_NumberActivity.class)
-                                        .putExtra("ref_code", getIntent().getStringExtra("ref_code")));
-                                finish();
-                            } 
-                            else
-                            {
-                                GetUsersTypeList();
-                            }
-
-                        } else {
-                            Toast.makeText(mContext, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, CHECK_OTP_GO, response -> {
+            Log.e("OtpRespo", response);
+            // progressBar.dismiss();
+            // Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getBoolean("ResponseStatus")) {
+                    Log.e("ResponseStatus", jsonObject.getBoolean("ResponseStatus") + "");
+                    Toast.makeText(mContext, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
+                    String StartDate = jsonObject.getString("StartDate");
+                    String EndDate = jsonObject.getString("EndDate");
+                    SharedPref.write(SharedPref.FY_StartDate, StartDate);
+                    SharedPref.write(SharedPref.FY_EndDate, EndDate);
+                    //here_is_the_token
+                    SharedPref.write(SharedPref.ACCCESS_TOKEN, jsonObject.getString("AccessToken"));
+                    // finish();
+                    SharedPref.write(SharedPref.isLogin, "true");
+                    if (getIntent().getStringExtra("reg_status").equals("NOTUSER")) {
+                        SharedPref.write(SharedPref.USER_TYPE, "new");
+                        startActivity(new Intent(mContext, GST_NumberActivity.class)
+                                .putExtra("ref_code", getIntent().getStringExtra("ref_code")));
+                        finish();
+                    } else {
+                        GetUsersTypeList();
                     }
-                }, error ->
-                networkConnetion3(mContext)){
+
+                } else {
+                    Toast.makeText(mContext, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error ->
+                networkConnetion3(mContext)) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob = SharedPref.read(SharedPref.USERMOBILE, "");
@@ -190,8 +190,14 @@ public class OTPActivity extends AppCompatActivity {
                 return "application/json; charset=utf-8";
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
+
     private void GetUsersTypeList() {
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("Fetching Data");
@@ -245,16 +251,13 @@ public class OTPActivity extends AppCompatActivity {
                                 SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
                                 SharedPref.write(SharedPref.TYPE, "notAdmin");
                                 finish();
-                            }
-                            else if (pojo.getUsersTypeListResult().get(0).getUserType().equals("4"))
-                            {
+                            } else if (pojo.getUsersTypeListResult().get(0).getUserType().equals("4")) {
                                 startActivity(new Intent(mContext, SplashActivity.class));
                                 SharedPref.write(SharedPref.IS_BACK_VISIBLE, "true");
                                 SharedPref.write(SharedPref.WHERE_TO_GO, "choose_cat");
-                                SharedPref.write(SharedPref.typeNumber,"4");
+                                SharedPref.write(SharedPref.typeNumber, "4");
                                 finish();
-                            }
-                            else {
+                            } else {
                                 Toast.makeText(mContext, "Invalid User Type..", Toast.LENGTH_SHORT).show();
                             }
 
@@ -279,15 +282,16 @@ public class OTPActivity extends AppCompatActivity {
                         Toast.makeText(mContext, pojo.getResponseMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }, error -> {
-                    progressBar.cancel();
-                    networkConnetion3(mContext);
-                }) {
+            progressBar.cancel();
+            networkConnetion3(mContext);
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
+
             @Override
             public byte[] getBody() throws AuthFailureError {
                 //  String mob = SharedPref.read(SharedPref.USERMOBILE,"");
@@ -304,6 +308,7 @@ public class OTPActivity extends AppCompatActivity {
         };
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
+
     private void ResendOTPDialog() {
         // ViewGroup viewGroup = findViewById(android.R.id.content);
         //final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this,R.style.RoundedDialog);
@@ -339,39 +344,41 @@ public class OTPActivity extends AppCompatActivity {
         });
         alertDialog.show();
     }
+
     private void resendOTP(String resend_otp) {
         final ProgressDialog progressBar = new ProgressDialog(mContext);
         progressBar.setTitle("Login");
         progressBar.show();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, CHECK_OTP,
-                response -> {
-                    Log.e("Data", response);
-                    progressBar.dismiss();
-                    //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        Log.e("jsonObject", jsonObject + "");
-                        if (jsonObject.getBoolean("ResponseStatus") == true) {
-                            // SharedPref.write(SharedPref.USERMOBILE, SharedPref.read(SharedPref.USERMOBILE,""));
+        //CHECKOTP
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, CHECK_OTP, response -> {
+            Log.e("Data", response);
+            progressBar.dismiss();
+            //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                Log.e("jsonObject", jsonObject + "");
+                if (jsonObject.getBoolean("ResponseStatus") == true) {
+                    // SharedPref.write(SharedPref.USERMOBILE, SharedPref.read(SharedPref.USERMOBILE,""));
 //                                startActivity(new Intent(mContext, OTPActivity.class));
 //                                finish();
-                        } else
+                } else
 //                                if (jsonObject.getBoolean("ResponseStatus") == true){
-                        {
+                {
 //                                showCustomDialog();
 //                                Toast.makeText(mContext, "Not Reg...", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(mContext, "" + jsonObject.getString("ResponseMessage"), Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }, error -> {
-                    networkConnetion3(mContext);
-                    progressBar.cancel();
-                }) {
+                    Toast.makeText(mContext, "" + jsonObject.getString("ResponseMessage"), Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            networkConnetion3(mContext);
+            progressBar.cancel();
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob = SharedPref.read(SharedPref.USERMOBILE, "");
+                System.out.println("READING_MOBILE_NO " + mob);
 //              String str ="{\"MOBILENO\":\"" + mob + "\",\"OTP\":\"}";
                 String str = "{\"MOBILENO\":\"" + mob + "\",\"OTPTYPE\":\"" + resend_otp + "\"}";
                 Log.e("str", str);
@@ -385,13 +392,15 @@ public class OTPActivity extends AppCompatActivity {
 
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(new Intent(mContext, LoginPage.class));
         finish();
     }
-    public void  networkConnetion3(Context mContext) {
+
+    public void networkConnetion3(Context mContext) {
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
         ImageView cross = dialogView.findViewById(R.id.cross);
         TextView try_button = dialogView.findViewById(R.id.try_button);
@@ -406,9 +415,9 @@ public class OTPActivity extends AppCompatActivity {
         alertDialog.setCancelable(false);
         cross.setOnClickListener(v -> alertDialog.dismiss());
         try_button.setOnClickListener(view -> {
-            if (Lazy.haveNetworkConnection(mContext)){
+            if (Lazy.haveNetworkConnection(mContext)) {
                 alertDialog.dismiss();
-            }else {
+            } else {
                 networkConnetion3(mContext);
             }
         });

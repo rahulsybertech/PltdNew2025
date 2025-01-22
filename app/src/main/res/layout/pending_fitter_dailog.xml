@@ -1,293 +1,296 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
 
-    <TextView
-        android:id="@+id/filter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="5dp"
-        android:text="Filter"
-        android:textColor="@color/black"
-        android:textSize="18dp" />
+      <TextView
+          android:id="@+id/filter"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+          android:padding="5dp"
+          android:text="Filter"
+          android:textColor="@color/black"
+          android:textSize="18dp" />
 
-    <ImageView
-        android:layout_alignParentRight="true"
-        android:id="@+id/cancle_i"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        android:padding="5dp"
-        android:src="@drawable/ic_cross2" />
-    <LinearLayout
-        android:background="@drawable/line"
-        android:layout_below="@+id/filter"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+      <ImageView
+          android:id="@+id/cancle_i"
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:layout_alignParentRight="true"
+          android:layout_marginStart="5dp"
+          android:layout_marginTop="5dp"
+          android:layout_marginEnd="5dp"
+          android:layout_marginBottom="5dp"
+          android:padding="5dp"
+          android:src="@drawable/ic_cross2" />
 
-        <RelativeLayout
-            android:orientation="vertical"
-            android:layout_weight="1.9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_below="@+id/filter"
+          android:background="@drawable/line"
+          android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/pendingFilter_Date"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:text="Date"
-                android:textSize="18dp" />
-
-            <View
-                android:layout_below="@+id/pendingFilter_Date"
-                android:id="@+id/line1"
-                android:background="@color/colorGrey2"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"/>
-
-            <TextView
-                android:id="@+id/pendingFilter_Branch"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_below="@id/line1"
-                android:gravity="center"
-                android:paddingEnd="27dp"
-                android:text="Branch"
-                android:textSize="18dp" />
-            <TextView
-                android:id="@+id/countbranch"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_below="@id/line1"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="3dp"
-                android:background="@drawable/button_background"
-                android:gravity="center"
-                android:text="0" />
-
-            <View
-                android:layout_below="@id/pendingFilter_Branch"
-                android:id="@+id/line2"
-                android:background="@color/colorGrey2"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"/>
-
-
-            <TextView
-                android:id="@+id/pendingFilter_SubParty"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_below="@id/line2"
-                android:gravity="center"
-                android:paddingEnd="27dp"
-                android:text="Sub-Party"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/countsub_party"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_below="@id/line2"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/button_background"
-                android:gravity="center"
-                android:text="0" />
-
-            <View
-                android:id="@+id/line3"
-                android:layout_below="@+id/pendingFilter_SubParty"
-                android:background="@color/colorGrey2"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"/>
-
-            <TextView
-                android:id="@+id/pendingFilter_SuppNikName"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_below="@+id/line3"
-                android:layout_marginTop="-1dp"
-                android:gravity="center"
-                android:paddingEnd="27dp"
-                android:text="Supplier"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_marginRight="3dp"
-                android:background="@drawable/button_background"
-                android:layout_below="@id/line3"
-                android:gravity="center"
-                android:text="0"
-                android:id="@+id/countbrand"
-                android:layout_marginTop="10dp"
-                android:layout_alignParentRight="true"
-                android:layout_width="25dp"
-                android:layout_height="25dp"/>
-
-            <View
-                android:layout_below="@+id/pendingFilter_SuppNikName"
-                android:background="@color/colorGrey2"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"/>
-
-        </RelativeLayout>
-
-        <View
-            android:background="@color/colorPrimary"
-            android:layout_weight="0"
-            android:layout_width="2dp"
-            android:layout_height="match_parent"/>
-
-        <RelativeLayout
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/ll_price_range"
+                android:layout_weight="1.9"
                 android:orientation="vertical">
-                <LinearLayout
-                    android:id="@+id/min_max"
-                    android:layout_marginTop="20dp"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+
+                  <TextView
+                      android:id="@+id/pendingFilter_Date"
+                      android:layout_width="match_parent"
+                      android:layout_height="40dp"
+                      android:gravity="center"
+                      android:text="Date"
+                      android:textSize="18dp" />
+
+                  <View
+                      android:id="@+id/line1"
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:layout_below="@+id/pendingFilter_Date"
+                      android:background="@color/colorGrey2" />
+
+                  <TextView
+                      android:id="@+id/pendingFilter_Branch"
+                      android:layout_width="match_parent"
+                      android:layout_height="40dp"
+                      android:layout_below="@id/line1"
+                      android:gravity="center"
+                      android:paddingEnd="27dp"
+                      android:text="Branch"
+                      android:textSize="18dp" />
+
+                  <TextView
+                      android:id="@+id/countbranch"
+                      android:layout_width="25dp"
+                      android:layout_height="25dp"
+                      android:layout_below="@id/line1"
+                      android:layout_alignParentEnd="true"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginRight="3dp"
+                      android:background="@drawable/button_background"
+                      android:gravity="center"
+                      android:text="0" />
+
+                  <View
+                      android:id="@+id/line2"
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:layout_below="@id/pendingFilter_Branch"
+                      android:background="@color/colorGrey2" />
 
 
-                    <TextView
-                        android:textSize="18dp"
-                        android:gravity="center"
-                        android:text="From date"
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                  <TextView
+                      android:id="@+id/pendingFilter_SubParty"
+                      android:layout_width="match_parent"
+                      android:layout_height="40dp"
+                      android:layout_below="@id/line2"
+                      android:gravity="center"
+                      android:paddingEnd="27dp"
+                      android:text="Sub-Party"
+                      android:textSize="18dp" />
 
+                  <TextView
+                      android:id="@+id/countsub_party"
+                      android:layout_width="25dp"
+                      android:layout_height="25dp"
+                      android:layout_below="@id/line2"
+                      android:layout_alignParentEnd="true"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginEnd="3dp"
+                      android:background="@drawable/button_background"
+                      android:gravity="center"
+                      android:text="0" />
 
-                    <TextView
-                        android:gravity="center"
-                        android:text="To date"
-                        android:textSize="18dp"
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_below="@id/min_max"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                  <View
+                      android:id="@+id/line3"
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:layout_below="@+id/pendingFilter_SubParty"
+                      android:background="@color/colorGrey2" />
 
+                  <TextView
+                      android:id="@+id/pendingFilter_SuppNikName"
+                      android:layout_width="match_parent"
+                      android:layout_height="45dp"
+                      android:layout_below="@+id/line3"
+                      android:layout_marginTop="-1dp"
+                      android:gravity="center"
+                      android:paddingEnd="27dp"
+                      android:text="Supplier"
+                      android:textSize="18dp" />
 
-                    <TextView
-                        android:paddingLeft="10dp"
-                        android:layout_margin="6dp"
-                        android:background="@color/light_pink"
-                        android:hint="DD/MM/YYYY"
-                        android:gravity="center|start"
-                        android:inputType="number"
-                        android:id="@+id/stockDate"
-                        android:layout_weight="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"/>
+                  <TextView
+                      android:id="@+id/countbrand"
+                      android:layout_width="25dp"
+                      android:layout_height="25dp"
+                      android:layout_below="@id/line3"
+                      android:layout_alignParentRight="true"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginRight="3dp"
+                      android:background="@drawable/button_background"
+                      android:gravity="center"
+                      android:text="0" />
 
+                  <View
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:layout_below="@+id/pendingFilter_SuppNikName"
+                      android:background="@color/colorGrey2" />
 
-                    <TextView
-                        android:paddingLeft="10dp"
-                        android:layout_margin="6dp"
-                        android:id="@+id/stock_ToDate"
-                        android:background="@color/light_pink"
-                        android:hint="DD/MM/YYYY"
-                        android:gravity="center|start"
-                        android:layout_weight="1"
-                        android:inputType="number"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"/>
-                </LinearLayout>
-            </LinearLayout>
+            </RelativeLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/pending_Recy"
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:background="@color/colorPrimary" />
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/ll_bottom"
-                android:layout_marginBottom="20dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-            <TextView
-                android:id="@+id/no_data"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:layout_weight="1"
-                android:padding="5dp"
-                android:gravity="center"
-                android:visibility="gone"
-                android:layout_centerInParent="true"
-                android:text="No Filter Available for given date range"
-                android:textColor="@color/black"
-                />
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/progress"
-                android:layout_centerInParent="true"
-                android:visibility="gone"
-                />
-            <LinearLayout
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="20dp"
-                android:id="@+id/ll_bottom"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_weight="1">
+
+                  <LinearLayout
+                      android:id="@+id/ll_price_range"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/min_max"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:orientation="horizontal">
 
 
-                <TextView
-                    android:textColor="@color/white"
-                    android:background="@drawable/red_button"
-                    android:layout_margin="20dp"
-                    android:textSize="18dp"
-                    android:gravity="center"
-                    android:id="@+id/clear_all"
-                    android:text="Reset"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"/>
+                              <TextView
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:gravity="center"
+                                  android:text="From date"
+                                  android:textSize="18dp" />
 
 
-                <TextView
-                    android:id="@+id/apply"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_margin="20dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/green_bg"
-                    android:gravity="center"
-                    android:text="Apply"
-                    android:textColor="@color/white"
-                    android:textSize="18dp" />
-            </LinearLayout>
+                              <TextView
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:gravity="center"
+                                  android:text="To date"
+                                  android:textSize="18dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/min_max"
+                            android:orientation="horizontal">
 
 
+                              <TextView
+                                  android:id="@+id/stockDate"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_margin="6dp"
+                                  android:layout_weight="1"
+                                  android:background="@color/light_pink"
+                                  android:gravity="center|start"
+                                  android:hint="DD/MM/YYYY"
+                                  android:inputType="number"
+                                  android:paddingLeft="10dp" />
 
 
+                              <TextView
+                                  android:id="@+id/stock_ToDate"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_margin="6dp"
+                                  android:layout_weight="1"
+                                  android:background="@color/light_pink"
+                                  android:gravity="center|start"
+                                  android:hint="DD/MM/YYYY"
+                                  android:inputType="number"
+                                  android:paddingLeft="10dp" />
+                        </LinearLayout>
+                  </LinearLayout>
 
-        </RelativeLayout>
+                  <androidx.recyclerview.widget.RecyclerView
+                      android:id="@+id/pending_Recy"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:layout_above="@+id/ll_bottom"
+                      android:layout_marginBottom="20dp"
+                      android:orientation="vertical"
+                      android:visibility="gone"
+                      app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                  <TextView
+                      android:id="@+id/no_data"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_centerInParent="true"
+                      android:layout_margin="20dp"
+                      android:layout_weight="1"
+                      android:gravity="center"
+                      android:padding="5dp"
+                      android:text="No Filter Available for given date range"
+                      android:textColor="@color/black"
+                      android:visibility="gone" />
+
+                  <ProgressBar
+                      android:id="@+id/progress"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_centerInParent="true"
+                      android:visibility="gone" />
+
+                  <LinearLayout
+                      android:id="@+id/ll_bottom"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_alignParentBottom="true"
+                      android:layout_marginTop="20dp"
+                      android:orientation="horizontal">
 
 
-    </LinearLayout>
+                        <TextView
+                            android:id="@+id/clear_all"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_margin="20dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/red_button"
+                            android:gravity="center"
+                            android:text="Reset"
+                            android:textColor="@color/white"
+                            android:textSize="18dp" />
+
+
+                        <TextView
+                            android:id="@+id/apply"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_margin="20dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/green_bg"
+                            android:gravity="center"
+                            android:text="Apply"
+                            android:textColor="@color/white"
+                            android:textSize="18dp" />
+                  </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+      </LinearLayout>
 
 </RelativeLayout>

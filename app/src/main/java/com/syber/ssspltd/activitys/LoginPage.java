@@ -28,13 +28,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.BuildConfig;
-import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.LoginNoAdap.LoginNumberAdapter;
@@ -46,19 +47,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginPage extends AppCompatActivity {
+    public static EditText enter_mobile_number;
+    public static String reg_status, mobile_number = "";
     TextView login;
     Context mContext = this;
-   public static EditText enter_mobile_number;
-    TextView ver_code, userType,haveReferl;
+    TextView ver_code, userType, haveReferl;
     RelativeLayout rlLogin;
     Dialog dialog;
     String referalCode = "";
     ImageView back;
-    List<AccountDetail>accountDetails;
+    List<AccountDetail> accountDetails;
     LoginNumberAdapter loginNumberAdapter;
     Type listType;
     LinearLayoutManager linearLayoutManager;
-    public static String reg_status ,mobile_number="";
     TextView numberName;
 
 
@@ -77,19 +78,19 @@ public class LoginPage extends AppCompatActivity {
         enter_mobile_number.setInputType(InputType.TYPE_CLASS_NUMBER);
         listType = new TypeToken<LoginNoPojo>() {
         }.getType();
-        accountDetails= new ArrayList<>();
+        accountDetails = new ArrayList<>();
         enter_mobile_number.setText(mobile_number);
-        if (Lazy.haveNetworkConnection(mContext)){
+        if (Lazy.haveNetworkConnection(mContext)) {
 
-        }else {
-            networkConnetion3(mContext,"Check Your Internet Connection");
+        } else {
+            networkConnetion3(mContext, "Check Your Internet Connection");
         }
 
-        ver_code.setText("Version - "+BuildConfig.VERSION_CODE+"");
-       // ver_code.setText("Version - " + SharedPref.read(SharedPref.AppVersion,""));
+        ver_code.setText("Version - " + BuildConfig.VERSION_CODE + "");
+        // ver_code.setText("Version - " + SharedPref.read(SharedPref.AppVersion,""));
 
         login.setOnClickListener(view -> {
-            Log.e("list_type",SharedPref.read(SharedPref.LIST_TYPE,"221"));
+            Log.e("list_type", SharedPref.read(SharedPref.LIST_TYPE, "221"));
             if (enter_mobile_number.getText().toString().length() >= 10) {
                 getLogin();
             } else {
@@ -106,12 +107,10 @@ public class LoginPage extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length()<10)
-                {
+                if (s.length() < 10) {
                     numberName.setText("");
 
-                }else
-                {
+                } else {
 
                 }
 
@@ -130,69 +129,67 @@ public class LoginPage extends AppCompatActivity {
         progressBar.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, LOGIN,
                 response -> {
-            Log.e("loginRespo",response);
+                    Log.e("loginRespo", response);
                     progressBar.dismiss();
-                        LoginNoPojo pojo = new Gson().fromJson(response, listType);
-                        if (pojo.getResponseStatus()) {
-                            SharedPref.write(SharedPref.USERMOBILE, enter_mobile_number.getText().toString());
-                            Log.e("login_sharedPref", enter_mobile_number.getText().toString());
-                            if (pojo.getUserStatus().equals("REGUSER") ) {
-                                Toast.makeText(mContext, "OTP sent on mobile number", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(mContext, OTPActivity.class)
-                                        .putExtra("reg_status", pojo.getUserStatus()));
-                                finish();
-                            }else if ( pojo.getUserStatus().equals("NEWUSER")){
-                                startActivity(new Intent(mContext, MainActivity.class)
-                                        .putExtra("reg_status", pojo.getUserStatus()));
-                                SharedPref.write(SharedPref.isLogin, "true");
-                                SharedPref.write(SharedPref.USER_TYPE, "new");
-                                SharedPref.write(SharedPref.PARTY_CODE,"new");
-                                SharedPref.write(SharedPref.DASHBOARD_TYPE, "New User");
-                                SharedPref.write(SharedPref.SELECTED, "");
-                                SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
-                                SharedPref.write(SharedPref.TYPE, "notAdmin");
-                                finish();
-                            }
-                            else {
-                                startActivity(new Intent(mContext, GST_NumberActivity.class)
-                                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        .putExtra("reg_status", pojo.getUserStatus()));
-                                finish();
-                            }
-                        } else if (pojo.getUserStatus().equals("Try With Register No")) {
-                            accountDetails.clear();
-                            accountDetails.addAll(pojo.getAccountDetail());
-                            //loginNumberAdapter.notifyDataSetChanged();
-                             dialog = new Dialog(mContext); // Context, this, etc.
-                            dialog.setContentView(R.layout.dialog_login_no_reg);
-                            Window window = dialog.getWindow();
-                            window.setGravity(Gravity.CENTER);
-                            RecyclerView loginRespon=dialog.findViewById(R.id.loginRespons);
-                            ImageView cancelNum = dialog.findViewById(R.id.cancelNum);
-                            TextView old_number = dialog.findViewById(R.id.old_number);
-                            String oldNum=enter_mobile_number.getText().toString();
-                            old_number.setText("\"Entered Number "+ oldNum +" is not\n" + "  registred with us\"");
+                    LoginNoPojo pojo = new Gson().fromJson(response, listType);
+                    if (pojo.getResponseStatus()) {
+                        SharedPref.write(SharedPref.USERMOBILE, enter_mobile_number.getText().toString());
+                        Log.e("login_sharedPref", enter_mobile_number.getText().toString());
+                        if (pojo.getUserStatus().equals("REGUSER")) {
+                            Toast.makeText(mContext, "OTP sent on mobile number", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(mContext, OTPActivity.class)
+                                    .putExtra("reg_status", pojo.getUserStatus()));
+                            finish();
+                        } else if (pojo.getUserStatus().equals("NEWUSER")) {
+                            startActivity(new Intent(mContext, MainActivity.class)
+                                    .putExtra("reg_status", pojo.getUserStatus()));
+                            SharedPref.write(SharedPref.isLogin, "true");
+                            SharedPref.write(SharedPref.USER_TYPE, "new");
+                            SharedPref.write(SharedPref.PARTY_CODE, "new");
+                            SharedPref.write(SharedPref.DASHBOARD_TYPE, "New User");
+                            SharedPref.write(SharedPref.SELECTED, "");
+                            SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
+                            SharedPref.write(SharedPref.TYPE, "notAdmin");
+                            finish();
+                        } else {
+                            startActivity(new Intent(mContext, GST_NumberActivity.class)
+                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    .putExtra("reg_status", pojo.getUserStatus()));
+                            finish();
+                        }
+                    } else if (pojo.getUserStatus().equals("Try With Register No")) {
+                        accountDetails.clear();
+                        accountDetails.addAll(pojo.getAccountDetail());
+                        //loginNumberAdapter.notifyDataSetChanged();
+                        dialog = new Dialog(mContext); // Context, this, etc.
+                        dialog.setContentView(R.layout.dialog_login_no_reg);
+                        Window window = dialog.getWindow();
+                        window.setGravity(Gravity.CENTER);
+                        RecyclerView loginRespon = dialog.findViewById(R.id.loginRespons);
+                        ImageView cancelNum = dialog.findViewById(R.id.cancelNum);
+                        TextView old_number = dialog.findViewById(R.id.old_number);
+                        String oldNum = enter_mobile_number.getText().toString();
+                        old_number.setText("\"Entered Number " + oldNum + " is not\n" + "  registred with us\"");
 //                            TextView confirm_num = dialog.findViewById(R.id.confirm_num);
 //                            TextView get_number = dialog.findViewById(R.id.get_number);
 //                            login_num.setText(pojo.getResponseMessage());
 //                            get_number.setText(enter_mobile_number.getText().toString());
 //                            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                            reg_status = pojo.getUserStatus();
-                            linearLayoutManager = new LinearLayoutManager(mContext);
-                            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                            loginRespon.setLayoutManager(linearLayoutManager);
-                            loginNumberAdapter = new LoginNumberAdapter(mContext,accountDetails);
-                            loginRespon.setAdapter(loginNumberAdapter);
-                            cancelNum.setOnClickListener(v -> dialog.dismiss());
-                            dialog.show();
-                        }
-                        else {
-                            showCustomDialog();
-                        }
-                }, error ->{
-                progressBar.dismiss();
-                networkConnetion3(mContext,error.toString());
-        }){
+                        reg_status = pojo.getUserStatus();
+                        linearLayoutManager = new LinearLayoutManager(mContext);
+                        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                        loginRespon.setLayoutManager(linearLayoutManager);
+                        loginNumberAdapter = new LoginNumberAdapter(mContext, accountDetails);
+                        loginRespon.setAdapter(loginNumberAdapter);
+                        cancelNum.setOnClickListener(v -> dialog.dismiss());
+                        dialog.show();
+                    } else {
+                        showCustomDialog();
+                    }
+                }, error -> {
+            progressBar.dismiss();
+            networkConnetion3(mContext, error.toString());
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob = enter_mobile_number.getText().toString();
@@ -201,14 +198,20 @@ public class LoginPage extends AppCompatActivity {
                 Log.e("str", str);
                 return str.getBytes();
             }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
-    public void  networkConnetion3(Context mContext , String errorMsg) {
+    public void networkConnetion3(Context mContext, String errorMsg) {
 
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
         ImageView cross = dialogView.findViewById(R.id.cross);
@@ -226,11 +229,11 @@ public class LoginPage extends AppCompatActivity {
         alertDialog.setCancelable(false);
         cross.setOnClickListener(v -> alertDialog.dismiss());
         try_button.setOnClickListener(view -> {
-            if (Lazy.haveNetworkConnection(mContext)){
+            if (Lazy.haveNetworkConnection(mContext)) {
                 alertDialog.dismiss();
-            }else {
+            } else {
                 Toast.makeText(mContext, "fgsf", Toast.LENGTH_SHORT).show();
-                networkConnetion3(mContext,"");
+                networkConnetion3(mContext, "");
             }
         });
         alertDialog.show();
@@ -259,8 +262,8 @@ public class LoginPage extends AppCompatActivity {
         });
         alertDialog.show();
     }
-    public void  setLoginNo(AccountDetail accountDetail)
-    {
+
+    public void setLoginNo(AccountDetail accountDetail) {
         dialog.dismiss();
         enter_mobile_number.setText(accountDetail.getMobileNo());
         numberName.setText(accountDetail.getAccountName());

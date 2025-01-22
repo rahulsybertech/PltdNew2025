@@ -52,7 +52,6 @@ public class AlertUtil {
                 .show();
     }
 
-
     public static void responseError(Context context, String apiName,String error) {
         String responseErrorMsg = errorType +apiName +" api is getting "+error+". "+"Please Try after sometime!";
         new SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)

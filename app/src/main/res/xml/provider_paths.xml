@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path
-        name="external-files"
-        path="."/>
-    <!-- Need to add line below, because lib downloads the pdf into cache -->
-    <cache-path
-        name="cache-files"
-        path="."/>
+<paths>
+      <external-path
+          name="external-files"
+          path="." />
+      <external-files-path
+          name="images"
+          path="Pictures" />
+      <!-- Need to add line below, because lib downloads the pdf into cache -->
+      <cache-path
+          name="cache-files"
+          path="." />
+      <files-path
+          name="files"
+          path="." />
 </paths>

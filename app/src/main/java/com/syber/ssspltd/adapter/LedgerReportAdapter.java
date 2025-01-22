@@ -2,7 +2,6 @@ package com.syber.ssspltd.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,19 +16,31 @@ import com.syber.ssspltd.R;
 import com.syber.ssspltd.activitys.ViewPDFActivity;
 import com.syber.ssspltd.response.LedgerReportResponse.LedgerReportResult;
 
-
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class LedgerReportAdapter extends RecyclerView.Adapter<LedgerReportAdapter.MyViewHolder> {
 
+    public static String currentBal, avrgDay;
     final private Context mContext;
     final private List<LedgerReportResult> ledgerReportDetails;
-    public  static  String currentBal,avrgDay;
 
     public LedgerReportAdapter(Context mContext, List<LedgerReportResult> detailList) {
         this.mContext = mContext;
         this.ledgerReportDetails = detailList;
     }
+
+//    public String  (String amount) {
+//
+//        if (amount.endsWith(" Cr")) {
+//            return new DecimalFormat("#,###.##")
+//                    .format(Double.parseDouble(amount.replace(" Cr", "")))
+//                    + " Cr";
+//        } else {
+//            return new DecimalFormat("#,###.##")
+//                    .format(Double.parseDouble(amount));
+//        }
+//    }
 
     @NonNull
     @Override
@@ -42,60 +53,61 @@ public class LedgerReportAdapter extends RecyclerView.Adapter<LedgerReportAdapte
     public void onBindViewHolder(LedgerReportAdapter.MyViewHolder holder, final int position) {
 
         final LedgerReportResult datum = ledgerReportDetails.get(position);
+
+
         holder.ledger_date.setText(datum.getBillDate());
         holder.ac_id.setText(datum.getAccountID());
         holder.ledger_decri.setText(datum.getBLDescription());
+        // possibility of crash
+        System.out.println("getting_number "
+                +  (datum.getBalance()) + ", "
+                +  (datum.getCreditAmt()) + ", "
+                +  (datum.getDebitAmt()));
         holder.balance_ledger.setText(datum.getBalance());
-        currentBal=datum.getBalance();
-        avrgDay=datum.getAvgDays();
-        if (datum.getAccountID().equals(""))
-        {
+        currentBal = datum.getBalance();
+        avrgDay = datum.getAvgDays();
+        if (datum.getAccountID().equals("")) {
             holder.ac_id.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             holder.ac_id.setVisibility(View.VISIBLE);
         }
-           String str = datum.getCreditAmt();
-          str.replaceAll(",", "");
-          String strr = str.replaceAll(",", "");
-          Log.e("strr",strr);
-          if (Integer.parseInt(strr) > 0) {
-              holder.ledger_credit.setText(datum.getCreditAmt());
-              holder.ledger_credit.setTextColor(mContext.getResources().getColor(R.color.gerrn));
-          }else {
-              holder.ledger_credit.setText("");
-          }
+        String str = datum.getCreditAmt();
+        str.replaceAll(",", "");
+        String strr = str.replaceAll(",", "");
+        Log.e("strr", strr);
+//          if (Integer.parseInt(strr) > 0) {
+        // possibility of crash
+        holder.ledger_credit.setText(datum.getCreditAmt());
+        holder.ledger_credit.setTextColor(mContext.getResources().getColor(R.color.gerrn));
+//          }else {
+//              holder.ledger_credit.setText("");
+//          }
 
-            String str1 = datum.getDebitAmt();
-           String str2 = str1.replaceAll("[^a-zA-Z0-9]", "");
-           Log.e("str1", str2);
+        String str1 = datum.getDebitAmt();
+        String str2 = str1.replaceAll("[^a-zA-Z0-9]", "");
+        Log.e("str1", str2);
 
-        if (Integer.parseInt(str2) >0) {
+//        if (Integer.parseInt(str2) > 0) {
+            // possibility of crash
             holder.ledger_debit.setText(datum.getDebitAmt());
             holder.ledger_debit.setTextColor(mContext.getResources().getColor(R.color.red));
-        }else {
-            holder.ledger_debit.setText("");
-        }
-            holder.ledger_decri.setOnClickListener(v -> {
-                Log.i("TaG","ledger report pdf -=-=-=-=-=-=-=-=>" + datum.getPDFPath());
-                if (!datum.getPDFPath().equals(""))
-                {
-                    mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
-                            .putExtra("pdfUrl",datum.getPDFPath()));
-                }
-                else {
-                    Toast.makeText(mContext, "PDF Not Available", Toast.LENGTH_SHORT).show();
-                }
+//        } else {
+//            holder.ledger_debit.setText("");
+//        }
+        holder.ledger_decri.setOnClickListener(v -> {
+            Log.i("TaG", "ledger report pdf -=-=-=-=-=-=-=-=>" + datum.getPDFPath());
+            if (!datum.getPDFPath().equals("")) {
+                mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
+                        .putExtra("pdfUrl", datum.getPDFPath()));
+            } else {
+                Toast.makeText(mContext, "PDF Not Available", Toast.LENGTH_SHORT).show();
+            }
 
-            });
-        if (datum.getPDFPath().equals(""))
-        {
+        });
+        if (datum.getPDFPath().equals("")) {
             holder.ledger_decri.setTextColor(mContext.getResources().getColor(R.color.solid_gray));
 
-        }
-        else
-        {
+        } else {
             holder.ledger_decri.setTextColor(mContext.getResources().getColor(R.color.light_red));
 
         }
@@ -105,16 +117,14 @@ public class LedgerReportAdapter extends RecyclerView.Adapter<LedgerReportAdapte
 
     }
 
-
     @Override
     public int getItemCount() {
         return ledgerReportDetails.size();
     }
 
-
     static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView ledger_date,ac_id,ledger_debit,ledger_decri,ledger_credit,balance_ledger;
+        TextView ledger_date, ac_id, ledger_debit, ledger_decri, ledger_credit, balance_ledger;
 
 
         public MyViewHolder(View itemView) {
@@ -128,4 +138,5 @@ public class LedgerReportAdapter extends RecyclerView.Adapter<LedgerReportAdapte
             ledger_credit = itemView.findViewById(R.id.ledger_credit);
         }
     }
+
 }

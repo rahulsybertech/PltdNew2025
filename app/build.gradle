@@ -3,13 +3,13 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 34
+    compileSdk 34
     defaultConfig {
         applicationId "com.syber.ssspltd"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 33
-        versionName "3.1.0"
+        versionCode 43
+        versionName "3.1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -124,6 +124,7 @@ dependencies {
 
     //ImagePicker
     implementation 'com.github.dhaval2404:imagepicker-support:1.7.1'
+
 
     //html textview
     implementation 'org.sufficientlysecure:html-textview:4.0'

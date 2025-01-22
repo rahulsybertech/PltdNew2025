@@ -1,7 +1,9 @@
 package com.syber.ssspltd.activitys.supplierorderform;
 
 import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_BRANCH_ACCOUNT;
 import static com.syber.ssspltd.Constants.NewErpUrls.ORDER_REPORT;
+import static com.syber.ssspltd.Utils.AppController.mContext;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.Interface.RefreshOrderReport;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
@@ -26,6 +29,8 @@ import com.syber.ssspltd.adapter.supplierformadapter.SupplierOrderReportAdptr;
 import com.syber.ssspltd.databinding.ActivitySupplierReportBinding;
 import com.syber.ssspltd.response.SupplierOrderReport.OrderDetail;
 import com.syber.ssspltd.response.SupplierOrderReport.SupplierReportPojo;
+
+import org.json.JSONException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -131,7 +136,11 @@ public class SupplierReportActivity extends AppCompatActivity implements Refresh
         }, error -> {
             binding.includeProgress.progress.setVisibility(View.GONE);
             binding.includeProgress.noData.setVisibility(View.VISIBLE);
-            AlertUtil.responseError(this, "Pending Order", error.toString());
+            try {
+                Constants.convertByteToString(mContext, "Pending Oder ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
 //            loading.setVisibility(View.GONE);
 //            noData.setVisibility(View.VISIBLE);
 //            noData.setText("Retry!");
@@ -152,7 +161,7 @@ public class SupplierReportActivity extends AppCompatActivity implements Refresh
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                headers.put("Authorization", Constants.SettingHeader());
                 return headers;
             }
 

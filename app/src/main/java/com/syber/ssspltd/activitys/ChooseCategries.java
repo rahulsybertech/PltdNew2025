@@ -2,11 +2,6 @@ package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_LIST;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,14 +21,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.saleFilterAdapter.SuppAdminAdapter.ChooseCatagriesAdp;
@@ -42,7 +40,6 @@ import com.syber.ssspltd.adapter.saleFilterAdapter.SuppAdminAdapter.EmployeeDial
 import com.syber.ssspltd.response.ChooseCatagriesRespo.CustomerListResult;
 import com.syber.ssspltd.response.ChooseCatagriesRespo.EmployeeListResult;
 import com.syber.ssspltd.response.ChooseCatagriesRespo.SupplierListResult;
-import com.syber.ssspltd.response.ModelClass.RowItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,40 +47,33 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ChooseCategries extends AppCompatActivity {
 
-    TextView nextPage;
-    String str;
-    Context mContext = this;
-    RelativeLayout supVisility, cusVisility, empVisility;
     public static TextView suplierClick, customClick, employeeClick;
     public static ArrayAdapter<String> type_Adapter1, type_Adapter2, type_Adapter3;
     public static ArrayList<String> type_List1 = new ArrayList<>();
     public static ArrayList<String> type_List2 = new ArrayList<>();
     public static ArrayList<String> type_List3 = new ArrayList<>();
-    String supplier;
     public static String cust_num, part_co;
-    private Dialog sDialog;
+    public static ArrayList<SupplierListResult> salepartyModelList, saleData;
+    public static ArrayList<SupplierListResult> sData = new ArrayList<>();
+    public static ArrayList<CustomerListResult> CustomerList, CustomerData;
+    public static ArrayList<CustomerListResult> CData = new ArrayList<>();
+    public static ArrayList<EmployeeListResult> EmployeeList, EmployeeData;
+    public static ArrayList<EmployeeListResult> EData = new ArrayList<>();
+    public static String partyCode;
+    public static String mobNo;
+    TextView nextPage;
+    String str;
+    Context mContext = this;
+    RelativeLayout supVisility, cusVisility, empVisility;
+    String supplier;
     ChooseCatagriesAdp chooseCatagriesAdp;
     CustomerDialogAdapter customerDialogAdapter;
     EmployeeDialogAdapte employeeDialogAdapte;
     ProgressBar progressBar;
-
-     public static ArrayList<SupplierListResult> salepartyModelList, saleData;
-    public static ArrayList<SupplierListResult> sData = new ArrayList<>();
-
-    public static ArrayList<CustomerListResult> CustomerList, CustomerData;
-    public static ArrayList<CustomerListResult> CData = new ArrayList<>();
-
-    public static ArrayList<EmployeeListResult> EmployeeList, EmployeeData;
-    public static ArrayList<EmployeeListResult> EData = new ArrayList<>();
-
-    public static String partyCode;
-    public static String mobNo;
-
     EditText search;
     TextView titile;
     RecyclerView recyclerView;
@@ -91,7 +81,7 @@ public class ChooseCategries extends AppCompatActivity {
     String suppl;
     RadioButton suppler, customer, emplooye;
     String selectedName = "";
-
+    private Dialog sDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,9 +97,9 @@ public class ChooseCategries extends AppCompatActivity {
         supVisility = findViewById(R.id.supVisility);
         cusVisility = findViewById(R.id.cusVisility);
         empVisility = findViewById(R.id.empVisility);
-         RadioButton radiosupplier = findViewById(R.id.supplier);
-         RadioButton radiocustomer = findViewById(R.id.custom);
-         RadioButton radioemployee = findViewById(R.id.employee);
+        RadioButton radiosupplier = findViewById(R.id.supplier);
+        RadioButton radiocustomer = findViewById(R.id.custom);
+        RadioButton radioemployee = findViewById(R.id.employee);
 
 //        suppler=findViewById(R.id.suppler);
 //        customer=findViewById(R.id.customer);
@@ -132,11 +122,9 @@ public class ChooseCategries extends AppCompatActivity {
         });
 
 
-        if (SharedPref.read(SharedPref.typeNumber,"").equals("4"))
-        {
+        if (SharedPref.read(SharedPref.typeNumber, "").equals("4")) {
             radioemployee.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             radioemployee.setVisibility(View.VISIBLE);
         }
 
@@ -157,12 +145,12 @@ public class ChooseCategries extends AppCompatActivity {
 //                SharedPref.write(SharedPref.PARTY_CODE,partyCode);
 //                SharedPref.write(SharedPref.USERMOBILE,mobNo);
 
-                if (radiosupplier.isChecked() && (!suplierClick.getText().toString().isEmpty()) || radiocustomer.isChecked()&&(!customClick.getText().toString().isEmpty()) || radioemployee.isChecked() && (!employeeClick.getText().toString().isEmpty())) {
+                if (radiosupplier.isChecked() && (!suplierClick.getText().toString().isEmpty()) || radiocustomer.isChecked() && (!customClick.getText().toString().isEmpty()) || radioemployee.isChecked() && (!employeeClick.getText().toString().isEmpty())) {
                     startActivity(new Intent(ChooseCategries.this, MainActivity.class)
                             .putExtra("", supplier));
                     SharedPref.write(SharedPref.TYPE, "Admin");
                     SharedPref.write(SharedPref.BACK_BUTTON, "5");
-                    SharedPref.write(SharedPref.IS_ANY_CHOOSEN,"true");
+                    SharedPref.write(SharedPref.IS_ANY_CHOOSEN, "true");
                     finish();
                 } else {
                     Toast.makeText(mContext, "Select Any one", Toast.LENGTH_LONG).show();
@@ -170,7 +158,7 @@ public class ChooseCategries extends AppCompatActivity {
             }
         });
 //        if (Lazy.haveNetworkConnection(mContext)){
-           // GetUsersTypeList();
+        // GetUsersTypeList();
 //            GetUsersTypeList1();
 //            GetUsersTypeList2();
 //        }else {
@@ -181,37 +169,42 @@ public class ChooseCategries extends AppCompatActivity {
 
 
     private void GetUsersTypeList() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_LIST,
-                response -> {
-                    Log.e("Data", response);
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.getBoolean("ResponseStatus")) {
-                            JSONArray BankListData = jsonObject.getJSONArray("SupplierListResult");
-                            salepartyModelList.clear();
-                            for (int i = 0; i < BankListData.length(); i++) {
-                                JSONObject ob = BankListData.getJSONObject(i);
-                                String name = ob.optString("Name");
-                                String psrty = ob.optString("PartyCode");
-                                String mobNo = ob.optString("UserMobileNo");
-                                Log.e("name", mobNo);
-                                salepartyModelList.add(new SupplierListResult("", name, psrty, "", mobNo, ""));
-                            }
-                            chooseCatagriesAdp.notifyDataSetChanged();
-                        } else {
-                            AlertUtil.responseElse(mContext, "GetUserList ", jsonObject.optString("ResponseMessage") + "");                        }
-                    } catch (JSONException e) {
-                        AlertUtil.responseExecption(mContext, "GetUserList ", e.toString());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_LIST, response -> {
+            Log.e("Data", response);
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getBoolean("ResponseStatus")) {
+                    JSONArray BankListData = jsonObject.getJSONArray("SupplierListResult");
+                    salepartyModelList.clear();
+                    for (int i = 0; i < BankListData.length(); i++) {
+                        JSONObject ob = BankListData.getJSONObject(i);
+                        String name = ob.optString("Name");
+                        String psrty = ob.optString("PartyCode");
+                        String mobNo = ob.optString("UserMobileNo");
+                        Log.e("name", mobNo);
+                        salepartyModelList.add(new SupplierListResult("", name, psrty, "", mobNo, ""));
                     }
-                }, error ->
-            AlertUtil.responseError(mContext, "GetUserList ", error.toString()))
-           {
-               @Override
-               public Map<String, String> getHeaders() throws AuthFailureError {
-                   HashMap<String, String> headers = new HashMap<>();
-                   headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
-                   return headers;
-               }
+                    chooseCatagriesAdp.notifyDataSetChanged();
+                } else {
+                    AlertUtil.responseElse(mContext, "GetUserList ", jsonObject.optString("ResponseMessage") + "");
+                }
+            } catch (JSONException e) {
+                AlertUtil.responseExecption(mContext, "GetUserList ", e.toString());
+            }
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, "GetUserList ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob = SharedPref.read(SharedPref.USERMOBILE, "");
@@ -219,6 +212,7 @@ public class ChooseCategries extends AppCompatActivity {
                 Log.e("abcstr", str);
                 return str.getBytes();
             }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -231,35 +225,41 @@ public class ChooseCategries extends AppCompatActivity {
     }
 
     private void GetUsersTypeList1() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_LIST,
-                response -> {
-                    Log.e("Data", response);
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.getBoolean("ResponseStatus") == true) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_LIST, response -> {
+            Log.e("Data", response);
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getBoolean("ResponseStatus") == true) {
 
-                            JSONArray CustomerListData = jsonObject.getJSONArray("CustomerListResult");
-                            Log.e("CustomerListResult", CustomerListData + "");
+                    JSONArray CustomerListData = jsonObject.getJSONArray("CustomerListResult");
+                    Log.e("CustomerListResult", CustomerListData + "");
 
-                            CustomerList.clear();
-                            for (int i = 0; i < CustomerListData.length(); i++) {
-                                JSONObject ob = CustomerListData.getJSONObject(i);
-                                String name = ob.optString("Name");
-                                Log.e("c+name", name);
-                                String psrty = ob.optString("PartyCode");
-                                String mobNo = ob.optString("UserMobileNo");
-                                // supplierListResult = new SupplierListResult(name);
-                                CustomerList.add(new CustomerListResult("", name, psrty, "", mobNo, ""));
-                            }
-                            customerDialogAdapter.notifyDataSetChanged();
-                        } else {
-                            AlertUtil.responseElse(mContext, "GetUserList ", jsonObject.optString("ResponseMessage") + "");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        AlertUtil.responseExecption(mContext, "GetUserList ", e.toString());
+                    CustomerList.clear();
+                    for (int i = 0; i < CustomerListData.length(); i++) {
+                        JSONObject ob = CustomerListData.getJSONObject(i);
+                        String name = ob.optString("Name");
+                        Log.e("c+name", name);
+                        String psrty = ob.optString("PartyCode");
+                        String mobNo = ob.optString("UserMobileNo");
+                        // supplierListResult = new SupplierListResult(name);
+                        CustomerList.add(new CustomerListResult("", name, psrty, "", mobNo, ""));
                     }
-                }, error -> AlertUtil.responseError(mContext, "GetUserList ", error.toString()))  {
+                    customerDialogAdapter.notifyDataSetChanged();
+                } else {
+                    AlertUtil.responseElse(mContext, "GetUserList ", jsonObject.optString("ResponseMessage") + "");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                AlertUtil.responseExecption(mContext, "GetUserList ", e.toString());
+            }
+        }, error ->
+        {
+            try {
+                Constants.convertByteToString(mContext, "GetUserList ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob = SharedPref.read(SharedPref.USERMOBILE, "");
@@ -281,38 +281,44 @@ public class ChooseCategries extends AppCompatActivity {
 
     private void GetUsersTypeList2() {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_LIST,
-                response -> {
-                    Log.e("Data", response);
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        if (jsonObject.getBoolean("ResponseStatus") == true) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_LIST, response -> {
+            Log.e("Data", response);
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getBoolean("ResponseStatus") == true) {
 
-                            JSONArray EmployeeListData = jsonObject.getJSONArray("EmployeeListResult");
-                            Log.e("EmployeeListData", EmployeeListData + "");
+                    JSONArray EmployeeListData = jsonObject.getJSONArray("EmployeeListResult");
+                    Log.e("EmployeeListData", EmployeeListData + "");
 
-                            EmployeeList.clear();
+                    EmployeeList.clear();
 
-                            for (int i = 0; i < EmployeeListData.length(); i++) {
-                                JSONObject ob = EmployeeListData.getJSONObject(i);
-                                String name = ob.optString("Name");
-                                Log.e("e_name", name);
-                                String psrty = ob.optString("PartyCode");
-                                String mobNo = ob.optString("UserMobileNo");
-                                // supplierListResult = new SupplierListResult(name);
-                                EmployeeList.add(new EmployeeListResult("", name, psrty, "", mobNo, ""));
-                            }
-
-                            employeeDialogAdapte.notifyDataSetChanged();
-
-                        } else {
-                            AlertUtil.responseElse(mContext, "GetUserList ", jsonObject.optString("ResponseMessage") + "");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        AlertUtil.responseExecption(mContext, "GetUserList ", e.toString());
+                    for (int i = 0; i < EmployeeListData.length(); i++) {
+                        JSONObject ob = EmployeeListData.getJSONObject(i);
+                        String name = ob.optString("Name");
+                        Log.e("e_name", name);
+                        String psrty = ob.optString("PartyCode");
+                        String mobNo = ob.optString("UserMobileNo");
+                        // supplierListResult = new SupplierListResult(name);
+                        EmployeeList.add(new EmployeeListResult("", name, psrty, "", mobNo, ""));
                     }
-                }, error -> AlertUtil.responseError(mContext, "GetUserList ", error.toString())) {
+
+                    employeeDialogAdapte.notifyDataSetChanged();
+
+                } else {
+                    AlertUtil.responseElse(mContext, "GetUserList ", jsonObject.optString("ResponseMessage") + "");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                AlertUtil.responseExecption(mContext, "GetUserList ", e.toString());
+            }
+        }, error ->
+        {
+            try {
+                Constants.convertByteToString(mContext, "GetUserList ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob = SharedPref.read(SharedPref.USERMOBILE, "");
@@ -339,7 +345,7 @@ public class ChooseCategries extends AppCompatActivity {
             case R.id.supplier:
                 if (checked)
                     selectedName = suplierClick.getText().toString();
-                    supVisility.setVisibility(View.VISIBLE);
+                supVisility.setVisibility(View.VISIBLE);
 //                supplier=suplierClick.getSelectedItem().toString();
                 cusVisility.setVisibility(View.GONE);
                 empVisility.setVisibility(View.GONE);
@@ -347,16 +353,16 @@ public class ChooseCategries extends AppCompatActivity {
             case R.id.custom:
                 if (checked)
                     selectedName = customClick.getText().toString();
-                    //   searchDialog("");
-                    cusVisility.setVisibility(View.VISIBLE);
+                //   searchDialog("");
+                cusVisility.setVisibility(View.VISIBLE);
                 supVisility.setVisibility(View.GONE);
                 empVisility.setVisibility(View.GONE);
                 break;
             case R.id.employee:
                 if (checked)
                     selectedName = employeeClick.getText().toString();
-                    //suppGetList=employeeClick.getText().toString();
-                    empVisility.setVisibility(View.VISIBLE);
+                //suppGetList=employeeClick.getText().toString();
+                empVisility.setVisibility(View.VISIBLE);
                 cusVisility.setVisibility(View.GONE);
                 supVisility.setVisibility(View.GONE);
                 break;
@@ -444,7 +450,7 @@ public class ChooseCategries extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 CustomerData.clear();
-                for (int p = 0; p < CustomerList.size(); p++)     {
+                for (int p = 0; p < CustomerList.size(); p++) {
                     if (CustomerList.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())
                     ) {
                         CustomerData.add(CustomerList.get(p));
@@ -556,7 +562,7 @@ public class ChooseCategries extends AppCompatActivity {
         SharedPref.write(SharedPref.SELECTED, n);
         SharedPref.write(SharedPref.PARTY_CODE, supplierListResult.getPartyCode());
         //SharedPref.write(SharedPref.USERMOBILE, supplierListResult.getUserMobileNo());
-        Log.e("SharedPref.USERMOBILE",supplierListResult.getUserMobileNo());
+        Log.e("SharedPref.USERMOBILE", supplierListResult.getUserMobileNo());
         Log.e("party_code", supplierListResult.getPartyCode());
         Log.e("mobNo", supplierListResult.getUserMobileNo());
         suplierClick.setText(n);
@@ -568,7 +574,7 @@ public class ChooseCategries extends AppCompatActivity {
         String n = customerList.getName();
         SharedPref.write(SharedPref.SELECTED, n);
         SharedPref.write(SharedPref.PARTY_CODE, customerList.getPartyCode());
-       // SharedPref.write(SharedPref.USERMOBILE, customerList.getUserMobileNo());
+        // SharedPref.write(SharedPref.USERMOBILE, customerList.getUserMobileNo());
         Log.e("party_code", customerList.getPartyCode());
         Log.e("mobNo", customerList.getUserMobileNo());
         customClick.setText(n);
@@ -597,7 +603,7 @@ public class ChooseCategries extends AppCompatActivity {
         finishAffinity();
     }
 
-    public void  networkConnetion3(Context mContext) {
+    public void networkConnetion3(Context mContext) {
 
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
         ImageView cross = dialogView.findViewById(R.id.cross);

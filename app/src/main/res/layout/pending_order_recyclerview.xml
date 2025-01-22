@@ -1,369 +1,356 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
 
-
-
-        <LinearLayout
-            android:layout_margin="6dp"
-            android:background="@drawable/all_outline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-
-                <LinearLayout
-
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Supplier name     :"
-                        android:layout_weight="0"
-                        android:textSize="12dp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/roboto_regular"
-                        android:layout_marginTop="1dp"
-                        android:textColor="@color/black"
-
-                        />
-
-                    <TextView
-                        android:textColor="@color/green"
-                        android:text="abc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="5dp"
-                        android:layout_weight="1"
-                        android:textSize="12dp"
-                        android:id="@+id/pendingSupplier_Name"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="@font/roboto_regular"
-                        />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_weight="2.1"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Order No. :"
-                        android:layout_weight="0"
-                        android:textSize="12dp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/roboto_regular"
-                        android:layout_marginTop="1dp"
-                        android:textColor="@color/black"
-
-                        />
-
-                    <TextView
-                        android:textColor="@color/green"
-                        android:text="abc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="5dp"
-                        android:layout_weight="1"
-                        android:textSize="12dp"
-                        android:id="@+id/pendingOrder_no"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="@font/roboto_regular"
-                        />
-
-
-
-                </LinearLayout>
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_margin="6dp"
+                android:background="@drawable/all_outline"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="18dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_weight="0"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Marketer Name   :"
-                    android:textColor="@color/black"
-                    android:textSize="12dp"
-                    android:textStyle="bold"
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
 
-                    />
 
-                <TextView
-                    android:textColor="@color/black"
-                    android:text="abc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="5dp"
-                    android:layout_weight="1"
-                    android:textSize="12dp"
-                    android:id="@+id/marketer_pending"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="@font/roboto_regular"
-                    />
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="1dp"
+                                  android:layout_weight="0"
+                                  android:fontFamily="@font/roboto_regular"
+                                  android:text="Supplier name     :"
+                                  android:textColor="@color/black"
+                                  android:textSize="12dp"
+                                  android:textStyle="bold"
+
+                                  />
+
+                              <TextView
+                                  android:id="@+id/pendingSupplier_Name"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="2dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_regular"
+                                  android:paddingStart="5dp"
+                                  android:text="abc"
+                                  android:textColor="@color/green"
+                                  android:textSize="12dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.1"
+                            android:orientation="horizontal">
+
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="1dp"
+                                  android:layout_weight="0"
+                                  android:fontFamily="@font/roboto_regular"
+                                  android:text="Order No. :"
+                                  android:textColor="@color/black"
+                                  android:textSize="12dp"
+                                  android:textStyle="bold"
+
+                                  />
+
+                              <TextView
+                                  android:id="@+id/pendingOrder_no"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="2dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_regular"
+                                  android:paddingStart="5dp"
+                                  android:text="abc"
+                                  android:textColor="@color/green"
+                                  android:textSize="12dp" />
+
+
+                        </LinearLayout>
+                  </LinearLayout>
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="18dp"
+                            android:layout_marginTop="1dp"
+                            android:layout_weight="0"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="Marketer Name   :"
+                            android:textColor="@color/black"
+                            android:textSize="12dp"
+                            android:textStyle="bold"
+
+                            />
+
+                        <TextView
+                            android:id="@+id/marketer_pending"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto_regular"
+                            android:paddingStart="5dp"
+                            android:text="abc"
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+                  </LinearLayout>
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+
+
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="1dp"
+                                  android:layout_weight="0"
+                                  android:fontFamily="@font/roboto_regular"
+                                  android:text="Sub Party             :"
+                                  android:textColor="@color/black"
+                                  android:textSize="12dp"
+                                  android:textStyle="bold"
+
+                                  />
+
+                              <TextView
+                                  android:id="@+id/pendingSub_party"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="2dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_regular"
+                                  android:paddingStart="5dp"
+                                  android:text="abc"
+                                  android:textColor="@color/green"
+                                  android:textSize="12dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.1"
+                            android:orientation="horizontal">
+
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="1dp"
+                                  android:layout_weight="0"
+                                  android:fontFamily="@font/roboto_regular"
+                                  android:text="Date :"
+                                  android:textColor="@color/black"
+                                  android:textSize="12dp"
+                                  android:textStyle="bold"
+
+                                  />
+
+                              <TextView
+                                  android:id="@+id/pending_date"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginTop="2dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_regular"
+                                  android:paddingStart="5dp"
+                                  android:text="20/08/2020"
+                                  android:textSize="12dp" />
+
+
+                        </LinearLayout>
+                  </LinearLayout>
+                  <!--            <LinearLayout-->
+
+                  <!--                android:layout_weight="1"-->
+                  <!--                android:layout_width="match_parent"-->
+                  <!--                android:layout_height="match_parent"-->
+                  <!--                android:orientation="horizontal">-->
+
+                  <!--                <TextView-->
+                  <!--                    android:layout_width="wrap_content"-->
+                  <!--                    android:layout_height="wrap_content"-->
+                  <!--                    android:text="Net Amount        :"-->
+                  <!--                    android:layout_weight="0"-->
+                  <!--                    android:textSize="12dp"-->
+                  <!--                    android:textStyle="bold"-->
+                  <!--                    android:fontFamily="@font/roboto_regular"-->
+                  <!--                    android:layout_marginTop="1dp"-->
+                  <!--                    android:textColor="@color/black"-->
+
+                  <!--                    />-->
+
+                  <!--                <TextView-->
+                  <!--                    android:id="@+id/netAmt_pending"-->
+                  <!--                    android:text="abc"-->
+                  <!--                    android:layout_width="wrap_content"-->
+                  <!--                    android:layout_height="wrap_content"-->
+                  <!--                    android:paddingStart="5dp"-->
+                  <!--                    android:layout_weight="1"-->
+                  <!--                    android:textSize="12dp"-->
+                  <!--                    android:layout_marginTop="2dp"-->
+                  <!--                    android:fontFamily="@font/roboto_regular"/>-->
+                  <!--&lt;!&ndash;                <ImageView&ndash;&gt;-->
+                  <!--&lt;!&ndash;                    android:id="@+id/plusClick"&ndash;&gt;-->
+                  <!--&lt;!&ndash;                    android:src="@drawable/ic_down"&ndash;&gt;-->
+                  <!--&lt;!&ndash;                    android:layout_alignParentRight="true"&ndash;&gt;-->
+                  <!--&lt;!&ndash;                    android:layout_width="30dp"&ndash;&gt;-->
+                  <!--&lt;!&ndash;                    android:layout_height="wrap_content"/>&ndash;&gt;-->
+
+                  <!--            </LinearLayout>-->
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="5dp"
+                      android:background="@drawable/otp_line">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/otp_line"
+                            android:fontFamily="@font/helvetica_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text="Item"
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/otp_line"
+                            android:fontFamily="@font/helvetica_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text="Type"
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/otp_line"
+                            android:fontFamily="@font/helvetica_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text="Qty"
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/otp_line"
+                            android:fontFamily="@font/helvetica_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text="Apx. Amount"
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+                  </LinearLayout>
+
+                  <LinearLayout
+                      android:id="@+id/ll_2"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:background="@drawable/otp_line">
+
+                        <TextView
+                            android:id="@+id/pendingItem"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/otp_line"
+                            android:fontFamily="@font/helvetica_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text="10/12/2020"
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/pendingType"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/otp_line"
+                            android:fontFamily="@font/helvetica_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/pendingQTY"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/otp_line"
+                            android:fontFamily="@font/helvetica_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text="1"
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/pendingAmt"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/otp_line"
+                            android:fontFamily="@font/helvetica_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text="200"
+                            android:textColor="@color/black"
+                            android:textSize="12dp" />
+                  </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
 
-
-                <LinearLayout
-
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sub Party             :"
-                        android:layout_weight="0"
-                        android:textSize="12dp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/roboto_regular"
-                        android:layout_marginTop="1dp"
-                        android:textColor="@color/black"
-
-                        />
-
-                    <TextView
-                        android:textColor="@color/green"
-                        android:text="abc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="5dp"
-                        android:layout_weight="1"
-                        android:textSize="12dp"
-                        android:id="@+id/pendingSub_party"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="@font/roboto_regular"
-                        />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_weight="2.1"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Date :"
-                        android:layout_weight="0"
-                        android:textSize="12dp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/roboto_regular"
-                        android:layout_marginTop="1dp"
-                        android:textColor="@color/black"
-
-                        />
-
-                    <TextView
-                        android:text="20/08/2020"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="5dp"
-                        android:layout_weight="1"
-                        android:textSize="12dp"
-                        android:id="@+id/pending_date"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="@font/roboto_regular"
-                        />
-
-
-
-                </LinearLayout>
-            </LinearLayout>
-<!--            <LinearLayout-->
-
-<!--                android:layout_weight="1"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:orientation="horizontal">-->
-
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="Net Amount        :"-->
-<!--                    android:layout_weight="0"-->
-<!--                    android:textSize="12dp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:fontFamily="@font/roboto_regular"-->
-<!--                    android:layout_marginTop="1dp"-->
-<!--                    android:textColor="@color/black"-->
-
-<!--                    />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/netAmt_pending"-->
-<!--                    android:text="abc"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:paddingStart="5dp"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:textSize="12dp"-->
-<!--                    android:layout_marginTop="2dp"-->
-<!--                    android:fontFamily="@font/roboto_regular"/>-->
-<!--&lt;!&ndash;                <ImageView&ndash;&gt;-->
-<!--&lt;!&ndash;                    android:id="@+id/plusClick"&ndash;&gt;-->
-<!--&lt;!&ndash;                    android:src="@drawable/ic_down"&ndash;&gt;-->
-<!--&lt;!&ndash;                    android:layout_alignParentRight="true"&ndash;&gt;-->
-<!--&lt;!&ndash;                    android:layout_width="30dp"&ndash;&gt;-->
-<!--&lt;!&ndash;                    android:layout_height="wrap_content"/>&ndash;&gt;-->
-
-<!--            </LinearLayout>-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/otp_line">
-                <TextView
-                    android:textSize="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Item"
-                    android:padding="2dp"
-                    android:background="@drawable/otp_line"
-                    android:gravity="center"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/helvetica_regular"/>
-                <TextView
-                    android:textSize="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Type"
-                    android:padding="2dp"
-                    android:background="@drawable/otp_line"
-                    android:gravity="center"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/helvetica_regular"/>
-
-                <TextView
-                    android:textSize="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:padding="2dp"
-                    android:background="@drawable/otp_line"
-                    android:text="Qty"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/helvetica_regular"/>
-                <TextView
-                    android:textSize="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Apx. Amount"
-                    android:padding="2dp"
-                    android:background="@drawable/otp_line"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/helvetica_regular"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ll_2"
-                android:background="@drawable/otp_line"
-                >
-                <TextView
-                    android:textSize="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="10/12/2020"
-                    android:padding="2dp"
-                    android:id="@+id/pendingItem"
-                    android:background="@drawable/otp_line"
-                    android:gravity="center"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/helvetica_regular"/>
-
-                <TextView
-                    android:textSize="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text=""
-                    android:padding="2dp"
-                    android:id="@+id/pendingType"
-                    android:background="@drawable/otp_line"
-                    android:gravity="center"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/helvetica_regular"/>
-
-                <TextView
-                    android:textSize="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="1"
-                    android:padding="2dp"
-                    android:background="@drawable/otp_line"
-                    android:id="@+id/pendingQTY"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/helvetica_regular"/>
-                <TextView
-                    android:textSize="12dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="200"
-                    android:padding="2dp"
-                    android:background="@drawable/otp_line"
-                    android:id="@+id/pendingAmt"                                android:textColor="@color/black"
-                    android:fontFamily="@font/helvetica_regular"/>
-            </LinearLayout>
-        </LinearLayout>
-
-
-
-
-
-
-
-    </LinearLayout>
+      </LinearLayout>
 
 
 </RelativeLayout>

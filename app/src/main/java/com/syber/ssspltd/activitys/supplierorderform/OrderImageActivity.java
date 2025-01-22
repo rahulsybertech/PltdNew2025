@@ -64,7 +64,7 @@ public class OrderImageActivity extends AppCompatActivity {
         if (extra != null) {
             product = (OrderDetail) extra.getSerializableExtra("img");
         }
-        Log.e("immm",new Gson().toJson(product.getImageList()));
+        System.out.println("immm"+ new Gson().toJson(product.getImageList()));
         if ( (product.getImageList() != null)) {
             galleryAdapter = new OrderImageAdapter(mContext, (product.getImageList() != null) ? product.getImageList() : Collections.emptyList());
             LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(mContext);

@@ -37,17 +37,18 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
-import com.syber.ssspltd.Utils.AlertUtil;
-import com.syber.ssspltd.Utils.CurrentDateTime;
 import com.syber.ssspltd.Interface.FilterChangedCourier;
 import com.syber.ssspltd.Interface.OnCheckChangesCourier;
-import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterCourierReport.Courier;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterCourierReport.CourierNo;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterCourierReport.CourierReportFilterRequest;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterCourierReport.CourierReportPojo;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterCourierReport.Salebill;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.CurrentDateTime;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.CourierAdapter;
@@ -67,6 +68,7 @@ import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -83,11 +85,11 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-public class   CourierReportActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, FilterChangedCourier, OnCheckChangesCourier {
+public class CourierReportActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, FilterChangedCourier, OnCheckChangesCourier {
+    public static TextView count_Cname, count_CNo, count_CBill_No;
+    static List<CourierReportResult> courierDetails;
     Context mContext = this;
     CourierAdapter courierAdapter;
-    private ActivityCourierReportBinding binding;
-    static List<CourierReportResult> courierDetails;
     Type listType;
     LinearLayoutManager linearLayoutManager;
     TextView courierFilter_Date, courierFilter_Name, courierFilter_No, courierFilter_BillNo, nodata;
@@ -109,24 +111,21 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
     SimpleDateFormat simpleDateFormat;
     SimpleDateFormat simpleDateFormat2;
     String Count = "", Count2 = "", Count3 = "";
-    public static TextView count_Cname, count_CNo, count_CBill_No;
     boolean isDatePressed = false, isNamePlace = false, isNoPlace = false, isbillNoPlace = false;
     boolean isFilterShowing = false;
-
     FilterCourierReportAdap filterCourierReportAdap;
     FilterCourierNoAdap filterCourierNoAdap;
     FilterSalebillAdap filterSalebillAdap;
-
     List<Courier> courier_List;
     List<CourierNo> courierNo_List;
     List<Salebill> salebill_List;
     Stack<FilterTypeCourierReport> filterStack;
     CourierReportPojo courierReportPojo;
-
     ProgressBar progressBar;
     String StartDate_filter, Enddate_filter;
     Dialog dialog;
-
+    ImageView backImage3;
+    private ActivityCourierReportBinding binding;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -153,7 +152,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
         }.getType();
         courierBillNoType1 = new TypeToken<CourierReportPojo>() {
         }.getType();
-      //new Filter
+        //new Filter
 
         courierDetails = new ArrayList<>();
         courierNameList = new ArrayList<>();
@@ -180,7 +179,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
         courierNameDetail("COURIERNAME");
         CourierNoDetail("COURIERNO");
         CourierBillNoDetail("SALEBILLNO");
-        ImageView backImage3 = findViewById(R.id.download);
+        backImage3 = findViewById(R.id.download);
         backImage3.setImageDrawable(ContextCompat.getDrawable(CourierReportActivity.this, R.drawable.ic_filter));
 
         backImage3.setOnClickListener(v -> {
@@ -206,7 +205,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
 
                     if (isSetFYDate()) {
                         GetCourierReport(courierName, courierNo, courierBill_no, StartDate_filter, Enddate_filter, dbNAME, false);
-                    }else {
+                    } else {
                         GetCourierReport(courierName, courierNo, courierBill_no, form_date, to_Date, dbNAME, false);
                     }
                 }
@@ -232,7 +231,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
         } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2021-2022")) {
             StartDate_filter = "01/04/2021";
             Enddate_filter = "31/03/2022";
-        }  else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
             StartDate_filter = "01/04/2020";
             Enddate_filter = "31/03/2021";
         } else {
@@ -244,94 +243,97 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
 
     private void GetCourierReport(String courierName, String courierNo, String courierBill_no, String form_Date, String to_date, String db_name, boolean isisFilterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_COURIER_REPORT,
-                new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_COURIER_REPORT, response -> {
+            Log.i("TaG", "GetCourierReport resp : URl " + GET_COURIER_REPORT + " " + response);
+            CourierReportPoojo pojo = new Gson().fromJson(response, listType);
+            courierDetails.clear();
+            System.out.println("GET_COURIER_RESPONSE_CODE " + pojo.getResponseStatus());
+            try {
+                if (pojo.getResponseStatus()) {
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.GONE);
+                    courierDetails.addAll(pojo.getCourierReportResult());
+                    courierAdapter.notifyDataSetChanged();
 
+                    if (isSetFYDate() == false) {
+                        StartDate_filter = pojo.getmDefaultStartDate();
+                        Enddate_filter = pojo.getmDefaultEndDate();
+                    }
 
-                    @Override
-                    public void onResponse(String response) {
-                        Log.i("TaG","GetCourierReport resp : URl " + GET_COURIER_REPORT + " " + response);
-                        CourierReportPoojo pojo = new Gson().fromJson(response, listType);
-                        courierDetails.clear();
-                        try {
-                            if (pojo.getResponseStatus()) {
-                                binding.includeProgress.progress.setVisibility(View.GONE);
-                                binding.includeProgress.noData.setVisibility(View.GONE);
-                                courierDetails.addAll(pojo.getCourierReportResult());
-                                courierAdapter.notifyDataSetChanged();
+                    // Enddate_filter = pojo.getEnddate();
+                    SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
+                    SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
 
-                                if(isSetFYDate() == false) {
-                                    StartDate_filter = pojo.getmDefaultStartDate();
-                                    Enddate_filter = pojo.getmDefaultEndDate();
-                                }
-
-                                // Enddate_filter = pojo.getEnddate();
-                                SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
-                                SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
-
-                                Log.e("dateFilter", pojo.getmStartDate());
-                                if (!isisFilterApplied) {
-                                    binding.tool.textDate.setVisibility(View.VISIBLE);if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
-                                        binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
-                                    } else {
-                                        binding.tool.textDate.setText("");
-                                    }
-                                } else {
-                                    binding.tool.textDate.setVisibility(View.VISIBLE);
-                                    if(form_Date != null && to_date != null && !form_Date.isEmpty() && !to_date.isEmpty()) {
-                                        binding.tool.textDate.setText(form_Date + " To " + to_date);
-                                    }else {
-                                        binding.tool.textDate.setText("");
-                                    }
-                                }
+                    Log.e("dateFilter", pojo.getmStartDate());
+                    if (!isisFilterApplied) {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                            binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                        } else {
+                            binding.tool.textDate.setText("");
+                        }
+                    } else {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        if (form_Date != null && to_date != null && !form_Date.isEmpty() && !to_date.isEmpty()) {
+                            binding.tool.textDate.setText(form_Date + " To " + to_date);
+                        } else {
+                            binding.tool.textDate.setText("");
+                        }
+                    }
 //                            binding.tool.textDate.setVisibility(View.VISIBLE);
 //                            binding.tool.textDate.setText(pojo.getmDefaultStartDate()+" To "+pojo.getmDefaultEndDate());
 
 
-                                SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
-                                Date newDateFilter = null;
-                                Date newDateFilter_to = null;
-                                try {
-                                    newDateFilter = date.parse(StartDate_filter);
-                                    newDateFilter_to = date.parse(Enddate_filter);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                                date = new SimpleDateFormat("dd/MM/yyyy");
-                                StartDate_filter = date.format(newDateFilter);
-                                Enddate_filter = date.format(newDateFilter_to);
-                            } else {
-                                if (!isisFilterApplied) {
-                                    binding.tool.textDate.setVisibility(View.VISIBLE);
-                                    binding.tool.textDate.setVisibility(View.VISIBLE);if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
-                                        binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
-                                    } else {
-                                        binding.tool.textDate.setText("");
-                                    }
-                                } else {
-                                    binding.tool.textDate.setVisibility(View.VISIBLE);
-                                    if(form_Date != null && to_date != null && !form_Date.isEmpty() && !to_date.isEmpty()) {
-                                        binding.tool.textDate.setText(form_Date + " To " + to_date);
-                                    }else {
-                                        binding.tool.textDate.setText("");
-                                    }
-                                }
-                                StartDate_filter = pojo.getmDefaultStartDate();
-                                Enddate_filter = pojo.getmDefaultEndDate();
-                                // Enddate_filter = pojo.getEnddate();
-                                SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
-                                SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
-                                binding.includeProgress.progress.setVisibility(View.GONE);
-                                binding.includeProgress.noData.setVisibility(View.VISIBLE);
-                                courierAdapter.notifyDataSetChanged();
-                            }
-                        }catch (JsonIOException e){
-                            AlertUtil.responseExecption(mContext, "GetCourierReport ", e.toString());
-                        }
-
+                    SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
+                    Date newDateFilter = null;
+                    Date newDateFilter_to = null;
+                    try {
+                        newDateFilter = date.parse(StartDate_filter);
+                        newDateFilter_to = date.parse(Enddate_filter);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                }, error -> {
-            AlertUtil.responseError(mContext, "GetCourierReport ", error.toString());
+                    date = new SimpleDateFormat("dd/MM/yyyy");
+                    StartDate_filter = date.format(newDateFilter);
+                    Enddate_filter = date.format(newDateFilter_to);
+                } else {
+                    backImage3.setVisibility(View.GONE);
+                    if (!isisFilterApplied) {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                            binding.tool.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                        } else {
+                            binding.tool.textDate.setText("");
+                        }
+                    } else {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        if (form_Date != null && to_date != null && !form_Date.isEmpty() && !to_date.isEmpty()) {
+                            binding.tool.textDate.setText(form_Date + " To " + to_date);
+                        } else {
+                            binding.tool.textDate.setText("");
+                        }
+                    }
+                    StartDate_filter = pojo.getmDefaultStartDate();
+                    Enddate_filter = pojo.getmDefaultEndDate();
+                    // Enddate_filter = pojo.getEnddate();
+                    SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
+                    SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.VISIBLE);
+                    courierAdapter.notifyDataSetChanged();
+                }
+            } catch (JsonIOException e) {
+                e.printStackTrace();
+                AlertUtil.responseExecption(mContext, "GetCourierReport ", e.toString());
+            }
+
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, "GetCourierReport ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
             binding.includeProgress.progress.setVisibility(View.GONE);
             binding.includeProgress.noData.setVisibility(View.VISIBLE);
         }) {
@@ -339,11 +341,11 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
-
-                Log.i("TaG","GetCourierReport header : URl " + GET_COURIER_REPORT + " " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", Constants.SettingHeader());
+                Log.i("TaG", "GetCourierReport header : URl " + GET_COURIER_REPORT + " " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
+
             @Override
             public byte[] getBody() throws AuthFailureError {
                 //  String mob = SharedPref.read(SharedPref.USERMOBILE,"");
@@ -351,7 +353,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                 // String otpp = otp.getText().toString();
                 String str = "{\"MOBILENO\":\"" + mob3 + "\",\"PartyCode\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FromDate\":\"" + form_Date + "\",\"ToDate\":\"" + to_date + "\",\"CourierName\":\"" + courierName + "\"" +
                         ",\"CourierNumber\":\"" + courierNo + "\",\"SaleBillNumber\":\"" + courierBill_no + "\",\"DBNAME\":\"" + db_name + "\"}";
-                Log.i("TaG","GetCourierReport req : URl " + GET_COURIER_REPORT + " " + str);
+                Log.i("TaG", "GetCourierReport req : URl " + GET_COURIER_REPORT + " " + str);
 
                 return str.getBytes();
             }
@@ -559,14 +561,22 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("CourierName");
-                        sb.append(name + ",");
+                        if (name.isEmpty()) {
+                            sb.append(name).append("without courier name");
+                        } else {
+                            sb.append(name).append(",");
+                        }
+                        System.out.println("My_Courier_Name - " + name);
                         Log.e("courierName", name);
                     }
+
                     String sbb = sb.toString();
                     courierName = sbb;
                     Log.e("courier_name", sbb);
-                } catch (Exception e) {
+                    System.out.println("My_Courier_Name 2 - " + sbb);
 
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
                 courierName = "null";
@@ -583,12 +593,14 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                         String name = objects.getString("CourierNumber");
                         sb.append(name + ",");
                         Log.e("courierNo_name", name);
+                        System.out.println("My_Courier_Name 3 - " + name);
                     }
                     String sbb = sb.toString();
                     courierNo = sbb;
                     Log.e("courierNo_list", sbb);
+                    System.out.println("My_Courier_Name 4 - " + sbb);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             } else {
                 courierNo = "null";
@@ -606,10 +618,12 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                         String name = objects.getString("SalebillNo");
                         sb.append(name + ",");
                         Log.e("courierBNo_name", name);
+                        System.out.println("My_Courier_Name 5 - " + name);
                     }
                     String sbb = sb.toString();
                     courierBill_no = sbb;
                     Log.e("courierBNo_list", sbb);
+                    System.out.println("My_Courier_Name 6 - " + sbb);
                 } catch (Exception e) {
 
                 }
@@ -625,6 +639,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                 Date d1 = sdformat.parse(formDate.getText().toString());
                 Date d2 = sdformat.parse(todate.getText().toString());
                 if (d1.compareTo(d2) < 0 || d1.compareTo(d2) == 0) {
+                    System.out.println("My_Courier_Name 7 - " + courierName);
                     startActivity(new Intent(mContext, CourierReportActivity.class)
                             .putExtra("formDate", formDate.getText().toString())
                             .putExtra("todate", todate.getText().toString())
@@ -796,7 +811,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                 SharedPref.read(SharedPref.DB_NAME, "")
         );
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_LIST_NEW, response -> {
-            Log.i("TaG","GetCourierReport res : URl1 " + GET_FILTER_LIST_NEW + " " + response);
+            Log.i("TaG", "GetCourierReport res : URl1 " + GET_FILTER_LIST_NEW + " " + response);
             CourierReportPojo pojo = new Gson().fromJson(response, courierNameType1);
 
             if (pojo.getResponseStatus()) {
@@ -929,14 +944,14 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
             public byte[] getBody() throws AuthFailureError {
                 String str = new Gson().toJson(request);
                 Log.e("str", str);
-                Log.i("TaG","GetCourierReport req : URl1 " + GET_FILTER_LIST_NEW + " " + str);
+                Log.i("TaG", "GetCourierReport req : URl1 " + GET_FILTER_LIST_NEW + " " + str);
                 return str.getBytes();
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
 
@@ -1320,7 +1335,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                     @Override
                     public void onResponse(String response) {
 
-                        Log.i("TaG","GetCourierReport rsp : URl2 " + GET_FILTER_DETAIL_LIST + " " + response);
+                        Log.i("TaG", "GetCourierReport rsp : URl2 " + GET_FILTER_DETAIL_LIST + " " + response);
                         FilterListPojo pojo = new Gson().fromJson(response, courierNameType);
                         if (pojo.getResponseStatus()) {
                             courierNameList.clear();
@@ -1341,13 +1356,14 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
                 // String otpp = otp.getText().toString();
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "COURIERREPORT" + "\"}";
-                Log.i("TaG","GetCourierReport req : URl2 " + GET_FILTER_DETAIL_LIST + " " + str);
+                Log.i("TaG", "GetCourierReport req : URl2 " + GET_FILTER_DETAIL_LIST + " " + str);
                 return str.getBytes();
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
 
@@ -1363,7 +1379,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("TaG","GetCourierReport rsp : URl3 " + GET_FILTER_DETAIL_LIST + " " + response);
+                        Log.i("TaG", "GetCourierReport rsp : URl3 " + GET_FILTER_DETAIL_LIST + " " + response);
                         com.syber.ssspltd.response.CourierNameRespons.CourierNoRespo.FilterListPojo pojo = new Gson().fromJson(response, courierNoType);
                         if (pojo.getResponseStatus()) {
                             courierNoList.clear();
@@ -1380,14 +1396,14 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "COURIERREPORT" + "\"}";
-                Log.i("TaG","GetCourierReport req : URl3 " + GET_FILTER_DETAIL_LIST + " " + str);
+                Log.i("TaG", "GetCourierReport req : URl3 " + GET_FILTER_DETAIL_LIST + " " + str);
                 return str.getBytes();
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
 
@@ -1403,7 +1419,7 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("TaG","GetCourierReport res : URl4 " + GET_FILTER_DETAIL_LIST + " " + response);
+                        Log.i("TaG", "GetCourierReport res : URl4 " + GET_FILTER_DETAIL_LIST + " " + response);
                         com.syber.ssspltd.response.CourierNameRespons.CourierBillNoRespo.FilterListPojo pojo = new Gson().fromJson(response, courierBillNoType);
                         if (pojo.getResponseStatus()) {
                             courierBillNoList.clear();
@@ -1422,13 +1438,14 @@ public class   CourierReportActivity extends AppCompatActivity implements DatePi
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "COURIERREPORT" + "\"}";
 
-                Log.i("TaG","GetCourierReport req : URl4 " + GET_FILTER_DETAIL_LIST + " " + str);
+                Log.i("TaG", "GetCourierReport req : URl4 " + GET_FILTER_DETAIL_LIST + " " + str);
                 return str.getBytes();
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
 

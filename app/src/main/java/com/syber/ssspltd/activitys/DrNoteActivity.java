@@ -2,10 +2,6 @@ package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_DEBIT_NOTE_REPORT;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -15,20 +11,27 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
-import com.syber.ssspltd.Utils.AlertUtil;
-import com.syber.ssspltd.Utils.Lazy;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.DebitNoteAdap.DebitNoteAdapter;
 import com.syber.ssspltd.databinding.ActivityDrNoteBinding;
 import com.syber.ssspltd.response.DebitNoteResponse.DebitNotePojo;
 import com.syber.ssspltd.response.DebitNoteResponse.DebitNoteReportResult;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -74,7 +77,7 @@ public class DrNoteActivity extends AppCompatActivity {
     private void GetDebitNoteReport() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_DEBIT_NOTE_REPORT, response -> {
-            Log.e("Data", GET_DEBIT_NOTE_REPORT  + "========" + response);
+            Log.e("Data", GET_DEBIT_NOTE_REPORT + "========" + response);
 
             DebitNotePojo pojo = new Gson().fromJson(response, listType);
             try {
@@ -93,16 +96,21 @@ public class DrNoteActivity extends AppCompatActivity {
                 AlertUtil.responseExecption(mContext, "GetDebitNoteReport ", e.toString());
             }
         }, error -> {
-            AlertUtil.responseError(mContext, "GetDebitNoteReport ", error.toString());
+            try {
+                Constants.convertByteToString(mContext, "GetDebitNoteReport ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
             binding.includeProgress.progress.setVisibility(View.GONE);
             binding.includeProgress.noData.setVisibility(View.VISIBLE);
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", Constants.SettingHeader());
                 return headers;
             }
+
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
@@ -110,6 +118,7 @@ public class DrNoteActivity extends AppCompatActivity {
                 Log.e("str", str);
                 return str.getBytes();
             }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }

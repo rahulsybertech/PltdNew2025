@@ -30,8 +30,8 @@
                 android:id="@+id/scroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                android:layout_above="@+id/ll4">
+                android:layout_above="@+id/ll4"
+                android:scrollbars="vertical">
 
                   <LinearLayout
                       android:layout_width="match_parent"
@@ -66,13 +66,13 @@
                                   android:id="@+id/order_no"
                                   android:layout_width="130dp"
                                   android:layout_height="40dp"
-                                  android:hint="Order No."
-                                  android:background="@drawable/otp_line_fade"
                                   android:layout_marginTop="10dp"
                                   android:layout_marginEnd="5dp"
                                   android:layout_weight="1"
+                                  android:background="@drawable/otp_line_fade"
                                   android:fontFamily="monospace"
                                   android:gravity="center"
+                                  android:hint="Order No."
                                   android:imeOptions="actionNext"
                                   android:maxLines="1"
                                   android:padding="8dp"
@@ -82,39 +82,39 @@
 
                         </LinearLayout>
 
-                              <TextView
-                                  android:layout_width="wrap_content"
-                                  android:layout_height="wrap_content"
-                                  android:layout_marginStart="2dp"
-                                  android:layout_marginTop="5dp"
-                                  android:fontFamily="@font/roboto_light"
-                                  android:gravity="center|start"
-                                  android:singleLine="true"
-                                  android:text="@string/marketer1"
-                                  android:textColor="@color/black"
-                                  android:textSize="16sp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/roboto_light"
+                            android:gravity="center|start"
+                            android:singleLine="true"
+                            android:text="@string/marketer1"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:background="@drawable/otp_line"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:layout_marginTop="5dp"
-                            android:layout_height="wrap_content">
+                            android:background="@drawable/otp_line">
 
                               <TextView
                                   android:id="@+id/marketer"
                                   android:layout_width="match_parent"
                                   android:layout_height="45dp"
+                                  android:layout_alignParentStart="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_toStartOf="@id/clear_marketer"
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
                                   android:gravity="center|start"
                                   android:paddingStart="10dp"
                                   android:singleLine="true"
-                                  android:layout_alignParentStart="true"
                                   android:textColor="@color/black"
                                   android:textSize="16sp"
-                                  android:layout_marginEnd="5dp"
-                                  android:layout_toStartOf="@id/clear_marketer"
                                   android:visibility="visible" />
 
 
@@ -163,25 +163,25 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:background="@drawable/otp_line"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:layout_marginTop="5dp"
-                            android:layout_height="wrap_content">
+                            android:background="@drawable/otp_line">
 
                               <TextView
                                   android:id="@+id/sale_party"
                                   android:layout_width="match_parent"
                                   android:layout_height="45dp"
+                                  android:layout_alignParentStart="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_toStartOf="@id/clear_saleparty"
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
                                   android:gravity="center|start"
                                   android:paddingStart="10dp"
                                   android:singleLine="true"
-                                  android:layout_alignParentStart="true"
                                   android:textColor="@color/black"
                                   android:textSize="16sp"
-                                  android:layout_marginEnd="5dp"
-                                  android:layout_toStartOf="@id/clear_saleparty"
                                   android:visibility="visible" />
 
 
@@ -225,17 +225,16 @@
                                   android:layout_height="45dp"
                                   android:layout_marginStart="2dp"
                                   android:layout_marginTop="5dp"
-                                  android:inputType="numberPassword"
                                   android:background="@drawable/otp_line_fade"
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
                                   android:gravity="center|start"
+                                  android:inputType="numberPassword"
                                   android:paddingLeft="10dp"
                                   android:singleLine="true"
                                   android:textColor="@color/black"
                                   android:textSize="16dp"
-                                  android:visibility="visible"
-                                  />
+                                  android:visibility="visible" />
 
                               <TextView
                                   android:layout_width="match_parent"
@@ -256,11 +255,11 @@
                                   android:layout_height="45dp"
                                   android:layout_marginLeft="2dp"
                                   android:layout_marginTop="5dp"
-                                  android:inputType="textPassword"
                                   android:background="@drawable/otp_line_fade"
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
                                   android:gravity="center|start"
+                                  android:inputType="textPassword"
                                   android:paddingLeft="10dp"
                                   android:singleLine="true"
                                   android:textColor="@color/black"
@@ -268,55 +267,54 @@
                                   android:visibility="visible" />
                         </LinearLayout>
 
+                        <TextView
+                            android:id="@+id/radio_subparty"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:checked="true"
+                            android:fontFamily="@font/roboto_light"
+                            android:gravity="start|center"
+                            android:singleLine="true"
+                            android:text="@string/sub_party"
+                            android:textColor="@color/black"
+                            android:textSize="16dp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/otp_line">
+
                               <TextView
-                                  android:id="@+id/radio_subparty"
+                                  android:id="@+id/sub_party"
                                   android:layout_width="match_parent"
-                                  android:layout_height="wrap_content"
-                                  android:layout_marginLeft="2dp"
-                                  android:layout_marginTop="5dp"
+                                  android:layout_height="45dp"
+                                  android:layout_toStartOf="@+id/clear_subparty"
                                   android:layout_weight="1"
-                                  android:checked="true"
                                   android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
                                   android:gravity="start|center"
+                                  android:paddingLeft="10dp"
                                   android:singleLine="true"
-                                  android:text="@string/sub_party"
                                   android:textColor="@color/black"
                                   android:textSize="16dp" />
 
-                              <RelativeLayout
-                                  android:layout_width="match_parent"
-                                  android:background="@drawable/otp_line"
-                                  android:layout_marginStart="2dp"
-                                  android:layout_marginTop="10dp"
-                                  android:layout_height="wrap_content">
-
-                                    <TextView
-                                        android:id="@+id/sub_party"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="45dp"
-                                        android:layout_toStartOf="@+id/clear_subparty"
-                                        android:layout_weight="1"
-                                        android:fontFamily="@font/roboto_light"
-                                        android:freezesText="true"
-                                        android:gravity="start|center"
-                                        android:paddingLeft="10dp"
-                                        android:singleLine="true"
-                                        android:textColor="@color/black"
-                                        android:textSize="16dp" />
-
-                                    <ImageView
-                                        android:id="@+id/clear_subparty"
-                                        android:layout_width="30dp"
-                                        android:layout_height="match_parent"
-                                        android:padding="7dp"
-                                        android:layout_alignParentEnd="true"
-                                        android:layout_centerInParent="true"
-                                        android:layout_marginEnd="5dp"
-                                        android:onClick="handleClear"
-                                        android:src="@drawable/ic_cross2"
-                                        app:tint="@color/red" />
-                              </RelativeLayout>
-
+                              <ImageView
+                                  android:id="@+id/clear_subparty"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:padding="7dp"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
 
 
                         <LinearLayout
@@ -389,12 +387,13 @@
                             android:text="@string/transport"
                             android:textColor="@color/black"
                             android:textSize="16dp" />
+
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:background="@drawable/otp_line"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:layout_marginTop="10dp"
-                            android:layout_height="wrap_content">
+                            android:background="@drawable/otp_line">
 
 
                               <TextView
@@ -411,15 +410,16 @@
                                   android:singleLine="true"
                                   android:textColor="@color/black"
                                   android:textSize="16dp" />
+
                               <ImageView
                                   android:id="@+id/clear_transport"
                                   android:layout_width="30dp"
                                   android:layout_height="match_parent"
-                                  android:padding="7dp"
                                   android:layout_alignParentEnd="true"
                                   android:layout_centerInParent="true"
                                   android:layout_marginEnd="5dp"
                                   android:onClick="handleClear"
+                                  android:padding="7dp"
                                   android:src="@drawable/ic_cross2"
                                   app:tint="@color/red" />
                         </RelativeLayout>
@@ -436,12 +436,13 @@
                             android:text="@string/b_station"
                             android:textColor="@color/black"
                             android:textSize="16dp" />
+
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:background="@drawable/otp_line"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:layout_marginTop="10dp"
-                            android:layout_height="wrap_content">
+                            android:background="@drawable/otp_line">
 
 
                               <TextView
@@ -463,11 +464,11 @@
                                   android:id="@+id/clear_station"
                                   android:layout_width="30dp"
                                   android:layout_height="match_parent"
-                                  android:padding="7dp"
                                   android:layout_alignParentEnd="true"
                                   android:layout_centerInParent="true"
                                   android:layout_marginEnd="5dp"
                                   android:onClick="handleClear"
+                                  android:padding="7dp"
 
                                   android:src="@drawable/ic_cross2"
                                   app:tint="@color/red" />
@@ -485,12 +486,13 @@
                             android:text="@string/scheme"
                             android:textColor="@color/black"
                             android:textSize="16sp" />
+
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:background="@drawable/otp_line"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:layout_marginTop="10dp"
-                            android:layout_height="wrap_content">
+                            android:background="@drawable/otp_line">
 
                               <TextView
                                   android:id="@+id/scheme"
@@ -506,15 +508,16 @@
                                   android:singleLine="true"
                                   android:textColor="@color/black"
                                   android:textSize="16dp" />
+
                               <ImageView
                                   android:id="@+id/clear_scheme"
                                   android:layout_width="30dp"
                                   android:layout_height="match_parent"
-                                  android:padding="5dp"
                                   android:layout_alignParentEnd="true"
                                   android:layout_centerInParent="true"
                                   android:layout_marginEnd="5dp"
                                   android:onClick="handleClear"
+                                  android:padding="5dp"
                                   android:src="@drawable/ic_cross2"
                                   app:tint="@color/red" />
                         </RelativeLayout>
@@ -532,12 +535,13 @@
                             android:text="@string/status"
                             android:textColor="@color/black"
                             android:textSize="16sp" />
+
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:background="@drawable/otp_line"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:layout_marginTop="10dp"
-                            android:layout_height="wrap_content">
+                            android:background="@drawable/otp_line">
 
                               <TextView
                                   android:id="@+id/tvStatus"
@@ -546,8 +550,8 @@
                                   android:layout_weight="1"
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
-                                  android:hint="Status"
                                   android:gravity="center|start"
+                                  android:hint="Status"
                                   android:imeOptions="actionNext"
                                   android:paddingLeft="10dp"
                                   android:singleLine="true"
@@ -558,11 +562,11 @@
                                   android:id="@+id/ivStatus"
                                   android:layout_width="30dp"
                                   android:layout_height="match_parent"
-                                  android:padding="5dp"
                                   android:layout_alignParentEnd="true"
                                   android:layout_centerInParent="true"
                                   android:layout_marginEnd="5dp"
                                   android:onClick="handleClear"
+                                  android:padding="5dp"
                                   android:src="@drawable/ic_baseline_arrow_drop_down_24"
                                   app:tint="@color/black" />
 
@@ -600,8 +604,8 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="**"
                                         android:enabled="false"
+                                        android:text="**"
                                         android:textSize="20dp">
 
                                     </RadioButton>
@@ -611,8 +615,8 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
-                                        android:text="***"
                                         android:enabled="false"
+                                        android:text="***"
                                         android:textSize="20dp">
 
                                     </RadioButton>
@@ -678,6 +682,7 @@
 
                               </RadioGroup>
                         </LinearLayout>
+
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/iptl_pvt_marka"
                             style="@style/LoginTextInputLayoutStyle"
@@ -805,7 +810,6 @@
                                         android:padding="8dp"
                                         android:textColor="@color/black"
                                         android:textSize="14sp" />
-
                                     <TextView
                                         android:id="@+id/set_date_to"
                                         android:layout_width="wrap_content"
@@ -830,6 +834,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp">
+
                               <Button
                                   android:id="@+id/text_add_image"
                                   android:layout_width="match_parent"
@@ -838,227 +843,249 @@
                                   android:backgroundTint="@color/active_color"
                                   android:drawableEnd="@drawable/ic_baseline_add_a_photo_24"
                                   android:text="Add Image"
-                                  android:textColor="@color/white" />
+                                  android:textColor="@color/white"
+                                  android:visibility="visible" />
                         </LinearLayout>
+
                         <LinearLayout
+                            android:id="@+id/ll_img"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/ll_img"
                             android:orientation="vertical"
                             android:visibility="gone">
+
                               <LinearLayout
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
-                                  android:orientation="horizontal"
+                                  android:layout_marginStart="20dp"
                                   android:layout_marginEnd="20dp"
-                                  android:layout_marginStart="20dp">
+                                  android:orientation="horizontal">
+
                                     <FrameLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="140dp"
                                         android:layout_margin="10dp"
-                                        android:background="@drawable/otp_line"
-                                        android:layout_weight="1">
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line">
+
                                           <ImageView
+                                              android:id="@+id/placeholder1"
                                               android:layout_width="76dp"
                                               android:layout_height="76dp"
-                                              android:id="@+id/placeholder1"
-                                              android:onClick="placeholderClick"
                                               android:layout_gravity="center"
-                                              />
+                                              android:onClick="placeholderClick" />
+
                                           <ProgressBar
+                                              android:id="@+id/progress1"
                                               android:layout_width="match_parent"
                                               android:layout_height="wrap_content"
-                                              android:id="@+id/progress1"
-                                              android:visibility="gone"
-                                              android:layout_gravity="center"/>
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
                                           <ImageView
                                               android:id="@+id/image1"
-                                              android:layout_weight="1"
                                               android:layout_width="match_parent"
                                               android:layout_height="140dp"
-                                              android:scaleType="fitXY"
+                                              android:layout_weight="1"
                                               android:padding="1dp"
+                                              android:scaleType="fitXY"
                                               android:visibility="visible" />
+
                                           <ImageView
+                                              android:id="@+id/removeImage1"
                                               android:layout_width="32dp"
                                               android:layout_height="32dp"
-                                              android:src="@drawable/cross_button"
                                               android:layout_margin="12dp"
-                                              android:visibility="gone"
                                               android:onClick="removeImage"
-                                              android:id="@+id/removeImage1"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
                                               app:tint="@color/error_text" />
 
                                     </FrameLayout>
+
                                     <FrameLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="140dp"
                                         android:layout_margin="10dp"
-                                        android:background="@drawable/otp_line"
-                                        android:layout_weight="1">
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line">
+
                                           <ImageView
+                                              android:id="@+id/placeholder2"
                                               android:layout_width="76dp"
                                               android:layout_height="76dp"
-                                              android:id="@+id/placeholder2"
-                                              android:onClick="placeholderClick"
                                               android:layout_gravity="center"
-                                              />
+                                              android:onClick="placeholderClick" />
+
                                           <ProgressBar
+                                              android:id="@+id/progress2"
                                               android:layout_width="match_parent"
                                               android:layout_height="wrap_content"
-                                              android:id="@+id/progress2"
-                                              android:visibility="gone"
-                                              android:layout_gravity="center"/>
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
                                           <ImageView
                                               android:id="@+id/image2"
-                                              android:layout_weight="1"
                                               android:layout_width="match_parent"
                                               android:layout_height="140dp"
-                                              android:scaleType="fitXY"
+                                              android:layout_weight="1"
                                               android:padding="1dp"
+                                              android:scaleType="fitXY"
                                               android:visibility="visible" />
+
                                           <ImageView
+                                              android:id="@+id/removeImage2"
                                               android:layout_width="32dp"
                                               android:layout_height="32dp"
-                                              android:src="@drawable/cross_button"
                                               android:layout_margin="12dp"
-                                              android:visibility="gone"
                                               android:onClick="removeImage"
-                                              android:id="@+id/removeImage2"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
                                               app:tint="@color/error_text" />
 
                                     </FrameLayout>
                               </LinearLayout>
+
                               <LinearLayout
+                                  android:id="@+id/ll_img1"
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
-                                  android:orientation="horizontal"
-                                  android:id="@+id/ll_img1"
-                                  android:visibility="visible"
+                                  android:layout_marginStart="20dp"
                                   android:layout_marginEnd="20dp"
-                                  android:layout_marginStart="20dp">
+                                  android:orientation="horizontal"
+                                  android:visibility="visible">
+
                                     <FrameLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="140dp"
                                         android:layout_margin="10dp"
-                                        android:background="@drawable/otp_line"
-                                        android:layout_weight="1">
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line">
+
                                           <ImageView
+                                              android:id="@+id/placeholder3"
                                               android:layout_width="76dp"
                                               android:layout_height="76dp"
-                                              android:id="@+id/placeholder3"
-                                              android:onClick="placeholderClick"
                                               android:layout_gravity="center"
-                                              />
+                                              android:onClick="placeholderClick" />
+
                                           <ProgressBar
+                                              android:id="@+id/progress3"
                                               android:layout_width="match_parent"
                                               android:layout_height="wrap_content"
-                                              android:id="@+id/progress3"
-                                              android:visibility="gone"
-                                              android:layout_gravity="center"/>
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
                                           <ImageView
                                               android:id="@+id/image3"
-                                              android:layout_weight="1"
                                               android:layout_width="match_parent"
                                               android:layout_height="140dp"
+                                              android:layout_weight="1"
                                               android:scaleType="fitXY"
                                               android:visibility="visible" />
+
                                           <ImageView
+                                              android:id="@+id/removeImage3"
                                               android:layout_width="32dp"
                                               android:layout_height="32dp"
-                                              android:src="@drawable/cross_button"
                                               android:layout_margin="12dp"
-                                              android:visibility="gone"
                                               android:onClick="removeImage"
-                                              android:id="@+id/removeImage3"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
                                               app:tint="@color/error_text" />
 
                                     </FrameLayout>
 
                                     <FrameLayout
                                         android:layout_width="match_parent"
-                                        android:layout_weight="1"
                                         android:layout_height="140dp"
                                         android:layout_margin="10dp"
+                                        android:layout_weight="1"
                                         android:background="@drawable/otp_line">
+
                                           <ImageView
+                                              android:id="@+id/placeholder4"
                                               android:layout_width="76dp"
                                               android:layout_height="76dp"
-                                              android:id="@+id/placeholder4"
-                                              android:onClick="placeholderClick"
                                               android:layout_gravity="center"
-                                              />
+                                              android:onClick="placeholderClick" />
+
                                           <ProgressBar
+                                              android:id="@+id/progress4"
                                               android:layout_width="match_parent"
                                               android:layout_height="wrap_content"
-                                              android:id="@+id/progress4"
-                                              android:visibility="gone"
-                                              android:layout_gravity="center"/>
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
                                           <ImageView
+                                              android:id="@+id/image4"
                                               android:layout_width="match_parent"
                                               android:layout_height="140dp"
                                               android:scaleType="fitXY"
-                                              android:id="@+id/image4"
-                                              android:visibility="visible"
-                                              />
+                                              android:visibility="visible" />
+
                                           <ImageView
+                                              android:id="@+id/removeImage4"
                                               android:layout_width="32dp"
                                               android:layout_height="32dp"
-                                              android:src="@drawable/cross_button"
                                               android:layout_margin="12dp"
-                                              android:visibility="gone"
                                               android:onClick="removeImage"
-                                              android:id="@+id/removeImage4"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
                                               app:tint="@color/error_text" />
                                     </FrameLayout>
 
                               </LinearLayout>
+
                               <LinearLayout
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
-                                  android:visibility="visible"
-                                  android:weightSum="1"
+                                  android:layout_marginStart="20dp"
                                   android:layout_marginEnd="20dp"
-                                  android:layout_marginStart="20dp">
+                                  android:visibility="visible"
+                                  android:weightSum="1">
+
                                     <FrameLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="140dp"
                                         android:layout_margin="10dp"
-                                        android:background="@drawable/otp_line"
-                                        android:layout_weight="1">
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line">
+
                                           <ImageView
+                                              android:id="@+id/placeholder5"
                                               android:layout_width="76dp"
                                               android:layout_height="76dp"
-                                              android:id="@+id/placeholder5"
-                                              android:onClick="placeholderClick"
                                               android:layout_gravity="center"
-                                              />
+                                              android:onClick="placeholderClick" />
+
                                           <ProgressBar
+                                              android:id="@+id/progress5"
                                               android:layout_width="match_parent"
                                               android:layout_height="wrap_content"
-                                              android:id="@+id/progress5"
-                                              android:visibility="gone"
-                                              android:layout_gravity="center"/>
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
                                           <ImageView
                                               android:id="@+id/image5"
-                                              android:layout_weight="1"
                                               android:layout_width="match_parent"
                                               android:layout_height="140dp"
-                                              android:scaleType="fitXY"
+                                              android:layout_weight="1"
                                               android:padding="1dp"
+                                              android:scaleType="fitXY"
                                               android:visibility="visible" />
+
                                           <ImageView
+                                              android:id="@+id/removeImage5"
                                               android:layout_width="32dp"
                                               android:layout_height="32dp"
-                                              android:src="@drawable/cross_button"
                                               android:layout_margin="12dp"
-                                              android:visibility="gone"
                                               android:onClick="removeImage"
-                                              android:id="@+id/removeImage5"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
                                               app:tint="@color/error_text" />
 
                                     </FrameLayout>
-
 
 
                               </LinearLayout>
@@ -1098,6 +1125,7 @@
                       android:textAllCaps="false"
                       android:textColor="#fff"
                       android:textSize="19sp" />
+
             </LinearLayout>
       </RelativeLayout>
 </LinearLayout>

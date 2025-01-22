@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.activitys.BankDetailActivity;
@@ -80,6 +81,7 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         final DeasbordListType lists;
         lists = OfferList.get(position);
+        System.out.println("GETTING_LIST " + new Gson().toJson(lists));
         holder.imageViewIMG.setImageResource(lists.getImg());
         holder.titleText.setText(lists.getName());
         if (lists.getOnClickId().equals("24") && (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("SSSPLTD") || SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("N/A") || SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("NA") || SharedPref.read(SharedPref.clubType, "").equals(""))) {

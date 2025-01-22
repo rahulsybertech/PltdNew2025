@@ -4,8 +4,11 @@ public class NewErpUrls {
     static String DOMAIN                                                        = "http://appapi.ssspltd.com/";
     public static String API_CONTROLLER                                         = "api/PltdApp/";
     public static String BASE_URL                                               = DOMAIN + API_CONTROLLER;
-    public static String LOGIN                                                  = BASE_URL + "CheckMobileNo";
-    public static String CHECK_OTP                                              = BASE_URL + "CheckOTP";
+    public static String LOGIN = BASE_URL + "CheckMobileNo";
+    // using the old API end point checking with new one
+//    public static String CHECK_OTP                                              = BASE_URL + "CheckOTP";
+    public static String CHECK_OTP_GO                                           = BASE_URL + "CheckOTP";
+    public static String CHECK_OTP                                              = BASE_URL + "CheckMobile_New";
     public static String CLUB_TYPE_BY_ACOUNT_ID                                 = BASE_URL + "GetClubTypeByAccountId";
     public static String CLUB_TYPE_DETAILS                                      = BASE_URL + "GetClubTypeDetail";
     public static String BANK_DETAILS                                           = BASE_URL + "GetBankDetails";
@@ -26,6 +29,7 @@ public class NewErpUrls {
     public static String GET_FILTER_DETAIL_LIST                                 = BASE_URL + "GetFilterDetailList";
     public static String GET_FY_YEAR_LIST                                       = BASE_URL + "GetFYearList";
     public static String GET_USER_LIST                                          = BASE_URL + "GetUserList";
+    //abhinav_poor_connection
     public static String GET_USER_TYPE_LIST                                     = BASE_URL + "GetUsersTypeList";
     public static String UPDATE_POSTAGE_STATUS                                  = BASE_URL + "UpdatePostageStatus";
     public static String GET_STOCK_IN_OFFICE_REPORT                             = BASE_URL + "GetStockInOfficeReport";
@@ -42,10 +46,11 @@ public class NewErpUrls {
     public static String GET_LEDGER_REPORT_WITH_BALANCE                         = BASE_URL + "GetLedgerReportWithBalance";
     public static String GET_LEDGER_REPORT                                      = BASE_URL + "GetLedgerReport";
     public static String GET_FILTER_LIST_NEW                                    = BASE_URL + "GetFilterListNew";
+    //abhinav_poor_connection
     public static String GET_SECURITY_CHECK_REPORT                              = BASE_URL + "GetSecurityCheckReport";
     public static String GET_BANNER_LIST                                        = BASE_URL + "GetBannerListNew";
     public static String GET_DASHBOARD_DETAIL_GRAPH                             = BASE_URL + "GetDashboardDetail_Graph";
-    public static String GET_BLACK_LIST_NAME                                    = BASE_URL + "GetBlackListedName";
+    public static String GET_BLACK_LIST_NAME                                    = BASE_URL + "BlackListedName";
 
 
 

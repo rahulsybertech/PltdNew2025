@@ -38,16 +38,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.syber.ssspltd.Utils.AlertUtil;
-import com.syber.ssspltd.Utils.CurrentDateTime;
 import com.syber.ssspltd.Interface.FilterChangedPending;
-import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.NewFilter.PendingOrder.Branch;
 import com.syber.ssspltd.NewFilter.PendingOrder.Brand;
 import com.syber.ssspltd.NewFilter.PendingOrder.PendingOrderFilterRequest;
 import com.syber.ssspltd.NewFilter.PendingOrder.PendingOrderPojo;
 import com.syber.ssspltd.NewFilter.PendingOrder.SubParty;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.CurrentDateTime;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.NewFilterPendingOrdAdapter.FilterBranchAdap;
@@ -67,6 +68,7 @@ import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -83,16 +85,16 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-public class PendingOrderActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener , FilterChangedPending {
+public class PendingOrderActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, FilterChangedPending {
+    public static TextView countbranch, countsub_party, countbrand;
+    static List<PendingOrderReportResult> pendingOrderDetails;
     Context mContext = this;
     PendingOrderReportAdapter pendingOrdertAdapter;
-    static List<PendingOrderReportResult> pendingOrderDetails;
     Type listType;
     LinearLayoutManager linearLayoutManager;
-    private ActivityPendingOrderBinding binding;
     String banch = "null", subparty = "null", supplier = "null", form_date = "null", to_Date = "null", dbNAME = SharedPref.read(SharedPref.DB_NAME, "");
     Boolean isDatePressed = false, isBranchPlace = false, isSubPartyPlace = false, isSuppNPlace = false, isTransportPlace = false;
-    TextView pendingFilter_Date, pendingFilter_Branch, pendingFilter_SubParty, pendingFilter_SuppNikName,nodata;
+    TextView pendingFilter_Date, pendingFilter_Branch, pendingFilter_SubParty, pendingFilter_SuppNikName, nodata;
     RecyclerView pending_Recy;
     LinearLayout llRange;
     TextView formDate, todate;
@@ -107,26 +109,22 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
     SimpleDateFormat simpleDateFormat;
     SimpleDateFormat simpleDateFormat2;
     String flag = "";
-    String Count = "",Count2 = "",Count3 = "";
-    public static TextView countbranch,countsub_party,countbrand;
+    String Count = "", Count2 = "", Count3 = "";
     boolean isFilterShowing = false;
-
+    ImageView backImage3;
     PendingOrderPojo pendingOrderPojo;
     Stack<FilterTypePendingOrder> filterStack;
-
     List<Branch> branch_List;
     List<SubParty> subPartyList;
     List<Brand> brandList;
-
     FilterBranchAdap filterBranchAdap;
     FilterBrandNameAdap filterBrandNameAdap;
     FilterSubPartyAdap filterSubPartyAdap;
-
     Type branch_Type, subParty_Type, brand_Type;
     ProgressBar progressBar;
     String StartDate_filter, Enddate_filter;
     Dialog dialog;
-
+    private ActivityPendingOrderBinding binding;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -140,7 +138,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
 
         pendingOrderDetails = new ArrayList<>();
 
-        listType = new TypeToken<PendingOrderPoojo>(){
+        listType = new TypeToken<PendingOrderPoojo>() {
         }.getType();
 
         pendingOrdertAdapter = new PendingOrderReportAdapter(mContext, pendingOrderDetails);
@@ -150,7 +148,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         backImage.setImageDrawable(ContextCompat.getDrawable(PendingOrderActivity.this, R.drawable.ic_baseline_keyboard_backspace));
         backImage.setOnClickListener(v -> onBackPressed());
 
-        ImageView backImage3 = findViewById(R.id.download);
+        backImage3 = findViewById(R.id.download);
         backImage3.setImageDrawable(ContextCompat.getDrawable(PendingOrderActivity.this, R.drawable.ic_filter));
         backImage3.setOnClickListener(v -> {
             if (!isFilterShowing) {
@@ -170,9 +168,9 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         brandList = new ArrayList<>();
         brandList = new ArrayList<>();
 
-        filterBranchAdap = new FilterBranchAdap(mContext, branch_List,this);
-        filterSubPartyAdap = new FilterSubPartyAdap(mContext, subPartyList,this);
-        filterBrandNameAdap = new FilterBrandNameAdap(mContext, brandList,this);
+        filterBranchAdap = new FilterBranchAdap(mContext, branch_List, this);
+        filterSubPartyAdap = new FilterSubPartyAdap(mContext, subPartyList, this);
+        filterBrandNameAdap = new FilterBrandNameAdap(mContext, brandList, this);
 
 
         branch_Type = new TypeToken<PendingOrderPojo>() {
@@ -195,20 +193,20 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         }.getType();
 
 
-        if (Lazy.haveNetworkConnection(mContext)){
+        if (Lazy.haveNetworkConnection(mContext)) {
             Intent intent = getIntent();
             if (intent != null) {
                 if (intent.getStringExtra("formDate") != null || intent.getStringExtra("todate") != null) {
                     GetPendingOrderReport(intent.getStringExtra("branch"),
                             intent.getStringExtra("subparty"), intent.getStringExtra("brand")
-                            , intent.getStringExtra("formDate"), intent.getStringExtra("todate"), dbNAME,true);
+                            , intent.getStringExtra("formDate"), intent.getStringExtra("todate"), dbNAME, true);
                 } else {
-                    GetPendingOrderReport(banch, subparty, supplier, form_date, to_Date, dbNAME,false);
+                    GetPendingOrderReport(banch, subparty, supplier, form_date, to_Date, dbNAME, false);
                 }
-            }else {
+            } else {
 
             }
-        }else {
+        } else {
             networkConnetion3(mContext);
         }
 
@@ -218,79 +216,83 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
 
     }
 
-    private void GetPendingOrderReport(String branch, String subParty, String supplier, String form_Date, String to_Date, String db_name,boolean isisFilterApplied) {
+    private void GetPendingOrderReport(String branch, String subParty, String supplier, String form_Date, String to_Date, String db_name, boolean isisFilterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_PENDING_ORDER_REPORT,
-                response -> {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_PENDING_ORDER_REPORT, response -> {
 //                    Log.e("Data", response);
-                    Log.i("TaG","URL1 ------->" + GET_PENDING_ORDER_REPORT);
-                    Log.i("TaG","response ------->" + response);
-                    PendingOrderPoojo pojo = new Gson().fromJson(response, listType);
-                    pendingOrderDetails.clear();
-                    try {
-                        if (pojo.getResponseStatus()) {
-                            binding.includeProgress.progress.setVisibility(View.GONE);
-                            binding.includeProgress.noData.setVisibility(View.GONE);
-                            pendingOrderDetails.addAll(pojo.getPendingOrderReportResult());
-                            pendingOrdertAdapter.notifyDataSetChanged();
+            Log.i("TaG", "URL1 ------->" + GET_PENDING_ORDER_REPORT);
+            Log.i("TaG", "response ------->" + response);
+            PendingOrderPoojo pojo = new Gson().fromJson(response, listType);
+            pendingOrderDetails.clear();
+            try {
+                if (pojo.getResponseStatus()) {
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.GONE);
+                    pendingOrderDetails.addAll(pojo.getPendingOrderReportResult());
+                    pendingOrdertAdapter.notifyDataSetChanged();
 
-                            StartDate_filter = pojo.getDefaultStartDate();
-                            Enddate_filter = pojo.getDefaultEndDate();
-                            // Enddate_filter = pojo.getEnddate();
-                            SharedPref.write(SharedPref.END_DATE, pojo.getEnddate());
-                            SharedPref.write(SharedPref.START_DATE, pojo.getStartDate());
-                            if (!isisFilterApplied) {
-                                binding.tool.textDate.setVisibility(View.VISIBLE);
-                                binding.tool.textDate.setText(pojo.getDefaultStartDate() + " To " + pojo.getDefaultEndDate());
-                            } else {
-                                binding.tool.textDate.setVisibility(View.VISIBLE);
-                                binding.tool.textDate.setText(form_Date + " To " + to_Date);
-                            }
-
-                            Log.e("dateFilter", pojo.getStartDate());
-
-
-                            SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
-                            Date newDateFilter = null;
-                            Date newDateFilter_to = null;
-                            try {
-                                newDateFilter = date.parse(StartDate_filter);
-                                newDateFilter_to = date.parse(Enddate_filter);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            date = new SimpleDateFormat("dd/MM/yyyy");
-                            StartDate_filter = date.format(newDateFilter);
-                            Enddate_filter = date.format(newDateFilter_to);
-                        } else {
-                            if (!isisFilterApplied) {
-                                binding.tool.textDate.setVisibility(View.VISIBLE);
-                                binding.tool.textDate.setText(pojo.getDefaultStartDate() + " To " + pojo.getDefaultEndDate());
-                            } else {
-                                binding.tool.textDate.setVisibility(View.VISIBLE);
-                                binding.tool.textDate.setText(form_Date + " To " + to_Date);
-                            }
-//
-                            StartDate_filter = pojo.getDefaultStartDate();
-                            Enddate_filter = pojo.getDefaultEndDate();
-                            // Enddate_filter = pojo.getEnddate();
-                            SharedPref.write(SharedPref.END_DATE, pojo.getEnddate());
-                            SharedPref.write(SharedPref.START_DATE, pojo.getStartDate());
-                            binding.includeProgress.progress.setVisibility(View.GONE);
-                            binding.includeProgress.noData.setVisibility(View.VISIBLE);
-                            pendingOrdertAdapter.notifyDataSetChanged();
-                            AlertUtil.responseElse(mContext, "GetPendingOrderReport ", pojo.getResponseMessage() + "");
-                            //     Toast.makeText(mContext, pojo.getResponseMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }catch (Exception e){
-                        AlertUtil.responseExecption(mContext, "GetPendingOrderReport ", e.toString());
+                    StartDate_filter = pojo.getDefaultStartDate();
+                    Enddate_filter = pojo.getDefaultEndDate();
+                    // Enddate_filter = pojo.getEnddate();
+                    SharedPref.write(SharedPref.END_DATE, pojo.getEnddate());
+                    SharedPref.write(SharedPref.START_DATE, pojo.getStartDate());
+                    if (!isisFilterApplied) {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        binding.tool.textDate.setText(pojo.getDefaultStartDate() + " To " + pojo.getDefaultEndDate());
+                    } else {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        binding.tool.textDate.setText(form_Date + " To " + to_Date);
                     }
-                }, error -> {
-            AlertUtil.responseError(mContext, "GetPendingOrderReport ", error.toString());
+
+                    Log.e("dateFilter", pojo.getStartDate());
+
+
+                    SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
+                    Date newDateFilter = null;
+                    Date newDateFilter_to = null;
+                    try {
+                        newDateFilter = date.parse(StartDate_filter);
+                        newDateFilter_to = date.parse(Enddate_filter);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    date = new SimpleDateFormat("dd/MM/yyyy");
+                    StartDate_filter = date.format(newDateFilter);
+                    Enddate_filter = date.format(newDateFilter_to);
+                } else {
+                    backImage3.setVisibility(View.GONE);
+                    if (!isisFilterApplied) {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        binding.tool.textDate.setText(pojo.getDefaultStartDate() + " To " + pojo.getDefaultEndDate());
+                    } else {
+                        binding.tool.textDate.setVisibility(View.VISIBLE);
+                        binding.tool.textDate.setText(form_Date + " To " + to_Date);
+                    }
+//
+                    StartDate_filter = pojo.getDefaultStartDate();
+                    Enddate_filter = pojo.getDefaultEndDate();
+                    // Enddate_filter = pojo.getEnddate();
+                    SharedPref.write(SharedPref.END_DATE, pojo.getEnddate());
+                    SharedPref.write(SharedPref.START_DATE, pojo.getStartDate());
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.VISIBLE);
+                    pendingOrdertAdapter.notifyDataSetChanged();
+                    AlertUtil.responseElse(mContext, "GetPendingOrderReport ", pojo.getResponseMessage() + "");
+                    //     Toast.makeText(mContext, pojo.getResponseMessage(), Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                AlertUtil.responseExecption(mContext, "GetPendingOrderReport ", e.toString());
+            }
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, "GetPendingOrderReport ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
 //                    binding.includeProgress.progress.setVisibility(View.GONE);
 //                    binding.includeProgress.noData.setVisibility(View.VISIBLE);
 
-                }) {
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
@@ -303,9 +305,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
-
-                Log.i("TaG","GetCourierReport header : URl " + GET_COURIER_REPORT + " " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", Constants.SettingHeader());
                 return headers;
             }
 
@@ -327,8 +327,8 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         new Handler().post(() -> {
             filterStack.clear();
             // getFilters(FilterType.CLEAR,true);
-            getFilters(FilterTypePendingOrder.PENDING_ORDER);});
-
+            getFilters(FilterTypePendingOrder.PENDING_ORDER);
+        });
 
 
         pendingFilter_Branch = dialog.findViewById(R.id.pendingFilter_Branch);
@@ -386,14 +386,14 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
             public void onClick(View v) {
                 flag = "from";
                 // StartDate_filter = ledgerDate.getText().toString();
-                if (SharedPref.read(SharedPref.FY_StartDate,"").equals("")){
+                if (SharedPref.read(SharedPref.FY_StartDate, "").equals("")) {
                     StartDate_filter = formDate.getText().toString();
-                }else {
+                } else {
                     StartDate_filter = SharedPref.read(SharedPref.FY_StartDate, "");
 
                 }
-                Log.e("startDate",SharedPref.read(SharedPref.FY_StartDate, ""));
-                if (!SharedPref.read(SharedPref.selected_default_yr,"").equals("2023-24"))
+                Log.e("startDate", SharedPref.read(SharedPref.FY_StartDate, ""));
+                if (!SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-24"))
                     Enddate_filter = SharedPref.read(SharedPref.FY_EndDate, "");
                 else {
                     Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
@@ -416,19 +416,18 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
             }
         });
         todate.setOnClickListener(v -> {
-            Log.e("dare",SharedPref.read(SharedPref.FY_StartDate, "")+"---"+SharedPref.read(SharedPref.selected_default_yr, ""));
+            Log.e("dare", SharedPref.read(SharedPref.FY_StartDate, "") + "---" + SharedPref.read(SharedPref.selected_default_yr, ""));
             flag = "to";
             // StartDate_filter = "01/04/2020";
             StartDate_filter = formDate.getText().toString();
             //  StartDate_filter = ledgerDate.getText().toString();
             //  Enddate_filter = ledger_ToDate.getText().toString();
-            if (!SharedPref.read(SharedPref.selected_default_yr,"").equals("2023-24")) {
+            if (!SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-24")) {
                 Enddate_filter = SharedPref.read(SharedPref.FY_EndDate, "");
-              // Toast.makeText(mContext, "!if", Toast.LENGTH_SHORT).show();
-            }
-            else{
+                // Toast.makeText(mContext, "!if", Toast.LENGTH_SHORT).show();
+            } else {
                 Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
-             //
+                //
                 //
                 //Toast.makeText(mContext, "else", Toast.LENGTH_SHORT).show();
             }
@@ -461,8 +460,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
             if (SharedPref.read(SharedPref.selected_default_yr, "").equals("23-24")) {
                 formDate.setText("01/04/2023");
                 todate.setText(CurrentDateTime.getCurrentDateDDMMYYY());
-            }
-            else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("22-23")) {
+            } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("22-23")) {
                 formDate.setText("01/04/2022");
                 todate.setText("31/03/2023");
             } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("21-22")) {
@@ -471,7 +469,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
             } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("20-21")) {
                 formDate.setText("01/04/2020");
                 todate.setText("31/03/2021");
-            }else {
+            } else {
                 formDate.setText("01/04/2023");
                 todate.setText(CurrentDateTime.getCurrentDateDDMMYYY());
             }
@@ -569,12 +567,10 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject objects = jsonArray.getJSONObject(i);
                             String name = objects.getString("BrandName");
-                            if (name.equals(""))
-                            {
+                            if (name.equals("")) {
                                 sb.append(name + "NA,");
                                 Log.e("brand_name", name);
-                            }
-                            else {
+                            } else {
                                 sb.append(name + ",");
                                 Log.e("brand_name", name);
                             }
@@ -594,7 +590,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 try {
                     Date d1 = sdformat.parse(formDate.getText().toString());
                     Date d2 = sdformat.parse(todate.getText().toString());
-                    if (d1.compareTo(d2)<0 || d1.compareTo(d2)==0) {
+                    if (d1.compareTo(d2) < 0 || d1.compareTo(d2) == 0) {
                         startActivity(new Intent(mContext, PendingOrderActivity.class)
                                 .putExtra("formDate", formDate.getText().toString())
                                 .putExtra("todate", todate.getText().toString())
@@ -603,7 +599,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                                 .putExtra("brand", supplier));
                         finish();
                         dialog.dismiss();
-                    }else {
+                    } else {
                         Toast.makeText(mContext, "From Date छोटी होनी चाहिए To Date से", Toast.LENGTH_SHORT).show();
                     }
                 } catch (ParseException e) {
@@ -665,7 +661,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 linearLayoutManager = new LinearLayoutManager(mContext);
                 linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 pending_Recy.setLayoutManager(linearLayoutManager);
-                filterBranchAdap = new FilterBranchAdap(mContext, branch_List,this);
+                filterBranchAdap = new FilterBranchAdap(mContext, branch_List, this);
                 pending_Recy.setAdapter(filterBranchAdap);
                 filterBranchAdap.notifyDataSetChanged();
                 isDatePressed = false;
@@ -696,7 +692,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 linearLayoutManager = new LinearLayoutManager(mContext);
                 linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 pending_Recy.setLayoutManager(linearLayoutManager);
-                filterSubPartyAdap = new FilterSubPartyAdap(mContext, subPartyList,this);
+                filterSubPartyAdap = new FilterSubPartyAdap(mContext, subPartyList, this);
                 pending_Recy.setAdapter(filterSubPartyAdap);
                 filterSubPartyAdap.notifyDataSetChanged();
                 isDatePressed = false;
@@ -727,7 +723,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 linearLayoutManager = new LinearLayoutManager(mContext);
                 linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 pending_Recy.setLayoutManager(linearLayoutManager);
-                filterBrandNameAdap = new FilterBrandNameAdap(mContext, brandList,this);
+                filterBrandNameAdap = new FilterBrandNameAdap(mContext, brandList, this);
                 pending_Recy.setAdapter(filterBrandNameAdap);
                 filterBrandNameAdap.notifyDataSetChanged();
                 isDatePressed = false;
@@ -750,7 +746,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getFilters(FilterTypePendingOrder mFilterType ) {
+    private void getFilters(FilterTypePendingOrder mFilterType) {
         progressBar.setVisibility(View.VISIBLE);
         PendingOrderFilterRequest request;
         request = new PendingOrderFilterRequest(
@@ -765,12 +761,12 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 brandList.stream()
                         .filter(e -> e.isSelected() && filterStack.contains(FilterTypePendingOrder.BRAND_NAME))
                         .collect(Collectors.toList()),
-                SharedPref.read(SharedPref.DB_NAME,"")
+                SharedPref.read(SharedPref.DB_NAME, "")
         );
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_LIST_NEW, response -> {
             Log.e("Data", response);
-            Log.i("TaG","URL2 ------->" + GET_FILTER_LIST_NEW);
-            Log.i("TaG","response2 ------->" + response);
+            Log.i("TaG", "URL2 ------->" + GET_FILTER_LIST_NEW);
+            Log.i("TaG", "response2 ------->" + response);
             PendingOrderPojo pojo = new Gson().fromJson(response, branch_Type);
             if (pojo.getResponseStatus()) {
                 progressBar.setVisibility(View.GONE);
@@ -786,7 +782,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                         branch_List.clear();
                         if (!filterStack.contains(mFilterType) || pendingOrderPojo == null || pendingOrderPojo.getBranch() == null || pendingOrderPojo.getBranch().isEmpty()) {
                             branch_List.addAll(pojo.getBranch());
-                            countbranch.setText( "0");
+                            countbranch.setText("0");
                         } else {
                             countbranch.setText(size.size() + "");
                             pendingOrderPojo.getBranch().forEach(branch -> {
@@ -809,9 +805,9 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                         Log.e("size", size1.size() + "");
 
                         subPartyList.clear();
-                        if (!filterStack.contains(mFilterType) || pendingOrderPojo == null || pendingOrderPojo.getSubParty() == null || pendingOrderPojo.getSubParty() .isEmpty()) {
+                        if (!filterStack.contains(mFilterType) || pendingOrderPojo == null || pendingOrderPojo.getSubParty() == null || pendingOrderPojo.getSubParty().isEmpty()) {
                             subPartyList.addAll(pojo.getSubParty());
-                            countsub_party.setText( "0");
+                            countsub_party.setText("0");
                         } else {
                             countsub_party.setText(size1.size() + "");
                             Log.e("LedgerActivity", "ZHere");
@@ -872,7 +868,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                         pendingOrderPojo = pojo;
                         break;
                 }
-            }else {
+            } else {
                 progressBar.setVisibility(View.GONE);
                 nodata.setVisibility(View.VISIBLE);
                 branch_List.clear();
@@ -888,7 +884,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
             // }
         }, error -> {
             progressBar.setVisibility(View.GONE);
-           // nodata.setVisibility(View.VISIBLE);
+            // nodata.setVisibility(View.VISIBLE);
             branch_List.clear();
             subPartyList.clear();
             brandList.clear();
@@ -906,14 +902,16 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 Log.e("TaG", "request 2 -=-=-==- " + str);
                 return str.getBytes();
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
 
-                Log.i("TaG","GetCourierReport header : URl " + GET_COURIER_REPORT + " " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN,""));
+                Log.i("TaG", "GetCourierReport header : URl " + GET_COURIER_REPORT + " " + "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -1017,16 +1015,15 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         TextView clearAll = dialog.findViewById(R.id.clear_all);
         clearAll.setOnClickListener(v -> {
             isFilterShowing = false;
-           // formDate.setText(SharedPref.read(SharedPref.FY_StartDate, ""));
-          //  todate.setText(SharedPref.read(SharedPref.FY_EndDate, ""));
+            // formDate.setText(SharedPref.read(SharedPref.FY_StartDate, ""));
+            //  todate.setText(SharedPref.read(SharedPref.FY_EndDate, ""));
             countbranch.setText("0");
             countsub_party.setText("0");
             countbrand.setText("0");
             filterStack.clear();
             // ledgerDate.setText(SharedPref.read(SharedPref.START_DATE, ""));
             // ledger_ToDate.setText(SharedPref.read(SharedPref.END_DATE, ""));
-            Log.e("selected_default_yr",SharedPref.read(SharedPref.selected_default_yr, ""));
-
+            Log.e("selected_default_yr", SharedPref.read(SharedPref.selected_default_yr, ""));
 
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -1147,7 +1144,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 }
 
 
-                GetPendingOrderReport(banch, subparty, supplier, form_date, to_Date, dbNAME,true);
+                GetPendingOrderReport(banch, subparty, supplier, form_date, to_Date, dbNAME, true);
                 dialog.dismiss();
             }
         });
@@ -1283,8 +1280,8 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                     @Override
                     public void onResponse(String response) {
                         Log.e("Data", response);
-                        Log.i("TaG","URL3 ------->" + GET_FILTER_DETAIL_LIST);
-                        Log.i("TaG","response3 ------->" + response);
+                        Log.i("TaG", "URL3 ------->" + GET_FILTER_DETAIL_LIST);
+                        Log.i("TaG", "response3 ------->" + response);
 //                        progressBar.dismiss();
 //                        Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                         FilterListPojo pojo = new Gson().fromJson(response, branchType);
@@ -1337,8 +1334,8 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                     public void onResponse(String response) {
                         Log.e("Data", response);
 
-                        Log.i("TaG","URL4 ------->" + GET_FILTER_DETAIL_LIST);
-                        Log.i("TaG","response4 ------->" + response);
+                        Log.i("TaG", "URL4 ------->" + GET_FILTER_DETAIL_LIST);
+                        Log.i("TaG", "response4 ------->" + response);
 //                        progressBar.dismiss();
 //                        Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                         com.syber.ssspltd.response.PendingOrdBranchRespo.Sup_PartyRespo.FilterListPojo pojo = new Gson().fromJson(response, subpartyListType);
@@ -1390,8 +1387,8 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                     @Override
                     public void onResponse(String response) {
                         Log.e("Data", response);
-                        Log.i("TaG","URL5 ------->" + GET_FILTER_DETAIL_LIST);
-                        Log.i("TaG","response5 ------->" + response);
+                        Log.i("TaG", "URL5 ------->" + GET_FILTER_DETAIL_LIST);
+                        Log.i("TaG", "response5 ------->" + response);
 //                        progressBar.dismiss();
 //                        Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
                         com.syber.ssspltd.response.PendingOrdBranchRespo.SupplierRespo.FilterListPojo pojo = new Gson().fromJson(response, supList);
@@ -1439,7 +1436,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         Calendar calendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
         if (flag.equals("from")) {
             formDate.setText(simpleDateFormat.format(calendar.getTime()));
-            if (simpleDateFormat.format(calendar.getTime()).equals(CurrentDateTime.getCurrentDateDDMMYYY())){
+            if (simpleDateFormat.format(calendar.getTime()).equals(CurrentDateTime.getCurrentDateDDMMYYY())) {
                 todate.setText(formDate.getText().toString());
             }
         } else if (flag.equals("to")) {
@@ -1454,7 +1451,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
                 .context(PendingOrderActivity.this)
                 .callback(PendingOrderActivity.this)
                 .spinnerTheme(spinnerTheme)
-                .minDate(year1-1, monthOfYear1, dayOfMonth1)
+                .minDate(year1 - 1, monthOfYear1, dayOfMonth1)
                 .maxDate(year2, monthOfYear2, dayOfMonth2)
                 .build()
                 .show();
@@ -1464,15 +1461,15 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
     @VisibleForTesting
     void showDate2(int year1, int monthOfYear1, int dayOfMonth1, int year2, int monthOfYear2, int dayOfMonth2, int spinnerTheme) {
         try {
-        new SpinnerDatePickerDialogBuilder()
-                .context(PendingOrderActivity.this)
-                .callback(PendingOrderActivity.this)
-                .spinnerTheme(spinnerTheme)
-                .minDate(year1-1, monthOfYear1, dayOfMonth1)
-                .maxDate(year2, monthOfYear2, dayOfMonth2)
-                .build()
-                .show();
-        } catch (Exception e){
+            new SpinnerDatePickerDialogBuilder()
+                    .context(PendingOrderActivity.this)
+                    .callback(PendingOrderActivity.this)
+                    .spinnerTheme(spinnerTheme)
+                    .minDate(year1 - 1, monthOfYear1, dayOfMonth1)
+                    .maxDate(year2, monthOfYear2, dayOfMonth2)
+                    .build()
+                    .show();
+        } catch (Exception e) {
             //ledger_ToDate.setText(ledgerDate.getText().toString());
             Toast.makeText(mContext, "आज की date से ज़्यादा नहीं कर सकतें ।", Toast.LENGTH_SHORT).show();
             e.toString();
@@ -1490,7 +1487,7 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         Log.e("Seq", filterStack.toString());
     }
 
-    public void  networkConnetion3(Context mContext) {
+    public void networkConnetion3(Context mContext) {
 
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
         ImageView cross = dialogView.findViewById(R.id.cross);
@@ -1512,13 +1509,12 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         try_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GetPendingOrderReport(banch, subparty, supplier, form_date, to_Date, dbNAME,false);
+                GetPendingOrderReport(banch, subparty, supplier, form_date, to_Date, dbNAME, false);
                 alertDialog.dismiss();
             }
         });
         alertDialog.show();
     }
-
 
 
 }

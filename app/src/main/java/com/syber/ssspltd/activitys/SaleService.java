@@ -3,10 +3,6 @@ package com.syber.ssspltd.activitys;
 import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_SALE_AND_SERVICE_REPORT;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -16,20 +12,27 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
-import com.syber.ssspltd.Utils.AlertUtil;
-import com.syber.ssspltd.Utils.Lazy;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.SaleServiceAdapter;
 import com.syber.ssspltd.databinding.ActivitySaleServiceBinding;
 import com.syber.ssspltd.response.SaleServiceRespo.SaleServicePojo;
 import com.syber.ssspltd.response.SaleServiceRespo.SaleServiceReportResult;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -79,27 +82,30 @@ public class SaleService extends AppCompatActivity {
 
     private void GetSaleServiceReport() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SALE_AND_SERVICE_REPORT,
-                response -> {
-                    Log.e("Data", response);
-                    SaleServicePojo pojo = new Gson().fromJson(response, listType);
-                    try {
-                        if (pojo.getResponseStatus()) {
-                            binding.includeProgress.progress.setVisibility(View.GONE);
-                            binding.includeProgress.noData.setVisibility(View.GONE);
-                            saleServiceDetails.clear();
-                            saleServiceDetails.addAll(pojo.getSaleServiceReportResult());
-                            saleServiceAdapter.notifyDataSetChanged();
-                        } else {
-                            AlertUtil.responseElse(mContext, "GetSaleServiceReport ", pojo.getResponseMessage() + "");
-                            binding.includeProgress.progress.setVisibility(View.GONE);
-                            binding.includeProgress.noData.setVisibility(View.VISIBLE);
-                        }
-                    } catch (Exception e) {
-                        AlertUtil.responseExecption(mContext, "GetSaleServiceReport ", e.toString());
-                    }
-                }, error -> {
-            AlertUtil.responseError(mContext, "GetSaleServiceReport ", error.toString());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SALE_AND_SERVICE_REPORT, response -> {
+            Log.e("Data", response);
+            SaleServicePojo pojo = new Gson().fromJson(response, listType);
+            try {
+                if (pojo.getResponseStatus()) {
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.GONE);
+                    saleServiceDetails.clear();
+                    saleServiceDetails.addAll(pojo.getSaleServiceReportResult());
+                    saleServiceAdapter.notifyDataSetChanged();
+                } else {
+                    AlertUtil.responseElse(mContext, "GetSaleServiceReport ", pojo.getResponseMessage() + "");
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.VISIBLE);
+                }
+            } catch (Exception e) {
+                AlertUtil.responseExecption(mContext, "GetSaleServiceReport ", e.toString());
+            }
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, "GetSaleServiceReport ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
             binding.includeProgress.progress.setVisibility(View.GONE);
             binding.includeProgress.noData.setVisibility(View.VISIBLE);
         }) {
@@ -115,7 +121,7 @@ public class SaleService extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
+                headers.put("Authorization", Constants.SettingHeader());
                 return headers;
             }
 

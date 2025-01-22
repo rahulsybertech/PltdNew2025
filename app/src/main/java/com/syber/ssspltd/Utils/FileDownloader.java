@@ -79,6 +79,7 @@ public  class FileDownloader {
         }
         fileName = url.getPath();
         fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+        System.out.println("Downloaded_URI " + Uri.parse(pdfUrl));
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(pdfUrl));
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
         request.setTitle(fileName);

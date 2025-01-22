@@ -6,39 +6,32 @@
     android:layout_height="match_parent"
     android:background="@color/all_bg"
     tools:context=".activitys.PendingOrderActivity">
-    <include layout="@layout/backbutton_toolbar"
-        android:id="@+id/tool">
 
-    </include>
+      <include
+          android:id="@+id/tool"
+          layout="@layout/backbutton_toolbar">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/pendingOrderRecy"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/tool"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        >
+      </include>
 
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <include
-        android:layout_centerInParent="true"
-        layout="@layout/progress_loader"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:id="@+id/include_progress"/>
-
-    <include
-        android:id="@+id/supportChat"
-        layout="@layout/floating_button_layout"></include>
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/pendingOrderRecy"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_below="@id/tool"
+          android:orientation="vertical"
+          app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 
+      <include
+          android:id="@+id/include_progress"
+          layout="@layout/progress_loader"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerInParent="true" />
 
-
-
-
-
+      <include
+          android:id="@+id/supportChat"
+          layout="@layout/floating_button_layout"/>
 
 
 </RelativeLayout>

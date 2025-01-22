@@ -5,14 +5,6 @@ import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_DETAIL_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_FILTER_LIST_NEW;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_SALE_REPORT;
 
-import androidx.annotation.RequiresApi;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -35,16 +27,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.syber.ssspltd.Utils.AlertUtil;
-import com.syber.ssspltd.Utils.CurrentDateTime;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.Interface.FilterChangeSaleReport;
-import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterSaleReport.Branch;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterSaleReport.Brand;
 import com.syber.ssspltd.NewFilter.PendingOrder.FilterSaleReport.FilterSaleReportRequest;
@@ -54,6 +53,10 @@ import com.syber.ssspltd.NewFilter.PendingOrder.FilterSaleReport.Transporter;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.SaleReportResponse.SaleReportPoojo;
 import com.syber.ssspltd.SaleReportResponse.SaleReportResult;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.CurrentDateTime;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.FilterAdapter.BranchListAdapter;
@@ -69,12 +72,11 @@ import com.syber.ssspltd.adapter.SaleReportAdapter;
 import com.syber.ssspltd.databinding.ActivitySaleReportBinding;
 import com.syber.ssspltd.response.BranchListResponse.FilterListPojo;
 import com.syber.ssspltd.response.BranchListResponse.FilterListResult;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
 import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -91,15 +93,14 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class SaleReportActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, FilterChangeSaleReport {
+    public static TextView countbranch, countsub_party, countbrand, counttransport;
+    static List<SaleReportResult> saleReportDetails;
     Context mContext = this;
     SaleReportAdapter saleReportAdapter;
-    static List<SaleReportResult> saleReportDetails;
     Type listType;
     LinearLayoutManager linearLayoutManager;
     String keyTypeList = "";
     String flag = "";
-    private ActivitySaleReportBinding binding;
-
     String banch = "null", subparty = "null", supplier = "null", transport = "null", sale_formDate = "null", sale_toDate = "null", dbNAME = SharedPref.read(SharedPref.DB_NAME, "");
     TextView saleFilter_Date, saleFilter_Branch, saleFilter_SubParty, saleFilter_SuppNikName, saleFilter_transport, nodata;
     BranchListAdapter filterAdapter;
@@ -118,15 +119,12 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     TextView saleDate, sale_ToDate;
     String msgShow;
     String Count = "", Count2 = "", Count3 = "", Count4 = "";
-    public static TextView countbranch, countsub_party, countbrand, counttransport;
     boolean isDatePressed = false, isbranchPlace = false, isSub_PartyPlace = false, issuppPlace = false, istransportPlace = false;
-
     boolean isFilterShowing = false;
     FilterBranch filterBranchAdap;
     FilterBrnad_NAdap filterBrnad_nAdap;
     FilterSub_PartyAdap filterSubPartyAdap;
     FilterTesnportAdpter filterTesnportAdpter;
-
     List<Branch> branchList;
     List<Brand> brandList;
     List<SubParty> subPartyList;
@@ -134,10 +132,10 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     Stack<FilterTypeSaleReport> filterStack;
     Type branchType, brandType, subPartyType, transportType;
     SaleReportPojo saleReport_Pojo;
-
     String StartDate_filter, Enddate_filter;
     ProgressBar progressBar;
-   Dialog dialog;
+    Dialog dialog;
+    private ActivitySaleReportBinding binding;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -175,34 +173,32 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         transportType = new TypeToken<SaleReportPojo>() {
         }.getType();
 
-        
-
 
 //new Filter
 
-        if (Lazy.haveNetworkConnection(mContext)){
+        if (Lazy.haveNetworkConnection(mContext)) {
 
             Intent intent = getIntent();
             if (intent != null) {
                 if (intent.getStringExtra("formDate") != null || intent.getStringExtra("todate") != null) {
-                 //   Log.e("isFilterDate_true", intent.getStringExtra("formDate") + "");
+                    //   Log.e("isFilterDate_true", intent.getStringExtra("formDate") + "");
                     GetSaleReport(intent.getStringExtra("branch")
                             , intent.getStringExtra("brand"), intent.getStringExtra("subparty"), intent.getStringExtra("transport")
                             , intent.getStringExtra("formDate"), intent.getStringExtra("todate"), dbNAME, true);
                 } else {
 
-                 //   Log.e("isFilterDate_false", "isFilterDate_false");
+                    //   Log.e("isFilterDate_false", "isFilterDate_false");
                     if (isSetFYDate()) {
                         GetSaleReport(banch, supplier, subparty, transport, StartDate_filter, Enddate_filter, dbNAME, false);
-                    }else {
+                    } else {
                         GetSaleReport(banch, supplier, subparty, transport, sale_formDate, sale_toDate, dbNAME, false);
                     }
                 }
-            }else {
+            } else {
 
 
             }
-        }else {
+        } else {
             networkConnetion3(mContext);
         }
 
@@ -243,6 +239,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         });
         binding.l.back2.setText("SALE REPORT");
     }
+
     private void showCustomDialog() {
         final View dialogView = LayoutInflater.from(this).inflate(R.layout.sale_report_dilogs, (RelativeLayout)
                 findViewById(R.id.sale_dialogs));
@@ -289,7 +286,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2021-2022")) {
             StartDate_filter = "01/04/2021";
             Enddate_filter = "31/03/2022";
-        }  else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
+        } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2020-2021")) {
             StartDate_filter = "01/04/2020";
             Enddate_filter = "31/03/2021";
         } else {
@@ -299,94 +296,100 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         return true;
     }
 
-    private void GetSaleReport(String branch, String supplier, String subparty, String transport, String form_date, String to_date, String db_name,boolean isFillterApplied) {
+    private void GetSaleReport(String branch, String supplier, String subparty, String transport, String form_date, String to_date, String db_name, boolean isFillterApplied) {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SALE_REPORT,
-                response -> {
-                    Log.e("GetSaleReportData", response);
-                    saleReportDetails.clear();
-                    SaleReportPoojo pojo = new Gson().fromJson(response, listType);
-                    try {
-                        if (pojo.getResponseStatus()) {
-                            binding.includeProgress.progress.setVisibility(View.GONE);
-                            binding.includeProgress.noData.setVisibility(View.GONE);
-                            saleReportDetails.addAll(pojo.getSaleReportResult());
-                            saleReportAdapter.notifyDataSetChanged();
-
-                            if(isSetFYDate() == false) {
-                                StartDate_filter = pojo.getmDefaultStartDate();
-                                Enddate_filter = pojo.getmDefaultEndDate();
-                            }
-
-                            // Enddate_filter = pojo.getEnddate();
-                            SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
-                            SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
-                            // Log.e("isfilter",isFillterApplied+"");
-
-                            if (!isFillterApplied) {
-                                binding.l.textDate.setVisibility(View.VISIBLE);
-                                if(pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
-                                    binding.l.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
-                                } else {
-                                    binding.l.textDate.setText("");
-                                }
-                            } else {
-                                binding.l.textDate.setVisibility(View.VISIBLE);
-                                if (form_date != null && to_date != null && !form_date.isEmpty() && !to_date.isEmpty()) {
-                                    binding.l.textDate.setText(form_date + " To " + to_date);
-                                } else {
-                                    binding.l.textDate.setText("");
-                                }
-                            }
-
-                            //  Log.e("dateFilter", pojo.getmStartDate());
-
-
-                            SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
-                            Date newDateFilter = null;
-                            Date newDateFilter_to = null;
-                            try {
-                                newDateFilter = date.parse(StartDate_filter);
-                                newDateFilter_to = date.parse(Enddate_filter);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            date = new SimpleDateFormat("dd/MM/yyyy");
-                            StartDate_filter = date.format(newDateFilter);
-                            Enddate_filter = date.format(newDateFilter_to);
-                        } else {
-                            if (!isFillterApplied) {
-                                binding.l.textDate.setVisibility(View.VISIBLE);
-                                if(pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
-                                    binding.l.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
-                                } else {
-                                    binding.l.textDate.setText("");
-                                }
-                            } else {
-                                binding.l.textDate.setVisibility(View.VISIBLE);
-                                if (form_date != null && to_date != null && !form_date.isEmpty() && !to_date.isEmpty()) {
-                                    binding.l.textDate.setText(form_date + " To " + to_date);
-                                } else {
-                                    binding.l.textDate.setText("");
-                                }
-                            }
-                            StartDate_filter = pojo.getmDefaultStartDate();
-                            Enddate_filter = pojo.getmDefaultEndDate();
-                            // Enddate_filter = pojo.getEnddate();
-                            SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
-                            SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
-                            binding.includeProgress.progress.setVisibility(View.GONE);
-                            binding.includeProgress.noData.setVisibility(View.VISIBLE);
-                            saleReportAdapter.notifyDataSetChanged();
-                            AlertUtil.responseElse(mContext, "GetSaleReport ", pojo.getResponseMessage() + "");
-                        }
-                    }catch (Exception e){
-                        AlertUtil.responseExecption(mContext, "GetSaleReport ", e.toString());
-
-                    }
-                }, error -> {
-                AlertUtil.responseError(mContext, "GetSaleReport ", error.toString());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_SALE_REPORT, response -> {
+            System.out.println("SALE_REPORT_DATA : " + response);
+            System.out.println("SALE_REPORT_URL : " + GET_SALE_REPORT);
+            Log.e("GetSaleReportData", response);
+            saleReportDetails.clear();
+            SaleReportPoojo pojo = new Gson().fromJson(response, listType);
+            try {
+                if (pojo.getResponseStatus()) {
                     binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.GONE);
+                    saleReportDetails.addAll(pojo.getSaleReportResult());
+                    saleReportAdapter.notifyDataSetChanged();
+
+                    if (isSetFYDate() == false) {
+                        StartDate_filter = pojo.getmDefaultStartDate();
+                        Enddate_filter = pojo.getmDefaultEndDate();
+                    }
+
+                    // Enddate_filter = pojo.getEnddate();
+                    SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
+                    SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
+                    // Log.e("isfilter",isFillterApplied+"");
+
+                    if (!isFillterApplied) {
+                        binding.l.textDate.setVisibility(View.VISIBLE);
+                        if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                            binding.l.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                        } else {
+                            binding.l.textDate.setText("");
+                        }
+                    } else {
+                        binding.l.textDate.setVisibility(View.VISIBLE);
+                        if (form_date != null && to_date != null && !form_date.isEmpty() && !to_date.isEmpty()) {
+                            binding.l.textDate.setText(form_date + " To " + to_date);
+                        } else {
+                            binding.l.textDate.setText("");
+                        }
+                    }
+
+                    //  Log.e("dateFilter", pojo.getmStartDate());
+
+
+                    SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
+                    Date newDateFilter = null;
+                    Date newDateFilter_to = null;
+                    try {
+                        newDateFilter = date.parse(StartDate_filter);
+                        newDateFilter_to = date.parse(Enddate_filter);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    date = new SimpleDateFormat("dd/MM/yyyy");
+                    StartDate_filter = date.format(newDateFilter);
+                    Enddate_filter = date.format(newDateFilter_to);
+                } else {
+                    binding.l.download.setVisibility(View.GONE);
+                    if (!isFillterApplied) {
+                        binding.l.textDate.setVisibility(View.VISIBLE);
+                        if (pojo.getmDefaultStartDate() != null && pojo.getmDefaultEndDate() != null && !pojo.getmDefaultStartDate().isEmpty() && !pojo.getmDefaultEndDate().isEmpty()) {
+                            binding.l.textDate.setText(pojo.getmDefaultStartDate() + " To " + pojo.getmDefaultEndDate());
+                        } else {
+                            binding.l.textDate.setText("");
+                        }
+                    } else {
+                        binding.l.textDate.setVisibility(View.VISIBLE);
+                        if (form_date != null && to_date != null && !form_date.isEmpty() && !to_date.isEmpty()) {
+                            binding.l.textDate.setText(form_date + " To " + to_date);
+                        } else {
+                            binding.l.textDate.setText("");
+                        }
+                    }
+                    StartDate_filter = pojo.getmDefaultStartDate();
+                    Enddate_filter = pojo.getmDefaultEndDate();
+                    // Enddate_filter = pojo.getEnddate();
+                    SharedPref.write(SharedPref.END_DATE, pojo.getmEnddate());
+                    SharedPref.write(SharedPref.START_DATE, pojo.getmStartDate());
+                    binding.includeProgress.progress.setVisibility(View.GONE);
+                    binding.includeProgress.noData.setVisibility(View.VISIBLE);
+                    saleReportAdapter.notifyDataSetChanged();
+                    AlertUtil.responseElse(mContext, "GetSaleReport ", pojo.getResponseMessage() + "");
+                }
+            } catch (Exception e) {
+                AlertUtil.responseExecption(mContext, "GetSaleReport ", e.toString());
+
+            }
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, "GetSaleReport ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            binding.includeProgress.progress.setVisibility(View.GONE);
             binding.includeProgress.noData.setVisibility(View.VISIBLE);
         }) {
 
@@ -400,12 +403,12 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 return str.getBytes();
             }
 
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<>();
-                    headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, AUTH_TOKEN));
-                    return headers;
-                }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
 
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
@@ -482,9 +485,9 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         saleDate.setOnClickListener(v -> {
             flag = "from";
             // StartDate_filter = ledgerDate.getText().toString();
-            if (SharedPref.read(SharedPref.FY_StartDate,"").equals("")){
+            if (SharedPref.read(SharedPref.FY_StartDate, "").equals("")) {
                 StartDate_filter = saleDate.getText().toString();
-            }else {
+            } else {
                 StartDate_filter = SharedPref.read(SharedPref.FY_StartDate, "");
 
             }
@@ -511,7 +514,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             getFilters(FilterTypeSaleReport.CLEAR);
         });
         sale_ToDate.setOnClickListener(v -> {
-         //   Log.e("dare", SharedPref.read(SharedPref.FY_StartDate, "") + "---" + SharedPref.read(SharedPref.selected_default_yr, ""));
+            //   Log.e("dare", SharedPref.read(SharedPref.FY_StartDate, "") + "---" + SharedPref.read(SharedPref.selected_default_yr, ""));
             flag = "to";
             // StartDate_filter = "01/04/2020";
             StartDate_filter = saleDate.getText().toString();
@@ -546,8 +549,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             if (SharedPref.read(SharedPref.selected_default_yr, "").equals("23-24")) {
                 saleDate.setText("01/04/2023");
                 sale_ToDate.setText(CurrentDateTime.getCurrentDateDDMMYYY());
-            }
-            else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("22-23")) {
+            } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("22-23")) {
                 saleDate.setText("01/04/2022");
                 sale_ToDate.setText(CurrentDateTime.getCurrentDateDDMMYYY());
             } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("21-22")) {
@@ -556,7 +558,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("20-21")) {
                 saleDate.setText("01/04/2020");
                 sale_ToDate.setText("31/03/2021");
-            }else {
+            } else {
                 saleDate.setText("01/04/2023");
                 sale_ToDate.setText(CurrentDateTime.getCurrentDateDDMMYYY());
             }
@@ -611,11 +613,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("BranchName");
                         sb.append(name + ",");
-                       /// Log.e("Branch_name", name);
+                        /// Log.e("Branch_name", name);
                     }
                     String sbb = sb.toString();
                     banch = sbb;
-                   // Log.e("sbb", sbb);
+                    // Log.e("sbb", sbb);
                 } catch (Exception e) {
 
                 }
@@ -634,11 +636,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("SubPartyName");
                         sb.append(name + ",");
-                      //  Log.e("subparty_name", name);
+                        //  Log.e("subparty_name", name);
                     }
                     String sbb = sb.toString();
                     subparty = sbb;
-                   // Log.e("sub_partys", sbb);
+                    // Log.e("sub_partys", sbb);
                 } catch (Exception e) {
 
                 }
@@ -656,11 +658,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("BrandName");
                         sb.append(name + ",");
-                       // Log.e("ssupplier_name", name);
+                        // Log.e("ssupplier_name", name);
                     }
                     String sbb = sb.toString();
                     supplier = sbb;
-                 //   Log.e("supplier_list", sbb);
+                    //   Log.e("supplier_list", sbb);
                 } catch (Exception e) {
 
                 }
@@ -679,11 +681,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("TransporterName");
                         sb.append(name + ",");
-                     //   Log.e("transport_name", name);
+                        //   Log.e("transport_name", name);
                     }
                     String sbb = sb.toString();
                     transport = sbb;
-                  //  Log.e("transport_list", sbb);
+                    //  Log.e("transport_list", sbb);
                 } catch (Exception e) {
 
                 }
@@ -713,7 +715,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 e.printStackTrace();
             }
             //GetSaleReport(banch, supplier, subparty, transport, sale_formDate, sale_toDate, dbNAME);
-           // dialog.dismiss();
+            // dialog.dismiss();
         });
 
 
@@ -744,7 +746,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 isSub_PartyPlace = false;
                 issuppPlace = false;
                 istransportPlace = false;
-               // filterChangedSaleReport(FilterTypeSaleReport.DATE);
+                // filterChangedSaleReport(FilterTypeSaleReport.DATE);
             }
         });
 
@@ -753,7 +755,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             saleFilter_Branch.setBackground(getResources().getDrawable(R.drawable.selected_button));
             saleFilter_Branch.setTextColor(getResources().getColor(R.color.white));
             keyTypeList = "BRANCH";
-        //    Log.e("filter", keyTypeList);
+            //    Log.e("filter", keyTypeList);
             if (isDatePressed || isSub_PartyPlace || issuppPlace || istransportPlace) {
                 llRange.setVisibility(View.GONE);
                 saleBranch_Recy.setVisibility(View.VISIBLE);
@@ -783,7 +785,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             saleFilter_SubParty.setBackground(getResources().getDrawable(R.drawable.selected_button));
             saleFilter_SubParty.setTextColor(getResources().getColor(R.color.white));
             keyTypeList = "SUBPARTY";
-          //  Log.e("filter", keyTypeList);
+            //  Log.e("filter", keyTypeList);
             if (isDatePressed || isbranchPlace || issuppPlace || istransportPlace) {
                 saleBranch_Recy.setVisibility(View.VISIBLE);
                 llRange.setVisibility(View.GONE);
@@ -816,7 +818,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 saleFilter_SuppNikName.setBackground(getResources().getDrawable(R.drawable.selected_button));
                 saleFilter_SuppNikName.setTextColor(getResources().getColor(R.color.white));
                 keyTypeList = "SUPPLIER";
-              ///  Log.e("filter", keyTypeList);
+                ///  Log.e("filter", keyTypeList);
                 if (isDatePressed || isbranchPlace || isSub_PartyPlace || istransportPlace) {
                     saleBranch_Recy.setVisibility(View.VISIBLE);
                     llRange.setVisibility(View.GONE);
@@ -847,7 +849,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             saleFilter_transport.setBackground(getResources().getDrawable(R.drawable.selected_button));
             saleFilter_transport.setTextColor(getResources().getColor(R.color.white));
             keyTypeList = "TRANSPORT";
-          //  Log.e("filter", keyTypeList);
+            //  Log.e("filter", keyTypeList);
             if (isDatePressed || isbranchPlace || isSub_PartyPlace || issuppPlace) {
                 saleBranch_Recy.setVisibility(View.VISIBLE);
                 llRange.setVisibility(View.GONE);
@@ -889,7 +891,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void getFilters(FilterTypeSaleReport mFilterType ) {
+    private void getFilters(FilterTypeSaleReport mFilterType) {
         progressBar.setVisibility(View.VISIBLE);
         FilterSaleReportRequest request;
         request = new FilterSaleReportRequest(
@@ -911,15 +913,15 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         );
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_LIST_NEW, response -> {
             SaleReportPojo pojo = new Gson().fromJson(response, branchType);
-         //   Log.e("getFilterRespo",response);
-            Log.i("TaG","url " + Request.Method.POST + " =--=-=> " + GET_FILTER_LIST_NEW);
-            Log.i("TaG","response -=-=-=-=-=-=--=-=> " + response);
+            //   Log.e("getFilterRespo",response);
+            Log.i("TaG", "url " + Request.Method.POST + " =--=-=> " + GET_FILTER_LIST_NEW);
+            Log.i("TaG", "response -=-=-=-=-=-=--=-=> " + response);
             if (pojo.getResponseStatus()) {
                 progressBar.setVisibility(View.GONE);
                 nodata.setVisibility(View.GONE);
-                Log.e("mFilterType",mFilterType+"");
-                Log.e("filterStack",filterStack+"");
-                Log.e("keyTypeList",keyTypeList+"");
+                Log.e("mFilterType", mFilterType + "");
+                Log.e("filterStack", filterStack + "");
+                Log.e("keyTypeList", keyTypeList + "");
 
                 switch (mFilterType) {
                     case BRANCH:
@@ -931,9 +933,9 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         if (!filterStack.contains(mFilterType) || saleReport_Pojo == null || saleReport_Pojo.getBranch() == null || saleReport_Pojo.getBranch().isEmpty()) {
                             branchList.addAll(pojo.getBranch());
                             countbranch.setText("0");
-                          //  Toast.makeText(mContext, "if", Toast.LENGTH_SHORT).show();
+                            //  Toast.makeText(mContext, "if", Toast.LENGTH_SHORT).show();
                         } else {
-                         //   Toast.makeText(mContext, "else", Toast.LENGTH_SHORT).show();
+                            //   Toast.makeText(mContext, "else", Toast.LENGTH_SHORT).show();
                             countbranch.setText(size.size() + "");
                             saleReport_Pojo.getBranch().forEach(branch -> {
                                 prevBranchList.forEach(branch2 -> {
@@ -951,14 +953,14 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         List<SubParty> size1 = prevSubPartyList.stream()
                                 .filter(e -> e.isSelected() && filterStack.contains(FilterTypeSaleReport.SUB_PARTY))
                                 .collect(Collectors.toList());
-                     //   Log.e("size", size1.size() + "");
+                        //   Log.e("size", size1.size() + "");
 
                         subPartyList.clear();
                         if (!filterStack.contains(mFilterType) || saleReport_Pojo == null || saleReport_Pojo.getSubParty() == null || saleReport_Pojo.getSubParty().isEmpty()) {
                             subPartyList.addAll(pojo.getSubParty());
                             countsub_party.setText("0");
                         } else {
-                        //    Log.e("LedgerActivity", "ZHere");
+                            //    Log.e("LedgerActivity", "ZHere");
                             countsub_party.setText(size1.size() + "");
                             saleReport_Pojo.getSubParty().forEach(subParty -> {
                                 prevSubPartyList.forEach(account1 -> {
@@ -974,21 +976,21 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         break;
                     case BRAND_NAME:
                         List<Brand> prevBrandList = new ArrayList<>(brandList);
-                       // Log.e("prevEntryList", new Gson().toJson(prevBrandList));
+                        // Log.e("prevEntryList", new Gson().toJson(prevBrandList));
                         List<Brand> size11 = prevBrandList.stream()
                                 .filter(e -> e.isSelected() && filterStack.contains(FilterTypeSaleReport.BRAND_NAME))
                                 .collect(Collectors.toList());
 
-                     //   Log.e("entryTypeListbfrclear", new Gson().toJson(brandList));
+                        //   Log.e("entryTypeListbfrclear", new Gson().toJson(brandList));
                         brandList.clear();
-                      //  Log.e("justaftrtclear", new Gson().toJson(brandList));
+                        //  Log.e("justaftrtclear", new Gson().toJson(brandList));
                         if (!filterStack.contains(mFilterType) || saleReport_Pojo == null || saleReport_Pojo.getBrand() == null || saleReport_Pojo.getBrand().isEmpty()) {
                             brandList.addAll(pojo.getBrand());
                             countbrand.setText("0");
-                         //   Log.e("entryTypestaftrclearif", new Gson().toJson(brandList));
+                            //   Log.e("entryTypestaftrclearif", new Gson().toJson(brandList));
                         } else {
                             countbrand.setText(size11.size() + "");
-                         //   Log.e("ledgerPogo", new Gson().toJson(saleReport_Pojo.getBrand()));
+                            //   Log.e("ledgerPogo", new Gson().toJson(saleReport_Pojo.getBrand()));
                             saleReport_Pojo.getBrand().forEach(brand -> {
                                 prevBrandList.forEach(brand1 -> {
                                     if (brand.getBrandName().equals(brand1.getBrandName())) {
@@ -998,13 +1000,13 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                             });
                             brandList.addAll(prevBrandList);
                             // entryTypeList.addAll(ledgerPogo.getEntryType());
-                          //  Log.e("entryTypestaftrclearels", new Gson().toJson(brandList));
+                            //  Log.e("entryTypestaftrclearels", new Gson().toJson(brandList));
                         }
                         filterBrnad_nAdap.notifyDataSetChanged();
                         break;
                     case TRANSPORT:
-                        Log.e("filterStack",filterStack+"");
-                        Log.e("mFilterType",mFilterType+"");
+                        Log.e("filterStack", filterStack + "");
+                        Log.e("mFilterType", mFilterType + "");
                         List<Transporter> prevTransporterList = new ArrayList<>(transporterList);
                         List<Transporter> size111 = prevTransporterList.stream()
                                 .filter(e -> e.isSelected() && filterStack.contains(FilterTypeSaleReport.TRANSPORT))
@@ -1090,13 +1092,12 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             filterSubPartyAdap.notifyDataSetChanged();
             filterBrnad_nAdap.notifyDataSetChanged();
             filterTesnportAdpter.notifyDataSetChanged();
-        })
-        {
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = new Gson().toJson(request);
                 Log.e("str", str);
-                Log.i("TaG","Request -=-=-=> " + str);
+                Log.i("TaG", "Request -=-=-=> " + str);
                 return str.getBytes();
             }
 
@@ -1303,11 +1304,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("FilterName");
                         sb.append(name + ",");
-                     //   Log.e("brand_name", name);
+                        //   Log.e("brand_name", name);
                     }
                     String sbb = sb.toString();
                     banch = sbb;
-                  //  Log.e("sbb", sbb);
+                    //  Log.e("sbb", sbb);
                 } catch (Exception e) {
 
                 }
@@ -1326,11 +1327,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("FilterName");
                         sb.append(name + ",");
-                       // Log.e("subparty_name", name);
+                        // Log.e("subparty_name", name);
                     }
                     String sbb = sb.toString();
                     subparty = sbb;
-                   // Log.e("sub_partys", sbb);
+                    // Log.e("sub_partys", sbb);
                 } catch (Exception e) {
 
                 }
@@ -1348,11 +1349,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("FilterName");
                         sb.append(name + ",");
-                     //   Log.e("ssupplier_name", name);
+                        //   Log.e("ssupplier_name", name);
                     }
                     String sbb = sb.toString();
                     supplier = sbb;
-                   // Log.e("supplier_list", sbb);
+                    // Log.e("supplier_list", sbb);
                 } catch (Exception e) {
 
                 }
@@ -1371,11 +1372,11 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                         JSONObject objects = jsonArray.getJSONObject(i);
                         String name = objects.getString("FilterName");
                         sb.append(name + ",");
-                      //  Log.e("transport_name", name);
+                        //  Log.e("transport_name", name);
                     }
                     String sbb = sb.toString();
                     transport = sbb;
-                  //  Log.e("transport_list", sbb);
+                    //  Log.e("transport_list", sbb);
                 } catch (Exception e) {
 
                 }
@@ -1383,7 +1384,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             } else {
                 transport = "null";
             }
-            GetSaleReport(banch, supplier, subparty, transport, sale_formDate, sale_toDate, dbNAME,false);
+            GetSaleReport(banch, supplier, subparty, transport, sale_formDate, sale_toDate, dbNAME, false);
             dialog.dismiss();
         });
 
@@ -1423,7 +1424,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             saleFilter_Branch.setBackground(getResources().getDrawable(R.drawable.selected_button));
             saleFilter_Branch.setTextColor(getResources().getColor(R.color.white));
             keyTypeList = "BRANCH";
-          //  Log.e("filter", keyTypeList);
+            //  Log.e("filter", keyTypeList);
             if (isDatePressed || isSub_PartyPlace || issuppPlace || istransportPlace) {
                 llRange.setVisibility(View.GONE);
                 saleBranch_Recy.setVisibility(View.VISIBLE);
@@ -1456,7 +1457,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             saleFilter_SubParty.setBackground(getResources().getDrawable(R.drawable.selected_button));
             saleFilter_SubParty.setTextColor(getResources().getColor(R.color.white));
             keyTypeList = "SUBPARTY";
-          //  Log.e("filter", keyTypeList);
+            //  Log.e("filter", keyTypeList);
             if (isDatePressed || isbranchPlace || issuppPlace || istransportPlace) {
                 saleBranch_Recy.setVisibility(View.VISIBLE);
                 llRange.setVisibility(View.GONE);
@@ -1492,7 +1493,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                 saleFilter_SuppNikName.setBackground(getResources().getDrawable(R.drawable.selected_button));
                 saleFilter_SuppNikName.setTextColor(getResources().getColor(R.color.white));
                 keyTypeList = "SUPPLIER";
-            //    Log.e("filter", keyTypeList);
+                //    Log.e("filter", keyTypeList);
                 if (isDatePressed || isbranchPlace || isSub_PartyPlace || istransportPlace) {
                     saleBranch_Recy.setVisibility(View.VISIBLE);
                     llRange.setVisibility(View.GONE);
@@ -1527,7 +1528,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             saleFilter_transport.setBackground(getResources().getDrawable(R.drawable.selected_button));
             saleFilter_transport.setTextColor(getResources().getColor(R.color.white));
             keyTypeList = "TRANSPORT";
-          //  Log.e("filter", keyTypeList);
+            //  Log.e("filter", keyTypeList);
             if (isDatePressed || isbranchPlace || isSub_PartyPlace || issuppPlace) {
                 saleBranch_Recy.setVisibility(View.VISIBLE);
                 llRange.setVisibility(View.GONE);
@@ -1561,7 +1562,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     private void BranchDetail(final String keyType) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
-              //      Log.e("Data", response);
+                    //      Log.e("Data", response);
                     FilterListPojo pojo = new Gson().fromJson(response, listType2);
                     if (pojo.getResponseStatus()) {
                         FilterListDetails.clear();
@@ -1574,7 +1575,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "SALEREPORT" + "\"}";
-              //  Log.e("str", str);
+                //  Log.e("str", str);
                 return str.getBytes();
             }
 
@@ -1595,7 +1596,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     private void SubpartyDetail(final String keyType) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
-               //     Log.e("Data", response);
+                    //     Log.e("Data", response);
                     com.syber.ssspltd.response.SubpartyListRespo.FilterListPojo pojo = new Gson().fromJson(response, subpartyListType);
                     if (pojo.getResponseStatus()) {
                         subpartyList.clear();
@@ -1611,7 +1612,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "SALEREPORT" + "\"}";
-             //   Log.e("str", str);
+                //   Log.e("str", str);
                 return str.getBytes();
             }
 
@@ -1632,7 +1633,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
     private void SupplerDetail(final String keyType) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_FILTER_DETAIL_LIST,
                 response -> {
-                  //  Log.e("Data", response);
+                    //  Log.e("Data", response);
                     com.syber.ssspltd.response.SupplierListPojo.FilterListPojo pojo = new Gson().fromJson(response, supList);
                     if (pojo.getResponseStatus()) {
                         supplierList.clear();
@@ -1640,12 +1641,12 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                     } else {
                     }
                 }, error -> {
-    //                progressBar.cancel();
-                }) {
+            //                progressBar.cancel();
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "SALEREPORT" + "\"}";
-              //  Log.e("str", str);
+                //  Log.e("str", str);
                 return str.getBytes();
             }
 
@@ -1675,7 +1676,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
                     }
                 }, error -> {
 
-                }) {
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DATAKEY\":\"" + keyType + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FILTERTYPE\":\"" + "SALEREPORT" + "\"}";
@@ -1805,7 +1806,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
 
     }
 
-    public void  networkConnetion3(Context mContext) {
+    public void networkConnetion3(Context mContext) {
 
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
         ImageView cross = dialogView.findViewById(R.id.cross);
@@ -1828,7 +1829,7 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         try_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GetSaleReport(banch, supplier, subparty, transport, sale_formDate, sale_toDate, dbNAME,false);
+                GetSaleReport(banch, supplier, subparty, transport, sale_formDate, sale_toDate, dbNAME, false);
                 alertDialog.dismiss();
             }
         });

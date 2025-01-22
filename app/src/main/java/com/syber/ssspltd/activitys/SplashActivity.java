@@ -1,7 +1,5 @@
 package com.syber.ssspltd.activitys;
 
-
-
 import static com.syber.ssspltd.Constants.ConstantVariable.AUTH_TOKEN;
 import static com.syber.ssspltd.Constants.NewErpUrls.CLUB_TYPE_BY_ACOUNT_ID;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_APP_VERSION;
@@ -9,10 +7,8 @@ import static com.syber.ssspltd.Constants.NewErpUrls.GET_PLTD_VERSION;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,7 +16,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,15 +25,11 @@ import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.Glide;
-import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
-import com.syber.ssspltd.activitys.clubtype.ClubTypeActivity;
 
 import org.json.JSONObject;
 
@@ -47,11 +38,10 @@ import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
     Context mContext = this;
-//    Button Button1,Button2,Button3,Button4;
+    //    Button Button1,Button2,Button3,Button4;
     ImageView imageView;
 
     @Override
@@ -61,11 +51,11 @@ public class SplashActivity extends AppCompatActivity {
         SharedPref.init(mContext);
         imageView = findViewById(R.id.logo);
 
-        if (SharedPref.read(SharedPref.clubType,"").equalsIgnoreCase("DIAMOND")){
+        if (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("DIAMOND")) {
             imageView.setImageDrawable(getDrawable(R.mipmap.ic_launcher__new_diamond));
-        } else if (SharedPref.read(SharedPref.clubType,"").equalsIgnoreCase("GOLD")) {
+        } else if (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("GOLD")) {
             imageView.setImageDrawable(getDrawable(R.mipmap.ic_launcher__new_gold));
-        }else {
+        } else {
             imageView.setImageDrawable(getDrawable(R.mipmap.ic_launcher_sss_logo));
         }
 
@@ -77,72 +67,73 @@ public class SplashActivity extends AppCompatActivity {
 
         if (Lazy.haveNetworkConnection(mContext)) {
             checkold();
-           if (!SharedPref.read(SharedPref.PARTY_CODE,"").equals("")) {
-               getClubType();
-           }else {
-               checkold();
-           }
+            if (!SharedPref.read(SharedPref.PARTY_CODE, "").equals("")) {
+                getClubType();
+            } else {
+                checkold();
+            }
         } else {
             networkConnetion3(mContext);
         }
     }
+
     private void getClubType() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, CLUB_TYPE_BY_ACOUNT_ID,
                 response -> {
-            Log.e("Api Cat ", "Url --> " + CLUB_TYPE_BY_ACOUNT_ID);
-            Log.e("Api Cat ", response);
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                if (jsonObject.getBoolean("ResponseStatus")) {
-                    Log.i("TaG","clubType ====> " + SharedPref.read(SharedPref.clubType,""));
-                    if (SharedPref.read(SharedPref.clubType,"").equals(jsonObject.getString("ClubType"))){
-                        checkold();
-                    }else {
-                        if ((SharedPref.read(SharedPref.clubType,"").equalsIgnoreCase("GOLD")
-                                ||SharedPref.read(SharedPref.clubType,"").equalsIgnoreCase("DIAMOND"))
-                                && (jsonObject.getString("ClubType").equalsIgnoreCase("SSSPLTD") ||
-                                jsonObject.getString("ClubType").equalsIgnoreCase("N/A") ||
-                                jsonObject.getString("ClubType").equalsIgnoreCase("NA") ||
-                                jsonObject.getString("ClubType").equalsIgnoreCase(""))) {
-                                responseSuccess(mContext, "Click here to Switch Club type to Normal", jsonObject.getString("ClubType"));
-                        }
-                        else if (   jsonObject.getString("ClubType").equalsIgnoreCase("SSSPLTD") ||
-                                    jsonObject.getString("ClubType").equalsIgnoreCase("N/A") ||
-                                    jsonObject.getString("ClubType").equalsIgnoreCase("NA") ||
-                                    jsonObject.getString("ClubType").equalsIgnoreCase("")
-                                ) {
-                            Log.i("TaG","11111111111111111111111111");
-                                SharedPref.write(SharedPref.clubType, jsonObject.getString("ClubType"));
-                                SharedPref.write(SharedPref.noClubType,"true");
-                                PackageManager pm0 = getPackageManager();
-                                pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                                pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                                pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-
+                    Log.e("Api Cat ", "Url --> " + CLUB_TYPE_BY_ACOUNT_ID);
+                    Log.e("Api Cat ", response);
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.getBoolean("ResponseStatus")) {
+                            Log.i("TaG", "clubType ====> " + SharedPref.read(SharedPref.clubType, ""));
+                            if (SharedPref.read(SharedPref.clubType, "").equals(jsonObject.getString("ClubType"))) {
                                 checkold();
-
                             } else {
-                                responseSuccess(mContext, jsonObject.getString("ResponseMessage"), jsonObject.getString("ClubType"));
+                                if ((SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("GOLD")
+                                        || SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("DIAMOND"))
+                                        && (jsonObject.getString("ClubType").equalsIgnoreCase("SSSPLTD") ||
+                                        jsonObject.getString("ClubType").equalsIgnoreCase("N/A") ||
+                                        jsonObject.getString("ClubType").equalsIgnoreCase("NA") ||
+                                        jsonObject.getString("ClubType").equalsIgnoreCase(""))) {
+                                    responseSuccess(mContext, "Click here to Switch Club type to Normal", jsonObject.getString("ClubType"));
+                                } else if (jsonObject.getString("ClubType").equalsIgnoreCase("SSSPLTD") ||
+                                        jsonObject.getString("ClubType").equalsIgnoreCase("N/A") ||
+                                        jsonObject.getString("ClubType").equalsIgnoreCase("NA") ||
+                                        jsonObject.getString("ClubType").equalsIgnoreCase("")
+                                ) {
+                                    Log.i("TaG", "11111111111111111111111111");
+                                    System.out.println("CHECK_ClubType " + jsonObject.getString("ClubType"));
+                                    SharedPref.write(SharedPref.clubType, jsonObject.getString("ClubType"));
+                                    SharedPref.write(SharedPref.noClubType, "true");
+//                                PackageManager pm0 = getPackageManager();
+//                                pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//                                pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//                                pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+
+                                    checkold();
+
+                                } else {
+                                    responseSuccess(mContext, jsonObject.getString("ResponseMessage"), jsonObject.getString("ClubType"));
+                                }
+                            }
+
+                        } else {
+                            if (!jsonObject.getString("ResponseMessage").isEmpty()) {
+                                Toast.makeText(mContext, jsonObject.getString("ResponseMessage") + "", Toast.LENGTH_SHORT).show();
                             }
                         }
-
-                } else {
-                    if(!jsonObject.getString("ResponseMessage").isEmpty()) {
-                        Toast.makeText(mContext, jsonObject.getString("ResponseMessage")+"", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Log.e("Exce3rrr", e.toString());
+                        Log.e("Exce3rrr", e.getMessage());
                     }
-                }
-            } catch (Exception e) {
-                Log.e("Exce3rrr", e.toString());
-                Log.e("Exce3rrr", e.getMessage());
-            }
-        }, error -> {
+                }, error -> {
             Log.e("error", error.toString() + "");
             Log.e("error", error.getMessage() + "");
             // networkDialog();
-        }){
+        }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
-                String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE,"") + "\",\"AccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\"}";
+                String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE, "") + "\",\"AccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\"}";
 //                String str = "{\"AccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE,"") + "\"}";
                 Log.e("strrr", "body request --> " + str);
                 return str.getBytes();
@@ -161,45 +152,43 @@ public class SplashActivity extends AppCompatActivity {
         };
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
-    private void responseSuccess(Context context, String succesMsg,String clubType) {
-        SweetAlertDialog sweetAlertDialog1 =  new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE);
-                //.setCustomImage(R.drawable.error)
+
+    private void responseSuccess(Context context, String succesMsg, String clubType) {
+        SweetAlertDialog sweetAlertDialog1 = new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE);
+//                .setCustomImage(R.drawable.error)
         sweetAlertDialog1.setCancelable(false);
         sweetAlertDialog1.setConfirmButtonTextColor(ContextCompat.getColor(context, R.color.success_text));
-                sweetAlertDialog1.setConfirmButtonBackgroundColor(ContextCompat.getColor(context, R.color.success_bg));
-                sweetAlertDialog1.setTitleText(clubType.equals("N/A")?"":clubType + context.getString(R.string.happy_emoji));
-                sweetAlertDialog1.setContentText( succesMsg);
-                sweetAlertDialog1.setConfirmText("OK");
-                sweetAlertDialog1.setConfirmClickListener(sweetAlertDialog -> {
-                    if (clubType.equalsIgnoreCase("DIAMOND")){
-                        SharedPref.write(SharedPref.clubType,clubType);
-                        SharedPref.write(SharedPref.noClubType,"false");
-                        PackageManager pmm = getPackageManager();
-                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
-                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
-                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
-                       sweetAlertDialog.dismissWithAnimation();
-
-                    }else if (clubType.equalsIgnoreCase("GOLD")){
-                        SharedPref.write(SharedPref.clubType,clubType);
-                        SharedPref.write(SharedPref.noClubType,"false");
-                        PackageManager pmm = getPackageManager();
-                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
-                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
-                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+        sweetAlertDialog1.setConfirmButtonBackgroundColor(ContextCompat.getColor(context, R.color.success_bg));
+        sweetAlertDialog1.setTitleText(clubType.equals("N/A") ? "" : clubType + context.getString(R.string.happy_emoji));
+        sweetAlertDialog1.setContentText(succesMsg);
+        sweetAlertDialog1.setConfirmText("OK");
+        sweetAlertDialog1.setConfirmClickListener(sweetAlertDialog -> {
+                    if (clubType.equalsIgnoreCase("DIAMOND")) {
+                        SharedPref.write(SharedPref.clubType, clubType);
+                        SharedPref.write(SharedPref.noClubType, "false");
+//                        PackageManager pmm = getPackageManager();
+//                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
+//                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+//                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
                         sweetAlertDialog.dismissWithAnimation();
 
-                    }
-
-                    else if (clubType.equalsIgnoreCase("SSSPLTD") || clubType.equalsIgnoreCase("N/A")|| clubType.equalsIgnoreCase("NA") || clubType.equalsIgnoreCase("")){
-                        SharedPref.write(SharedPref.clubType,clubType);
-                        PackageManager pm0 = getPackageManager();
-                        pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
-                        pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
-                        pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
+                    } else if (clubType.equalsIgnoreCase("GOLD")) {
+                        SharedPref.write(SharedPref.clubType, clubType);
+                        SharedPref.write(SharedPref.noClubType, "false");
+//                        PackageManager pmm = getPackageManager();
+//                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+//                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
+//                        pmm.setComponentEnabledSetting(new ComponentName(SplashActivity.this,"com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
                         sweetAlertDialog.dismissWithAnimation();
-                    }
-                    else {
+
+                    } else if (clubType.equalsIgnoreCase("SSSPLTD") || clubType.equalsIgnoreCase("N/A") || clubType.equalsIgnoreCase("NA") || clubType.equalsIgnoreCase("")) {
+                        SharedPref.write(SharedPref.clubType, clubType);
+//                        PackageManager pm0 = getPackageManager();
+//                        pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DiamondActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+//                        pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.GoldActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+//                        pm0.setComponentEnabledSetting(new ComponentName(SplashActivity.this, "com.syber.ssspltd.helper.DefaultActivityAlias"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,PackageManager.DONT_KILL_APP);
+                        sweetAlertDialog.dismissWithAnimation();
+                    } else {
                         checkold();
                         sweetAlertDialog.dismissWithAnimation();
                     }
@@ -238,6 +227,7 @@ public class SplashActivity extends AppCompatActivity {
                 Log.e("str", SharedPref.read(SharedPref.USERMOBILE, "") + "djsghgcb");
                 return str.getBytes();
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
@@ -253,19 +243,19 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void checkold() {
-        Log.e("ChackMobile", SharedPref.read(SharedPref.USERMOBILE, ""));
+        Log.d("ChackMobile", SharedPref.read(SharedPref.USERMOBILE, ""));
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_APP_VERSION,
                 response -> {
-                    Log.i("TaG","URL -->" + GET_APP_VERSION );
-                    Log.e("res", GET_APP_VERSION + "  " + response);
+                    Log.d("TaG", "URL -->" + GET_APP_VERSION);
+                    Log.d("res", GET_APP_VERSION + "  " + response);
                     try {
                         JSONObject ob = new JSONObject(response);
                         int ver = Integer.parseInt(ob.optString("AppVersion"));
+                        System.out.println("REACHED 1 " + ver);
                         //Log.e("ver", ob.getString("AppVersion"));
-                        if (ver <= 33) {
+                        if (ver <= 42) {
                             new Handler().postDelayed(this::goToNext, 2600);
                         } else {
-                            //  if ()
                             showVersionold();
                         }
                         SharedPref.write(SharedPref.AppVersion, ver);
@@ -285,12 +275,14 @@ public class SplashActivity extends AppCompatActivity {
                 Log.e("str", SharedPref.read(SharedPref.USERMOBILE, "") + "djsghgcb");
                 return str.getBytes();
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
+
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
             }
@@ -342,7 +334,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void goToNext() {
-        Log.i("TaG","goToNext --> " + SharedPref.read(SharedPref.USERMOBILE, "") +
+        Log.i("TaG", "goToNext --> " + SharedPref.read(SharedPref.USERMOBILE, "") +
                 " == " + SharedPref.read(SharedPref.isLogin, "") + " == " +
                 SharedPref.read(SharedPref.IS_ANY_CHOOSEN, "") + " == " +
                 SharedPref.read(SharedPref.IS_SUPPER_SELECTED, "") + " == " +
