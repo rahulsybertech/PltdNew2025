@@ -38,9 +38,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -118,6 +121,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class SupplierOrderFormActivity extends AppCompatActivity implements OnClick, DatePickerDialog.OnDateSetListener {
     private static final int REQUEST_CODE = 100;
@@ -227,11 +232,22 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 //        dattAhead(CurrentDateTime.getCurrentDateStringDDMMYYYY());
 //        binding.dateTo.setText(CurrentDateTime.getCurrentDateStringDDMMYYYY());
 
+
+
+
+
+
+
+
+
+
+
         handleEditInit();
         initPcsAdapter();
         handleRadioSelect();
         handleClickListner();
         handleDate();
+
 
         // Initialize the launcher
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -512,6 +528,86 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                 }
             }
         });
+
+
+    }
+
+   /* public void showDialog(Activity activity, String msg){
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog);
+
+        TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
+        text.setText(msg);
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }*/
+
+    private void showCustomDialogConfirm() {
+        final Dialog  sDialog = new Dialog(mContext);
+        sDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        sDialog.setCancelable(false);
+        sDialog.setContentView(R.layout.dialog_add_to_order);
+        sDialog.setCancelable(true);
+        TextView text = (TextView) sDialog.findViewById(R.id.dialog_title);
+        TextView dialogTitle = sDialog.findViewById(R.id.dialog_title);
+        TextView dialogContent = sDialog.findViewById(R.id.dialog_content);
+        TextView confirmButton = sDialog.findViewById(R.id.confirm_button);
+        RelativeLayout rlButton = sDialog.findViewById(R.id.rlButton);
+
+
+      /*  dialogTitle.setText("Order Saved Successfully");
+        dialogContent.setText("Please check WhatsApp for your PDF");
+*/
+
+        rlButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sDialog.dismiss();
+                startActivity(new Intent(mContext, SupplierOrderFormActivity.class));
+                finish();
+
+            }
+        });
+        sDialog.show();
+
+
+    }
+    private void showCustomDialogHold() {
+        final Dialog  sDialog = new Dialog(mContext);
+        sDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        sDialog.setCancelable(false);
+        sDialog.setContentView(R.layout.dialog_hold);
+        sDialog.setCancelable(true);
+        TextView text = (TextView) sDialog.findViewById(R.id.dialog_title);
+        TextView dialogTitle = sDialog.findViewById(R.id.dialog_title);
+        TextView dialogContent = sDialog.findViewById(R.id.dialog_content);
+        TextView confirmButton = sDialog.findViewById(R.id.confirm_button);
+        RelativeLayout rlButton = sDialog.findViewById(R.id.rlButton);
+
+      /*  dialogTitle.setText("Order Saved Successfully");
+        dialogContent.setText("Please check WhatsApp for your PDF");
+*/
+
+        rlButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sDialog.dismiss();
+                startActivity(new Intent(mContext, SupplierOrderFormActivity.class));
+                finish();
+            }
+        });
+        sDialog.show();
 
 
     }
@@ -1889,7 +1985,14 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     binding.transport.setText(jsonObject.getString("TransportName"));
                     binding.bStation.setText(jsonObject.getString("Station"));
                     binding.salePartyMobile.setText(jsonObject.getString("MobileNo"));
+                    // Original text
+                    String originalText = jsonObject.optString("MobileNo");
+
+// Replace it with *'s (you can replace it with as many * as the length of the original text)
+                    binding.salePartyMobile.setText("*".repeat(originalText.length()));
                     binding.salePartyEmail.setText(jsonObject.getString("EmailID"));
+                    String originalText1 = jsonObject.optString("EmailID");
+                    binding.salePartyEmail.setText("*".repeat(originalText1.length()));
                     handleEditInit();
                     binding.saleParty.setError(null, null);
                     binding.subParty.setError(null, null);
@@ -2522,14 +2625,14 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.scheme.setOnClickListener(v -> schmeDialog("Select Scheme"));
 
 
-        ArrayList<String> statusOptions = new ArrayList<>(Arrays.asList("PENDING", "HOLD"));
+       // ArrayList<String> statusOptions = new ArrayList<>(Arrays.asList("PENDING", "HOLD"));
         binding.tvStatus.setText("PENDING");
-        binding.tvStatus.setOnClickListener(new View.OnClickListener() {
+  /*      binding.tvStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 statusListDialog("Select Status", statusOptions);
             }
-        });
+        });*/
 
     }
 
@@ -2737,21 +2840,34 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getInt("ResponseCode") == 200) {
-//                    new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-//
-//                            //.setCustomImage(R.drawable.error)
-//                            .setConfirmButtonTextColor(ContextCompat.getColor(this, R.color.success_text))
-//                            .setConfirmButtonBackgroundColor(ContextCompat.getColor(this, R.color.success_bg))
-//                            .setTitleText("successTitle" + this.getString(R.string.happy_emoji))
-//                            .setContentText( "succesMsg")
-//                            .setConfirmText("confirmText")
-                    // .setConfirmClickListener(sweetAlertDialog -> {
-//                    myProgress.dismiss();
+
                     progressDialog.dismiss();
-                    startActivity(new Intent(mContext, SupplierOrderFormActivity.class));
-                    finish();
-//                            })
-//                            .show();
+                    if("Order added as Pending successfully".equals(jsonObject.optString("ResponseMessage"))){
+                        showCustomDialogConfirm();
+
+                    }else {
+                        showCustomDialogHold();
+                     //   showCustomDialogConfirm();
+                      //  showCustomDialogHold();
+
+                /*        new SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                                //.setCustomImage(R.drawable.error)
+                                .setConfirmButtonTextColor(ContextCompat.getColor(this, R.color.white))
+                                .setConfirmButtonBackgroundColor(ContextCompat.getColor(this, R.color.success_text))
+                                *//*    .setTitleText("successTitle" + this.getString(R.string.happy_emoji))*//*
+                                .setTitleText("Order saved as Successfully")
+                                .setContentText( "Please check Whatsapp for pdf")
+                                .setConfirmText("CONFRIM")
+                                .setConfirmClickListener(sweetAlertDialog -> {
+                                    //  myProgress.dismiss();
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    startActivity(new Intent(mContext, SupplierOrderFormActivity.class));
+                                    finish();
+                                })
+                                .show();*/
+                    }
+
+
 
                     Toast.makeText(mContext, jsonObject.getString("ResponseMessage") + "", Toast.LENGTH_SHORT).show();
                 } else if (jsonObject.getInt("ResponseCode") == 204) {
@@ -2832,7 +2948,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     jsonObject.put("ItemName", binding.llRow.item.getText().toString());
                     jsonObject.put("Qty", binding.llRow.qty.getText().toString());
                     jsonObject.put("Amount", binding.llRow.amount.getText().toString());
-                    jsonObject.put("OrderStatus", binding.tvStatus.getText());
+                    jsonObject.put("OrderStatus", "PENDING");
                     jsonObject.put("Image1", img);
                     jsonObject.put("Image2", img2);
                     jsonObject.put("Image3", img3);

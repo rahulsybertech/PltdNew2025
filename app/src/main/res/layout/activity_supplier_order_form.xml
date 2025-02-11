@@ -229,7 +229,7 @@
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
                                   android:gravity="center|start"
-                                  android:inputType="numberPassword"
+
                                   android:paddingLeft="10dp"
                                   android:singleLine="true"
                                   android:textColor="@color/black"
@@ -259,7 +259,6 @@
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
                                   android:gravity="center|start"
-                                  android:inputType="textPassword"
                                   android:paddingLeft="10dp"
                                   android:singleLine="true"
                                   android:textColor="@color/black"
@@ -559,6 +558,7 @@
                                   android:textSize="16dp" />
 
                               <ImageView
+                                  android:visibility="gone"
                                   android:id="@+id/ivStatus"
                                   android:layout_width="30dp"
                                   android:layout_height="match_parent"
