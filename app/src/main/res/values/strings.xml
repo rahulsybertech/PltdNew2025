@@ -192,5 +192,7 @@ Front page per ek SALE REPORT ka option arha hai us per click kriye apka sale re
       <string name="amount1">Amount <font color='#D81B60'>*</font></string>
       <string name="marketer1">Marketer <font color='#D81B60'>*</font> </string>
       <string name="status">Status</string>
+      <string name="save">Save</string>
+      <string name="no_purchase_no_stay">No Purchase,No Stay</string>
 
 </resources>

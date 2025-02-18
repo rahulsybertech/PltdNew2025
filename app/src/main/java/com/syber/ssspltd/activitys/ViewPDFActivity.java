@@ -1,24 +1,35 @@
 package com.syber.ssspltd.activitys;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
+import com.rajat.pdfviewer.PdfRendererView;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.FileDownloader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +47,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
     PDFPagerAdapter adapter;
     RemotePDFViewPager remotePDFViewPager;
     LinearLayout linear_layout_pdf;
+    RelativeLayout rlwaterMark;
     String pdfUrl;
     ImageView share,downloadPdf, ivBack;
     ProgressBar progressBar;
@@ -57,19 +69,40 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
         //  toolbar.setTitle(fileName);
 
 
+
         pdfUrl =  getIntent().getStringExtra("pdfUrl");
 
 
 
         share = findViewById(R.id.share);
+        rlwaterMark = findViewById(R.id.rlwaterMark);
         downloadPdf = findViewById(R.id.download);
+        PdfRendererView view = findViewById(R.id.pdfView);
         ivBack.setOnClickListener(v -> onBackPressed());
         share.setOnClickListener(v->sharePDF(pdfUrl));
         downloadPdf.setOnClickListener(v-> FileDownloader.downloadPDF(this,pdfUrl));
         System.out.println("MY_PDF_URL " + pdfUrl);
         linear_layout_pdf = findViewById(R.id.linear_layout_pdf);
-        remotePDFViewPager = new RemotePDFViewPager(this, pdfUrl, this);
 
+    /*    File file = new File(pdfUrl); // Change path as needed
+
+        try {
+            view.initWithFile(file);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }*/
+/*        Bitmap bitmap = getBitmapFromPath(pdfUrl);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setAlpha(100);
+        paint.setTextSize(50);
+        canvas.drawText("WATERMARK", 100, 100, paint);*/
+          remotePDFViewPager = new RemotePDFViewPager(this, pdfUrl, this);
+
+    }
+    public static Bitmap getBitmapFromPath(String filePath) {
+        return BitmapFactory.decodeFile(filePath);
     }
 
     @Override
@@ -90,7 +123,8 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
         System.out.println("MY_PDF_URL 3 " + FileUtil.extractFileNameFromURL(url));
         adapter = new PDFPagerAdapter(this, FileUtil.extractFileNameFromURL(url)); // Setup adapter with the file
         remotePDFViewPager.setAdapter(adapter); // Attach adapter to remote pdf viewpager
-
+     //water mark show
+      //  remotePDFViewPager.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         // Add it to the container
         linear_layout_pdf.removeAllViews();
         linear_layout_pdf.addView(
@@ -98,7 +132,40 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
         );
+//        showWatermark();
+
+
     }
+
+    private void showWatermark() {
+        // Create watermark text
+        TextView watermark = new TextView(this);
+        watermark.setText("HOLD");
+        watermark.setTextSize(40);
+        watermark.setTextColor(Color.parseColor("#80AAAAAA")); // Semi-transparent gray
+        watermark.setRotation(-30); // Tilted effect1
+        watermark.setGravity(Gravity.CENTER);
+
+        // Set layout params to center it
+        FrameLayout.LayoutParams watermarkParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER
+        );
+
+        // Add watermark to a FrameLayout overlay
+        FrameLayout overlay = new FrameLayout(this);
+        overlay.addView(watermark, watermarkParams);
+
+        // Ensure it covers the entire PDF layout
+        rlwaterMark.addView(overlay, new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+        ));
+    }
+
+
+
 
     @Override
     public void onFailure(Exception e) {

@@ -32,6 +32,7 @@ import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.MyProgress;
 import com.syber.ssspltd.Utils.SharedPref;
+import com.syber.ssspltd.Utils.StringUtils;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.activitys.ViewPDFActivity;
 import com.syber.ssspltd.activitys.supplierorderform.OrderImageActivity;
@@ -119,9 +120,16 @@ public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrder
 
 
         holder.orderNo.setOnClickListener(v -> {
+
             if (!datum.getPdfPath().isEmpty()) {
-                mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
-                        .putExtra("pdfUrl", datum.getPdfPath()));
+                boolean isPdf = StringUtils.containsPdf(datum.getPdfPath());
+                if(isPdf){
+                    mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
+                            .putExtra("pdfUrl", datum.getPdfPath()));
+                }else {
+                    Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
+                }
+
             } else {
                 Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
             }

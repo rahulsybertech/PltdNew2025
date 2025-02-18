@@ -69,6 +69,23 @@
           android:layout_below="@+id/app_bar"
           android:scrollbars="vertical"
           android:orientation="vertical" />
+      <RelativeLayout
+          android:id="@+id/rlwaterMark"
+          android:layout_marginTop="200dp"
+          android:layout_centerHorizontal="true"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"/>
+
+      <com.rajat.pdfviewer.PdfRendererView
+          android:id="@+id/pdfView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          app:pdfView_divider="@drawable/pdf_viewer_divider"
+          app:pdfView_showDivider="false" />
+      <androidx.appcompat.widget.AppCompatImageView
+          android:id="@+id/image"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"/>
 <!--      <com.syber.ssspltd.Utils.VerticalViewPager-->
 <!--          android:id="@+id/verticalPdfViewPager"-->
 <!--          android:layout_width="match_parent"-->

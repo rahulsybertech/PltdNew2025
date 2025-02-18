@@ -1,14 +1,14 @@
 <!-- res/layout/custom_dialog.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="30dp"
+    android:padding="7dp"
     android:background="@color/transperent"
     android:gravity="center">
       <LinearLayout
           android:orientation="vertical"
-          android:layout_width="wrap_content"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content">
             <!-- Image Icon (Optional) -->
 
@@ -18,7 +18,7 @@
                 android:id="@+id/dialog_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order saved as HOLD,"
+                android:text="Order saved as HOLD"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 android:layout_marginTop="16dp"
@@ -29,10 +29,10 @@
             <TextView
                 android:layout_gravity="center"
                 android:id="@+id/dialog_content"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please contact with Marketer Karan"
-                android:textColor="@android:color/darker_gray"
+                android:text="ffffff cccccccccccc"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:layout_marginTop="8dp"
                 android:gravity="center" />
@@ -62,4 +62,4 @@
       </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

@@ -253,7 +253,8 @@ public class SplashActivity extends AppCompatActivity {
                         int ver = Integer.parseInt(ob.optString("AppVersion"));
                         System.out.println("REACHED 1 " + ver);
                         //Log.e("ver", ob.getString("AppVersion"));
-                        if (ver <= 42) {
+
+                        if (ver <= 47) {
                             new Handler().postDelayed(this::goToNext, 2600);
                         } else {
                             showVersionold();

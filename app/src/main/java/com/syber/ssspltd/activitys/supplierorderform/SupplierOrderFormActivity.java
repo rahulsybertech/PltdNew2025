@@ -566,6 +566,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         RelativeLayout rlButton = sDialog.findViewById(R.id.rlButton);
 
 
+
       /*  dialogTitle.setText("Order Saved Successfully");
         dialogContent.setText("Please check WhatsApp for your PDF");
 */
@@ -587,11 +588,16 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         final Dialog  sDialog = new Dialog(mContext);
         sDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         sDialog.setCancelable(false);
+        Window window = sDialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
         sDialog.setContentView(R.layout.dialog_hold);
         sDialog.setCancelable(true);
         TextView text = (TextView) sDialog.findViewById(R.id.dialog_title);
         TextView dialogTitle = sDialog.findViewById(R.id.dialog_title);
         TextView dialogContent = sDialog.findViewById(R.id.dialog_content);
+        dialogContent.setText("Please contact with "+binding.marketer.getText().toString());
         TextView confirmButton = sDialog.findViewById(R.id.confirm_button);
         RelativeLayout rlButton = sDialog.findViewById(R.id.rlButton);
 
@@ -2575,6 +2581,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     private void handleClickListner() {
         binding.placeOrder.setOnClickListener(v -> {
+
             if (validate() && isPlacedOrderBtnEnabled) {
                 isPlacedOrderBtnEnabled = false;
                 binding.placeOrder.setEnabled(false);
@@ -2751,14 +2758,16 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             Toast.makeText(mContext, "Nick Name Can't be empty", Toast.LENGTH_SHORT).show();
 //            Toast.makeText(mContext, "1", Toast.LENGTH_SHORT).show();
             temp = false;
-        } else if (binding.orderNo.getText().toString().isEmpty()) {
+        }
+        else if (binding.orderNo.getText().toString().isEmpty()) {
             Toast.makeText(mContext, "Order Code Can't be empty. Please select any marketer", Toast.LENGTH_SHORT).show();
             binding.scroll.smoothScrollTo(binding.marketer.getScrollX(), binding.marketer.getScrollY());
             binding.marketer.setError("Can't be empty");
 //            Toast.makeText(mContext, "2", Toast.LENGTH_SHORT).show();
             temp = false;
 
-        } else if (binding.marketer.getText().toString().isEmpty()) {
+        }
+        else if (binding.marketer.getText().toString().isEmpty()) {
             binding.marketer.setError("Can't be empty");
 //            Toast.makeText(mContext, "3", Toast.LENGTH_SHORT).show();
             binding.scroll.smoothScrollTo(binding.marketer.getScrollX(), binding.marketer.getScrollY());

@@ -468,7 +468,6 @@
                                   android:layout_marginEnd="5dp"
                                   android:onClick="handleClear"
                                   android:padding="7dp"
-
                                   android:src="@drawable/ic_cross2"
                                   app:tint="@color/red" />
                         </RelativeLayout>

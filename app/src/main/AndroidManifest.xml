@@ -13,9 +13,11 @@
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
       <uses-permission
           android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-          android:maxSdkVersion="32" />
+          android:maxSdkVersion="32"
+          tools:replace="android:maxSdkVersion" />
       <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-      <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+      <uses-permission
+          android:name="android.permission.READ_EXTERNAL_STORAGE"
           android:maxSdkVersion="32" />
 
       <uses-feature
@@ -45,6 +47,13 @@
           android:supportsRtl="true"
           android:theme="@style/AppTheme"
           android:usesCleartextTraffic="true">
+
+            <activity
+                android:name=".activitys.BookingListActivity"
+                android:exported="false" />
+            <activity
+                android:name=".activitys.BookingRequestActivity"
+                android:exported="false" />
             <activity
                 android:name=".activitys.customer.CustomerListActivity"
                 android:exported="false" />
@@ -61,18 +70,15 @@
                 android:name=".activitys.supplierorderform.SupplierOrderFormActivity"
                 android:exported="false"
                 android:screenOrientation="portrait"
-                android:windowSoftInputMode="stateHidden|adjustResize" />
-
-<!--            <provider-->
-<!--                android:name="androidx.core.content.FileProvider"-->
-<!--                android:authorities="${applicationId}.provider"-->
-<!--                android:exported="false"-->
-<!--                android:grantUriPermissions="true">-->
-<!--                  <meta-data-->
-<!--                      android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                      android:resource="@xml/file_paths" />-->
-<!--            </provider>-->
-
+                android:windowSoftInputMode="stateHidden|adjustResize" /> <!-- <provider -->
+            <!-- android:name="androidx.core.content.FileProvider" -->
+            <!-- android:authorities="${applicationId}.provider" -->
+            <!-- android:exported="false" -->
+            <!-- android:grantUriPermissions="true"> -->
+            <!-- <meta-data -->
+            <!-- android:name="android.support.FILE_PROVIDER_PATHS" -->
+            <!-- android:resource="@xml/file_paths" /> -->
+            <!-- </provider> -->
             <activity
                 android:name=".activitys.ViewPDFActivity"
                 android:exported="false" />
@@ -280,7 +286,8 @@
             <activity
                 android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
                 android:theme="@style/Base.Theme.AppCompat" />
-            <activity android:name=".activitys.SplashActivity"
+            <activity
+                android:name=".activitys.SplashActivity"
                 android:exported="true">
                   <intent-filter>
                         <action android:name="android.intent.action.MAIN" />
@@ -289,20 +296,6 @@
                   </intent-filter>
             </activity>
 
-            <activity-alias
-                android:name=".helper.DiamondActivityAlias"
-                android:enabled="false"
-                android:exported="true"
-                android:icon="@mipmap/ic_launcher__new_diamond"
-                android:label="@string/app_name"
-                android:roundIcon="@mipmap/ic_launcher__new_diamond"
-                android:targetActivity=".activitys.SplashActivity">
-                  <intent-filter>
-                        <action android:name="android.intent.action.MAIN" />
-
-                        <category android:name="android.intent.category.LAUNCHER" />
-                  </intent-filter>
-            </activity-alias>
             <activity-alias
                 android:name=".helper.GoldActivityAlias"
                 android:enabled="false"
@@ -317,31 +310,41 @@
                         <category android:name="android.intent.category.LAUNCHER" />
                   </intent-filter>
             </activity-alias>
-<!--            <activity-alias-->
-<!--                android:name=".helper.DefaultActivityAlias"-->
-<!--                android:enabled="true"-->
-<!--                android:exported="true"-->
-<!--                android:icon="@mipmap/ic_launcher_sss_logo"-->
-<!--                android:label="@string/app_name"-->
-<!--                android:roundIcon="@mipmap/ic_launcher_sss_logo"-->
-<!--                android:targetActivity=".activitys.SplashActivity">-->
-<!--                  <intent-filter>-->
-<!--                        <action android:name="android.intent.action.MAIN" />-->
+            <activity-alias
+                android:name=".helper.DiamondActivityAlias"
+                android:enabled="false"
+                android:exported="true"
+                android:icon="@mipmap/ic_launcher__new_diamond"
+                android:label="@string/app_name"
+                android:roundIcon="@mipmap/ic_launcher__new_diamond"
+                android:targetActivity=".activitys.SplashActivity">
+                  <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
 
-<!--                        <category android:name="android.intent.category.LAUNCHER" />-->
-<!--                  </intent-filter>-->
-<!--            </activity-alias>-->
-
-                  <provider
-                      android:name="androidx.core.content.FileProvider"
-                      android:authorities="com.syber.ssspltd.fileprovider"
-                      android:exported="false"
-                      android:grantUriPermissions="true">
-                        <meta-data
-                            android:name="android.support.FILE_PROVIDER_PATHS"
-                            android:resource="@xml/provider_paths" />
-                  </provider>
-
+                        <category android:name="android.intent.category.LAUNCHER" />
+                  </intent-filter>
+            </activity-alias> <!-- <activity-alias -->
+            <!-- android:name=".helper.DefaultActivityAlias" -->
+            <!-- android:enabled="true" -->
+            <!-- android:exported="true" -->
+            <!-- android:icon="@mipmap/ic_launcher_sss_logo" -->
+            <!-- android:label="@string/app_name" -->
+            <!-- android:roundIcon="@mipmap/ic_launcher_sss_logo" -->
+            <!-- android:targetActivity=".activitys.SplashActivity"> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+            <!-- </activity-alias> -->
+            <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="com.syber.ssspltd.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+                  <meta-data
+                      android:name="android.support.FILE_PROVIDER_PATHS"
+                      android:resource="@xml/provider_paths" />
+            </provider>
       </application>
 
 </manifest>

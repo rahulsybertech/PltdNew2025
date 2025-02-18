@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.activitys.BankDetailActivity;
+import com.syber.ssspltd.activitys.BookingListActivity;
 import com.syber.ssspltd.activitys.BranchWithLogoActivity;
 import com.syber.ssspltd.activitys.CR_Note_Suppl;
 import com.syber.ssspltd.activitys.CourierReportActivity;
@@ -144,6 +145,8 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
             }
             else if (lists.getOnClickId().equals("25")) {
                 context.startActivity(new Intent(context, CustomerListActivity.class));
+            } else if (lists.getOnClickId().equals("26")) {
+                context.startActivity(new Intent(context, BookingListActivity.class));
             }
         });
         if (newuser && position > 7) {

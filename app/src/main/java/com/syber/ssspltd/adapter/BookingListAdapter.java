@@ -1,0 +1,109 @@
+package com.syber.ssspltd.adapter;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.MyConstant;
+import com.syber.ssspltd.activitys.BookingRequestActivity;
+import com.syber.ssspltd.model.booking.BookingData;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.MyViewHolder>{
+    private Context mContext;
+    private List<BookingData> stayBookingList;
+
+    public BookingListAdapter(Context mContext,/*, List<PendingOrderReportResult> detailList*/ArrayList<BookingData> stayBookingList) {
+        this.mContext = mContext;
+        this.stayBookingList = stayBookingList;
+    }
+
+    @Override
+    public BookingListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.booking_list_adapter, parent, false);
+        return new BookingListAdapter.MyViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(BookingListAdapter.MyViewHolder holder, final int position) {
+        final BookingData datum = stayBookingList.get(position);
+       /*
+        holder.pendingSupplier_Name.setText(datum.getSupplier());
+        holder.pendingOrder_no.setText(datum.getOrderNo());
+        holder.pendingSub_party.setText(datum.getSubParty());
+        holder.pending_date.setText(datum.getDate());
+        holder.pendingItem.setText(datum.getItems());
+        holder.pendingType.setText(datum.getPcs());
+        holder.pendingQTY.setText(datum.getQty());
+        holder.pendingAmt.setText(datum.getAmount());
+        holder.marketer_pending.setText(datum.getMarketer());*/
+        holder.visitId.setText(datum.getId());
+        holder.checkInTimeAndDate.setText(String.format("%s %s", datum.getCheckInDate(), datum.getCheckInTime()));
+        holder.checkOutDateAndTime.setText(String.format("%s %s", datum.getCheckoutDate(), datum.getCheckoutTime()));
+        holder.noOfPerson.setText(datum.getNoOfPerson());
+        holder.edit.setOnClickListener(v ->
+                mContext.startActivity(new Intent(mContext, BookingRequestActivity.class)
+                        .putExtra("data",datum)
+                        .putExtra(MyConstant.EXTRA_IS_EDIT,true)
+                )
+        );
+
+        holder.llCancel.setOnClickListener(v ->
+                Toast.makeText(mContext, "Booking is cencel", Toast.LENGTH_SHORT).show());
+    /*    holder.itemView.setOnClickListener(v->{
+            if (datum.getOrderdetail().size()>0) {
+                mContext.startActivity(new Intent(mContext, PendingOrderItemDetailsActivity.class)
+                        .putExtra("orderlist",datum));
+            }else {
+                Toast.makeText(mContext, "No Details found for this order", Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
+//        if (datum.getDebitAmt().equals("")){
+//            holder.dr_amt.setVisibility(View.GONE);
+//            holder.dr_txt.setVisibility(View.GONE);
+//        }else {
+//            holder.dr_amt.setVisibility(View.VISIBLE);
+//            holder.dr_txt.setVisibility(View.VISIBLE);
+//            holder.dr_amt.setText(datum.getDebitAmt());
+//        }
+//
+//        holder.bal_name.setText(tt);
+
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return  stayBookingList.size();
+    }
+
+
+    class MyViewHolder extends RecyclerView.ViewHolder {
+
+        TextView visitId,checkInTimeAndDate,checkOutDateAndTime,noOfPerson,pendingQTY,pendingAmt,marketer_pending;
+        LinearLayout llCancel;
+        LinearLayout edit;
+        TextView netAmt_pending;
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            visitId = itemView.findViewById(R.id.visitId);
+            checkInTimeAndDate = itemView.findViewById(R.id.checkInTimeAndDate);
+            checkOutDateAndTime = itemView.findViewById(R.id.checkOutDateAndTime);
+            noOfPerson = itemView.findViewById(R.id.noOfPerson);
+            edit = itemView.findViewById(R.id.edit);
+            llCancel = itemView.findViewById(R.id.llCancel);
+
+        }
+    }
+}

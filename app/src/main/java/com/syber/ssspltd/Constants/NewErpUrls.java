@@ -97,4 +97,9 @@ public class NewErpUrls {
     public static String blackList                  = BASE_URL + "BlackListedName";
     public static String ORDER_REPORT               = BASE_URL + "OrderReportWithAccountID";
     public static String UPDATE_ORDER_STATUS        = BASE_URL + "ChangeOrderStatus";
+
+    public static String BRANCH_LIST               = DOMAIN + "Api/StayBooking/GetBranchDetailList";
+    public static String SAVE_UPDATEBOOKING = DOMAIN + "Api/StayBooking/SaveAndUpdateStayBooking";
+    public static String StayBookingDataList = DOMAIN + "api/StayBooking/GetStayBookingDataList";
+
   }
