@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
@@ -22,10 +23,13 @@ import java.util.List;
 public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.MyViewHolder>{
     private Context mContext;
     private List<BookingData> stayBookingList;
+    private OnBookingCancelListener cancelListener; // Callback interface
 
-    public BookingListAdapter(Context mContext,/*, List<PendingOrderReportResult> detailList*/ArrayList<BookingData> stayBookingList) {
+
+    public BookingListAdapter(Context mContext,/*, List<PendingOrderReportResult> detailList*/ArrayList<BookingData> stayBookingList,OnBookingCancelListener cancelListener) {
         this.mContext = mContext;
         this.stayBookingList = stayBookingList;
+        this.cancelListener = cancelListener;
     }
 
     @Override
@@ -51,15 +55,25 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         holder.checkInTimeAndDate.setText(String.format("%s %s", datum.getCheckInDate(), datum.getCheckInTime()));
         holder.checkOutDateAndTime.setText(String.format("%s %s", datum.getCheckoutDate(), datum.getCheckoutTime()));
         holder.noOfPerson.setText(datum.getNoOfPerson());
+
+
+        // Edit Button Click
         holder.edit.setOnClickListener(v ->
                 mContext.startActivity(new Intent(mContext, BookingRequestActivity.class)
                         .putExtra("data",datum)
                         .putExtra(MyConstant.EXTRA_IS_EDIT,true)
+                        .putExtra(MyConstant.SCREEN,MyConstant.BOOKINGlIST)
+
                 )
         );
+        // Cancel Button Click - Notify Activity via Callback
+        holder.llCancel.setOnClickListener(v ->{
+            if (cancelListener != null) {
+                cancelListener.onBookingCancel(position,datum); // Notify activity
+            }
+                }
 
-        holder.llCancel.setOnClickListener(v ->
-                Toast.makeText(mContext, "Booking is cencel", Toast.LENGTH_SHORT).show());
+        );
     /*    holder.itemView.setOnClickListener(v->{
             if (datum.getOrderdetail().size()>0) {
                 mContext.startActivity(new Intent(mContext, PendingOrderItemDetailsActivity.class)
@@ -81,12 +95,20 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
 //        holder.bal_name.setText(tt);
 
     }
+    // Remove item from the list
+    public void removeItem(int position) {
+        stayBookingList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, stayBookingList.size()); // Refresh list
+    }
 
 
     @Override
     public int getItemCount() {
         return  stayBookingList.size();
     }
+
+
 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -105,5 +127,9 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
             llCancel = itemView.findViewById(R.id.llCancel);
 
         }
+    }
+    //  the interface
+    public interface OnBookingCancelListener {
+        void onBookingCancel(int position,BookingData data); // Method to notify activity
     }
 }

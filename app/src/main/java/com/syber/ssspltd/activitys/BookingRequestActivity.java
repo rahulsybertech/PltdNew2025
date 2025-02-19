@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.MyConstant;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
@@ -103,9 +104,9 @@ public class BookingRequestActivity extends AppCompatActivity {
 
             if (validate() && isPlacedOrderBtnEnabled) {
                 isPlacedOrderBtnEnabled = false;
-                binding.save.setEnabled(false);
+            /*    binding.save.setEnabled(false);
                 binding.save.setBackgroundColor(Color.parseColor("#808080"));
-                binding.tvSave.setText("Please Wait...");
+                binding.tvSave.setText("Please Wait...")*/;
                 sendData();
             }
 
@@ -117,13 +118,13 @@ public class BookingRequestActivity extends AppCompatActivity {
         isEditMode = getIntent().getBooleanExtra(EXTRA_IS_EDIT, false);
         getStation();
         if (isEditMode) {
-
             bookingData = getIntent().getParcelableExtra("data");
+            binding.tvSave.setText(R.string.update);
             if (bookingData != null) {
                 populateData(bookingData); // Load existing data into UI fields
             }
         }else {
-        ;
+            binding.tvSave.setText(R.string.save);
         }
 
        // binding.plusButton.setOnClickListener(v ->   startActivity(new Intent(this, BookingRequestActivity.class)));
@@ -199,8 +200,15 @@ public class BookingRequestActivity extends AppCompatActivity {
         List<String> items = new ArrayList<>();
         items.add("Select Branch"); // Add a default item
 
+        // HashMap to store branch availability
+        HashMap<String, String> branchAvailabilityMap = new HashMap<>();
+
         for (BookingData branch : branchList) {
-            items.add(branch.getDbPrefix()); // Add each dbPrefix to the list
+            String branchName = branch.getDbPrefix();
+            String isStayAvailable = branch.getStayFacility(); // Assume this method exists
+
+            items.add(branchName);
+            branchAvailabilityMap.put(branchName, isStayAvailable); // Store branch availability
         }
 
 
@@ -219,7 +227,7 @@ public class BookingRequestActivity extends AppCompatActivity {
 // Set the Spinner selection
             if (position >= 0) {
             binding.spinner.setSelection(position);
-            selectBranch = branchList.get(position).getId();
+                selectBranch = branchList.get(position - 1).getId(); // Adjust for "Select Branch"
             }
         }
 
@@ -232,9 +240,21 @@ public class BookingRequestActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                if (position != 0) { // Ignore first item
-                    selectBranch = branchList.get(position).getId();
-              //      Toast.makeText(BookingRequestActivity.this, "Selected: " + selectedItem, Toast.LENGTH_SHORT).show();
+                if (position != 0) { // Ignore "Select Branch"
+                    String selectedBranch = items.get(position);
+                    selectBranch = branchList.get(position - 1).getId(); // Adjust for default item
+
+                    // Get availability from HashMap
+                    String isStayAvailable = branchAvailabilityMap.get(selectedBranch);
+
+                    // Log or show a message based on availability
+                    if (isStayAvailable.equals("1")) {
+                    //    Toast.makeText(BookingRequestActivity.this, selectedBranch + " has Stay Facility", Toast.LENGTH_SHORT).show();
+                    } else {
+                        binding.spinner.setSelection(0);
+                        selectBranch = ""; // Adjust for default item
+                        Toast.makeText(BookingRequestActivity.this, selectedBranch + " does NOT have Stay Facility", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -469,6 +489,14 @@ public class BookingRequestActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getInt("ResponseCode") == 200) {
                     progressDialog.dismiss();
+                   String screen = getIntent().getStringExtra(MyConstant.SCREEN);
+                   if(screen.equals(MyConstant.HOME)){
+                       startActivity(new Intent(this, BookingListActivity.class));
+                       finish();
+                   }else {
+                       finish();
+                   }
+
                     finish();
                     Toast.makeText(this, jsonObject.getString("ResponseMessage") + "", Toast.LENGTH_SHORT).show();
                 } else if (jsonObject.getInt("ResponseCode") == 204) {
@@ -535,7 +563,13 @@ public class BookingRequestActivity extends AppCompatActivity {
                             "updatedDate": "2025-02-17T12:36:59.862Z"
                     }*/
 
-                    jsonObject.put("id", JSONObject.NULL);
+                    if (isEditMode) {
+                        jsonObject.put("id",bookingData.getId() );
+                    }else {
+                        jsonObject.put("id", JSONObject.NULL);
+                    }
+
+
                     jsonObject.put("companyID", JSONObject.NULL);
                     jsonObject.put("branchID", selectBranch);
                     jsonObject.put("accountID", JSONObject.NULL);

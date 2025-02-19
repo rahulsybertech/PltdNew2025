@@ -157,7 +157,8 @@ public class LoginPage extends AppCompatActivity {
                                     .putExtra("reg_status", pojo.getUserStatus()));
                             finish();
                         }
-                    } else if (pojo.getUserStatus().equals("Try With Register No")) {
+                    }
+                    else if (pojo != null && "Try With Register No".equals(pojo.getUserStatus())) {
                         accountDetails.clear();
                         accountDetails.addAll(pojo.getAccountDetail());
                         //loginNumberAdapter.notifyDataSetChanged();

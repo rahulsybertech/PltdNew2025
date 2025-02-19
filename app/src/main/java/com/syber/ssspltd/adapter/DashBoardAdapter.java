@@ -1,8 +1,11 @@
 package com.syber.ssspltd.adapter;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +21,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.AlertUtil;
+import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.MyConstant;
 import com.syber.ssspltd.Utils.SharedPref;
+import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.activitys.BankDetailActivity;
 import com.syber.ssspltd.activitys.BookingListActivity;
+import com.syber.ssspltd.activitys.BookingRequestActivity;
 import com.syber.ssspltd.activitys.BranchWithLogoActivity;
 import com.syber.ssspltd.activitys.CR_Note_Suppl;
 import com.syber.ssspltd.activitys.CourierReportActivity;
@@ -44,9 +56,16 @@ import com.syber.ssspltd.activitys.clubtype.ClubTypeActivity;
 import com.syber.ssspltd.activitys.customer.CustomerListActivity;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierReportActivity;
+import com.syber.ssspltd.model.booking.BookingData;
+import com.syber.ssspltd.model.booking.StayBookingResponse;
 import com.syber.ssspltd.response.DeasbordListType;
 
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -56,6 +75,8 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
     final private List<DeasbordListType> OfferList;
     Context context;
     boolean newuser;
+    private String customValue = ""; // Custom value variable
+
 
     public DashBoardAdapter(Context context, List<DeasbordListType> offerList, boolean newuser) {
         this.OfferList = offerList;
@@ -146,7 +167,8 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
             else if (lists.getOnClickId().equals("25")) {
                 context.startActivity(new Intent(context, CustomerListActivity.class));
             } else if (lists.getOnClickId().equals("26")) {
-                context.startActivity(new Intent(context, BookingListActivity.class));
+                getBookingList();
+
             }
         });
         if (newuser && position > 7) {
@@ -165,6 +187,9 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
             holder.imgFade.setVisibility(View.GONE);
         }
 
+    }
+    public void setCustomValue(String value) {
+        this.customValue = value;
     }
 
     public boolean loadFragment(Fragment fragment) {
@@ -200,6 +225,51 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
 
         }
 
+    }
+
+    private void getBookingList() {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, StayBookingDataList, response -> {
+//                    Log.e("Data", response);
+
+            Log.i("TaG", "url ---" + StayBookingDataList);
+            Log.i("TaG", "response ---> " + response);
+            StayBookingResponse pojo = new Gson().fromJson(response, StayBookingResponse.class);
+            try {
+                if (pojo.isResponseStatus()) {
+
+                    if(pojo.getStayBookingList().size()>0){
+                        context.startActivity(new Intent(context, BookingListActivity.class));
+
+                    }else {
+                        context.startActivity(new Intent(context, BookingRequestActivity.class).putExtra(MyConstant.SCREEN,MyConstant.HOME));
+                    }
+
+
+                } else {
+                    AlertUtil.responseElse(context, "", pojo.getResponseMessage() + "");
+                }
+            } catch (JsonIOException e) {
+                AlertUtil.responseExecption(context, "GetStayBookingDataList ", e.toString());
+            }
+
+        }, error ->
+        {
+            try {
+                Constants.convertByteToString(context, "GetStayBookingDataList ", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+        };
+        VolleySingleton.getInstance(context).addToRequestQueue(stringRequest);
     }
 
 

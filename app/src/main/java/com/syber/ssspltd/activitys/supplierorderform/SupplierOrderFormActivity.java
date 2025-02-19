@@ -183,6 +183,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     private ActivityResultLauncher<Intent> pickImageLauncher;
     private ActivityResultLauncher<Intent> pickCameraImageLauncher;
     private String subPartyId = "SELF";
+    private String traceIdentifier = "";
     private String transportResponseMessage = "";
     private String schemeResponseMessage = "";
 
@@ -1834,6 +1835,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 //                JSONObject js = jsonObject.getJSONObject("data");
                 if (jsonObject.getString("ResponseStatus").equals("true")) {
                     binding.orderNo.setText(jsonObject.getString("OrderNo"));
+                    traceIdentifier =jsonObject.optString("TraceIdentifier");
                     binding.orderNo.setError(null, null);
                 } else {
                     AlertUtil.responseElse(mContext, "MaxOrderNoByMarketer ", "api is getting false status. Please try after sometime ");
@@ -2946,6 +2948,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     jsonObject.put("Lattitude", null);  // null can be directly passed
                     jsonObject.put("Longitude", null);
                     jsonObject.put("Transport", binding.transport.getText().toString());
+                    jsonObject.put("TraceIdentifier", binding.transport.getText().toString());
                     jsonObject.put("BStation", binding.bStation.getText().toString());
                     jsonObject.put("SupplierNickName", binding.nickName.getText().toString());
                     jsonObject.put("SchemeName", binding.scheme.getText().toString());

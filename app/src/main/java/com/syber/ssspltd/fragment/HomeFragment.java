@@ -2,6 +2,7 @@ package com.syber.ssspltd.fragment;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_BANNER_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_SECURITY_CHECK_REPORT;
+import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -26,6 +27,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
 import com.jama.carouselview.CarouselView;
 import com.jama.carouselview.enums.IndicatorAnimationType;
@@ -33,6 +35,7 @@ import com.jama.carouselview.enums.OffsetType;
 import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Picasso;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
@@ -41,11 +44,14 @@ import com.syber.ssspltd.activitys.LoginPage;
 import com.syber.ssspltd.adapter.DashBoardAdapter;
 import com.syber.ssspltd.adapter.SliderAdapter;
 import com.syber.ssspltd.helper.MovableFloatingActionButton;
+import com.syber.ssspltd.model.booking.BookingData;
+import com.syber.ssspltd.model.booking.StayBookingResponse;
 import com.syber.ssspltd.response.BannerResponse.Banner.BannerList;
 import com.syber.ssspltd.response.BannerResponse.Banner.BannerPojo;
 import com.syber.ssspltd.response.DeasbordListType;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -135,6 +141,7 @@ public class HomeFragment extends Fragment {
         Log.e("login_page", SharedPref.read(SharedPref.USERMOBILE, ""));
         Log.e("DASHBOARD_TYPE1", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
         if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier")) {
+
             Log.e("DASHBOARD_TYPE", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
             for (int i = 0; i < list1_name.length; i++) {
                 Log.e("list1_name", list1_name[i]);
@@ -146,6 +153,7 @@ public class HomeFragment extends Fragment {
             securityCheck_vi.setVisibility(View.GONE);
         }
         if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")) {
+
             Log.e("DASHBOARD_TYPE", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
             for (int i = 0; i < list2_name.length; i++) {
                 deasbordListType = new DeasbordListType(list2_onclickId[i], list2_name[i], list2_Img[i]);
@@ -459,4 +467,6 @@ public class HomeFragment extends Fragment {
         alertDialog.show();
         return true;
     }
+
+
 }
