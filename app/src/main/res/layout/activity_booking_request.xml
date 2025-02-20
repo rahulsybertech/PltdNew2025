@@ -84,7 +84,7 @@
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
                                   android:textSize="12dp"
-                                  android:text="Check In"
+                                  android:text="Check in date"
                                   android:textColor="@color/black"/>
                               <LinearLayout
                                   android:layout_marginTop="10dp"
@@ -132,7 +132,7 @@
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
                                   android:textSize="12dp"
-                                  android:text="Check In"
+                                  android:text="Check out date"
                                   android:textColor="@color/black"/>
 
                               <LinearLayout
@@ -185,7 +185,7 @@
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
                                   android:textSize="12dp"
-                                  android:text="Check In"
+                                  android:text="Check in time"
                                   android:textColor="@color/black"/>
                               <LinearLayout
                                   android:layout_marginTop="10dp"
@@ -207,7 +207,7 @@
                                         android:background="@drawable/otp_line"
                                         android:fontFamily="monospace"
                                         android:gravity="center"
-                                        android:hint="Date From"
+                                        android:hint="12:00 AM"
                                         android:imeOptions="actionNext"
                                         android:maxLines="1"
                                         android:padding="8dp"
@@ -229,7 +229,7 @@
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
                                   android:textSize="12dp"
-                                  android:text="Check Out"
+                                  android:text="Check out time"
                                   android:textColor="@color/black"/>
 
                               <LinearLayout
@@ -253,7 +253,7 @@
                                         android:background="@drawable/otp_line"
                                         android:fontFamily="monospace"
                                         android:gravity="center"
-                                        android:hint="Date To"
+                                        android:hint="10:00 PM"
                                         android:imeOptions="actionNext"
                                         android:maxLines="1"
                                         android:padding="8dp"
@@ -301,6 +301,7 @@
                                         android:fontFamily="monospace"
                                         android:imeOptions="actionNext"
                                         android:maxLines="1"
+                                        android:maxLength="1"
                                         android:inputType="number"
                                         android:padding="8dp"
                                         android:textColor="@color/black"

@@ -65,6 +65,7 @@ public class BookingRequestActivity extends AppCompatActivity {
     private boolean isTodaySelected = false;
     ArrayList<BookingData> branchList;
     private Boolean isPlacedOrderBtnEnabled = true;
+    private Boolean notAllowllTime = false;
     private String selectBranch="";
 
     boolean isEditMode;
@@ -112,7 +113,7 @@ public class BookingRequestActivity extends AppCompatActivity {
 
         } );
 
-        binding.llCheckInTime.setOnClickListener(v ->showCheckInTimePicker(false) );
+        binding.llCheckInTime.setOnClickListener(v ->showCheckInTimePicker(notAllowllTime) );
         binding.llCheckOutTime.setOnClickListener(v ->showCheckOutTimePicker() );
 
         isEditMode = getIntent().getBooleanExtra(EXTRA_IS_EDIT, false);
@@ -292,8 +293,10 @@ public class BookingRequestActivity extends AppCompatActivity {
 
                     // Check if selected date is today
                     if (isToday(selectedYear, selectedMonth, selectedDay)) {
+                        notAllowllTime=true;
                         showCheckInTimePicker(true); // Enforce 12-hour restriction
                     } else {
+                        notAllowllTime=false;
                         showCheckInTimePicker(false); // Allow all times
                     }
                 },
@@ -321,9 +324,12 @@ public class BookingRequestActivity extends AppCompatActivity {
         if (enforce12HourRestriction) {
             // Enforce minimum time = current time + 12 hours
             minHour = currentHour + 12;
+
             if (minHour >= 24) {
-                minHour = 23; // Restrict max to 11 PM
-                minMinute = 59;
+                Toast.makeText(this, "Time  unavailable, check-in too late.", Toast.LENGTH_SHORT).show();
+                return;
+          /*      minHour = 23; // Restrict max to 11 PM
+                minMinute = 59;*/
             } else {
                 minMinute = currentMinute;
             }
@@ -332,6 +338,8 @@ public class BookingRequestActivity extends AppCompatActivity {
             minHour = 0;
             minMinute = 0;
         }
+
+
 
         int finalMinHour = minHour;
         TimePickerDialog timePickerDialog = new TimePickerDialog(

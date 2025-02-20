@@ -76,9 +76,9 @@ public class HomeFragment extends Fragment {
     CarouselView carouselView;
     TextView pending_order, courier_report, ledger, sale_report, stock_in_office, sale_service, dash_board, Dr_Note, create_note, cr_noteSuppl, dr_NoteCust;
     Type listType, bannerType;
-    String[] list1_name = {"Ledger", "Debit Note", "Credit Note To Supplier", "Sale Service", "Brands", "Customer Review", "Pending Order", "Honhar Khiladi", "Add Order","StayBooking"};
-    String[] list1_onclickId = {"1", "2", "3", "4", "13", "16", "23", "25", "22","26"};
-    Integer list1_Img[] = {R.drawable.button_two, R.drawable.button_nine, R.drawable.button_eleven, R.drawable.button_eight, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_two, R.drawable.button_thirteen, R.drawable.button_four,R.drawable.button_four};
+    String[] list1_name = {"Ledger", "Debit Note", "Credit Note To Supplier", "Sale Service", "Brands", "Customer Review", "Pending Order", "Honhar Khiladi", "Add Order"};
+    String[] list1_onclickId = {"1", "2", "3", "4", "13", "16", "23", "25", "22"};
+    Integer list1_Img[] = {R.drawable.button_two, R.drawable.button_nine, R.drawable.button_eleven, R.drawable.button_eight, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_two, R.drawable.button_thirteen, R.drawable.button_four};
 
     String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service", "Why SSS", "Brands"
             , "Customer Review", "Club Features", "Honhar Khiladi","StayBooking"};
