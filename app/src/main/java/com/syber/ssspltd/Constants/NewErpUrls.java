@@ -103,5 +103,6 @@ public class NewErpUrls {
     public static String SAVE_UPDATEBOOKING = DOMAIN + "Api/StayBooking/SaveAndUpdateStayBooking";
     public static String StayBookingDataList = DOMAIN + "api/StayBooking/GetStayBookingDataList";
     public static String CancelStayBooking = DOMAIN + "api/StayBooking/CancelStayBooking";
+    public static String StayBookingTime = DOMAIN + "api/StayBooking/StayBookingTime";
 
   }

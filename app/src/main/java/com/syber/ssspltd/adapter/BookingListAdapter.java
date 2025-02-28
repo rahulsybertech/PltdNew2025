@@ -17,8 +17,12 @@ import com.syber.ssspltd.Utils.MyConstant;
 import com.syber.ssspltd.activitys.BookingRequestActivity;
 import com.syber.ssspltd.model.booking.BookingData;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.MyViewHolder>{
     private Context mContext;
@@ -52,8 +56,9 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         holder.pendingAmt.setText(datum.getAmount());
         holder.marketer_pending.setText(datum.getMarketer());*/
         holder.visitId.setText(datum.getId());
-        holder.checkInTimeAndDate.setText(String.format("%s %s", datum.getCheckInDate(), datum.getCheckInTime()));
-        holder.checkOutDateAndTime.setText(String.format("%s %s", datum.getCheckoutDate(), datum.getCheckoutTime()));
+
+        holder.checkInTimeAndDate.setText(String.format("%s %s", convertDateFormat(datum.getCheckInDate()), datum.getCheckInTime()));
+        holder.checkOutDateAndTime.setText(String.format("%s %s", convertDateFormat(datum.getCheckoutDate()), datum.getCheckoutTime()));
         holder.noOfPerson.setText(datum.getNoOfPerson());
 
 
@@ -102,6 +107,18 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         notifyItemRangeChanged(position, stayBookingList.size()); // Refresh list
     }
 
+    public String convertDateFormat(String inputDate) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+        try {
+            Date date = inputFormat.parse(inputDate);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // Handle error case
+        }
+    }
 
     @Override
     public int getItemCount() {

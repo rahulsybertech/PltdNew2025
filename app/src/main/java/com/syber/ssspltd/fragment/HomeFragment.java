@@ -81,11 +81,11 @@ public class HomeFragment extends Fragment {
     Integer list1_Img[] = {R.drawable.button_two, R.drawable.button_nine, R.drawable.button_eleven, R.drawable.button_eight, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_two, R.drawable.button_thirteen, R.drawable.button_four};
 
     String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service", "Why SSS", "Brands"
-            , "Customer Review", "Club Features", "Honhar Khiladi","StayBooking"};
-    String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24", "25","26"};
+            , "Customer Review", "Club Features", "Stay Booking","Honhar Khiladi"};
+    String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24", "26","25"};
     Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
             , R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten,
-            R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_nine, R.drawable.button_thirteen,R.drawable.button_thirteen};
+            R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_nine, R.drawable.button_two,R.drawable.button_thirteen};
     String[] list_newuser = {"Why SSS", "Branches", "Brands", "Offers", "Customer Review", "Gallery", "Bank Details", "Feedback", "Apply KYC", "DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service"};
     String[] newuser_onclickId = {"12", "14", "13", "21", "16", "15", "18", "19", "17", "20", "5", "1", "6", "7", "8", "9", "10", "11", "4"};
     Integer newuser_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three, R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
@@ -137,6 +137,7 @@ public class HomeFragment extends Fragment {
         deasbordListTypeList = new ArrayList<>();
         GridLayoutManager linearLayoutManager = new GridLayoutManager(getContext(), 3);
         linearLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        recyclerView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         recyclerView.setLayoutManager(linearLayoutManager);
         Log.e("login_page", SharedPref.read(SharedPref.USERMOBILE, ""));
         Log.e("DASHBOARD_TYPE1", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
@@ -150,6 +151,7 @@ public class HomeFragment extends Fragment {
             }
             dashBoardAdapter = new DashBoardAdapter(getContext(), deasbordListTypeList, false);
             recyclerView.setAdapter(dashBoardAdapter);
+
             securityCheck_vi.setVisibility(View.GONE);
         }
         if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")) {
@@ -167,6 +169,7 @@ public class HomeFragment extends Fragment {
         }
         if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Other")) {
             Log.e("DASHBOARD_TYPE", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
+            recyclerView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             for (int i = 0; i < list3_name.length; i++) {
                 deasbordListType = new DeasbordListType(list3_onclickId[i], list3_name[i], list3_Img[i]);
                 deasbordListTypeList.add(deasbordListType);
