@@ -1,4 +1,4 @@
-package com.syber.ssspltd.adapter.supplierformadapter;
+package com.syber.ssspltd.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -12,46 +12,49 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
-import com.syber.ssspltd.response.SubpartyModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
+import com.syber.ssspltd.model.booking.branchlist.Account;
+import com.syber.ssspltd.response.SalepartyModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class SubPartyAdapter extends RecyclerView.Adapter<SubPartyAdapter.MyViewHolder> {
+public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.MyViewHolder> {
 
     private Activity mContext;
-    private List<SubpartyModel> data;
-    public static boolean sType = false;
-    public static int pq;
+    private List<Account> data;
+    private OnItemClickListener onItemClickListener; // Click listener
 
-    public SubPartyAdapter(Activity mContext, List<SubpartyModel> data) {
+
+    public AccountListAdapter(Activity mContext, ArrayList<Account> data,OnItemClickListener onItemClickListener) {
         this.mContext = mContext;
         this.data = data;
+        this.onItemClickListener = onItemClickListener;
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AccountListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sarch_list, parent, false);
-        return new MyViewHolder(v);
+        return new AccountListAdapter.MyViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final AccountListAdapter.MyViewHolder holder, final int position) {
 
-        final SubpartyModel product;
+        final Account product;
         product = data.get(position);
         holder.name.setText(product.getName());
-        System.out.println("PRINTING_SUB_PARTY " + product.getName());
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(product);
+            }
+        });
 
-        if (position % 2 == 0) {
+      /*  if (position % 2 == 0) {
             holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-
         } else {
             holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.eee));
-
-        }
-
-
+        }*/
     }
 
     @Override
@@ -61,21 +64,25 @@ public class SubPartyAdapter extends RecyclerView.Adapter<SubPartyAdapter.MyView
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView emp, name, mobile, date, sec_order_val;
-        LinearLayout ll, ll2;
+        TextView emp, name;
+        LinearLayout ll;
         CardView cardView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
-
             ll = itemView.findViewById(R.id.ll);
             cardView = itemView.findViewById(R.id.product_card);
-            itemView.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSubParty(data.get(getAbsoluteAdapterPosition())));
-
+         /*   itemView.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSaleParty(data.get(getAdapterPosition())));
+*/
         }
     }
+
+    public interface OnItemClickListener {
+        void onItemClick(Account account);
+    }
+
+
+
 }
-
-
 

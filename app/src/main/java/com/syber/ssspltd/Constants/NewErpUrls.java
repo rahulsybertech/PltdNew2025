@@ -104,5 +104,7 @@ public class NewErpUrls {
     public static String StayBookingDataList = DOMAIN + "api/StayBooking/GetStayBookingDataList";
     public static String CancelStayBooking = DOMAIN + "api/StayBooking/CancelStayBooking";
     public static String StayBookingTime = DOMAIN + "api/StayBooking/StayBookingTime";
+    public static String GetAccountNameList = DOMAIN + "api/StayBooking/GetAccountNameList";
+    public static String GetNickNameList = DOMAIN + "api/StayBooking/GetNickNameList";
 
   }

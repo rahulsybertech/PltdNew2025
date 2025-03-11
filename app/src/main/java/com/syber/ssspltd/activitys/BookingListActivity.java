@@ -2,15 +2,20 @@ package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.CancelStayBooking;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_BLACK_LIST_NAME;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountNameList;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
+import static com.syber.ssspltd.Constants.NewErpUrls.TRANSPORT;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,6 +28,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -40,9 +46,11 @@ import com.syber.ssspltd.Responses.customer.CustomerListPojo;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.MyConstant;
+import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
+import com.syber.ssspltd.adapter.AccountListAdapter;
 import com.syber.ssspltd.adapter.BookingListAdapter;
 import com.syber.ssspltd.adapter.PendingOrderReportAdapter;
 import com.syber.ssspltd.databinding.ActivityBookingListBinding;
@@ -50,6 +58,7 @@ import com.syber.ssspltd.databinding.ActivityPendingOrderBinding;
 import com.syber.ssspltd.model.booking.BookingData;
 
 import com.syber.ssspltd.model.booking.StayBookingResponse;
+import com.syber.ssspltd.model.booking.branchlist.Account;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +71,7 @@ import java.util.Map;
 
 public class BookingListActivity extends AppCompatActivity implements  BookingListAdapter.OnBookingCancelListener{
     private ActivityBookingListBinding binding;
-    public static ArrayList<BookingData> stayBookingList, data;
+    public static ArrayList<BookingData> stayBookingList, data,filterList;
     BookingListAdapter adapter;
     private Type listType;
     @Override
@@ -76,6 +85,7 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
 
     private void initUi() {
         stayBookingList = new ArrayList<>();
+        filterList = new ArrayList<>();
        ImageView backBookingList = findViewById(R.id.backBookingList);
         RelativeLayout plusButton = findViewById(R.id.plusButton);
         backBookingList.setOnClickListener(v -> onBackPressed());
@@ -83,12 +93,48 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
 
         plusButton.setOnClickListener(v ->
                startActivity(new Intent(this, BookingRequestActivity.class)
-                        .putExtra(MyConstant.EXTRA_IS_EDIT,false).putExtra(MyConstant.SCREEN,MyConstant.BOOKINGlIST)
+                        .putExtra(MyConstant.EXTRA_IS_EDIT,false)
+                       .putExtra(MyConstant.SCREEN,MyConstant.BOOKINGlIST)
+                       .putExtra(MyConstant.USERTYPE, SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
                 )
         );
         setRecyler();
         getBookingList();
 
+        if (!stayBookingList.isEmpty()) {
+            filterBc(stayBookingList);
+        } else {
+            getBookingList();
+        }
+        binding. search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                filterList.clear();
+                for (int p = 0; p < stayBookingList.size(); p++) {
+                    if (stayBookingList.get(p).getBranchName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || stayBookingList.get(p).getBranchName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        filterList.add(stayBookingList.get(p));
+                    }
+                }
+                filterBc(filterList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+    }
+
+    void filterBc(ArrayList<BookingData> bc) {
+        adapter = new BookingListAdapter(this, bc,this);
+        binding.recyler.setAdapter(adapter);
     }
 
     @Override
@@ -104,7 +150,10 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
 
     private void getBookingList() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, StayBookingDataList, response -> {
+        // Append partyCode as a query parameter to the URL
+        String urlWithPartyCode = StayBookingDataList + "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithPartyCode, response -> {
 //                    Log.e("Data", response);
             binding.includeProgress.progress.setVisibility(View.GONE);
             Log.i("TaG", "url ---" + StayBookingDataList);
@@ -131,7 +180,12 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
                 throw new RuntimeException(e);
             }
         }
-        ) {
+        )
+
+        {
+
+
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();

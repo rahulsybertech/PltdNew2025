@@ -5,6 +5,7 @@ import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +62,7 @@ import com.syber.ssspltd.model.booking.StayBookingResponse;
 import com.syber.ssspltd.response.DeasbordListType;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -229,7 +231,10 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
 
     private void getBookingList() {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, StayBookingDataList, response -> {
+        // Append partyCode as a query parameter to the URL
+        String urlWithPartyCode = StayBookingDataList + "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithPartyCode, response -> {
 //                    Log.e("Data", response);
 
             Log.i("TaG", "url ---" + StayBookingDataList);
@@ -242,7 +247,10 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
                         context.startActivity(new Intent(context, BookingListActivity.class));
 
                     }else {
-                        context.startActivity(new Intent(context, BookingRequestActivity.class).putExtra(MyConstant.SCREEN,MyConstant.HOME));
+                        context.startActivity(new Intent(context, BookingRequestActivity.class)
+                                .putExtra(MyConstant.SCREEN,MyConstant.HOME)
+                                .putExtra(MyConstant.USERTYPE,SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
+                        );
                     }
 
 
@@ -268,6 +276,7 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
                 headers.put("Authorization", Constants.SettingHeader());
                 return headers;
             }
+
         };
         VolleySingleton.getInstance(context).addToRequestQueue(stringRequest);
     }

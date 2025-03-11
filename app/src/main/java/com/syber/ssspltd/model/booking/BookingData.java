@@ -13,6 +13,8 @@ public class BookingData implements Parcelable {
     private String checkoutTime;
     private String noOfPerson;
     private String branchName;
+    private String accountID;
+    private String accountName;
 
     // Constructor
     public BookingData(String id, String companyID, String branchID, String checkInDate, String checkInTime, String checkoutDate, String checkoutTime, String noOfPerson, String branchName) {
@@ -38,6 +40,8 @@ public class BookingData implements Parcelable {
         checkoutTime = in.readString();
         noOfPerson = in.readString();
         branchName = in.readString();
+        accountID = in.readString();
+        accountName = in.readString();
     }
 
     public static final Creator<BookingData> CREATOR = new Creator<BookingData>() {
@@ -63,6 +67,8 @@ public class BookingData implements Parcelable {
         dest.writeString(checkoutTime);
         dest.writeString(noOfPerson);
         dest.writeString(branchName);
+        dest.writeString(accountID);
+        dest.writeString(accountName);
     }
 
     @Override
@@ -80,4 +86,6 @@ public class BookingData implements Parcelable {
     public String getCheckoutTime() { return checkoutTime; }
     public String getNoOfPerson() { return noOfPerson; }
     public String getBranchName() { return branchName; }
+    public String getaccountID() { return accountID; }
+    public String getaccountName() { return accountName; }
 }

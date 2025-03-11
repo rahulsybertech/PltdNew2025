@@ -151,6 +151,7 @@ public class ChooseCategries extends AppCompatActivity {
                     SharedPref.write(SharedPref.TYPE, "Admin");
                     SharedPref.write(SharedPref.BACK_BUTTON, "5");
                     SharedPref.write(SharedPref.IS_ANY_CHOOSEN, "true");
+
                     finish();
                 } else {
                     Toast.makeText(mContext, "Select Any one", Toast.LENGTH_LONG).show();

@@ -1,6 +1,8 @@
 package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.BRANCH_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountNameList;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetNickNameList;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.STATION_LIST;
@@ -10,22 +12,31 @@ import static com.syber.ssspltd.Utils.MyConstant.EXTRA_IS_EDIT;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -40,18 +51,21 @@ import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.MyConstant;
+import com.syber.ssspltd.Utils.MyProgress;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.SnackbarUtils;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
-import com.syber.ssspltd.databinding.ActivityBookingListBinding;
+import com.syber.ssspltd.adapter.AccountListAdapter;
+import com.syber.ssspltd.adapter.NickNameListAdapter;
 import com.syber.ssspltd.databinding.ActivityBookingRequestBinding;
-import com.syber.ssspltd.model.booking.StayBooking;
+import com.syber.ssspltd.model.booking.branchlist.Account;
+import com.syber.ssspltd.model.booking.branchlist.ApiResponse;
+import com.syber.ssspltd.model.booking.branchlist.NickNameList;
 import com.syber.ssspltd.response.BookingData;
 import com.syber.ssspltd.response.BookingResponse;
-import com.syber.ssspltd.response.StationModel;
+import com.syber.ssspltd.response.SalepartyModel;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,7 +73,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,9 +92,14 @@ public class BookingRequestActivity extends AppCompatActivity {
     private int count = 1;  // Initial value
     private int minHoursSelect=0;
     boolean isEditMode;
+    boolean isCustomerCode=true;
     com.syber.ssspltd.model.booking.BookingData bookingData;
     private String selectedDateTextCheckIn="";
     private String selectedDateTextCheckOut="";
+    AccountListAdapter accountListAdapter;
+    NickNameListAdapter nickNameListAdapter;
+
+    TextView titile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,14 +115,21 @@ public class BookingRequestActivity extends AppCompatActivity {
       String checkin=  convertDateFormat(bookingData.getCheckInDate());
       String checkOut=  convertDateFormat(bookingData.getCheckoutDate());
         binding.tvCheckInDate.setText(checkin);
+        existingCheckInDate=checkin;
+        existingCheckOutDate=checkOut;
+        binding.tvAccountName.setText(bookingData.getaccountName());
+        accountNameId=bookingData.getaccountID();
         binding.tvCheckOutDate.setText(checkOut);
         binding.tvCheckInTime.setText(bookingData.getCheckInTime());
+        existingCheckOutTime=bookingData.getCheckInTime();
+        existingCheckOutDateNew=bookingData.getCheckoutTime();
         selectedDateTextCheckIn=bookingData.getCheckInDate();
         selectedDateTextCheckOut=bookingData.getCheckoutDate();
         binding.tvCheckOutTime.setText(bookingData.getCheckoutTime());
         binding.textViewNumber.setText(bookingData.getNoOfPerson());
         int number = Integer.valueOf(bookingData.getNoOfPerson());
         count=number;
+        initializeCheckInDateTime(existingCheckInDate);
     }
     public String convertDateFormat(String inputDate) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -135,6 +160,7 @@ public class BookingRequestActivity extends AppCompatActivity {
         updateUI();
         getStayBookingTime();
 
+
         binding.buttonPlus.setOnClickListener(v ->{
             if (count < 9) {
                 count++;
@@ -147,6 +173,26 @@ public class BookingRequestActivity extends AppCompatActivity {
                 updateUI();
             }
         });
+        // Handle Radio Button Clicks
+        binding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton selectedRadioButton = findViewById(checkedId);
+                if (selectedRadioButton.getId() == R.id.rbCustomerCode) {
+                    isCustomerCode=true;
+                    binding.tvNickName.setText("");
+                        binding.llCustomer.setVisibility(View.VISIBLE);
+                        binding.llNickName.setVisibility(View.GONE);
+                } else {
+                    isCustomerCode=false;
+                    binding.tvAccountName.setText("");
+
+                    binding.llNickName.setVisibility(View.VISIBLE);
+                    binding.llCustomer.setVisibility(View.GONE);
+                }
+            }
+        });
+
     /*  binding.plusButton.setOnClickListener {
             if (count < 9) {
                 count++
@@ -160,14 +206,30 @@ public class BookingRequestActivity extends AppCompatActivity {
                 updateUI()
             }
         }*/
-        binding.save.setOnClickListener(v ->{
 
+
+        binding.tvAccountName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchDialog("");
+            }
+        });
+
+        binding.tvNickName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nickNameDialog("");
+            }
+        });
+
+        binding.save.setOnClickListener(v ->{
             if (validate() && isPlacedOrderBtnEnabled) {
                 isPlacedOrderBtnEnabled = false;
-            /*    binding.save.setEnabled(false);
+                binding.save.setEnabled(false);
                 binding.save.setBackgroundColor(Color.parseColor("#808080"));
-                binding.tvSave.setText("Please Wait...")*/;
+                binding.tvSave.setText("Please Wait...");
                 sendData();
+
             }
 
         } );
@@ -188,10 +250,30 @@ public class BookingRequestActivity extends AppCompatActivity {
         if (isEditMode) {
             bookingData = getIntent().getParcelableExtra("data");
             binding.tvSave.setText(R.string.update);
+
+            String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+            if(userType.equals("Other")){
+                binding.llEmployee.setVisibility(View.VISIBLE);
+                binding.llBranch.setVisibility(View.GONE);
+            }else {
+                binding.llEmployee.setVisibility(View.GONE);
+                binding.llBranch.setVisibility(View.VISIBLE);
+            }
             if (bookingData != null) {
                 populateData(bookingData); // Load existing data into UI fields
             }
-        }else {
+        }
+        else {
+
+            String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+            if(userType.equals("Other")){
+                binding.llEmployee.setVisibility(View.VISIBLE);
+                binding.llBranch.setVisibility(View.GONE);
+            }else {
+                binding.llEmployee.setVisibility(View.GONE);
+                binding.llBranch.setVisibility(View.VISIBLE);
+            }
+            initializeCheckInDateTime(existingCheckInDate);
             binding.tvSave.setText(R.string.save);
         }
 
@@ -203,9 +285,63 @@ public class BookingRequestActivity extends AppCompatActivity {
       binding.textViewNumber.setText(Integer.toString(count));
     }
 
-    private void initializeCheckInDateTime() {
+  String  existingCheckInDate="";
+  String  existingCheckOutTime="";
+    private void initializeCheckInDateTime(String existingCheckInDate) {
+
+
         Calendar calendar = Calendar.getInstance();
 
+
+        if (existingCheckInDate != null && !existingCheckInDate.isEmpty()) {
+            // Parse the existing check-in date (YYYY-MM-DD format)
+            String[] parts = existingCheckInDate.split("-");
+            int day = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]) - 1; // Convert to 0-based month
+            int year = Integer.parseInt(parts[2]);
+
+            calendar.set(year, month, day);
+            if (existingCheckOutTime != null && !existingCheckOutTime.isEmpty()) {
+                // Parse the existing check-out time (HH:mm format)
+                try {
+                    // Convert 12-hour format to 24-hour format
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                //    String[] timeParts = existingCheckOutTime.split(":");
+                    Date date = inputFormat.parse(existingCheckOutTime); // Parse input time
+                    String time24HourFormat = outputFormat.format(date); // Convert to 24-hour format
+
+                    // Extract hour, minute, and second
+
+                    // Extract hour, minute, second
+                    String[] timeParts = time24HourFormat.split(":");  // 24-hour format hour
+                    int checkOutHour = Integer.parseInt(timeParts[0]);  // 24-hour format hour
+                    int checkOutMinute = Integer.parseInt(timeParts[1]); // Minute
+
+
+
+                    checkInTimeCalendar.set(Calendar.HOUR_OF_DAY, checkOutHour);
+                    checkInTimeCalendar.set(Calendar.MINUTE, checkOutMinute);
+                    // Print values
+                    System.out.println("Hour: " + checkOutHour);
+                    System.out.println("Minute: " + checkOutMinute);
+
+                    String checkInTimeText = formatTime1(checkOutHour, checkOutMinute);
+
+
+                    // Set the values in the UI
+                    binding.tvCheckInTime.setText(checkInTimeText);
+                    binding.tvCheckOutTime.setText("");
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        } else {
+            // Default behavior: set the check-in date to today + minHoursSelect hours
+            calendar.add(Calendar.HOUR_OF_DAY, minHoursSelect);
+        }
         // Get current date and time
         int currentYear = calendar.get(Calendar.YEAR);
         int currentMonth = calendar.get(Calendar.MONTH);
@@ -231,25 +367,82 @@ public class BookingRequestActivity extends AppCompatActivity {
         String checkInDateText = currentYear + "-" + formattedMonth + "-" + formattedDay;
         selectedDateTextCheckIn=checkInDateText;
         // Format check-in time (HH:mm AM/PM)
-        String checkInTimeText = formatTime1(checkInHour, checkInMinute);
 
+        if (existingCheckOutTime != null && !existingCheckOutTime.isEmpty()){
 
+        }else {
+            String checkInTimeText = formatTime1(checkInHour, checkInMinute);
+            binding.tvCheckInTime.setText(checkInTimeText);
+            binding.tvCheckOutTime.setText("");
+            checkInTimeCalendar.set(Calendar.HOUR_OF_DAY, checkInHour);
+            checkInTimeCalendar.set(Calendar.MINUTE, checkInMinute);
+        }
         // Set the values in the UI
         binding.tvCheckInDate.setText(convertDateFormat(checkInDateText));
-        binding.tvCheckInTime.setText(checkInTimeText);
 
         // Save to calendar object
         checkInCalendar.set(currentYear, currentMonth, currentDay);
-        checkInTimeCalendar.set(Calendar.HOUR_OF_DAY, checkInHour);
-        checkInTimeCalendar.set(Calendar.MINUTE, checkInMinute);
+
         // Call checkout initializer to ensure it is later than check-in
-        initializeCheckOutDateTime();
+        initializeCheckOutDateTime(existingCheckOutDate);
     }
-    private void initializeCheckOutDateTime() {
+
+    String existingCheckOutDate="";
+    String existingCheckOutDateNew="";
+    private void initializeCheckOutDateTime(String existingCheckOutDate) {
         Calendar checkOutCalendar = (Calendar) checkInCalendar.clone();
 
-        // Ensure checkout is at least 4 hours after check-in
-        checkOutCalendar.add(Calendar.HOUR_OF_DAY, 4);
+
+        if (existingCheckOutDate != null && !existingCheckOutDate.isEmpty()) {
+            // Parse the existing check-out date (YYYY-MM-DD format)
+            String[] parts = existingCheckOutDate.split("-");
+            int day = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]) - 1; // Convert to 0-based month
+            int year = Integer.parseInt(parts[2]);
+            checkOutCalendar.set(year, month, day);
+            if (existingCheckOutDateNew != null && !existingCheckOutDateNew.isEmpty()) {
+                // Parse the existing check-out time (HH:mm format)
+                try {
+                    // Convert 12-hour format to 24-hour format
+                    SimpleDateFormat inputFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                    //    String[] timeParts = existingCheckOutTime.split(":");
+                    Date date = inputFormat.parse(existingCheckOutDateNew); // Parse input time
+                    String time24HourFormat = outputFormat.format(date); // Convert to 24-hour format
+
+                    // Extract hour, minute, and second
+
+                    // Extract hour, minute, second
+                    String[] timeParts = time24HourFormat.split(":");  // 24-hour format hour
+                    int checkOutHour = Integer.parseInt(timeParts[0]);  // 24-hour format hour
+                    int checkOutMinute = Integer.parseInt(timeParts[1]); // Minute
+
+
+
+                    checkOutTimeCalendar.set(Calendar.HOUR_OF_DAY, checkOutHour);
+                    checkOutTimeCalendar.set(Calendar.MINUTE, checkOutMinute);
+                    // Print values
+                    System.out.println("Hour: " + checkOutHour);
+                    System.out.println("Minute: " + checkOutMinute);
+
+                    String checkInTimeText = formatTime1(checkOutHour, checkOutMinute);
+
+
+                    // Set the values in the UI
+                    binding.tvCheckOutTime.setText(checkInTimeText);
+                //    binding.tvCheckOutTime.setText("");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        } else {
+            // Default behavior: Set checkout to at least 4 hours after check-in
+            checkOutCalendar = (Calendar) checkInCalendar.clone();
+            checkOutCalendar.add(Calendar.HOUR_OF_DAY, 4);
+        }
+        /*// Ensure checkout is at least 4 hours after check-in
+        checkOutCalendar.add(Calendar.HOUR_OF_DAY, 4);*/
 
         int checkOutYear = checkOutCalendar.get(Calendar.YEAR);
         int checkOutMonth = checkOutCalendar.get(Calendar.MONTH);
@@ -262,13 +455,20 @@ public class BookingRequestActivity extends AppCompatActivity {
         String formattedMonth = String.format("%02d", checkOutMonth + 1);
         String formattedDay = String.format("%02d", checkOutDay);
         String checkOutDateText = checkOutYear + "-" + formattedMonth + "-" + formattedDay;
-        selectedDateTextCheckOut=checkOutDateText;
-        // Format checkout time
-        String checkOutTimeText = formatTime(checkOutHour, checkOutMinute);
 
-        // Set values in UI
-        binding.tvCheckOutDate.setText(convertDateFormat(checkOutDateText));
-        binding.tvCheckOutTime.setText(checkOutTimeText);
+
+        if (existingCheckOutTime != null && !existingCheckOutTime.isEmpty()){
+
+        }else {
+            selectedDateTextCheckOut=checkOutDateText;
+            // Format checkout time
+            String checkOutTimeText = formatTime(checkOutHour, checkOutMinute);
+
+            // Set values in UI
+            binding.tvCheckOutDate.setText(convertDateFormat(checkOutDateText));
+            binding.tvCheckOutTime.setText(checkOutTimeText);
+        }
+
     }
 
     /**
@@ -284,10 +484,11 @@ public class BookingRequestActivity extends AppCompatActivity {
 
 
     public void handleClear(View view) {
-        if (view.getId() == R.id.clear_marketer) {
-            binding.editNoOfPerson.setText("");
-            binding.textViewNumber.setText("");
-            binding.clearNoPerson.setVisibility(View.GONE);
+        if (view.getId() == R.id.clearAccountName) {
+            binding.tvAccountName.setText("");
+        }
+        if(view.getId() == R.id.imgClearNickName){
+            binding.tvNickName.setText("");
         }
     }
 
@@ -297,10 +498,28 @@ public class BookingRequestActivity extends AppCompatActivity {
 
 
         // Check if branch is selected
-        if (selectBranch.isEmpty()) {
-            Toast.makeText(this, "Please select a branch!", Toast.LENGTH_SHORT).show();
-            return false;
+        String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+        if(userType.equals("Other")){
+            if(isCustomerCode){
+                if (binding.tvAccountName.getText().toString().isEmpty()) {
+                    Toast.makeText(this, "Please select Customer Code!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }else {
+                if (binding.tvNickName.getText().toString().isEmpty()) {
+                    Toast.makeText(this, "Please select NickName!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+
+        }else {
+            if (selectBranch.isEmpty()) {
+                Toast.makeText(this, "Please select a branch!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
         }
+
+
 
         // Check if check-in date is selected
         if (binding.tvCheckInDate.getText().toString().isEmpty()) {
@@ -483,23 +702,43 @@ public class BookingRequestActivity extends AppCompatActivity {
     private int selectedCheckInHour = -1, selectedCheckInMinute = -1; // Store selected time
 
     private void showCheckInTimePicker24Hours(boolean enforce12HourRestriction) {
-        if (binding.tvCheckInDate.getText().toString().isEmpty()) {
+        // ✅ Ensure Check-In Date is selected
+        String selectedDateTextCheckIn = binding.tvCheckInDate.getText().toString().trim();
+       String date= convertDateFormatnew(selectedDateTextCheckIn);
+        if (selectedDateTextCheckIn.isEmpty()) {
             Toast.makeText(this, "Please select Check-In date first!", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // ✅ Parse Check-In Date from tvCheckInDate
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Calendar selectedCheckInCalendar = Calendar.getInstance();
+
+        try {
+            Date selectedDate = dateFormat.parse(date);
+            if (selectedDate == null) {
+                throw new ParseException("Invalid date format", 0);
+            }
+            selectedCheckInCalendar.setTime(selectedDate);
+        } catch (ParseException e) {
+            Toast.makeText(this, "Invalid Check-In Date format!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // ✅ Get current date and time
         Calendar currentCalendar = Calendar.getInstance();
         int currentHour = currentCalendar.get(Calendar.HOUR_OF_DAY);
         int currentMinute = currentCalendar.get(Calendar.MINUTE);
 
-        int selectedYear = checkInCalendar.get(Calendar.YEAR);
-        int selectedMonth = checkInCalendar.get(Calendar.MONTH);
-        int selectedDay = checkInCalendar.get(Calendar.DAY_OF_MONTH);
+        // ✅ Get Check-In Date components
+        int selectedYear = selectedCheckInCalendar.get(Calendar.YEAR);
+        int selectedMonth = selectedCheckInCalendar.get(Calendar.MONTH);
+        int selectedDay = selectedCheckInCalendar.get(Calendar.DAY_OF_MONTH);
 
         boolean isToday = isToday(selectedYear, selectedMonth, selectedDay);
         boolean isTomorrow = isTomorrow(selectedYear, selectedMonth, selectedDay);
 
-        // Calculate minTime for today
+        // ✅ Calculate minimum allowed Check-In Time
         Calendar minTimeCalendar = (Calendar) currentCalendar.clone();
         minTimeCalendar.add(Calendar.HOUR_OF_DAY, minHoursSelect);
         int minHourToday = minTimeCalendar.get(Calendar.HOUR_OF_DAY);
@@ -510,11 +749,11 @@ public class BookingRequestActivity extends AppCompatActivity {
         if (isToday) {
             minHour = currentHour + minHoursSelect;
             if (minHour >= 24) {
-                SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Time unavailable, check-in too late");
+                binding.tvCheckInDate.setText("");
+                SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-in is not allowed for the current date.");
                 return;
-            } else {
-                minMinute = currentMinute;
             }
+            minMinute = currentMinute;
         } else if (isTomorrow && currentHour >= minHoursSelect) {
             minHour = minHourToday;
             minMinute = minMinuteToday;
@@ -525,17 +764,13 @@ public class BookingRequestActivity extends AppCompatActivity {
 
         int initialHour, initialMinute;
 
-        // ✅ Get selected Check-In date as a string
-        String selectedDateTextCheckIn = binding.tvCheckInDate.getText().toString();
-
-        // ✅ If the user selects a new date, reset time to 00:00
-        if (previousSelectedCheckInDate == null ||
-                !previousSelectedCheckInDate.equals(selectedDateTextCheckIn)) {
-            selectedCheckInHour = -1; // Reset stored values
+        // ✅ Reset time if the user selects a new date
+        if (previousSelectedCheckInDate == null || !previousSelectedCheckInDate.equals(selectedDateTextCheckIn)) {
+            selectedCheckInHour = -1;
             selectedCheckInMinute = -1;
         }
 
-        // ✅ Retain last selected time if available, else use minHour/minMinute
+        // ✅ Retain last selected time if available; otherwise, set the minimum allowed time
         if (selectedCheckInHour != -1 && selectedCheckInMinute != -1) {
             initialHour = selectedCheckInHour;
             initialMinute = selectedCheckInMinute;
@@ -544,144 +779,59 @@ public class BookingRequestActivity extends AppCompatActivity {
             initialMinute = minMinute;
         }
 
-        // ✅ Store the selected date for future comparison
+        // ✅ Store the selected Check-In date for future comparisons
         previousSelectedCheckInDate = selectedDateTextCheckIn;
 
+        // ✅ Show TimePickerDialog with the 24-hour format
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 this,
                 (view, hourOfDay, minute) -> {
-                    // Validate selection based on restrictions
+                    // ✅ Validate the selected time based on restrictions
                     if (isToday && (hourOfDay < minHour || (hourOfDay == minHour && minute < minMinute))) {
-                        SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-in time must be at least 12 hours from now");
-                    } else if (isTomorrow && currentHour >= minHoursSelect && (hourOfDay < minHour || (hourOfDay == minHour && minute < minMinute))) {
-                        SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-in time must be at least current time + 12 hours.");
+                        binding.tvCheckInTime.setText("");
+                        SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content),
+                                "Check-in time must be at least " + minHoursSelect + " hours from the current time.");
+                    } else if (isTomorrow && currentHour >= minHoursSelect &&
+                            (hourOfDay < minHour || (hourOfDay == minHour && minute < minMinute))) {
+                        SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content),
+                                "Check-in time must be at least " + minHoursSelect + " hours from the current time.");
+                        binding.tvCheckInTime.setText("");
                     } else {
-                        // ✅ Save the selected time
+                        // ✅ Save the selected Check-In time
                         selectedCheckInHour = hourOfDay;
                         selectedCheckInMinute = minute;
 
                         checkInTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         checkInTimeCalendar.set(Calendar.MINUTE, minute);
-                        binding.tvCheckInTime.setError(null, null);
+
+                        binding.tvCheckInTime.setError(null);
                         binding.tvCheckInTime.setText(formatTime(hourOfDay, minute));
-                        binding.tvCheckOutTime.setText(""); // Reset Check-Out Time
-                        binding.tvCheckOutDate.setText(""); // Reset Check-Out Date
+
+                        // ✅ Reset Check-Out Date & Time when Check-In changes
+                        binding.tvCheckOutTime.setText("");
+                      //  binding.tvCheckOutDate.setText("");
                     }
                 },
-                initialHour,  // ✅ Show last selected time or reset to 00:00 if date changed
-                initialMinute, // ✅ Show last selected time or reset to 00:00 if date changed
+                initialHour,
+                initialMinute,
                 true  // ✅ Use 24-hour format
         );
 
         timePickerDialog.show();
     }
 
+    public static String convertDateFormatnew(String dateStr) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-
-
-    private void showCheckInTimePicker1() {
-        if (binding.tvCheckInDate.getText().toString().isEmpty()) {
-            SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Please select Check-In date first!");
-            return;
-        }
-
-        Calendar currentCalendar = Calendar.getInstance();
-        int currentYear = currentCalendar.get(Calendar.YEAR);
-        int currentMonth = currentCalendar.get(Calendar.MONTH);
-        int currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
-        int currentHour = currentCalendar.get(Calendar.HOUR_OF_DAY);
-        int currentMinute = currentCalendar.get(Calendar.MINUTE);
-
-        // Add 12 hours to current time
-        Calendar minTimeCalendar = (Calendar) currentCalendar.clone();
-        minTimeCalendar.add(Calendar.HOUR_OF_DAY, minHoursSelect);
-        int minHourToday = minTimeCalendar.get(Calendar.HOUR_OF_DAY);
-        int minMinuteToday = minTimeCalendar.get(Calendar.MINUTE);
-
-        Calendar selectedDate = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try {
-            selectedDate.setTime(sdf.parse(binding.tvCheckInDate.getText().toString()));
+            Date date = inputFormat.parse(dateStr);
+            return outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Invalid date format.");
-            return;
+            return "Invalid Date";
         }
-
-        int selectedYear = selectedDate.get(Calendar.YEAR);
-        int selectedMonth = selectedDate.get(Calendar.MONTH);
-        int selectedDay = selectedDate.get(Calendar.DAY_OF_MONTH);
-
-        int minHour, minMinute;
-
-        if (selectedYear == currentYear && selectedMonth == currentMonth) {
-            if (selectedDay == currentDay + 1) { // If tomorrow (22nd Feb) is selected
-                minHour = minHourToday;
-                minMinute = minMinuteToday;
-            } else if (selectedDay > currentDay + 1) { // If any future date is selected (23rd Feb or later)
-                minHour = 0;
-                minMinute = 0; // No restriction
-            } else if (selectedDay == currentDay) { // If today is selected
-                minHour = minHourToday;
-                minMinute = minMinuteToday;
-
-                // If the selected date is today, enforce a 12-hour restriction
-                minHour = currentHour + minHoursSelect;
-
-                if (minHour >= 24) {
-                    SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Time unavailable, check-in too late.");
-                    return;
-                }
-            } else {
-                SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Invalid date selection.");
-                return;
-            }
-        } else {
-            minHour = 0;
-            minMinute = 0;
-        }
-
-        // If the minimum hour exceeds 24, time selection is unavailable
-        if (minHour >= 24) {
-            SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-in time unavailable, too late.");
-            return;
-        }
-
-        int finalMinHour = minHour;
-        int finalMinMinute = minMinute;
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    // Create a Calendar instance for selected time
-                    Calendar selectedTime = Calendar.getInstance();
-                    selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    selectedTime.set(Calendar.MINUTE, minute);
-
-                    // If tomorrow is selected (22nd Feb), enforce 12-hour rule
-                    if (selectedDay == currentDay + 1) {
-                        if (hourOfDay < minHourToday || (hourOfDay == minHourToday && minute < minMinuteToday)) {
-                            // User selected a time less than current time + 12 hours
-                            SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-in time must be at least 12 hours from now.");
-                            return;
-                        }
-                    }
-
-                    // Valid time selection
-                    checkInTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    checkInTimeCalendar.set(Calendar.MINUTE, minute);
-                    binding.tvCheckInTime.setError(null, null);
-                    binding.tvCheckInTime.setText(formatTime(hourOfDay, minute));
-                    binding.tvCheckOutTime.setText(""); // Reset Check-Out Time
-                    binding.tvCheckOutDate.setText(""); // Reset Check-Out Date
-                },
-                finalMinHour,
-                finalMinMinute,
-                false // Use 24-hour format
-        );
-        timePickerDialog.show();
     }
-
 
     private boolean isTomorrow(int year, int month, int day) {
         Calendar tomorrow = Calendar.getInstance();
@@ -690,93 +840,6 @@ public class BookingRequestActivity extends AppCompatActivity {
                 month == tomorrow.get(Calendar.MONTH) &&
                 day == tomorrow.get(Calendar.DAY_OF_MONTH));
     }
-
-
-
-
-    private void showCheckInTimePicker(boolean enforce12HourRestriction) {
-        if (binding.tvCheckInDate.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Please select Check-In date first!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Calendar currentCalendar = Calendar.getInstance();
-        int currentHour = currentCalendar.get(Calendar.HOUR_OF_DAY);
-        int currentMinute = currentCalendar.get(Calendar.MINUTE);
-
-        int selectedYear = checkInCalendar.get(Calendar.YEAR);
-        int selectedMonth = checkInCalendar.get(Calendar.MONTH);
-        int selectedDay = checkInCalendar.get(Calendar.DAY_OF_MONTH);
-
-        Calendar selectedDateCalendar = Calendar.getInstance();
-        selectedDateCalendar.set(selectedYear, selectedMonth, selectedDay);
-
-        boolean isToday = isToday(selectedYear, selectedMonth, selectedDay);
-        boolean isTomorrow = isTomorrow(selectedYear, selectedMonth, selectedDay);
-        // Add 12 hours to current time
-        Calendar minTimeCalendar = (Calendar) currentCalendar.clone();
-        minTimeCalendar.add(Calendar.HOUR_OF_DAY, minHoursSelect);
-        int minHourToday = minTimeCalendar.get(Calendar.HOUR_OF_DAY);
-        int minMinuteToday = minTimeCalendar.get(Calendar.MINUTE);
-
-        int minHour, minMinute;
-
-        if (isToday) {
-            // Today: Enforce a minimum check-in time of "current time + 12 hours"
-            minHour = currentHour + minHoursSelect;
-            if (minHour >= 24) {
-                SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Time unavailable, check-in too late");
-            //    Toast.makeText(this, "Time unavailable, check-in too late.", Toast.LENGTH_SHORT).show();
-                return;
-            } else {
-                minMinute = currentMinute;
-            }
-        } else if (isTomorrow && currentHour >= minHoursSelect) {
-            // Tomorrow: Enforce restriction only if current time is AFTER 12 PM
-            minHour = currentHour + minHoursSelect;
-            if (minHour >= 24) {
-                minHour = 0; // Reset for next day
-            }
-            minHour = minHourToday;
-            minMinute = minMinuteToday;
-        } else {
-            // Future date or tomorrow (before 12 PM): No restrictions
-            minHour = 0;
-            minMinute = 0;
-        }
-
-        int finalMinHour = minHour;
-        int finalMinMinute = minMinute;
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    // Ensure valid time selection based on restrictions
-                    if (isToday && (hourOfDay < finalMinHour || (hourOfDay == finalMinHour && minute < finalMinMinute))) {
-                        SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-in time must be at least 12 hours from now");
-                     //   Toast.makeText(this, "Check-in time must be at least 12 hours from now.", Toast.LENGTH_SHORT).show();
-                    } else if (isTomorrow && currentHour >= minHoursSelect && (hourOfDay < finalMinHour || (hourOfDay == finalMinHour && minute < finalMinMinute))) {
-                        SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-in time must be at least current time + 12 hours.");
-                     //   Toast.makeText(this, "Check-in time must be at least current time + 12 hours.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // Valid time selection
-                        checkInTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        checkInTimeCalendar.set(Calendar.MINUTE, minute);
-                        binding.tvCheckInTime.setError(null, null);
-                        binding.tvCheckInTime.setText(formatTime(hourOfDay, minute));
-                        binding.tvCheckOutTime.setText(""); // Reset Check-Out Time
-                        binding.tvCheckOutDate.setText(""); // Reset Check-Out Time
-                    }
-                },
-                minHour,
-                minMinute,
-                false // Use 24-hour format
-        );
-        timePickerDialog.show();
-    }
-
-
-
 
     private boolean isToday(int year, int month, int day) {
         Calendar calendar = Calendar.getInstance();
@@ -790,9 +853,6 @@ public class BookingRequestActivity extends AppCompatActivity {
         int formattedHour = (hour > 12) ? hour - 12 : (hour == 0 ? 12 : hour);
         return String.format("%02d:%02d %s", formattedHour, minute, amPm);
     }
-
-
-
 
     private void showCheckOutDatePicker() {
         if (binding.tvCheckInDate.getText().toString().isEmpty()) {
@@ -840,74 +900,6 @@ public class BookingRequestActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-
-    private void showCheckOutTimePicker() {
-
-        if (binding.tvCheckOutDate.getText().toString().isEmpty()) {
-            //    SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Please select Check-Out date first!");
-
-            Toast.makeText(this, "Please select Check-Out date first!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-         else  if (binding.tvCheckInTime.getText().toString().isEmpty()) {
-          //  SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Please select Check-In time first!");
-            Toast.makeText(this, "Please select Check-In time first!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-
-
-        int checkInHour = checkInTimeCalendar.get(Calendar.HOUR_OF_DAY);
-        int checkInMinute = checkInTimeCalendar.get(Calendar.MINUTE);
-
-        int minHour = checkInHour;
-        int minMinute = checkInMinute;
-
-
-        // Allow any time if check-out date is different from check-in date
-        if (checkOutCalendar.get(Calendar.YEAR) != checkInCalendar.get(Calendar.YEAR) ||
-                checkOutCalendar.get(Calendar.MONTH) != checkInCalendar.get(Calendar.MONTH) ||
-                checkOutCalendar.get(Calendar.DAY_OF_MONTH) != checkInCalendar.get(Calendar.DAY_OF_MONTH)) {
-            minHour = 0;
-            minMinute = 0;
-        }
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    // Validate Check-Out time must be later than Check-In time on the same day
-                    if (checkOutCalendar.get(Calendar.YEAR) == checkInCalendar.get(Calendar.YEAR) &&
-                            checkOutCalendar.get(Calendar.MONTH) == checkInCalendar.get(Calendar.MONTH) &&
-                            checkOutCalendar.get(Calendar.DAY_OF_MONTH) == checkInCalendar.get(Calendar.DAY_OF_MONTH)) {
-
-                        if (hourOfDay < checkInHour || (hourOfDay == checkInHour && minute < checkInMinute)) {
-                            binding.tvCheckOutTime.setText("");
-                            SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-Out time must be later than Check-In time.");
-                        //    Toast.makeText(this, "Check-Out time must be later than Check-In time.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        if (hourOfDay == checkInHour && minute == checkInMinute) {
-                            binding.tvCheckOutTime.setText("");
-                            SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "Check-In and Check-Out time cannot be the same");
-                         //   Toast.makeText(this, "Check-In and Check-Out time cannot be the same.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                    binding.tvCheckOutTime.setError(null, null);
-                    // Set valid Check-Out time
-                    checkOutTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    checkOutTimeCalendar.set(Calendar.MINUTE, minute);
-
-                    binding.tvCheckOutTime.setText(formatTime(hourOfDay, minute));
-                },
-                minHour,
-                minMinute,
-                false
-        );
-        timePickerDialog.show();
-    }
-
     private int selectedCheckOutHour = -1, selectedCheckOutMinute = -1; // Store selected time
 
     private String previousSelectedCheckOutDate = null;
@@ -921,8 +913,10 @@ public class BookingRequestActivity extends AppCompatActivity {
             return;
         }
 
+
         int checkInHour = checkInTimeCalendar.get(Calendar.HOUR_OF_DAY);
         int checkInMinute = checkInTimeCalendar.get(Calendar.MINUTE);
+
 
         int minHour, minMinute;
         int initialHour, initialMinute;
@@ -998,23 +992,6 @@ public class BookingRequestActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-
-
-    private boolean isCheckOutTomorrow() {
-        // Get the current date
-        Calendar tomorrowCalendar = Calendar.getInstance();
-
-        // Add 1 day to current date
-        tomorrowCalendar.add(Calendar.DAY_OF_MONTH, 1);
-
-        // Compare with Check-Out date
-        return (checkOutCalendar.get(Calendar.YEAR) == tomorrowCalendar.get(Calendar.YEAR) &&
-                checkOutCalendar.get(Calendar.MONTH) == tomorrowCalendar.get(Calendar.MONTH) &&
-                checkOutCalendar.get(Calendar.DAY_OF_MONTH) == tomorrowCalendar.get(Calendar.DAY_OF_MONTH));
-    }
-
-
-
     private void sendData() {
         //test code for disable all views
 //        for(int i = 0; i < binding.llLl.getChildCount(); i++){
@@ -1053,6 +1030,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                     AlertUtil.responseElse(this, "", jsonObject.getString("ResponseMessage"));
                 } else {
+
 //                    myProgress.dismiss();
                     progressDialog.dismiss();
                     new AlertDialog.Builder(this).setMessage(jsonObject.getString("ResponseMessage") + "").setPositiveButton("Retry", (arg0, arg1) -> sendData()).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show();
@@ -1082,13 +1060,30 @@ public class BookingRequestActivity extends AppCompatActivity {
             }
 
            // isPlacedOrderBtnEnabled = true;
-            new AlertDialog.Builder(this).setMessage("Try again.. Somthing went wrong").setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-//                    myProgress.dismiss();
-                    progressDialog.dismiss();
-                    sendData();
-                }
-            }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show();
+            new AlertDialog.Builder(this)
+                    .setMessage("Try again.. Something went wrong")
+                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            // Dismiss the progress dialog and retry sending data
+                            progressDialog.dismiss();
+                            sendData();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Dismiss the progress dialog and perform cancel action
+                            progressDialog.dismiss();
+                            dialog.dismiss();  // Close the dialog
+                            isPlacedOrderBtnEnabled = true;
+                            binding.save.setEnabled(false);
+
+                            binding.save.setBackgroundColor(Color.parseColor("#2bab1c"));
+                            binding.tvSave.setText("Save");
+                        }
+                    })
+                    .create()
+                    .show();
+
         }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
@@ -1113,23 +1108,46 @@ public class BookingRequestActivity extends AppCompatActivity {
 
                     if (isEditMode) {
                         jsonObject.put("id",bookingData.getId() );
+                        String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+                        if(userType.equals("Other")){
+                            jsonObject.put("accountID", accountNameId);
+                            jsonObject.put("branchID", JSONObject.NULL);
+
+                        }else {
+                            jsonObject.put("accountID", JSONObject.NULL);
+                            jsonObject.put("branchID", selectBranch);
+                        }
                     }else {
                         jsonObject.put("id", JSONObject.NULL);
+                        String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+                        if(userType.equals("Other")){
+                            jsonObject.put("accountID", accountNameId);
+                            jsonObject.put("branchID", JSONObject.NULL);
+                        }else {
+                            jsonObject.put("accountID", JSONObject.NULL);
+                            jsonObject.put("branchID", selectBranch);
+                        }
                     }
 
 
+
+
                     jsonObject.put("companyID", JSONObject.NULL);
-                    jsonObject.put("branchID", selectBranch);
-                    jsonObject.put("accountID", JSONObject.NULL);
+
+                    jsonObject.put("partyCode",SharedPref.read(SharedPref.PARTY_CODE, ""));
+
                     jsonObject.put("checkInDate", selectedDateTextCheckIn.toString());
                     jsonObject.put("checkInTime", binding.tvCheckInTime.getText().toString());
                     jsonObject.put("checkoutDate", selectedDateTextCheckOut);
                     jsonObject.put("checkoutTime", binding.tvCheckOutTime.getText().toString());
-                   // jsonObject.put("noOfPerson", binding.editNoOfPerson.getText().toString());
+                    // jsonObject.put("noOfPerson", binding.editNoOfPerson.getText().toString());
                     jsonObject.put("noOfPerson", binding.textViewNumber.getText().toString());
                     jsonObject.put("updatedDate", JSONObject.NULL);
                     jsonString = jsonObject.toString();
                     System.out.println(jsonString);
+
+
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1157,9 +1175,7 @@ public class BookingRequestActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
-
-
- private void getStation() {
+    private void getStation() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, BRANCH_LIST, response -> {
             Log.i("TaG", "Response " + STATION_LIST + "---> " + response);
             try {
@@ -1222,7 +1238,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                 int bookingTime = jsonObject.optInt("BookingTime");
 
                 minHoursSelect=bookingTime;
-                initializeCheckInDateTime();
+              //  initializeCheckInDateTime();
                 // Print BookingTime
                 System.out.println("Booking Time: " + bookingTime);
             } catch (Exception e) {
@@ -1267,5 +1283,293 @@ public class BookingRequestActivity extends AppCompatActivity {
     }
 
 
+   // ArrayList<SalepartyModel> salepartyModelList, saleData;
+    public static ArrayList<SalepartyModel> sData = new ArrayList<>();
+    private ArrayList<Account> accountNameList= new ArrayList<>();;
+    private ArrayList<Account> saleData= new ArrayList<>();
+
+    private ArrayList<NickNameList> nickNameList= new ArrayList<>();;
+    private ArrayList<NickNameList> filternicNameList= new ArrayList<>();;
+
+    private String nickNameId="";
+    private String accountNameId="";
+
+    EditText search;
+    RecyclerView recyclerView;
+    private Dialog sDialog;
+    private void searchDialog(final String title) {
+
+        sDialog = new Dialog(this);
+        sDialog.setContentView(R.layout.search_dialog);
+        sDialog.setCancelable(true);
+        titile = sDialog.findViewById(R.id.title);
+        titile.setText(title);
+        recyclerView = sDialog.findViewById(R.id.dist_recycler);
+        search = sDialog.findViewById(R.id.search);
+        if (accountNameList.size() > 0) {
+            sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+        }
+        sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
+
+        if (!accountNameList.isEmpty()) {
+            filterBc(accountNameList);
+        } else {
+            getAccountNameList(GetAccountNameList);
+        }
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                saleData.clear();
+                for (int p = 0; p < accountNameList.size(); p++) {
+                    if (accountNameList.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || accountNameList.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        saleData.add(accountNameList.get(p));
+                    }
+                }
+                filterBc(saleData);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        accountListAdapter = new AccountListAdapter(this, accountNameList, account -> {
+            sDialog.dismiss();
+           binding.tvAccountName.setText(account.getName());
+            accountNameId=account.getId();
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(accountListAdapter);
+        getAccountNameList(GetAccountNameList);
+        sDialog.show();
+
+    }
+
+    void filterBc(ArrayList<Account> bc) {
+        accountListAdapter = new AccountListAdapter(this, bc, account -> {
+            sDialog.dismiss();
+            binding.tvAccountName.setText(account.getName());
+            accountNameId=account.getId();
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(accountListAdapter);
+    }
+
+    private void getAccountNameList(final String url) {
+        final MyProgress myProgress = new MyProgress(this);
+        myProgress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
+            Util.getInstance().logLargeString("TaG", "Response " + url + " -=-=-=>" + response);
+            myProgress.dismiss();
+            try {
+                Gson gson = new Gson();
+                ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
+
+             /*   JSONObject jsonObject = new JSONObject(newresponse);
+                JSONArray jsonArray = jsonObject.getJSONArray("salesPartyNames");
+                salepartyModelList.clear();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject ob = jsonArray.getJSONObject(i);
+                    String name = ob.optString("NickName");
+                    String accountId = ob.optString("AccountCode");
+                    salepartyModel = new SalepartyModel(name, false, "", accountId);
+                    salepartyModelList.add(salepartyModel);
+
+                }*/
+                accountNameList.addAll(newresponse.getAccountNameList());
+                accountListAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Log.e("Exce", e.toString());
+            }
+        }, error -> {
+            myProgress.dismiss();
+            Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+//                String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE, "") + "\",\"Filter\":\"" + "selected" + "\"}";
+                String str = "{}";
+                Log.i("TaG", "Request " + url + " -=-=-=>" + str);
+
+                return str.getBytes();
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
+        stringRequest.setShouldCache(true);
+        stringRequest.shouldCache();
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
+
+    private void getNickNameList(final String url) {
+        final MyProgress myProgress = new MyProgress(this);
+        myProgress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
+            Util.getInstance().logLargeString("TaG", "Response " + url + " -=-=-=>" + response);
+            myProgress.dismiss();
+            try {
+                Gson gson = new Gson();
+                ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
+
+             /*   JSONObject jsonObject = new JSONObject(newresponse);
+                JSONArray jsonArray = jsonObject.getJSONArray("salesPartyNames");
+                salepartyModelList.clear();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject ob = jsonArray.getJSONObject(i);
+                    String name = ob.optString("NickName");
+                    String accountId = ob.optString("AccountCode");
+                    salepartyModel = new SalepartyModel(name, false, "", accountId);
+                    salepartyModelList.add(salepartyModel);
+
+                }*/
+                nickNameList.addAll(newresponse.getNickNameList());
+                nickNameListAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Log.e("Exce", e.toString());
+            }
+        }, error -> {
+            myProgress.dismiss();
+            Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+//                String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE, "") + "\",\"Filter\":\"" + "selected" + "\"}";
+                String str = "{}";
+                Log.i("TaG", "Request " + url + " -=-=-=>" + str);
+
+                return str.getBytes();
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
+        stringRequest.setShouldCache(true);
+        stringRequest.shouldCache();
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
+
+    private void nickNameDialog(final String title) {
+
+        sDialog = new Dialog(this);
+        sDialog.setContentView(R.layout.search_dialog);
+        sDialog.setCancelable(true);
+        titile = sDialog.findViewById(R.id.title);
+        titile.setText(title);
+        recyclerView = sDialog.findViewById(R.id.dist_recycler);
+        search = sDialog.findViewById(R.id.search);
+        if (nickNameList.size() > 0) {
+            sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+        }
+        sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
+
+        if (!nickNameList.isEmpty()) {
+            filternicNameList(nickNameList);
+        } else {
+            getNickNameList(GetNickNameList);
+        }
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                filternicNameList.clear();
+                for (int p = 0; p < nickNameList.size(); p++) {
+                    if (nickNameList.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || nickNameList.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        filternicNameList.add(nickNameList.get(p));
+                    }
+                }
+                filternicNameList(filternicNameList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        nickNameListAdapter = new NickNameListAdapter(this, nickNameList, account -> {
+            sDialog.dismiss();
+            binding.tvNickName.setText(account.getName());
+            accountNameId=account.getId();
+
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(nickNameListAdapter);
+        getNickNameList(GetNickNameList);
+        sDialog.show();
+
+    }
+
+    void filternicNameList(ArrayList<NickNameList> bc) {
+        nickNameListAdapter = new NickNameListAdapter(this, bc, account -> {
+            sDialog.dismiss();
+            binding.tvNickName.setText(account.getName());
+            accountNameId=account.getId();
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(nickNameListAdapter);
+    }
+
+    private void parseTime(String time12HourFormat) {
+        try {
+            // Convert 12-hour format to 24-hour format
+            SimpleDateFormat inputFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
+
+            Date date = inputFormat.parse(time12HourFormat); // Parse input time
+            String time24HourFormat = outputFormat.format(date); // Convert to 24-hour format
+
+            // Extract hour, minute, and second
+            String[] timeParts = time24HourFormat.split(":");
+            int checkOutHour = Integer.parseInt(timeParts[0]);  // 24-hour format hour
+            int checkOutMinute = Integer.parseInt(timeParts[1]); // Minute
+            int checkOutSecond = Integer.parseInt(timeParts[2]); // Second
+
+
+            // Print values
+            System.out.println("Hour: " + checkOutHour);
+            System.out.println("Minute: " + checkOutMinute);
+            System.out.println("Second: " + checkOutSecond);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

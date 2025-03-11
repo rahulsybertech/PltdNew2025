@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.MyConstant;
+import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.activitys.BookingRequestActivity;
 import com.syber.ssspltd.model.booking.BookingData;
 
@@ -55,11 +56,17 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         holder.pendingQTY.setText(datum.getQty());
         holder.pendingAmt.setText(datum.getAmount());
         holder.marketer_pending.setText(datum.getMarketer());*/
-        holder.visitId.setText(datum.getId());
+
+        String companyID = datum.getId().toString();
+        String cleanCompanyID = companyID.replace("-", "");
+    //    println(cleanCompanyID)  // Output: 43029624ea4a434c9a14d7da24840bad
+        holder.visitId.setText(cleanCompanyID);
 
         holder.checkInTimeAndDate.setText(String.format("%s %s", convertDateFormat(datum.getCheckInDate()), datum.getCheckInTime()));
         holder.checkOutDateAndTime.setText(String.format("%s %s", convertDateFormat(datum.getCheckoutDate()), datum.getCheckoutTime()));
         holder.noOfPerson.setText(datum.getNoOfPerson());
+        holder.branchName.setText(datum.getBranchName());
+
 
 
         // Edit Button Click
@@ -67,6 +74,7 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
                 mContext.startActivity(new Intent(mContext, BookingRequestActivity.class)
                         .putExtra("data",datum)
                         .putExtra(MyConstant.EXTRA_IS_EDIT,true)
+                        .putExtra(MyConstant.USERTYPE, SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
                         .putExtra(MyConstant.SCREEN,MyConstant.BOOKINGlIST)
 
                 )
@@ -130,7 +138,7 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView visitId,checkInTimeAndDate,checkOutDateAndTime,noOfPerson,pendingQTY,pendingAmt,marketer_pending;
+        TextView visitId,checkInTimeAndDate,checkOutDateAndTime,noOfPerson,branchName,pendingAmt,marketer_pending;
         LinearLayout llCancel;
         LinearLayout edit;
         TextView netAmt_pending;
@@ -140,6 +148,7 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
             checkInTimeAndDate = itemView.findViewById(R.id.checkInTimeAndDate);
             checkOutDateAndTime = itemView.findViewById(R.id.checkOutDateAndTime);
             noOfPerson = itemView.findViewById(R.id.noOfPerson);
+            branchName = itemView.findViewById(R.id.branchName);
             edit = itemView.findViewById(R.id.edit);
             llCancel = itemView.findViewById(R.id.llCancel);
 

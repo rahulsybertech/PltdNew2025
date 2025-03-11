@@ -2047,6 +2047,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                 return "application/json; charset=utf-8";
             }
 
+
+
         };
         RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(retryPolicy);
@@ -2441,6 +2443,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.clearSubparty.setVisibility(View.VISIBLE);
         selectedSubPartyId = subpartyModel.getAccountCode();
         binding.subParty.setError(null, null);
+        getTransport();
         // clearStation.setVisibility(View.VISIBLE);
 //        getSubPartyData1(transportstationmarka, saleParty.getText().toString(), n);
     }
