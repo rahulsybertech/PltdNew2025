@@ -15,6 +15,7 @@ public class BookingData implements Parcelable {
     private String branchName;
     private String accountID;
     private String accountName;
+    private String bookingID;
 
     // Constructor
     public BookingData(String id, String companyID, String branchID, String checkInDate, String checkInTime, String checkoutDate, String checkoutTime, String noOfPerson, String branchName) {
@@ -42,6 +43,7 @@ public class BookingData implements Parcelable {
         branchName = in.readString();
         accountID = in.readString();
         accountName = in.readString();
+        bookingID = in.readString();
     }
 
     public static final Creator<BookingData> CREATOR = new Creator<BookingData>() {
@@ -69,6 +71,7 @@ public class BookingData implements Parcelable {
         dest.writeString(branchName);
         dest.writeString(accountID);
         dest.writeString(accountName);
+        dest.writeString(bookingID);
     }
 
     @Override
@@ -88,4 +91,5 @@ public class BookingData implements Parcelable {
     public String getBranchName() { return branchName; }
     public String getaccountID() { return accountID; }
     public String getaccountName() { return accountName; }
+    public String getBookingID() { return bookingID; }
 }

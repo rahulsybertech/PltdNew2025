@@ -40,7 +40,7 @@ public class TransportAdapter extends RecyclerView.Adapter<TransportAdapter.MyVi
 
         final TransportModel product;
         product = data.get(position);
-        holder.name.setText(product.gettName());
+        holder.name.setText(product.getTransportName());
 
         if (position % 2 == 0) {
             holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));

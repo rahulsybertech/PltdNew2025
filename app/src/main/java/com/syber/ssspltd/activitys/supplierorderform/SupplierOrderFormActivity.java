@@ -1,10 +1,12 @@
 package com.syber.ssspltd.activitys.supplierorderform;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GetDispatchTypeList;
 import static com.syber.ssspltd.Constants.NewErpUrls.ITEM_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.MARKETER_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.NICK_NAME;
 import static com.syber.ssspltd.Constants.NewErpUrls.ORDER_NO;
 import static com.syber.ssspltd.Constants.NewErpUrls.PCS_TYPE;
+import static com.syber.ssspltd.Constants.NewErpUrls.PartyDetailsByPartyCode;
 import static com.syber.ssspltd.Constants.NewErpUrls.SALE_PARTY;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.SCHEME_LIST;
@@ -40,7 +42,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -79,6 +80,7 @@ import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.activitys.MainActivity;
+import com.syber.ssspltd.adapter.DispatchAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.ItemAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.MarketerAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.SalePartyAdapter;
@@ -88,6 +90,8 @@ import com.syber.ssspltd.adapter.supplierformadapter.StatusAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.SubPartyAdapter;
 import com.syber.ssspltd.adapter.supplierformadapter.TransportAdapter;
 import com.syber.ssspltd.databinding.ActivitySupplierOrderFormBinding;
+import com.syber.ssspltd.model.partyDetails.TransportResponse;
+import com.syber.ssspltd.response.DispatchResponse;
 import com.syber.ssspltd.response.ItemModel;
 import com.syber.ssspltd.response.MarketerModel;
 import com.syber.ssspltd.response.SalepartyModel;
@@ -110,7 +114,6 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -122,7 +125,6 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class SupplierOrderFormActivity extends AppCompatActivity implements OnClick, DatePickerDialog.OnDateSetListener {
     private static final int REQUEST_CODE = 100;
@@ -153,7 +155,9 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     SalepartyModel salepartyModel;
     SubpartyModel subpartyModel;
     ArrayList<SubpartyModel> subpartyModelList, subdata;
+    ArrayList<DispatchResponse.DispatchType> dispatchTypeList,filterDispatchList;
     SubPartyAdapter subPartyAdapter;
+    DispatchAdapter dispatchAdapter;
     SchemeModel schemeModel;
     ArrayList<SchemeModel> schemeModelList, schData;
     SchmeAdapter schmeAdapter;
@@ -186,6 +190,9 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     private String traceIdentifier = "";
     private String transportResponseMessage = "";
     private String schemeResponseMessage = "";
+    private String dispatchTypeID = "";
+
+    private TransportResponse responseData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +205,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         salepartyModelList = new ArrayList<>();
         saleData = new ArrayList<>();
         subpartyModelList = new ArrayList<>();
+        dispatchTypeList = new ArrayList<>();
+        filterDispatchList = new ArrayList<>();
         subdata = new ArrayList<>();
         schemeModelList = new ArrayList<>();
         schData = new ArrayList<>();
@@ -213,6 +222,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
         geNickName();
         getMarketer(SharedPref.read(SharedPref.PARTY_CODE, ""));
+        getDispatchTypeList();
 //        getSaleParty(SALE_PARTY);
 //        getTransport();
 //        getTransportDetails(SharedPref.read(SharedPref.PARTY_CODE,""), accountId, "SELF");
@@ -633,6 +643,9 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             binding.bStation.setText("");
             binding.scheme.setText("");
             binding.transport.setText("");
+            subpartyModelList.clear();
+            transportModelList.clear();
+            stationModelList.clear();
             binding.clearSaleparty.setVisibility(View.GONE);
             binding.clearSubparty.setVisibility(View.GONE);
             binding.clearStation.setVisibility(View.GONE);
@@ -642,7 +655,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         } else if (view.getId() == R.id.clear_subparty) {
             binding.subParty.setText("");
 //            binding.salePartyMobile.setText("");
-//            binding.bStation.setText("");
+            binding.bStation.setText("");
 //            binding.scheme.setText("");
             binding.transport.setText("");
             binding.clearSubparty.setVisibility(View.GONE);
@@ -652,6 +665,10 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         } else if (view.getId() == R.id.clear_transport) {
             binding.transport.setText("");
             binding.clearTransport.setVisibility(View.GONE);
+
+        } else if (view.getId() == R.id.clear_dispatchType) {
+            binding.dispatchType.setText("");
+            binding.clearDispatchType.setVisibility(View.GONE);
 
         } else if (view.getId() == R.id.clear_station) {
             binding.bStation.setText("");
@@ -1494,8 +1511,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 subdata.clear();
                 for (int p = 0; p < subpartyModelList.size(); p++) {
-                    if (subpartyModelList.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())
-                            || subpartyModelList.get(p).getAccountCode().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                    if (subpartyModelList.get(p).getSubPartyName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || subpartyModelList.get(p).getSubPartyId().toLowerCase().contains(charSequence.toString().toLowerCase())) {
                         subdata.add(subpartyModelList.get(p));
                     }
                 }
@@ -1511,7 +1528,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(subPartyAdapter);
         System.out.println("SUB_PARTY 1 " + selectedAccountId);
-        getSubParty(selectedAccountId);
+      //  getSubParty(selectedAccountId);
         sDialog.show();
 
     }
@@ -1556,7 +1573,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 tdata.clear();
                 for (int p = 0; p < transportModelList.size(); p++) {
-                    if (transportModelList.get(p).gettName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                    if (transportModelList.get(p).getTransportName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
                         tdata.add(transportModelList.get(p));
                     }
                 }
@@ -1623,6 +1640,66 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     }
                 }
                 filterScheme(schData);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        sDialog.show();
+    }
+
+    private void dispatchTypeListDialog(final String title) {
+        sDialog = new Dialog(mContext);
+        sDialog.setContentView(R.layout.search_dialog);
+        sDialog.setCancelable(true);
+        titile = sDialog.findViewById(R.id.title);
+        TextView transportNoData = sDialog.findViewById(R.id.transportNoData);
+        titile.setText(title);
+        recyclerView = sDialog.findViewById(R.id.dist_recycler);
+
+        dispatchAdapter = new DispatchAdapter(this, dispatchTypeList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(dispatchAdapter);
+        dispatchAdapter.notifyDataSetChanged();
+
+
+   //     System.out.println("GET_RESPONSE_MESSAGE 1 " + schemeResponseMessage);
+        search = sDialog.findViewById(R.id.search);
+        if (!dispatchTypeList.isEmpty()) {
+            transportNoData.setVisibility(View.GONE);
+            sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+        } else {
+          //  System.out.println("GET_RESPONSE_MESSAGE 2 " + schemeResponseMessage);
+            transportNoData.setText(schemeResponseMessage);
+            transportNoData.setVisibility(View.VISIBLE);
+            sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+        }
+        sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
+
+
+
+        if (!filterDispatchList.isEmpty()) {
+            filterDispatch(dispatchTypeList);
+        }
+//        else {
+//            getScheme();
+//        }
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                filterDispatchList.clear();
+                for (int p = 0; p < dispatchTypeList.size(); p++) {
+                    if (dispatchTypeList.get(p).getValue().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        filterDispatchList.add(dispatchTypeList.get(p));
+                    }
+                }
+                filterDispatch(filterDispatchList);
             }
 
             @Override
@@ -1706,7 +1783,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 sdata.clear();
                 for (int p = 0; p < stationModelList.size(); p++) {
-                    if (stationModelList.get(p).getsName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                    if (stationModelList.get(p).getStationName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
                         sdata.add(stationModelList.get(p));
                     }
                 }
@@ -1720,7 +1797,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         stationAdapter = new StationAdapter(this, stationModelList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(stationAdapter);
-        if (selectedAccountId != null && !selectedAccountId.isEmpty()) getStation();
+        if (selectedAccountId != null && !selectedAccountId.isEmpty())
+         //  getStation();
         sDialog.show();
     }
 
@@ -1748,6 +1826,12 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         schmeAdapter = new SchmeAdapter(this, bc);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(schmeAdapter);
+    }
+    void filterDispatch(ArrayList<DispatchResponse.DispatchType> bc) {
+        // MyPref.storePrefs(context).setTotalMechanics(bc.size() + "");
+        dispatchAdapter = new DispatchAdapter(this, bc);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(dispatchAdapter);
     }
 
     void filterTransport(ArrayList<TransportModel> bc) {
@@ -1807,6 +1891,206 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                 Log.i("TaG", "Request " + NICK_NAME + "---> " + str);
                 return str.getBytes();
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        stringRequest.setShouldCache(true);
+        stringRequest.shouldCache();
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
+    }
+
+    private void getPartyDetailsByPartyCode(String partyCode ) {
+     String   urlWithPartyCode = PartyDetailsByPartyCode+ "?partyCode=" + partyCode;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithPartyCode, response -> {
+            Log.i("TaG", "Response " + urlWithPartyCode + "---> " + response);
+            try {
+
+                JSONObject jsonObject = new JSONObject(response);
+                Gson gson = new Gson();
+                 responseData = gson.fromJson(response, TransportResponse.class);
+
+                try {
+
+
+                   /* if (responseData.getSubPartyList().get(p).getTransportList() != null && !responseData.getSubPartyList().get(p).getTransportList().isEmpty()) {
+
+                    }*/
+
+                    if (responseData.getSubPartyList()!= null && !responseData.getSubPartyList().isEmpty()) {
+                        subPartyAdapter = new SubPartyAdapter(this, subpartyModelList);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                        recyclerView.setAdapter(subPartyAdapter);
+                        //SubParty
+                        subpartyModelList.clear();
+                        subpartyModelList.addAll(responseData.getSubPartyList());
+                        subPartyAdapter.notifyDataSetChanged();
+                        binding.subParty.setText(responseData.getSubPartyList().get(0).getSubPartyName());
+
+
+                        if (responseData.getSubPartyList().get(0).getTransportList() != null && !responseData.getSubPartyList().get(0).getTransportList().isEmpty()) {
+
+                            binding.transport.setText(responseData.getSubPartyList().get(0).getTransportList().get(0).getTransportName());
+                            transportAdapter = new TransportAdapter(this, transportModelList);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                            recyclerView.setAdapter(transportAdapter);
+                            transportModelList.clear();
+                            transportModelList.addAll(responseData.getSubPartyList().get(0).getTransportList());
+                            transportAdapter.notifyDataSetChanged();
+                            binding.transport.setError(null, null);
+
+
+                            if (responseData.getSubPartyList().get(0).getTransportList().get(0).getStationList() != null && !responseData.getSubPartyList().get(0).getTransportList().get(0).getStationList().isEmpty()) {
+                                stationAdapter = new StationAdapter(this, stationModelList);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                                recyclerView.setAdapter(stationAdapter);
+                                binding.bStation.setText(responseData.getSubPartyList().get(0).getTransportList().get(0).getStationList().get(0).getStationName());
+                                stationModelList.clear();
+                                stationModelList.addAll(responseData.getSubPartyList().get(0).getTransportList().get(0).getStationList());
+                                stationAdapter.notifyDataSetChanged();
+                                binding.bStation.setError(null, null);
+                            }else {
+                                stationModelList.clear();
+                            }
+
+                        }else {
+
+                            transportModelList.clear();
+                            stationModelList.clear();
+                        }
+
+
+                    }else {
+                        subpartyModelList.clear();
+                        transportModelList.clear();
+                        stationModelList.clear();
+                    }
+
+                  //  binding.salePartyMobile.setText(jsonObject.getString("MobileNo"));
+                    // Original text
+                    String originalText = jsonObject.optString("MobileNo");
+
+// Replace it with *'s (you can replace it with as many * as the length of the original text)
+                 //   binding.salePartyMobile.setText("*".repeat(originalText.length()));
+                  //  binding.salePartyEmail.setText(jsonObject.getString("EmailID"));
+                  //  String originalText1 = jsonObject.optString("EmailID");
+                 //   binding.salePartyEmail.setText("*".repeat(originalText1.length()));
+                /*    handleEditInit();
+                    binding.saleParty.setError(null, null);
+                    binding.subParty.setError(null, null);
+                    binding.transport.setError(null, null);
+                    binding.bStation.setError(null, null);
+                    binding.scheme.setError(null, null);
+*/
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("Exce", e.toString());
+                }
+
+//                JSONObject js = jsonObject.getJSONObject("data");
+                if (jsonObject.getString("ResponseStatus").equals("true")) {
+
+                } else {
+                    AlertUtil.responseElse(mContext,  urlWithPartyCode, jsonObject.getString("ResponseMessage"));
+
+                }
+            } catch (Exception e) {
+                AlertUtil.responseExecption(mContext, urlWithPartyCode, e.toString());
+            }
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, urlWithPartyCode, error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }) {
+         /*   @Override
+            public byte[] getBody() throws AuthFailureError {
+                String str = "{\"SupplierAccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\"}";
+                Log.i("TaG", "Request " + NICK_NAME + "---> " + str);
+                return str.getBytes();
+            }*/
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        stringRequest.setShouldCache(true);
+        stringRequest.shouldCache();
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
+    }
+
+    private void getDispatchTypeList( ) {
+        String   urlWithPartyCode = GetDispatchTypeList;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithPartyCode, response -> {
+            Log.i("TaG", "Response " + urlWithPartyCode + "---> " + response);
+            try {
+
+                JSONObject jsonObject = new JSONObject(response);
+                Gson gson = new Gson();
+             DispatchResponse   responseData = gson.fromJson(response, DispatchResponse.class);
+
+                try {
+
+
+                    if (responseData.getDispatchTypeList()!= null && !responseData.getDispatchTypeList().isEmpty()) {
+                        dispatchTypeList.clear();
+                        dispatchTypeList.addAll(responseData.getDispatchTypeList());
+                        binding.dispatchType.setText(responseData.getDispatchTypeList().get(0).getValue());
+                        dispatchTypeID=responseData.getDispatchTypeList().get(0).getId();
+                    }else {
+                        dispatchTypeList.clear();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("Exce", e.toString());
+                }
+
+//                JSONObject js = jsonObject.getJSONObject("data");
+                if (jsonObject.getString("ResponseStatus").equals("true")) {
+
+                } else {
+                    AlertUtil.responseElse(mContext,  urlWithPartyCode, jsonObject.getString("ResponseMessage"));
+
+                }
+            } catch (Exception e) {
+                AlertUtil.responseExecption(mContext, urlWithPartyCode, e.toString());
+            }
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, urlWithPartyCode, error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }) {
+         /*   @Override
+            public byte[] getBody() throws AuthFailureError {
+                String str = "{\"SupplierAccountID\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\"}";
+                Log.i("TaG", "Request " + NICK_NAME + "---> " + str);
+                return str.getBytes();
+            }*/
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -1945,7 +2229,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     salepartyModelList.add(salepartyModel);
 
                 }
-                getStation();
+             //   getStation();
                 salePartyAdapter.notifyDataSetChanged();
             } catch (Exception e) {
                 Log.e("Exce", e.toString());
@@ -1990,8 +2274,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getString("ResponseStatus").equals("true")) {
-                    binding.transport.setText(jsonObject.getString("TransportName"));
-                    binding.bStation.setText(jsonObject.getString("Station"));
+                /*    binding.transport.setText(jsonObject.getString("TransportName"));
+                    binding.bStation.setText(jsonObject.getString("Station"));*/
                     binding.salePartyMobile.setText(jsonObject.getString("MobileNo"));
                     // Original text
                     String originalText = jsonObject.optString("MobileNo");
@@ -2004,8 +2288,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     handleEditInit();
                     binding.saleParty.setError(null, null);
                     binding.subParty.setError(null, null);
-                    binding.transport.setError(null, null);
-                    binding.bStation.setError(null, null);
+                  /*  binding.transport.setError(null, null);
+                    binding.bStation.setError(null, null);*/
                     binding.scheme.setError(null, null);
 //                    binding.subParty.setText("SELF");
                 } else {
@@ -2396,6 +2680,12 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         String n = salepartyModel.getName();
         binding.saleParty.setText(salepartyModel.getAccountId() + " " + n);
         binding.subParty.setText("SELF");
+
+        binding.subParty.setText("");
+        binding.bStation.setText("");
+        binding.scheme.setText("");
+        binding.transport.setText("");
+
         binding.clearSaleparty.setVisibility(View.VISIBLE);
         binding.clearSubparty.setVisibility(View.VISIBLE);
         binding.clearScheme.setVisibility(View.VISIBLE);
@@ -2403,13 +2693,20 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.clearStation.setVisibility(View.VISIBLE);
         selectedAccountId = salepartyModel.getAccountId();
         System.out.println("SUB_PARTY " + salepartyModel.getAccountId());
-        getSubParty(salepartyModel.getAccountId());
-//        getScheme();
+
+        getPartyDetailsByPartyCode(salepartyModel.getAccountId());
         getTransportDetails(SharedPref.read(SharedPref.PARTY_CODE, ""), salepartyModel.getAccountId(), "SELF");
+    //    getSubParty(salepartyModel.getAccountId());
+
         binding.saleParty.setError(null, null);
-        getTransport();
+//        getScheme();
+
+    //    getTransport();
         // getPcsType(pcstype,orderCode.getText().toString(),selectedSuperStar,saleParty.getText().toString());
         //  getSubPartyData(transportstationmarka, n, "SELF");
+
+
+
     }
 
     @Override
@@ -2422,15 +2719,20 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.marketer.setError(null, null);
     }
 
+    @Override
+    public void setSubParty(SubpartyModel subpartyModel) {
+
+    }
+
     public void setStatus(String status) {
         sDialog.dismiss();
         binding.tvStatus.setText(status);
     }
 
     @Override
-    public void setSubParty(SubpartyModel subpartyModel) {
+    public void setSubParty(SubpartyModel subpartyModel1, int p) {
         sDialog.dismiss();
-        String n = subpartyModel.getName();
+    /*    String n = subpartyModel.getName();
         System.out.println("GETTING_SUB_PARTY " + n);
         if (subpartyModel.getAccountCode().equalsIgnoreCase("self")) {
             binding.subParty.setText("SELF");
@@ -2443,24 +2745,138 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.clearSubparty.setVisibility(View.VISIBLE);
         selectedSubPartyId = subpartyModel.getAccountCode();
         binding.subParty.setError(null, null);
-        getTransport();
+
+        getTransport();*/
+
+
+
+
+     /*   String n = responseData.getSubPartyList().get(p).getSubPartyName();
+
+        if (responseData.getSubPartyList().get(p).getSubPartyName().equalsIgnoreCase("self")) {
+            binding.subParty.setText("SELF");
+            subPartyId = "SELF";
+        } else {
+            binding.subParty.setText(responseData.getSubPartyList().get(p).getSubPartyName() + " " + n);
+            subPartyId = responseData.getSubPartyList().get(p).getSubPartyId();
+        }
+
+        if (responseData.getSubPartyList().get(p).getTransportList() != null && !responseData.getSubPartyList().get(p).getTransportList().isEmpty()) {
+            transportModelList.clear();
+            transportModelList.addAll(responseData.getSubPartyList().get(p).getTransportList());
+            transportAdapter.notifyDataSetChanged();
+
+            String tranport = transportModelList.get(0).getTransportName();
+            binding.transport.setText(tranport);
+            binding.clearTransport.setVisibility(View.VISIBLE);
+            binding.transport.setError(null, null);
+
+
+            stationModelList.clear();
+            stationModelList.addAll(responseData.getSubPartyList().get(p).getTransportList().get(0).getStationList());
+            transportAdapter.notifyDataSetChanged();
+            String station = responseData.getSubPartyList().get(p).getTransportList().get(0).getStationList().get(0).getStationName();
+            binding.bStation.setText(station);
+            binding.clearStation.setVisibility(View.VISIBLE);
+            binding.bStation.requestFocus();
+            binding.bStation.setError(null, null);
+
+        } else {
+            transportModelList.clear();
+            stationModelList.clear();
+            binding.transport.setText("");
+            binding.bStation.setText("");
+            Log.d("CheckTransportList", "TransportList is either NULL or EMPTY");
+        }
+        binding.clearSubparty.setVisibility(View.VISIBLE);
+        selectedSubPartyId = responseData.getSubPartyList().get(p).getSubPartyId();
+        binding.subParty.setError(null, null);*/
+
+           String n = subpartyModel1.getSubPartyName();
+
+        if (subpartyModel1.getSubPartyName().equalsIgnoreCase("self")) {
+            binding.subParty.setText("SELF");
+            subPartyId = "SELF";
+        } else {
+            binding.subParty.setText(subpartyModel1.getSubPartyName() + " " + n);
+            subPartyId = subpartyModel1.getSubPartyId();
+        }
+
+        if (subpartyModel1.getTransportList() != null && !subpartyModel1.getTransportList().isEmpty()) {
+            transportModelList.clear();
+            transportModelList.addAll(subpartyModel1.getTransportList());
+            transportAdapter.notifyDataSetChanged();
+
+            String tranport = transportModelList.get(0).getTransportName();
+            binding.transport.setText(tranport);
+            binding.clearTransport.setVisibility(View.VISIBLE);
+            binding.transport.setError(null, null);
+
+
+            stationModelList.clear();
+            stationModelList.addAll(subpartyModel1.getTransportList().get(0).getStationList());
+            transportAdapter.notifyDataSetChanged();
+            String station = subpartyModel1.getTransportList().get(0).getStationList().get(0).getStationName();
+            binding.bStation.setText(station);
+            binding.clearStation.setVisibility(View.VISIBLE);
+            binding.bStation.requestFocus();
+            binding.bStation.setError(null, null);
+
+        } else {
+            transportModelList.clear();
+            stationModelList.clear();
+            binding.transport.setText("");
+            binding.bStation.setText("");
+            Log.d("CheckTransportList", "TransportList is either NULL or EMPTY");
+        }
+        binding.clearSubparty.setVisibility(View.VISIBLE);
+        selectedSubPartyId = responseData.getSubPartyList().get(p).getSubPartyId();
+        binding.subParty.setError(null, null);
+
+     //   getTransport();
         // clearStation.setVisibility(View.VISIBLE);
 //        getSubPartyData1(transportstationmarka, saleParty.getText().toString(), n);
     }
 
     @Override
+    public void setDispatchType(SubpartyModel subpartyModel1, int p) {
+
+    }
+
+    @Override
+    public void setDispatchType(DispatchResponse.DispatchType dispatchType, int p) {
+        sDialog.dismiss();
+        binding.dispatchType.setText(dispatchType.getValue());
+        dispatchTypeID=dispatchType.getId();
+    }
+
+    @Override
     public void setTransport(TransportModel transportModel) {
         sDialog.dismiss();
-        String n = transportModel.gettName();
+        String n = transportModel.getTransportName();
         binding.transport.setText(n);
         binding.clearTransport.setVisibility(View.VISIBLE);
         binding.transport.setError(null, null);
+
+
+
+
+        stationModelList.clear();
+        stationModelList.addAll(transportModel.getStationList());
+        transportAdapter.notifyDataSetChanged();
+        String station = transportModel.getStationList().get(0).getStationName();
+        binding.bStation.setText(station);
+        binding.clearStation.setVisibility(View.VISIBLE);
+        binding.bStation.requestFocus();
+        binding.bStation.setError(null, null);
+
+
     }
 
     @Override
     public void setStation(StationModel stationModel) {
         sDialog.dismiss();
-        String n = stationModel.getsName();
+        String n = stationModel.getStationName();
         binding.bStation.setText(n);
         binding.clearStation.setVisibility(View.VISIBLE);
         binding.bStation.requestFocus();
@@ -2619,6 +3035,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.subParty.setOnClickListener(v -> {
             if (!binding.saleParty.getText().toString().isEmpty()) {
                 subPartyDialog("Select Sub Party");
+
             } else {
                 Toast.makeText(mContext, "Select Sale Party First", Toast.LENGTH_SHORT).show();
             }
@@ -2635,6 +3052,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         });
         binding.llRow.item.setOnClickListener(v -> itemDialog("Select Item"));
         binding.scheme.setOnClickListener(v -> schmeDialog("Select Scheme"));
+        binding.dispatchType.setOnClickListener(v -> dispatchTypeListDialog("Select Dispatch Type"));
 
 
        // ArrayList<String> statusOptions = new ArrayList<>(Arrays.asList("PENDING", "HOLD"));
@@ -2946,6 +3364,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     jsonObject.put("AccountID", selectedAccountId);
                     jsonObject.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
                     jsonObject.put("SubPartyID", SubPartyID);
+                    jsonObject.put("dispatchTypeID", dispatchTypeID);
                     jsonObject.put("Marketer", binding.marketer.getText().toString());
                     jsonObject.put("OrderRatio", selected2Star);
                     jsonObject.put("Lattitude", null);  // null can be directly passed

@@ -124,7 +124,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
         adapter = new PDFPagerAdapter(this, FileUtil.extractFileNameFromURL(url)); // Setup adapter with the file
         remotePDFViewPager.setAdapter(adapter); // Attach adapter to remote pdf viewpager
      //water mark show
-      //  remotePDFViewPager.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        remotePDFViewPager.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         // Add it to the container
         linear_layout_pdf.removeAllViews();
         linear_layout_pdf.addView(

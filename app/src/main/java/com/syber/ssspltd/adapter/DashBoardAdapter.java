@@ -1,5 +1,6 @@
 package com.syber.ssspltd.adapter;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.GetStayBookingDataListByBranchId;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 
 import android.content.Context;
@@ -231,8 +232,15 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
 
     private void getBookingList() {
 
+        String userType = SharedPref.read(SharedPref.DASHBOARD_TYPE, "");
+        String urlWithPartyCode="";
+        if(userType.equals("Other")){
+            urlWithPartyCode = GetStayBookingDataListByBranchId+ "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
+        }else {
+            urlWithPartyCode = StayBookingDataList + "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
+        }
         // Append partyCode as a query parameter to the URL
-        String urlWithPartyCode = StayBookingDataList + "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
+     //   String urlWithPartyCode = StayBookingDataList + "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithPartyCode, response -> {
 //                    Log.e("Data", response);
@@ -244,7 +252,9 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
                 if (pojo.isResponseStatus()) {
 
                     if(pojo.getStayBookingList().size()>0){
-                        context.startActivity(new Intent(context, BookingListActivity.class));
+                        context.startActivity(new Intent(context, BookingListActivity.class)
+                                .putExtra(MyConstant.USERTYPE,SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
+                        );
 
                     }else {
                         context.startActivity(new Intent(context, BookingRequestActivity.class)

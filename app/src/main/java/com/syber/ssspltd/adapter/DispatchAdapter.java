@@ -1,4 +1,4 @@
-package com.syber.ssspltd.adapter.supplierformadapter;
+package com.syber.ssspltd.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -10,36 +10,40 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.syber.ssspltd.R;
-import com.syber.ssspltd.response.StationModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
+import com.syber.ssspltd.adapter.supplierformadapter.SubPartyAdapter;
+import com.syber.ssspltd.response.DispatchResponse;
+import com.syber.ssspltd.response.SubpartyModel;
 
 import java.util.List;
 
-public class StationAdapter extends RecyclerView.Adapter<StationAdapter.MyViewHolder> {
+public class DispatchAdapter  extends RecyclerView.Adapter<DispatchAdapter.MyViewHolder> {
 
     private Activity mContext;
-    private List<StationModel> data;
+    private List<DispatchResponse.DispatchType> data;
     public static boolean sType = false;
     public static int pq;
 
-    public StationAdapter(Activity mContext, List<StationModel> data) {
+    public DispatchAdapter(Activity mContext, List<DispatchResponse.DispatchType> data) {
         this.mContext = mContext;
         this.data = data;
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DispatchAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sarch_list, parent, false);
-        return new MyViewHolder(v);
+        return new DispatchAdapter.MyViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final DispatchAdapter.MyViewHolder holder, final int position) {
 
-        final StationModel product;
+        final DispatchResponse.DispatchType product;
         product = data.get(position);
-        holder.name.setText(product.getStationName());
+        holder.name.setText(product.getValue());
+        System.out.println("PRINTING_SUB_PARTY " + product.getValue());
 
         if (position % 2 == 0) {
             holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
@@ -48,6 +52,9 @@ public class StationAdapter extends RecyclerView.Adapter<StationAdapter.MyViewHo
             holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.eee));
 
         }
+
+        holder.name.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setDispatchType(product,position));
+
 
 
     }
@@ -69,17 +76,12 @@ public class StationAdapter extends RecyclerView.Adapter<StationAdapter.MyViewHo
 
             ll = itemView.findViewById(R.id.ll);
             cardView = itemView.findViewById(R.id.product_card);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                            ((SupplierOrderFormActivity) mContext).setStation(data.get(getAbsoluteAdapterPosition()));
-
-                }
-            });
-
+            /*  itemView.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSubParty(data.get(getAbsoluteAdapterPosition())));
+             */
         }
-
-
     }
 }
+
+
+
+

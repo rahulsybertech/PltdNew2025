@@ -40,7 +40,7 @@ public class SubPartyAdapter extends RecyclerView.Adapter<SubPartyAdapter.MyView
 
         final SubpartyModel product;
         product = data.get(position);
-        holder.name.setText(product.getName());
+        holder.name.setText(product.getSubPartyName());
         System.out.println("PRINTING_SUB_PARTY " + product.getName());
 
         if (position % 2 == 0) {
@@ -50,6 +50,9 @@ public class SubPartyAdapter extends RecyclerView.Adapter<SubPartyAdapter.MyView
             holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.eee));
 
         }
+
+        holder.name.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSubParty(product,position));
+
 
 
     }
@@ -71,8 +74,8 @@ public class SubPartyAdapter extends RecyclerView.Adapter<SubPartyAdapter.MyView
 
             ll = itemView.findViewById(R.id.ll);
             cardView = itemView.findViewById(R.id.product_card);
-            itemView.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSubParty(data.get(getAbsoluteAdapterPosition())));
-
+          /*  itemView.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSubParty(data.get(getAbsoluteAdapterPosition())));
+*/
         }
     }
 }

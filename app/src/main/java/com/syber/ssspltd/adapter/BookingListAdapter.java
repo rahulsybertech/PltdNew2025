@@ -60,7 +60,7 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         String companyID = datum.getId().toString();
         String cleanCompanyID = companyID.replace("-", "");
     //    println(cleanCompanyID)  // Output: 43029624ea4a434c9a14d7da24840bad
-        holder.visitId.setText(cleanCompanyID);
+        holder.visitId.setText(datum.getBookingID()+"("+datum.getaccountName()+")");
 
         holder.checkInTimeAndDate.setText(String.format("%s %s", convertDateFormat(datum.getCheckInDate()), datum.getCheckInTime()));
         holder.checkOutDateAndTime.setText(String.format("%s %s", convertDateFormat(datum.getCheckoutDate()), datum.getCheckoutTime()));

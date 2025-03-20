@@ -97,11 +97,16 @@ public class NewErpUrls {
     public static String blackList                  = BASE_URL + "BlackListedName";
     public static String ORDER_REPORT               = BASE_URL + "OrderReportWithAccountID";
     public static String UPDATE_ORDER_STATUS        = BASE_URL + "ChangeOrderStatus";
+    public static String ORDER_BOOK_GENERATE_PDF        = DOMAIN + "api/OrderBook/OrderBookGeneratePdf";
 
+
+    public static String PartyDetailsByPartyCode               = BASE_URL + "PartyDetailsByPartyCode";
+    public static String GetDispatchTypeList               = BASE_URL + "GetDispatchTypeList";
     //Booking order module
     public static String BRANCH_LIST               = DOMAIN + "Api/StayBooking/GetBranchDetailList";
     public static String SAVE_UPDATEBOOKING = DOMAIN + "Api/StayBooking/SaveAndUpdateStayBooking";
     public static String StayBookingDataList = DOMAIN + "api/StayBooking/GetStayBookingDataList";
+    public static String GetStayBookingDataListByBranchId = DOMAIN + "api/StayBooking/GetStayBookingDataListByBranchId";
     public static String CancelStayBooking = DOMAIN + "api/StayBooking/CancelStayBooking";
     public static String StayBookingTime = DOMAIN + "api/StayBooking/StayBookingTime";
     public static String GetAccountNameList = DOMAIN + "api/StayBooking/GetAccountNameList";

@@ -3,9 +3,11 @@ package com.syber.ssspltd.activitys;
 import static com.syber.ssspltd.Constants.NewErpUrls.CancelStayBooking;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_BLACK_LIST_NAME;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountNameList;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetStayBookingDataListByBranchId;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
+import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingTime;
 import static com.syber.ssspltd.Constants.NewErpUrls.TRANSPORT;
 
 import android.app.AlertDialog;
@@ -19,6 +21,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -87,7 +90,7 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
         stayBookingList = new ArrayList<>();
         filterList = new ArrayList<>();
        ImageView backBookingList = findViewById(R.id.backBookingList);
-        RelativeLayout plusButton = findViewById(R.id.plusButton);
+        LinearLayout plusButton = findViewById(R.id.plusButton);
         backBookingList.setOnClickListener(v -> onBackPressed());
 
 
@@ -150,13 +153,22 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
 
     private void getBookingList() {
         binding.includeProgress.progress.setVisibility(View.VISIBLE);
-        // Append partyCode as a query parameter to the URL
-        String urlWithPartyCode = StayBookingDataList + "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
 
+
+        String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+        String urlWithPartyCode="";
+        if(userType.equals("Other")){
+            urlWithPartyCode = GetStayBookingDataListByBranchId+ "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
+        }else {
+            urlWithPartyCode = StayBookingDataList + "?partyCode=" + Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, ""));
+        }
+
+
+        String finalUrlWithPartyCode = urlWithPartyCode;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithPartyCode, response -> {
 //                    Log.e("Data", response);
             binding.includeProgress.progress.setVisibility(View.GONE);
-            Log.i("TaG", "url ---" + StayBookingDataList);
+            Log.i("TaG", "url ---" + finalUrlWithPartyCode);
             Log.i("TaG", "response ---> " + response);
             StayBookingResponse pojo = new Gson().fromJson(response, StayBookingResponse.class);
             try {
@@ -184,6 +196,20 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
 
         {
 
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject jsonBody = new JSONObject();
+                try {
+
+//                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
+                    //     jsonBody.put("SupplierAccountID", selectedAccountId);
+
+                    Log.i("TaG", "Request " + StayBookingTime + "---> " + jsonBody);
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
 
             @Override

@@ -12,6 +12,8 @@ public class OrderDetail implements Serializable {
 
     @SerializedName("Amount")
     private Double amount;
+    @SerializedName("RecordId")
+    private String recordId;
     @SerializedName("ImageList")
     private List<ImageList> imageList;
     @SerializedName("ItemName")
@@ -43,6 +45,14 @@ public class OrderDetail implements Serializable {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
     }
 
     public List<ImageList> getImageList() {

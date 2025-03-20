@@ -3,6 +3,7 @@ package com.syber.ssspltd.activitys;
 import static com.syber.ssspltd.Constants.NewErpUrls.BRANCH_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountNameList;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetNickNameList;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetStayBookingDataListByBranchId;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.STATION_LIST;
@@ -18,6 +19,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -225,9 +227,9 @@ public class BookingRequestActivity extends AppCompatActivity {
         binding.save.setOnClickListener(v ->{
             if (validate() && isPlacedOrderBtnEnabled) {
                 isPlacedOrderBtnEnabled = false;
-                binding.save.setEnabled(false);
+               /* binding.save.setEnabled(false);
                 binding.save.setBackgroundColor(Color.parseColor("#808080"));
-                binding.tvSave.setText("Please Wait...");
+                binding.tvSave.setText("Please Wait...");*/
                 sendData();
 
             }
@@ -439,7 +441,7 @@ public class BookingRequestActivity extends AppCompatActivity {
         } else {
             // Default behavior: Set checkout to at least 4 hours after check-in
             checkOutCalendar = (Calendar) checkInCalendar.clone();
-            checkOutCalendar.add(Calendar.HOUR_OF_DAY, 4);
+            checkOutCalendar.add(Calendar.HOUR_OF_DAY, minHoursSelect);
         }
         /*// Ensure checkout is at least 4 hours after check-in
         checkOutCalendar.add(Calendar.HOUR_OF_DAY, 4);*/
@@ -789,14 +791,16 @@ public class BookingRequestActivity extends AppCompatActivity {
                     // ✅ Validate the selected time based on restrictions
                     if (isToday && (hourOfDay < minHour || (hourOfDay == minHour && minute < minMinute))) {
                         binding.tvCheckInTime.setText("");
+                    /*    SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content),
+                                "Check-in time must be at least " + minHoursSelect + " hours from the current time."); */
                         SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content),
-                                "Check-in time must be at least " + minHoursSelect + " hours from the current time.");
-                    } else if (isTomorrow && currentHour >= minHoursSelect &&
+                                "Check-in time must be greater than current time.");
+                    } /*else if (isTomorrow && currentHour >= minHoursSelect &&
                             (hourOfDay < minHour || (hourOfDay == minHour && minute < minMinute))) {
                         SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content),
                                 "Check-in time must be at least " + minHoursSelect + " hours from the current time.");
                         binding.tvCheckInTime.setText("");
-                    } else {
+                    }*/ else {
                         // ✅ Save the selected Check-In time
                         selectedCheckInHour = hourOfDay;
                         selectedCheckInMinute = minute;
@@ -1016,7 +1020,9 @@ public class BookingRequestActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                    String screen = getIntent().getStringExtra(MyConstant.SCREEN);
                    if(screen.equals(MyConstant.HOME)){
-                       startActivity(new Intent(this, BookingListActivity.class));
+                       startActivity(new Intent(this, BookingListActivity.class)
+                               .putExtra(MyConstant.USERTYPE,SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
+                       );
                        finish();
                    }else {
                        finish();
@@ -1033,7 +1039,12 @@ public class BookingRequestActivity extends AppCompatActivity {
 
 //                    myProgress.dismiss();
                     progressDialog.dismiss();
-                    new AlertDialog.Builder(this).setMessage(jsonObject.getString("ResponseMessage") + "").setPositiveButton("Retry", (arg0, arg1) -> sendData()).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show();
+                    new AlertDialog.Builder(this).setMessage(jsonObject.getString("ResponseMessage") + "")
+                            .setNegativeButton("Cancel", (dialog, which) -> {
+                                isPlacedOrderBtnEnabled = true; // Enable the button on cancel
+                                dialog.cancel();
+                            })
+                            .create().show();
                 }
             } catch (JSONException e) {
                 progressDialog.dismiss();
@@ -1139,6 +1150,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                     jsonObject.put("checkInDate", selectedDateTextCheckIn.toString());
                     jsonObject.put("checkInTime", binding.tvCheckInTime.getText().toString());
                     jsonObject.put("checkoutDate", selectedDateTextCheckOut);
+                    jsonObject.put("partyCode", Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, "")));
                     jsonObject.put("checkoutTime", binding.tvCheckOutTime.getText().toString());
                     // jsonObject.put("noOfPerson", binding.editNoOfPerson.getText().toString());
                     jsonObject.put("noOfPerson", binding.textViewNumber.getText().toString());
@@ -1368,6 +1380,7 @@ public class BookingRequestActivity extends AppCompatActivity {
             Util.getInstance().logLargeString("TaG", "Response " + url + " -=-=-=>" + response);
             myProgress.dismiss();
             try {
+                accountNameList.clear();
                 Gson gson = new Gson();
                 ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
 
@@ -1428,6 +1441,7 @@ public class BookingRequestActivity extends AppCompatActivity {
             Util.getInstance().logLargeString("TaG", "Response " + url + " -=-=-=>" + response);
             myProgress.dismiss();
             try {
+                nickNameList.clear();
                 Gson gson = new Gson();
                 ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
 

@@ -143,7 +143,7 @@ public class HomeFragment extends Fragment {
         Log.e("login_page", SharedPref.read(SharedPref.USERMOBILE, ""));
         Log.e("DASHBOARD_TYPE1", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
         if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier")) {
-
+            recyclerView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             Log.e("DASHBOARD_TYPE", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
             for (int i = 0; i < list1_name.length; i++) {
                 Log.e("list1_name", list1_name[i]);
@@ -409,7 +409,7 @@ public class HomeFragment extends Fragment {
             public byte[] getBody() throws AuthFailureError {
                 String mob = SharedPref.read(SharedPref.USERMOBILE, "");
                 // String mob=mobile_no_otp.getText().toString();
-                String str = "{\"MOBILENO\":\"" + mob + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\"}";
+                String str = "{\"MOBILENO\":\"" + "123" + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\"}";
                 Log.e("straff", str);
                 Log.i("TaG", "req----->" + GET_SECURITY_CHECK_REPORT + " " + str);
                 return str.getBytes();

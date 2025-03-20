@@ -1,5 +1,7 @@
 package com.syber.ssspltd.adapter.supplierformadapter;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.ORDER_BOOK_GENERATE_PDF;
+import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.UPDATE_ORDER_STATUS;
 
 import android.app.Dialog;
@@ -33,6 +35,7 @@ import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.MyProgress;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.StringUtils;
+import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.activitys.ViewPDFActivity;
 import com.syber.ssspltd.activitys.supplierorderform.OrderImageActivity;
@@ -41,7 +44,9 @@ import com.syber.ssspltd.response.SupplierOrderReport.OrderDetail;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrderReportAdptr.SupplierViewHolder> {
@@ -131,7 +136,8 @@ public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrder
                 }
 
             } else {
-                Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
+                generatePdf( datum.getRecordId());
+            //    Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -221,6 +227,98 @@ public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrder
 
             public String getBodyContentType() {
                 return "application/json; charset=utf-8";
+            }
+        };
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(300000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
+    }
+
+    private void generatePdf(final String orderID) {
+        final MyProgress progress = new MyProgress(mContext);
+        progress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, ORDER_BOOK_GENERATE_PDF, response -> {
+            Log.e("Data", response);
+            progress.dismiss();
+         /*   {
+                "data": "https://images.ssspltd.com/SyberERP/IMAGES/43029624-ea4a-434c-9a14-d7da24840bad/OrderPdf_162620701.pdf",
+                    "message": "Order Book Pdf Generated Successfully",
+                    "success": true,
+                    "error": false,
+                    "responsecode": "200"
+            }*/
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+
+                // Ensure the key matches the actual JSON structure (use "responsecode" instead of "ResponseCode")
+                if (jsonObject.optInt("responsecode") == 200) {
+
+                    if (jsonObject.optBoolean("success")) {
+                        // Check if the "data" contains a PDF URL
+                        boolean isPdf = jsonObject.optString("data").toLowerCase().endsWith(".pdf");
+
+                        if (isPdf) {
+                            // Open PDF in ViewPDFActivity
+                            mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
+                                    .putExtra("pdfUrl", jsonObject.optString("data")));
+                        } else {
+                            Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(mContext, "Failed to Generate PDF", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else if (jsonObject.optInt("responsecode") == 204) {
+                    Toast.makeText(mContext, "No Content Available", Toast.LENGTH_SHORT).show();
+
+                } else if (jsonObject.optInt("responsecode") == 400) {
+                    refreshOrderReport.onOrderRefresh();
+
+                } else {
+                    Toast.makeText(mContext, "Unknown Error: " + jsonObject.optString("message"), Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (JSONException e) {
+                AlertUtil.responseError(mContext, "ChangeOrderStatus", e.toString());
+                e.printStackTrace();
+            }
+
+        }, error -> {
+            try {
+                Constants.convertByteToString(mContext, "ChangeOrderStatus", error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+
+            progress.cancel();
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+
+                String jsonString = "";
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("recordId",orderID );
+                    jsonString = jsonObject.toString();
+
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Log.i("TaG", "Request " + ORDER_BOOK_GENERATE_PDF + "---> " + jsonString);
+                Util.getInstance().logLargeString("TaG", "Request " + ORDER_BOOK_GENERATE_PDF + "---> " + jsonString);
+
+                return jsonString.getBytes();
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
             }
         };
         RetryPolicy retryPolicy = new DefaultRetryPolicy(300000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
