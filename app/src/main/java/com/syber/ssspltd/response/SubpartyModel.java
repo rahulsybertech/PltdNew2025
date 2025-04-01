@@ -7,12 +7,18 @@ import java.io.Serializable;
 import java.util.List;
 
 public class SubpartyModel implements Serializable {
+
     @SerializedName("SubPartyId")
     private String subPartyId;
 
     @SerializedName("SubPartyName")
     private String subPartyName;
-    private String accountCode, name;
+
+    @SerializedName("AccountCode")
+    private String accountCode;
+
+    @SerializedName("Name")
+    private String name;
 
     @SerializedName("TransportList")
     private List<TransportModel> transportList;
@@ -46,7 +52,6 @@ public class SubpartyModel implements Serializable {
         this.transportList = transportList;
     }
 
-
     public String getSubPartyId() {
         return subPartyId;
     }
@@ -62,6 +67,4 @@ public class SubpartyModel implements Serializable {
     public void setSubPartyName(String subPartyName) {
         this.subPartyName = subPartyName;
     }
-
-
 }

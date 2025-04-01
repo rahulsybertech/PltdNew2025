@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.activitys.ChooseCategries;
 import com.syber.ssspltd.activitys.MainActivity;
 import com.syber.ssspltd.response.ModelClass.RowItem;
@@ -39,8 +40,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         holder.textViewName.setText(datum.getmName());
         holder.itemView.setOnClickListener(v -> {
             ((MainActivity) mContext).setListRecyler(rowItem.get(position));
-//            SharedPref.write(SharedPref.PARTY_CODE,datum.getmPartyCode());
             ChooseCategries.partyCode = rowItem.get(position).getmPartyCode();
+
+//by rahul
+            SharedPref.write(SharedPref.PARTY_CODE,datum.getmPartyCode());
         });
 
         if (datum.getmUserType().equals("5")) {

@@ -2,8 +2,9 @@ package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.BRANCH_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountNameList;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetGuestMasterListByCustomerId;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetNickNameList;
-import static com.syber.ssspltd.Constants.NewErpUrls.GetStayBookingDataListByBranchId;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetStayBookingDataById;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.STATION_LIST;
@@ -36,7 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,15 +59,21 @@ import com.syber.ssspltd.Utils.SnackbarUtils;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.AccountListAdapter;
+import com.syber.ssspltd.adapter.GuestListBookingAdapter;
 import com.syber.ssspltd.adapter.NickNameListAdapter;
 import com.syber.ssspltd.databinding.ActivityBookingRequestBinding;
+import com.syber.ssspltd.model.booking.BookingDetails;
+import com.syber.ssspltd.model.booking.BookingDetailsResponse;
 import com.syber.ssspltd.model.booking.branchlist.Account;
 import com.syber.ssspltd.model.booking.branchlist.ApiResponse;
+import com.syber.ssspltd.model.booking.branchlist.GuestMasterDetail;
+import com.syber.ssspltd.model.booking.branchlist.GuestMasterResponse;
 import com.syber.ssspltd.model.booking.branchlist.NickNameList;
 import com.syber.ssspltd.response.BookingData;
 import com.syber.ssspltd.response.BookingResponse;
 import com.syber.ssspltd.response.SalepartyModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,7 +88,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class BookingRequestActivity extends AppCompatActivity {
+public class BookingRequestActivity extends AppCompatActivity implements GuestListBookingAdapter.OnCancelListener {
     private ActivityBookingRequestBinding binding;
     private Calendar checkInCalendar, checkOutCalendar;
     private Calendar checkInTimeCalendar, checkOutTimeCalendar;
@@ -100,6 +106,9 @@ public class BookingRequestActivity extends AppCompatActivity {
     private String selectedDateTextCheckOut="";
     AccountListAdapter accountListAdapter;
     NickNameListAdapter nickNameListAdapter;
+    ArrayList<GuestMasterDetail> guestList;
+    private GuestListBookingAdapter guestListBookingAdapter;
+    List<String> checkGuestList = new ArrayList<>(); // List of IDs to be checked
 
     TextView titile;
 
@@ -109,8 +118,9 @@ public class BookingRequestActivity extends AppCompatActivity {
         binding = ActivityBookingRequestBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
         initUi();
+
+
     }
 
     private void populateData(com.syber.ssspltd.model.booking.BookingData bookingData) {
@@ -149,6 +159,7 @@ public class BookingRequestActivity extends AppCompatActivity {
     private void initUi() {
         ImageView backBookingList = findViewById(R.id.backBookingList);
         branchList = new ArrayList<>();
+        guestList = new ArrayList<>();
         backBookingList.setOnClickListener(v -> onBackPressed());
        // setSpinner();
         checkInCalendar = Calendar.getInstance();
@@ -163,11 +174,21 @@ public class BookingRequestActivity extends AppCompatActivity {
         getStayBookingTime();
 
 
+
+
+
+
         binding.buttonPlus.setOnClickListener(v ->{
             if (count < 9) {
                 count++;
                 updateUI();
             }
+        } );
+
+        binding.ivGuest.setOnClickListener(v ->{
+            startActivity(new Intent(this, AddGuestInBookingActivity.class)
+                    .putExtra(MyConstant.ACCOUNT_ID,accountNameId)
+            );
         } );
         binding.buttonMinus.setOnClickListener(v ->{
             if (count > 1) {
@@ -188,7 +209,6 @@ public class BookingRequestActivity extends AppCompatActivity {
                 } else {
                     isCustomerCode=false;
                     binding.tvAccountName.setText("");
-
                     binding.llNickName.setVisibility(View.VISIBLE);
                     binding.llCustomer.setVisibility(View.GONE);
                 }
@@ -226,10 +246,15 @@ public class BookingRequestActivity extends AppCompatActivity {
 
         binding.save.setOnClickListener(v ->{
             if (validate() && isPlacedOrderBtnEnabled) {
+                List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
+                if (selectedGuests.size() >= 1 && selectedGuests.size() <= 9) {
+                    // Proceed with selected guests
+                }
                 isPlacedOrderBtnEnabled = false;
-               /* binding.save.setEnabled(false);
+                binding.save.setEnabled(false);
                 binding.save.setBackgroundColor(Color.parseColor("#808080"));
-                binding.tvSave.setText("Please Wait...");*/
+                binding.tvSave.setText("Please Wait...");
+           //    startActivity(new Intent(this, AddGuestInBookingActivity.class));
                 sendData();
 
             }
@@ -241,7 +266,7 @@ public class BookingRequestActivity extends AppCompatActivity {
        //     showCheckInTimePicker1();
             showCheckInTimePicker24Hours(true);
         } );
-        binding.noStayNoPurchase.setOnClickListener(v ->finish() );
+
         binding.llCheckOutTime.setOnClickListener(v -> {
          //   showCheckOutTimePicker();
             showCheckOutTimePicker24Hours();
@@ -258,10 +283,12 @@ public class BookingRequestActivity extends AppCompatActivity {
                 binding.llEmployee.setVisibility(View.VISIBLE);
                 binding.llBranch.setVisibility(View.GONE);
             }else {
+               // getGuestList("");
                 binding.llEmployee.setVisibility(View.GONE);
                 binding.llBranch.setVisibility(View.VISIBLE);
             }
             if (bookingData != null) {
+               getStayBookingDataById(bookingData.getId(),bookingData.getaccountID());
                 populateData(bookingData); // Load existing data into UI fields
             }
         }
@@ -272,6 +299,7 @@ public class BookingRequestActivity extends AppCompatActivity {
                 binding.llEmployee.setVisibility(View.VISIBLE);
                 binding.llBranch.setVisibility(View.GONE);
             }else {
+                getGuestList("");
                 binding.llEmployee.setVisibility(View.GONE);
                 binding.llBranch.setVisibility(View.VISIBLE);
             }
@@ -441,7 +469,7 @@ public class BookingRequestActivity extends AppCompatActivity {
         } else {
             // Default behavior: Set checkout to at least 4 hours after check-in
             checkOutCalendar = (Calendar) checkInCalendar.clone();
-            checkOutCalendar.add(Calendar.HOUR_OF_DAY, minHoursSelect);
+            checkOutCalendar.add(Calendar.HOUR_OF_DAY, 1);
         }
         /*// Ensure checkout is at least 4 hours after check-in
         checkOutCalendar.add(Calendar.HOUR_OF_DAY, 4);*/
@@ -1010,7 +1038,7 @@ public class BookingRequestActivity extends AppCompatActivity {
 
 //        myProgress.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, SAVE_UPDATEBOOKING, response -> {
-            Util.getInstance().logLargeString("TaG", "Response " + SAVE_ORDER + "---> " + response);
+            Util.getInstance().logLargeString("TaG", "Response " + SAVE_UPDATEBOOKING + "---> " + response);
 //            Log.i("TaG", "Response " + SAVE_ORDER  +"---> " + response);
 
             isPlacedOrderBtnEnabled = true;
@@ -1153,8 +1181,17 @@ public class BookingRequestActivity extends AppCompatActivity {
                     jsonObject.put("partyCode", Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, "")));
                     jsonObject.put("checkoutTime", binding.tvCheckOutTime.getText().toString());
                     // jsonObject.put("noOfPerson", binding.editNoOfPerson.getText().toString());
-                    jsonObject.put("noOfPerson", binding.textViewNumber.getText().toString());
+
                     jsonObject.put("updatedDate", JSONObject.NULL);
+
+                    // Guest IDs
+                    JSONArray guestIdsArray = new JSONArray();
+                    List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
+                    for (GuestMasterDetail guest : selectedGuests) {
+                        guestIdsArray.put(guest.getId()); // Assuming GuestMasterDetail has a getId() method
+                    }
+                    jsonObject.put("guestIds", guestIdsArray);
+                    jsonObject.put("noOfPerson", (String.valueOf(selectedGuests.size())));
                     jsonString = jsonObject.toString();
                     System.out.println(jsonString);
 
@@ -1174,6 +1211,7 @@ public class BookingRequestActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Authorization", Constants.SettingHeader());
+                Log.i("TaG", "Token " +Constants.SettingHeader());
                 return headers;
             }
 
@@ -1355,6 +1393,9 @@ public class BookingRequestActivity extends AppCompatActivity {
             sDialog.dismiss();
            binding.tvAccountName.setText(account.getName());
             accountNameId=account.getId();
+            binding.ivGuest.setVisibility(View.VISIBLE);
+            binding.recycler.setVisibility(View.VISIBLE);
+            getGuestList(accountNameId);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(accountListAdapter);
@@ -1541,6 +1582,7 @@ public class BookingRequestActivity extends AppCompatActivity {
             sDialog.dismiss();
             binding.tvNickName.setText(account.getName());
             accountNameId=account.getId();
+            getGuestList(accountNameId);
 
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -1586,4 +1628,159 @@ public class BookingRequestActivity extends AppCompatActivity {
         }
     }
 
+
+    private void getGuestList(String accountId) {
+        String getGuestMasterListByCustomerId="";
+       // getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + "a3b605ba-f20a-4dd5-9544-784ad0243a1f";
+        getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + accountId+ "&partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+    //    getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+
+        String finalGetGuestMasterListByCustomerId = getGuestMasterListByCustomerId;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, getGuestMasterListByCustomerId, response -> {
+            Log.i("TaG", "Response " + finalGetGuestMasterListByCustomerId + "---> " + response);
+            try {
+                guestList.clear();
+                Gson gson = new Gson();
+                GuestMasterResponse bookingResponse = gson.fromJson(response, GuestMasterResponse.class);
+                //   JSONObject jsonObject = new JSONObject(response);
+
+                guestList.addAll(bookingResponse.getGuestMasterDetailList());
+                if(guestList.size()>0){
+                    binding.llGuest.setVisibility(View.VISIBLE);
+                    binding.recycler.setVisibility(View.VISIBLE);
+                    guestListBookingAdapter = new GuestListBookingAdapter(this, guestList,this,checkGuestList,MyConstant.BOOKING_PAGE);
+                    binding.recycler.setAdapter(guestListBookingAdapter);
+
+                    guestListBookingAdapter.notifyDataSetChanged();
+                }else {
+                    binding.llGuest.setVisibility(View.GONE);
+                    binding.recycler.setVisibility(View.GONE);
+                }
+
+
+            } catch (Exception e) {
+                Log.e("Exce", e.toString());
+            }
+
+        }, error -> {
+            Toast.makeText(this, error.getMessage() + "", Toast.LENGTH_LONG).show();
+            Log.e("Volly ", error.getMessage() + "");
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject jsonBody = new JSONObject();
+                try {
+
+//                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
+                    //     jsonBody.put("SupplierAccountID", selectedAccountId);
+
+                    Log.i("TaG", "Request " + STATION_LIST + "---> " + jsonBody);
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
+
+    @Override
+    public void onBookingCancel(int position, GuestMasterDetail data) {
+
+    }
+
+    private void getStayBookingDataById(String recordId, String accountId) {
+        String getGuestMasterListByCustomerId="";
+        getGuestMasterListByCustomerId = GetStayBookingDataById+ "?recordId=" + recordId;
+      //  getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+
+        String finalGetGuestMasterListByCustomerId1 = getGuestMasterListByCustomerId;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, getGuestMasterListByCustomerId, response -> {
+            Log.i("TaG", "Response " + finalGetGuestMasterListByCustomerId1 + "---> " + response);
+
+
+            try {
+
+
+                guestList.clear();
+                Gson gson = new Gson();
+                BookingDetailsResponse pojo = new Gson().fromJson(response, BookingDetailsResponse.class);
+                if (pojo != null && pojo.getStayBookingData() != null) {
+                    BookingDetails bookingData = pojo.getStayBookingData();
+
+                    // Extract guestId and guestIds list
+                  checkGuestList.clear();
+
+                    // Add single guestId if exists
+                    if (bookingData.getGuestId() != null) {
+                        checkGuestList.add(bookingData.getGuestId());
+                    }
+
+                    // Add guestIds list if exists
+                    if (bookingData.getGuestIds() != null && !bookingData.getGuestIds().isEmpty()) {
+                        checkGuestList.addAll(bookingData.getGuestIds());
+                    }
+                    getGuestList(accountId);
+
+                    // Log the result
+                    Log.i("GuestList", "Guest IDs: " + checkGuestList);
+
+                    // Now you have checkGuestList populated with guestId(s)
+                }
+
+            } catch (Exception e) {
+                Log.e("Exce", e.toString());
+            }
+
+        }, error -> {
+            Toast.makeText(this, error.getMessage() + "", Toast.LENGTH_LONG).show();
+            Log.e("Volly ", error.getMessage() + "");
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject jsonBody = new JSONObject();
+                try {
+
+//                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
+                    //     jsonBody.put("SupplierAccountID", selectedAccountId);
+
+                    Log.i("TaG", "Request " + STATION_LIST + "---> " + jsonBody);
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
 }

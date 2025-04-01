@@ -85,7 +85,6 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
                 cancelListener.onBookingCancel(position,datum); // Notify activity
             }
                 }
-
         );
     /*    holder.itemView.setOnClickListener(v->{
             if (datum.getOrderdetail().size()>0) {

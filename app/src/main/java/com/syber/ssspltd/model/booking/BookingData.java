@@ -3,6 +3,8 @@ package com.syber.ssspltd.model.booking;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 public class BookingData implements Parcelable {
     private String id;
     private String companyID;
@@ -16,9 +18,10 @@ public class BookingData implements Parcelable {
     private String accountID;
     private String accountName;
     private String bookingID;
+    private List<String> guestIds;
 
     // Constructor
-    public BookingData(String id, String companyID, String branchID, String checkInDate, String checkInTime, String checkoutDate, String checkoutTime, String noOfPerson, String branchName) {
+    public BookingData(String id, String companyID, String branchID, String checkInDate, String checkInTime, String checkoutDate, String checkoutTime, String noOfPerson, String branchName,List<String> guestIds) {
         this.id = id;
         this.companyID = companyID;
         this.branchID = branchID;
@@ -28,6 +31,7 @@ public class BookingData implements Parcelable {
         this.checkoutTime = checkoutTime;
         this.noOfPerson = noOfPerson;
         this.branchName = branchName;
+        this.guestIds = guestIds;
     }
 
     // Parcelable Implementation
@@ -44,6 +48,7 @@ public class BookingData implements Parcelable {
         accountID = in.readString();
         accountName = in.readString();
         bookingID = in.readString();
+        guestIds = in.createStringArrayList(); // Read guestIds list from Parcel
     }
 
     public static final Creator<BookingData> CREATOR = new Creator<BookingData>() {
@@ -72,6 +77,8 @@ public class BookingData implements Parcelable {
         dest.writeString(accountID);
         dest.writeString(accountName);
         dest.writeString(bookingID);
+        dest.writeStringList(guestIds); // Write guestIds list to Parcel
+
     }
 
     @Override
@@ -92,4 +99,5 @@ public class BookingData implements Parcelable {
     public String getaccountID() { return accountID; }
     public String getaccountName() { return accountName; }
     public String getBookingID() { return bookingID; }
+    public List<String> getGuestIds() { return guestIds; } // Getter for guestIds
 }

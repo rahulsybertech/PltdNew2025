@@ -1,7 +1,6 @@
 package com.syber.ssspltd.adapter.supplierformadapter;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.ORDER_BOOK_GENERATE_PDF;
-import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.UPDATE_ORDER_STATUS;
 
 import android.app.Dialog;
@@ -31,7 +30,9 @@ import com.syber.ssspltd.Interface.RefreshOrderReport;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.CustomToast;
 import com.syber.ssspltd.Utils.Lazy;
+import com.syber.ssspltd.Utils.MyConstant;
 import com.syber.ssspltd.Utils.MyProgress;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.StringUtils;
@@ -126,19 +127,29 @@ public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrder
 
         holder.orderNo.setOnClickListener(v -> {
 
-            if (!datum.getPdfPath().isEmpty()) {
-                boolean isPdf = StringUtils.containsPdf(datum.getPdfPath());
-                if(isPdf){
-                    mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
-                            .putExtra("pdfUrl", datum.getPdfPath()));
-                }else {
-                    Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
-                }
 
-            } else {
-                generatePdf( datum.getRecordId());
-            //    Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
+            if (datum.getOrderStatus().equals("HOLD")){
+              //  CustomToast.show(mContext, "PDF File Not Available", R.mipmap.ic_launcher_sss_logo);
+                Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
+            }else {
+                if (!datum.getPdfPath().isEmpty()) {
+                    boolean isPdf = StringUtils.containsPdf(datum.getPdfPath());
+                    if(isPdf){
+                        mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
+                                .putExtra("pdfUrl", datum.getPdfPath()));
+                    }else {
+
+                     //   CustomToast.show(mContext, "PDF File Not Available", R.mipmap.ic_launcher_sss_logo);
+
+                           Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    generatePdf( datum.getRecordId(),datum.getOrderStatus());
+                    //    Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
+                }
             }
+
         });
     }
 
@@ -234,7 +245,7 @@ public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrder
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
-    private void generatePdf(final String orderID) {
+    private void generatePdf(final String orderID, String orderStatus) {
         final MyProgress progress = new MyProgress(mContext);
         progress.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ORDER_BOOK_GENERATE_PDF, response -> {
@@ -258,9 +269,16 @@ public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrder
                         boolean isPdf = jsonObject.optString("data").toLowerCase().endsWith(".pdf");
 
                         if (isPdf) {
+                            if(orderStatus.equals("HOLD")){
+                                Toast.makeText(mContext, "Order Book Pdf Generated Successfully", Toast.LENGTH_SHORT).show();
+                            }else {
+                                mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
+                                        .putExtra("pdfUrl", jsonObject.optString("data")));
+                            }
+
                             // Open PDF in ViewPDFActivity
-                            mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
-                                    .putExtra("pdfUrl", jsonObject.optString("data")));
+                        /*    mContext.startActivity(new Intent(mContext, ViewPDFActivity.class)
+                                    .putExtra("pdfUrl", jsonObject.optString("data")));*/
                         } else {
                             Toast.makeText(mContext, "PDF File Not Available", Toast.LENGTH_SHORT).show();
                         }
@@ -355,6 +373,7 @@ public class SupplierOrderReportAdptr extends RecyclerView.Adapter<SupplierOrder
                 OrderDetail datum = detailList.get(getAbsoluteAdapterPosition());
                 Intent i = new Intent(mContext, OrderImageActivity.class);
                 i.putExtra("img", datum);
+                i.putExtra(MyConstant.SCREEN,MyConstant.ORDER);
                 Log.e("imgList", new Gson().toJson(datum));
                 mContext.startActivity(i);
             });

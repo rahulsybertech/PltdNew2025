@@ -186,11 +186,14 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     private Dialog sDialog;
     private ActivityResultLauncher<Intent> pickImageLauncher;
     private ActivityResultLauncher<Intent> pickCameraImageLauncher;
-    private String subPartyId = "SELF";
+    private String subPartyId = "";
     private String traceIdentifier = "";
     private String transportResponseMessage = "";
     private String schemeResponseMessage = "";
     private String dispatchTypeID = "";
+    private String tranportID = "";
+    private String stationtID = "";
+
 
     private TransportResponse responseData;
 
@@ -665,6 +668,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         } else if (view.getId() == R.id.clear_transport) {
             binding.transport.setText("");
             binding.clearTransport.setVisibility(View.GONE);
+            binding.clearDispatchType.setVisibility(View.GONE);
 
         } else if (view.getId() == R.id.clear_dispatchType) {
             binding.dispatchType.setText("");
@@ -820,6 +824,12 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         checkAndRequestCameraPermission(reqCode);
 //        ImagePicker.Companion.with(this).cameraOnly().crop().compress(150).start(reqCode);
     }
+    private void pickGalleryImage(int reqCode) {
+        System.out.println("my-request-code " + reqCode);
+        imageRequestCode = reqCode;
+        checkAndRequestPermissions(reqCode);
+        // ImagePicker.Companion.with(this).galleryOnly().compress(150).start(reqCode);
+    }
 
 //    private File createImageFile() throws IOException {
 //        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
@@ -831,12 +841,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
     //changes done by abhinavv to updating the storage permission and customised the code by creating
     //image URI
-    private void pickGalleryImage(int reqCode) {
-        System.out.println("my-request-code " + reqCode);
-        imageRequestCode = reqCode;
-        checkAndRequestPermissions(reqCode);
-        // ImagePicker.Companion.with(this).galleryOnly().compress(150).start(reqCode);
-    }
+
 
 
     public String getStringImage(Bitmap bmp) {
@@ -1497,6 +1502,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         if (subpartyModelList.size() > 0) {
             sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
         }
+        sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
         sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
         if (subdata.size() > 0) {
             filterSubParty(sbData);
@@ -1527,6 +1533,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         subPartyAdapter = new SubPartyAdapter(this, subpartyModelList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(subPartyAdapter);
+
         System.out.println("SUB_PARTY 1 " + selectedAccountId);
       //  getSubParty(selectedAccountId);
         sDialog.show();
@@ -1544,9 +1551,11 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         search = sDialog.findViewById(R.id.search);
         System.out.println("GET_TRANSPORT_LIST " + transportModelList);
         if (!transportModelList.isEmpty()) {
+            transportNoData.setVisibility(View.VISIBLE);
             transportNoData.setVisibility(View.GONE);
             sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
         } else {
+
             transportNoData.setText(transportResponseMessage);
             transportNoData.setVisibility(View.VISIBLE);
             sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
@@ -1770,6 +1779,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         if (stationModelList.size() > 0) {
             sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
         }
+        sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+
         sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
         if (sdata.size() > 0) {
             filterStation(stData);
@@ -1932,15 +1943,24 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                         subPartyAdapter = new SubPartyAdapter(this, subpartyModelList);
                         recyclerView.setLayoutManager(new LinearLayoutManager(this));
                         recyclerView.setAdapter(subPartyAdapter);
+
                         //SubParty
                         subpartyModelList.clear();
                         subpartyModelList.addAll(responseData.getSubPartyList());
                         subPartyAdapter.notifyDataSetChanged();
-                        binding.subParty.setText(responseData.getSubPartyList().get(0).getSubPartyName());
+                  //      binding.subParty.setText(responseData.getSubPartyList().get(0).getSubPartyName());
+                        if (responseData.getSubPartyList().get(0).getSubPartyName().equalsIgnoreCase("self")) {
+                            binding.subParty.setText("SELF");
+                            subPartyId = "SELF";
+                        } else {
+                            binding.subParty.setText(responseData.getSubPartyList().get(0).getSubPartyName());
+                            subPartyId = responseData.getSubPartyList().get(0).getAccountCode();
+                        }
 
 
                         if (responseData.getSubPartyList().get(0).getTransportList() != null && !responseData.getSubPartyList().get(0).getTransportList().isEmpty()) {
 
+                            tranportID=responseData.getSubPartyList().get(0).getTransportList().get(0).getTransportId();
                             binding.transport.setText(responseData.getSubPartyList().get(0).getTransportList().get(0).getTransportName());
                             transportAdapter = new TransportAdapter(this, transportModelList);
                             recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -2057,8 +2077,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     if (responseData.getDispatchTypeList()!= null && !responseData.getDispatchTypeList().isEmpty()) {
                         dispatchTypeList.clear();
                         dispatchTypeList.addAll(responseData.getDispatchTypeList());
-                        binding.dispatchType.setText(responseData.getDispatchTypeList().get(0).getValue());
-                        dispatchTypeID=responseData.getDispatchTypeList().get(0).getId();
+                     //   binding.dispatchType.setText(responseData.getDispatchTypeList().get(0).getValue());
+                      //  dispatchTypeID=responseData.getDispatchTypeList().get(0).getId();
                     }else {
                         dispatchTypeList.clear();
                     }
@@ -2679,12 +2699,15 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         sDialog.dismiss();
         String n = salepartyModel.getName();
         binding.saleParty.setText(salepartyModel.getAccountId() + " " + n);
-        binding.subParty.setText("SELF");
+     //   binding.subParty.setText("SELF");
 
         binding.subParty.setText("");
         binding.bStation.setText("");
         binding.scheme.setText("");
         binding.transport.setText("");
+        tranportID="";
+        subPartyId="";
+        stationtID="";
 
         binding.clearSaleparty.setVisibility(View.VISIBLE);
         binding.clearSubparty.setVisibility(View.VISIBLE);
@@ -2751,6 +2774,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
 
 
+
      /*   String n = responseData.getSubPartyList().get(p).getSubPartyName();
 
         if (responseData.getSubPartyList().get(p).getSubPartyName().equalsIgnoreCase("self")) {
@@ -2798,8 +2822,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             binding.subParty.setText("SELF");
             subPartyId = "SELF";
         } else {
-            binding.subParty.setText(subpartyModel1.getSubPartyName() + " " + n);
-            subPartyId = subpartyModel1.getSubPartyId();
+            binding.subParty.setText(subpartyModel1.getSubPartyName());
+            subPartyId = subpartyModel1.getAccountCode();
         }
 
         if (subpartyModel1.getTransportList() != null && !subpartyModel1.getTransportList().isEmpty()) {
@@ -2809,6 +2833,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 
             String tranport = transportModelList.get(0).getTransportName();
             binding.transport.setText(tranport);
+            tranportID=transportModelList.get(0).getTransportId();
             binding.clearTransport.setVisibility(View.VISIBLE);
             binding.transport.setError(null, null);
 
@@ -2818,6 +2843,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             transportAdapter.notifyDataSetChanged();
             String station = subpartyModel1.getTransportList().get(0).getStationList().get(0).getStationName();
             binding.bStation.setText(station);
+            stationtID=subpartyModel1.getTransportList().get(0).getStationList().get(0).getStationId();
             binding.clearStation.setVisibility(View.VISIBLE);
             binding.bStation.requestFocus();
             binding.bStation.setError(null, null);
@@ -2826,6 +2852,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
             transportModelList.clear();
             stationModelList.clear();
             binding.transport.setText("");
+            tranportID="";
+
             binding.bStation.setText("");
             Log.d("CheckTransportList", "TransportList is either NULL or EMPTY");
         }
@@ -2846,6 +2874,7 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     @Override
     public void setDispatchType(DispatchResponse.DispatchType dispatchType, int p) {
         sDialog.dismiss();
+        binding.clearDispatchType.setVisibility(View.VISIBLE);
         binding.dispatchType.setText(dispatchType.getValue());
         dispatchTypeID=dispatchType.getId();
     }
@@ -2877,6 +2906,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
     public void setStation(StationModel stationModel) {
         sDialog.dismiss();
         String n = stationModel.getStationName();
+
+        binding.clearStation.setVisibility(View.VISIBLE);
         binding.bStation.setText(n);
         binding.clearStation.setVisibility(View.VISIBLE);
         binding.bStation.requestFocus();
@@ -3034,21 +3065,38 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         });
         binding.subParty.setOnClickListener(v -> {
             if (!binding.saleParty.getText().toString().isEmpty()) {
-                subPartyDialog("Select Sub Party");
+                if(subpartyModelList.size()>0){
+                    subPartyDialog("Select Sub Party");
+                }else {
+                    Toast.makeText(mContext, "Subparty list is empty!", Toast.LENGTH_SHORT).show();
+
+                }
+
 
             } else {
                 Toast.makeText(mContext, "Select Sale Party First", Toast.LENGTH_SHORT).show();
             }
         });
         binding.transport.setOnClickListener(v -> {
-            if (binding.saleParty.getText().length() > 0) {
-                transportDialog("Select Transport");
+            if (binding.subParty.getText().length() > 0) {
+                if(transportModelList.isEmpty()){
+                    Toast.makeText(mContext, "Transport List is empty", Toast.LENGTH_SHORT).show();
+                }else {
+                    transportDialog("Select Transport");
+                }
+
             } else {
-                Toast.makeText(mContext, "Select Sale Party First", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Select Subparty First", Toast.LENGTH_SHORT).show();
             }
         });
         binding.bStation.setOnClickListener(v -> {
-            stationDialog("Select Station");
+
+            if (binding.transport.getText().length() > 0) {
+                stationDialog("Select Station");
+            } else {
+                Toast.makeText(mContext, "Select Transport First", Toast.LENGTH_SHORT).show();
+            }
+
         });
         binding.llRow.item.setOnClickListener(v -> itemDialog("Select Item"));
         binding.scheme.setOnClickListener(v -> schmeDialog("Select Scheme"));
@@ -3216,6 +3264,11 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 //            Toast.makeText(mContext, "7", Toast.LENGTH_SHORT).show();
             binding.scroll.smoothScrollTo(binding.bStation.getScrollX(), binding.bStation.getScrollY());
             temp = false;
+        } else if (binding.dispatchType.getText().toString().isEmpty()) {
+            binding.dispatchType.setError("Can't be empty");
+//            Toast.makeText(mContext, "7", Toast.LENGTH_SHORT).show();
+            binding.scroll.smoothScrollTo(binding.dispatchType.getScrollX(), binding.dispatchType.getScrollY());
+            temp = false;
         }
 //
 //        if (binding.scheme.getText().toString().isEmpty()) {
@@ -3363,14 +3416,15 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("AccountID", selectedAccountId);
                     jsonObject.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
-                    jsonObject.put("SubPartyID", SubPartyID);
+                    jsonObject.put("SubPartyID", subPartyId);
                     jsonObject.put("dispatchTypeID", dispatchTypeID);
                     jsonObject.put("Marketer", binding.marketer.getText().toString());
                     jsonObject.put("OrderRatio", selected2Star);
                     jsonObject.put("Lattitude", null);  // null can be directly passed
                     jsonObject.put("Longitude", null);
+             //       jsonObject.put("Transport", binding.transport.getText().toString());
                     jsonObject.put("Transport", binding.transport.getText().toString());
-                    jsonObject.put("TraceIdentifier", binding.transport.getText().toString());
+                    jsonObject.put("TraceIdentifier", traceIdentifier);
                     jsonObject.put("BStation", binding.bStation.getText().toString());
                     jsonObject.put("SupplierNickName", binding.nickName.getText().toString());
                     jsonObject.put("SchemeName", binding.scheme.getText().toString());
@@ -3423,7 +3477,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                 Log.i("TaG", "Request " + SAVE_ORDER + "---> " + jsonString);
                 Util.getInstance().logLargeString("TaG", "Request " + SAVE_ORDER + "---> " + jsonString);
 
-                return jsonString.getBytes();
+               return jsonString.getBytes();
+            //    return "jsonString.getBytes()";
             }
 
             @Override

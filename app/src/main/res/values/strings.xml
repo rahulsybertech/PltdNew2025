@@ -195,5 +195,12 @@ Front page per ek SALE REPORT ka option arha hai us per click kriye apka sale re
       <string name="save">Save</string>
       <string name="no_purchase_no_stay">No Purchase,No Stay</string>
       <string name="update">Update</string>
+      <string name="dispatchtype">DispatchType<font color='#D81B60'>*</font></string>
+      <string name="manage_guest">Manage Guest</string>
+      <string name="add_guest">Add Guest</string>
+      <string name="guest_name">Guest Name</string>
+      <string name="front_side">Front Side</string>
+      <string name="back_side">Back Side</string>
+      <string name="aadhar_card">Aadhar Card</string>
 
 </resources>

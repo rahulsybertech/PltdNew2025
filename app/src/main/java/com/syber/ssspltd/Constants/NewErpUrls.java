@@ -111,5 +111,9 @@ public class NewErpUrls {
     public static String StayBookingTime = DOMAIN + "api/StayBooking/StayBookingTime";
     public static String GetAccountNameList = DOMAIN + "api/StayBooking/GetAccountNameList";
     public static String GetNickNameList = DOMAIN + "api/StayBooking/GetNickNameList";
+    public static String SaveUpdateGuestMasterDetails = DOMAIN + "Api/StayBooking/SaveUpdateGuestMasterDetails";
+    public static String GetGuestMasterListByCustomerId = DOMAIN + "Api/StayBooking/GetGuestMasterListByCustomerId";
+    public static String DeleteGuestMasterData = DOMAIN + "Api/StayBooking/DeleteGuestMasterData";
+    public static String GetStayBookingDataById = DOMAIN + "Api/StayBooking/GetStayBookingDataById";
 
   }
