@@ -60,9 +60,10 @@
                 android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:text="@string/guest_name"
                 android:textColor="@color/black"
-                android:textSize="12dp"
+                android:textSize="14dp"
                 />
             <EditText
                 android:layout_marginStart="15dp"
@@ -71,10 +72,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                android:inputType="textCapWords"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/otp_line"
                 android:drawablePadding="20dp"
-                android:maxLength="10"
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp" />
@@ -91,10 +92,11 @@
                       android:layout_toRightOf="@+id/backBookingList"
                       android:layout_centerVertical="true"
                       android:layout_width="wrap_content"
+                      android:textStyle="bold"
                       android:layout_height="wrap_content"
                       android:text="@string/aadhar_card"
                       android:textColor="@color/black"
-                      android:textSize="12dp"
+                      android:textSize="14dp"
                       />
                   <View
                       android:visibility="gone"
@@ -113,8 +115,6 @@
                   <LinearLayout
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:layout_marginStart="20dp"
-                      android:layout_marginEnd="20dp"
                       android:orientation="horizontal">
 
                         <LinearLayout
@@ -127,6 +127,16 @@
                                   android:layout_width="match_parent"
                                   android:layout_height="140dp"
                                   android:background="@drawable/otp_line">
+                                    <TextView
+                                        android:id="@+id/etFront"
+                                        android:layout_gravity="end"
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:singleLine="true"
+                                        android:enabled="true"
+                                        android:background="@null"
+                                        android:maxLength="10"
+                                        android:paddingBottom="10dp" />
 
                                     <ImageView
                                         android:id="@+id/placeholder1"
@@ -167,9 +177,10 @@
                                   android:layout_width="match_parent"
                                   android:textAlignment="center"
                                   android:layout_height="wrap_content"
+                                  android:textStyle="bold"
                                   android:text="@string/front_side"
                                   android:textColor="@color/black"
-                                  android:textSize="12dp"
+                                  android:textSize="14dp"
                                   />
                         </LinearLayout>
                         <LinearLayout
@@ -182,6 +193,16 @@
                                   android:layout_width="match_parent"
                                   android:layout_height="140dp"
                                   android:background="@drawable/otp_line">
+                                    <TextView
+                                        android:id="@+id/etBack"
+                                        android:layout_gravity="end"
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:singleLine="true"
+                                        android:enabled="true"
+                                        android:background="@null"
+                                        android:maxLength="10"
+                                        android:paddingBottom="10dp" />
 
                                     <ImageView
                                         android:id="@+id/placeholder2"
@@ -223,9 +244,10 @@
                                   android:textAlignment="center"
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
+                                  android:textStyle="bold"
                                   android:text="@string/back_side"
                                   android:textColor="@color/black"
-                                  android:textSize="12dp"
+                                  android:textSize="14dp"
                                   />
                         </LinearLayout>
 

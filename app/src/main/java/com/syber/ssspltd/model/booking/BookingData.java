@@ -17,6 +17,8 @@ public class BookingData implements Parcelable {
     private String branchName;
     private String accountID;
     private String accountName;
+    private String actualCheckInDate;
+    private String actualCheckoutDate;
     private String bookingID;
     private List<String> guestIds;
 
@@ -47,6 +49,8 @@ public class BookingData implements Parcelable {
         branchName = in.readString();
         accountID = in.readString();
         accountName = in.readString();
+        actualCheckInDate = in.readString();
+        actualCheckoutDate = in.readString();
         bookingID = in.readString();
         guestIds = in.createStringArrayList(); // Read guestIds list from Parcel
     }
@@ -76,6 +80,8 @@ public class BookingData implements Parcelable {
         dest.writeString(branchName);
         dest.writeString(accountID);
         dest.writeString(accountName);
+        dest.writeString(actualCheckInDate);
+        dest.writeString(actualCheckoutDate);
         dest.writeString(bookingID);
         dest.writeStringList(guestIds); // Write guestIds list to Parcel
 
@@ -98,6 +104,15 @@ public class BookingData implements Parcelable {
     public String getBranchName() { return branchName; }
     public String getaccountID() { return accountID; }
     public String getaccountName() { return accountName; }
+    public String getActualCheckInDate() { return actualCheckInDate; }
+    public String getActualCheckoutDate() { return actualCheckoutDate; }
     public String getBookingID() { return bookingID; }
     public List<String> getGuestIds() { return guestIds; } // Getter for guestIds
+
+    public void setActualCheckInDate(String currentDateTime) {
+        this.actualCheckInDate = currentDateTime;
+    }
+    public void setActualCheckoutDate(String currentDateTime) {
+        this.actualCheckoutDate = currentDateTime;
+    }
 }

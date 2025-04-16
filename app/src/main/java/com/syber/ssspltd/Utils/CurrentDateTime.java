@@ -39,6 +39,32 @@ public class CurrentDateTime {
         return formattedDate;
     }
 
+    public static String formatDateTimeDDMMYYYY(String input) {
+        // Input format
+        String[] inputFormats = {
+                "yyyy-MM-dd'T'HH:mm:ss",        // e.g., 2025-04-10T17:44:23
+                "yyyy-MM-dd HH:mm:ss.SSS"       // e.g., 2025-04-10 17:44:23.176
+        };
+      //  SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+
+        // Output format
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm a", Locale.getDefault());
+
+        for (String format : inputFormats) {
+            try {
+                SimpleDateFormat inputFormat = new SimpleDateFormat(format, Locale.getDefault());
+                Date date = inputFormat.parse(input);
+                if (date != null) {
+                    return outputFormat.format(date);
+                }
+            } catch (ParseException e) {
+                // Try the next format
+            }
+        }
+
+        return "";
+    }
+
 
 
     private void parseTime(String time12HourFormat) {

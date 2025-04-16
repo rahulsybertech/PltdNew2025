@@ -2,6 +2,8 @@ package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_FY_YEAR_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetGuestMasterListByCustomerId;
+import static com.syber.ssspltd.Constants.NewErpUrls.SwitchFinancialYear;
 import static com.syber.ssspltd.activitys.registered_msg.UsersTyperDetails;
 
 import android.annotation.SuppressLint;
@@ -23,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -36,13 +39,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.StringRequest;
+import com.chuckerteam.chucker.api.Chucker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.Interface.TopicClickListener;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
@@ -69,7 +76,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements TopicClickListener, View.OnTouchListener {
     public static RecyclerView ListRescyler;
-    public static String db_name = "A7", set_year, selectedYr = "2023-24", fy_StartDate, fy_EndDate, def_db;
+    public static String db_name = "A7", set_year, selectedYr = "2023-24", fy_StartDate, fy_EndDate, def_db,id_financial_year;
     private static String checked = "";
     //ShadowGenerator shadowGenerator;
     ImageView popup;
@@ -123,6 +130,11 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
 
 //        Toast.makeText(mContext, SharedPref.read(SharedPref.PARTY_CODE,""), Toast.LENGTH_SHORT).show();
 
+       /* if( SharedPref.read(SharedPref.DB_NAME, "").equals("")){
+            SharedPref.write(SharedPref.DB_NAME, "2025-2026");
+        }else {
+
+        }*/
 
         if (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("DIAMOND")) {
             sssLogo.setImageDrawable(getDrawable(R.mipmap.ic_launcher__new_diamond));
@@ -466,18 +478,26 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
 //              Log.e("FYearListResult",e.isChecked()+"0");
 //          });
 
-            SharedPref.write(SharedPref.default_db, def_db);
-            SharedPref.write(SharedPref.DB_NAME, db_name);
-            SharedPref.write(SharedPref.SET_YEAR, set_year);
-            Log.e("dh", db_name + "null");
-            SharedPref.write(SharedPref.selected_default_yr, selectedYr);
-            SharedPref.write(SharedPref.FY_StartDate, fy_StartDate);
-            SharedPref.write(SharedPref.FY_EndDate, fy_EndDate);
-            loadFragment(new HomeFragment());
-            fYearAdapter.notifyDataSetChanged();
+            if (MainActivity.id_financial_year != null && !MainActivity.id_financial_year.isEmpty()) {
+                switchFinancialYear(MainActivity.id_financial_year);
+                SharedPref.write(SharedPref.default_db, def_db);
+                SharedPref.write(SharedPref.DB_NAME, db_name);
+                SharedPref.write(SharedPref.SET_YEAR, set_year);
+                Log.e("dh", db_name + "null");
+                SharedPref.write(SharedPref.selected_default_yr, selectedYr);
+                SharedPref.write(SharedPref.FY_StartDate, fy_StartDate);
+                SharedPref.write(SharedPref.FY_EndDate, fy_EndDate);
+                loadFragment(new HomeFragment());
+                //     switchFinancialYear();
+                fYearAdapter.notifyDataSetChanged();
 //                Intent intent= new Intent(getApplicationContext(),MainActivity.class);
 //                startActivity(intent);
-            alertDialog.dismiss();
+                alertDialog.dismiss();
+            } else {
+                Toast.makeText(this, "Please select year", Toast.LENGTH_SHORT).show();
+            }
+
+
 
 
         });
@@ -487,6 +507,62 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                 alertDialog.dismiss()
         );
         alertDialog.show();
+    }
+
+    private void switchFinancialYear(String id_financial_year) {
+     String   SwitchFinancialYearByID = SwitchFinancialYear+ "?finYearId=" + id_financial_year;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, SwitchFinancialYearByID, response -> {
+            Log.i("TaG", "Response " + SwitchFinancialYearByID + "---> " + response);
+            try {
+                JSONObject jsonResponse = new JSONObject(response);  // Use the actual response JSON
+                if (jsonResponse.has("AccessToken")) {
+                    String accessToken = jsonResponse.getString("AccessToken");
+                    SharedPref.write(SharedPref.ACCCESS_TOKEN, accessToken);
+                    Log.i("AccessToken", "Token saved: " + accessToken);
+                } else {
+                    Log.e("AccessToken", "AccessToken key not found in response");
+                }
+                // stationAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Log.e("Exce", e.toString());
+            }
+
+        }, error -> {
+            Toast.makeText(this, error.getMessage() + "", Toast.LENGTH_LONG).show();
+            Log.e("Volly ", error.getMessage() + "");
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject jsonBody = new JSONObject();
+                try {
+
+//                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
+                    //     jsonBody.put("SupplierAccountID", selectedAccountId);
+
+                    Log.i("TaG", "Request " + SwitchFinancialYear + "---> " + jsonBody);
+                    return jsonBody.toString().getBytes("utf-8");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
     }
 
 
@@ -609,7 +685,9 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                             }
                         }
                         fYearListResults.addAll(pojo.getFYearListResult());
-                        if (fYearAdapter != null) fYearAdapter.notifyDataSetChanged();
+                        if (fYearAdapter != null)
+                            fYearAdapter.notifyDataSetChanged();
+
 
                     }
 

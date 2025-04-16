@@ -84,14 +84,16 @@ public class HomeFragment extends Fragment {
             , "Customer Review", "Club Features", "Stay Booking","Honhar Khiladi"};
    /* String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service", "Why SSS", "Brands"
             , "Customer Review", "Club Features","Honhar Khiladi"};*/
-  //  String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24", "26","25"};
+ //   String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24", "26","25"};
     String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24","26","25"};
     Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
             , R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten,
-            R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_nine, R.drawable.button_two,R.drawable.button_thirteen};
-/*    Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
+            R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_nine,
+            R.drawable.button_two,R.drawable.button_thirteen};
+    /*Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
             , R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten,
-            R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_nine,R.drawable.button_thirteen};*/
+            R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve,
+            R.drawable.button_nine,R.drawable.button_thirteen};*/
     String[] list_newuser = {"Why SSS", "Branches", "Brands", "Offers", "Customer Review", "Gallery", "Bank Details", "Feedback", "Apply KYC", "DashBoard", "Ledger"
             , "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service"};
     String[] newuser_onclickId = {"12", "14", "13", "21", "16", "15", "18", "19", "17", "20", "5", "1", "6", "7", "8", "9", "10", "11", "4"};
@@ -100,11 +102,11 @@ public class HomeFragment extends Fragment {
             R.drawable.button_grey, R.drawable.button_three};
 
     String[] list3_name = {"Why SSS", "Ledger", "Brands", "Customer Review","Stay Booking"};
-   // String[] list3_name = {"Why SSS", "Ledger", "Brands", "Customer Review"};
+  //  String[] list3_name = {"Why SSS", "Ledger", "Brands", "Customer Review"};
     String[] list3_onclickId = {"12", "1", "13", "16","26"};
-   // String[] list3_onclickId = {"12", "1", "13", "16"};
+  //  String[] list3_onclickId = {"12", "1", "13", "16"};
     Integer list3_Img[] = {R.drawable.button_two, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve,R.drawable.button_two};
-   // Integer list3_Img[] = {R.drawable.button_two, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve};
+ //   Integer list3_Img[] = {R.drawable.button_two, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve};
     String[] list4_name = {"Kavita"};
     String[] list4_onclickId = {"1"};
     Integer list4_Img[] = {R.drawable.button_one};

@@ -83,9 +83,14 @@ public class OrderImageActivity extends AppCompatActivity {
 
                     // Add back image if available
                     if (imgList.getBackDocPath() != null) {
-                        ImageList backImage = new ImageList();
-                        backImage.setImagepath(imgList.getBackDocPath());
-                        galleryList.add(backImage);
+                        if(imgList.getBackDocPath().equals("")){
+
+                        }else {
+                            ImageList backImage = new ImageList();
+                            backImage.setImagepath(imgList.getBackDocPath());
+                            galleryList.add(backImage);
+                        }
+
                     }
                 }
                 galleryAdapter = new OrderImageAdapter(mContext, galleryList);

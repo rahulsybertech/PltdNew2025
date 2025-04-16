@@ -54,6 +54,7 @@ import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.CurrentDateTime;
 import com.syber.ssspltd.Utils.Lazy;
+import com.syber.ssspltd.Utils.MyConstant;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.LedgerReportAdapter;
@@ -89,6 +90,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
     public static String startYear, endYear;
     public static TextView count_aduj, count_account, count_entry;
     public static String entry = "", tickforPdf = "";
+    public static String mEndDate = "",mStartDate="";
     static List<LedgerReportResult> LedgerReportDetails;
     Context mContext = this;
     LinearLayout llRange;
@@ -167,16 +169,21 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             Intent intent = getIntent();
             if (intent != null) {
                 if (intent.getStringExtra("ledgerDate") != null || intent.getStringExtra("ledger_ToDate") != null) {
+
                     GetLedgerReport(intent.getStringExtra("ledgerDate"), intent.getStringExtra("ledger_ToDate"), intent.getStringExtra("entry"), intent.getStringExtra("adjustment"), dnNAME, intent.getStringExtra("account"), true);
 //                    GetLedgerReport("",
 //                           "", intent.getStringExtra("entry")
 //                            , intent.getStringExtra("adjustment"), dnNAME, intent.getStringExtra("account"), true);
                 } else {
                     if (isSetFYDate()) {
+                        if(dnNAME.equals("")){
+                            dnNAME="2025-2026";
+                        }
 //                        GetLedgerReport(StartDate_filter, Enddate_filter, "", adjustment, dnNAME, account, false);
                         GetLedgerReport("", "", "", adjustment, dnNAME, account, false);
 
                     } else {
+                        dnNAME="2025-2026";
 //                        GetLedgerReport(led_formDate, led_toDate, "", adjustment, dnNAME, account, false);
                         GetLedgerReport("", "", "", adjustment, dnNAME, account, false);
 
@@ -231,7 +238,10 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
     }
 
     private Boolean isSetFYDate() {
-        if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
+        if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2025-2026")) {
+            StartDate_filter = "01/04/2025";
+            Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
+        } if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
             StartDate_filter = "01/04/2024";
             Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
         } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-2024")) {
@@ -283,6 +293,8 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                     /*StartDate_filter = pojo.getmDefaultStartDate();
                     Enddate_filter = pojo.getmDefaultEndDate();*/
                     // Enddate_filter = pojo.getEnddate();
+                    mEndDate=pojo.getmDefaultEndDate();
+                    mStartDate=pojo.getmDefaultStartDate();
                     SharedPref.write(SharedPref.END_DATE, pojo.getEnddate());
                     SharedPref.write(SharedPref.START_DATE, pojo.getStartDate());
                     if (!isisFilterApplied) {
@@ -339,7 +351,10 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                         }
                     }
                     Log.i("TaG", "ledger fy data -===========================>" + SharedPref.read(SharedPref.selected_default_yr, ""));
-                    if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
+                    if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2025-2026")) {
+                        StartDate_filter = "01/04/2025";
+                        Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
+                    } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2024-2025")) {
                         StartDate_filter = "01/04/2024";
                         Enddate_filter = CurrentDateTime.getCurrentDateDDMMYYY();
                     } else if (SharedPref.read(SharedPref.selected_default_yr, "").equals("2023-2024")) {
@@ -363,6 +378,8 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
                     binding.currentBalLeg.setText(open_bla);
                     binding.closingBal.setText(clos_bla);
                     // Enddate_filter = pojo.getEnddate();
+                    mEndDate=pojo.getmDefaultEndDate();
+                    mStartDate=pojo.getmDefaultStartDate();
                     SharedPref.write(SharedPref.END_DATE, pojo.getEnddate());
                     SharedPref.write(SharedPref.START_DATE, pojo.getStartDate());
 
@@ -397,6 +414,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
 
             @Override
             public byte[] getBody() throws AuthFailureError {
+
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
                 String str = "{\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"FROMDATE\":\"" + formDate + "\",\"TODATE\":\"" + toDate + "\",\"Status\":\"" + status + "\"" + ",\"AVGDATE\":\"" + "null" + "\",\"TICK\":\"" + tick + "\",\"DBNAME\":\"" + db_name + "\",\"LEDGERTYPE\":\"" + ledger_type + "\"}";
                 Log.e("str", str);
@@ -539,9 +557,14 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
         Log.i("TaG", "00000000000000000000");
         if (led_formDate.equals("null") && led_toDate.equals("null")) {
             Log.i("TaG", "11111111111111111111111111111111");
-            ledger_FromDate.setText(StartDate_filter);
-            ledger_ToDate.setText(Enddate_filter);
-        } else {
+
+        /*    ledger_FromDate.setText(StartDate_filter);
+            ledger_ToDate.setText(Enddate_filter);*/
+
+            ledger_FromDate.setText(mStartDate);
+            ledger_ToDate.setText(mEndDate);
+        }
+        else {
             Log.i("TaG", "2222222222222222222222");
             SimpleDateFormat spf = new SimpleDateFormat("dd/MM/yyyy");
             Date newDate = null;

@@ -13,7 +13,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,10 +30,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -41,21 +49,29 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Constants;
+import com.syber.ssspltd.Utils.ImageHelper;
 import com.syber.ssspltd.Utils.MyConstant;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.SnackbarUtils;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.GuestListBookingAdapter;
+import com.syber.ssspltd.adapter.supplierformadapter.OrderImageAdapter;
 import com.syber.ssspltd.databinding.ActivityAddGuestInBookingBinding;
 import com.syber.ssspltd.model.booking.branchlist.GuestMasterDetail;
 import com.syber.ssspltd.model.booking.branchlist.GuestMasterResponse;
+import com.syber.ssspltd.response.SupplierOrderReport.ImageList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +79,10 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,6 +93,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import ru.tinkoff.scrollingpagerindicator.ScrollingPagerIndicator;
+
 public class AddGuestInBookingActivity extends AppCompatActivity {
     private ActivityAddGuestInBookingBinding binding;
     private ActivityResultLauncher<Intent> pickCameraImageLauncher;
@@ -81,6 +102,8 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
     Uri photoURI;
     static Uri imgUri;
     static Bitmap bitmap;
+    private  String isPlaceHolderSelect="1";
+    private  String guestId="";
     ArrayList<GuestMasterDetail> guestList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,36 +114,308 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
 
 
         initUi();
+/*        // Initialize the launcher
+        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            //getting status code for all images - 1
+            System.out.println("GETTING_REQUEST_CODE = " + result.getResultCode() + ", "
+                    + "DATA = " + result.getData().getData() + ", " + imageRequestCode);
+            // here code is used for only image 1
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                imgUri = result.getData().getData();
+                // Use the selected image URI
+                System.out.println("MY_NEW_IMAGE_URI " + imgUri);
+
+                if (imageRequestCode == 101) {
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        System.out.println("MY_YOUNG_BITMAP : " + bitmap);
+                        binding.image1.setImageBitmap(bitmap);
+
+                        img_string = getStringImage(bitmap);
+                        System.out.println("getting_my_test_image " + img_string);
+                        // binding.removeFront.setVisibility(View.VISIBLE);
+                        byte[] imageInByte = stream.toByteArray();
+                        imgFlag = true;
+                        binding.image1.setVisibility(View.VISIBLE);
+                        binding.removeImage1.setVisibility(View.VISIBLE);
+                        binding.progress1.setVisibility(View.GONE);
+                    } catch (Exception e) {
+                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                        Log.e("bit", e.toString());
+                        imgFlag = false;
+                        binding.image1.setVisibility(View.GONE);
+                        binding.removeImage1.setVisibility(View.GONE);
+                        binding.progress1.setVisibility(View.GONE);
+                        binding.placeholder1.setVisibility(View.VISIBLE);
+                    }
+                } else if (imageRequestCode == 102) {
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        binding.image2.setImageBitmap(bitmap);
+                        img_string2 = getStringImage(bitmap);
+                        byte[] imageInByte = stream.toByteArray();
+                        long lengthbmp = imageInByte.length;
+                        Log.e("img2", lengthbmp + "");
+                        Log.e("kb3", String.format("Size : %s", getReadableFileSize(lengthbmp)));
+                        //  Log.e("img_string2", img_string2 + "");
+                        //Toast.makeText(mContext, "Img2", Toast.LENGTH_SHORT).show();
+                        imgFlag = true;
+                        binding.image2.setVisibility(View.VISIBLE);
+                        binding.removeImage2.setVisibility(View.VISIBLE);
+                        binding.placeholder2.setVisibility(View.GONE);
+                    } catch (Exception e) {
+                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                        Log.e("bit", e.toString());
+                        imgFlag = false;
+                        binding.image2.setVisibility(View.GONE);
+                        binding.removeImage2.setVisibility(View.GONE);
+                        binding.progress2.setVisibility(View.GONE);
+                        binding.placeholder2.setVisibility(View.VISIBLE);
+                    }
+                }
+
+            }
+        });
+
+        pickCameraImageLauncher = registerForActivityResult(new ActivityResultContracts.
+                StartActivityForResult(), result -> {
+            //getting status code for all images - 1
+            // URI is correct, 101
+            System.out.println("GETTING_REQUEST_CODE_Camera = " + photoURI + ", "
+                    + cameraRequestCode);
+            // here code is used for only image 1
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                // Use the selected image URI
+                System.out.println("MY_NEW_IMAGE_URI " + photoURI);
+
+                if (cameraRequestCode == 101) {
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        System.out.println("MY_YOUNG_BITMAP : " + bitmap);
+                        binding.image1.setImageBitmap(bitmap);
+
+                        img_string = getStringImage(bitmap);
+                        System.out.println("getting_my_test_image " + img_string);
+                        // binding.removeFront.setVisibility(View.VISIBLE);
+                        byte[] imageInByte = stream.toByteArray();
+                        imgFlag = true;
+                        binding.image1.setVisibility(View.VISIBLE);
+                        binding.removeImage1.setVisibility(View.VISIBLE);
+                        binding.progress1.setVisibility(View.GONE);
+                    } catch (Exception e) {
+                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                        Log.e("bit", e.toString());
+                        imgFlag = false;
+                        binding.image1.setVisibility(View.GONE);
+                        binding.removeImage1.setVisibility(View.GONE);
+                        binding.progress1.setVisibility(View.GONE);
+                        binding.placeholder1.setVisibility(View.VISIBLE);
+                    }
+                } else if (cameraRequestCode == 102) {
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        binding.image2.setImageBitmap(bitmap);
+                        img_string2 = getStringImage(bitmap);
+                        byte[] imageInByte = stream.toByteArray();
+                        long lengthbmp = imageInByte.length;
+                        Log.e("img2", lengthbmp + "");
+                        Log.e("kb3", String.format("Size : %s", getReadableFileSize(lengthbmp)));
+                        //  Log.e("img_string2", img_string2 + "");
+                        //Toast.makeText(mContext, "Img2", Toast.LENGTH_SHORT).show();
+                        imgFlag = true;
+                        binding.image2.setVisibility(View.VISIBLE);
+                        binding.removeImage2.setVisibility(View.VISIBLE);
+                        binding.placeholder2.setVisibility(View.GONE);
+                    } catch (Exception e) {
+                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                        Log.e("bit", e.toString());
+                        imgFlag = false;
+                        binding.image2.setVisibility(View.GONE);
+                        binding.removeImage2.setVisibility(View.GONE);
+                        binding.progress2.setVisibility(View.GONE);
+                        binding.placeholder2.setVisibility(View.VISIBLE);
+                    }
+                }
+
+            }
+        });*/
     }
 
     private void initUi() {
+
+
+        List<ImageList> galleryList = new ArrayList<>();
+        Intent extra = getIntent();
+
+        if(getIntent().getStringExtra(MyConstant.SCREEN).equals(MyConstant.ADDREQUEQEST)){
+            if (extra != null) {
+
+                if (extra.getStringExtra(MyConstant.SCREEN).equals(MyConstant.ADDREQUEQEST)) {
+                    String imgListJson = getIntent().getStringExtra("imgList");
+                    // If imgList is an object, convert back from JSON
+                    Gson gson = new Gson();
+                    GuestMasterDetail imgList = gson.fromJson(imgListJson, GuestMasterDetail.class);
+
+
+
+                    // Add front image if available
+                    if (imgList != null) {
+                        guestId=imgList.getId();
+                        binding.guestName.setText(imgList.getGuestName());
+
+                        if (imgList.getFrontDocPath() != null) {
+
+
+                      /*      Glide.with(this)
+                                    .load("https://images.ssspltd.com/SyberERP/IMAGES//6ecf6d4e-7dc1-4b76-a3f7-0187303b9b581_FrontImage.jpg")
+                                    .placeholder(R.drawable.ic_supermarket)
+                                    .into(binding.image1);*/
+                            ImageHelper.imageUrlToBase64(imgList.getFrontDocPath(), new ImageHelper.Base64Callback() {
+                                @Override
+                                public void onResult(String base64) {
+                                    if (base64 != null) {
+                                        img_string=base64;
+                                        runOnUiThread(() -> {
+                                            binding.image1.setImageBitmap(base64ToBitmap(img_string));
+                                        });
+
+                                        Log.d("Base64", base64);
+                                        // use the base64 string here
+                                    } else {
+                                        Log.e("Base64", "Conversion failed");
+                                    }
+                                }
+                            });
+
+
+
+
+
+                        }else {
+                            img_string="";
+                        }
+
+                        if (imgList.getFrontDocPath() != null) {
+                            ImageList frontImage = new ImageList();
+                            frontImage.setImagepath(imgList.getFrontDocPath());
+                            galleryList.add(frontImage);
+                        }
+
+                        // Add back image if available
+                        if (imgList.getBackDocPath() != null) {
+                         /*   Glide.with(this)
+                                    .load(imgList.getBackDocPath())
+                                    .placeholder(R.drawable.ic_supermarket)
+                                    .listener(new RequestListener<>() {
+                                        @Override
+                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+//                        holder.iamge_list.setVisibility(View.VISIBLE);
+//                        Log.e("GlideException",e.toString());
+                                            return false;
+                                        }
+                                        @Override
+                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+//                        holder.iamge_list.setVisibility(View.VISIBLE);
+//                        Toast.makeText(mContext, "success", Toast.LENGTH_SHORT).show();
+                                            return false;
+                                        }
+                                    })
+                                    .into(binding.image2);*/
+                            ImageList backImage = new ImageList();
+                            backImage.setImagepath(imgList.getBackDocPath());
+                            galleryList.add(backImage);
+                            if(!imgList.getBackDocPath().equals("") ){
+                                ImageHelper.imageUrlToBase64(imgList.getBackDocPath(), new ImageHelper.Base64Callback() {
+                                    @Override
+                                    public void onResult(String base64) {
+                                        if (base64 != null) {
+                                            img_string=base64;
+                                            runOnUiThread(() -> {
+                                                binding.image2.setImageBitmap(base64ToBitmap(img_string));
+                                            });
+
+                                            Log.d("Base64", base64);
+                                            // use the base64 string here
+                                        } else {
+                                            Log.e("Base64", "Conversion failed");
+                                        }
+                                    }
+                                });
+                            }
+
+                        }else {
+                            img_string2="";
+                        }
+                    }
+
+                }
+            }
+            guestList = new ArrayList<>();
+            String account_id = getIntent().getStringExtra(MyConstant.ACCOUNT_ID);
+        }else {
+
+        }
+
+     /*   binding.image1.setOnClickListener(v ->
+
+                BottomSheet(101));*/
+     /*   binding.image2.setOnClickListener(v ->
+                BottomSheet(102));*/
         guestList = new ArrayList<>();
         String account_id = getIntent().getStringExtra(MyConstant.ACCOUNT_ID);
-        binding.image1.setOnClickListener(v -> BottomSheet(101));
-        binding.save.setOnClickListener(v -> sendData());
+        binding.save.setOnClickListener(v -> {
+            if(validate()){
+                sendData();
+            }
+        });
+
+
+
         binding.backBookingList.setOnClickListener(v -> finish());
         binding.tvManageGuest.setOnClickListener(v ->
                 clickManageGuest()
 
         );
-        getGuestList(account_id);
+        //   getGuestList(account_id);
 
     }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String account_id = getIntent().getStringExtra(MyConstant.ACCOUNT_ID);
+        getGuestList(account_id);
+    }
+    public Bitmap base64ToBitmap(String base64Str) {
+        byte[] decodedBytes = Base64.decode(base64Str, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
     private void clickManageGuest(){
         if(guestList.size()>0){
             startActivity(  new Intent(this,GuestListBookingActivity.class)
                     .putExtra(MyConstant.ACCOUNT_ID,getIntent().getStringExtra(MyConstant.ACCOUNT_ID))
             );
         }else {
-            SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "No data found.");
-        //    Toast.makeText(this, "No data found." + "", Toast.LENGTH_LONG).show();
+            SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "No data in list.");
+            //    Toast.makeText(this, "No data found." + "", Toast.LENGTH_LONG).show();
         }
 
     }
     private void getGuestList(String account_id) {
         String getGuestMasterListByCustomerId="";
         getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + account_id+ "&partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
-  //      getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+        //      getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
         String finalGetGuestMasterListByCustomerId = getGuestMasterListByCustomerId;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, getGuestMasterListByCustomerId, response -> {
             Log.i("TaG", "Response " + finalGetGuestMasterListByCustomerId + "---> " + response);
@@ -182,13 +477,13 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-;
+        ;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, SaveUpdateGuestMasterDetails, response -> {
             Util.getInstance().logLargeString("TaG", "Response " + SaveUpdateGuestMasterDetails + "---> " + response);
             Log.i("TaG", "Response " + SaveUpdateGuestMasterDetails  +"---> " + response);
 
             try {
-             /*   {"ResponseCode":200,"ResponseStatus":true,"ResponseMessage":"Data Saved Successfully!!","BookingTime":0}*/
+                /*   {"ResponseCode":200,"ResponseStatus":true,"ResponseMessage":"Data Saved Successfully!!","BookingTime":0}*/
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getInt("ResponseCode") == 200) {
                     progressDialog.dismiss();
@@ -241,6 +536,7 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                         public void onClick(DialogInterface arg0, int arg1) {
                             // Dismiss the progress dialog and retry sending data
                             progressDialog.dismiss();
+
                             sendData();
                         }
                     })
@@ -282,8 +578,8 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                             "nameCount": 0
                     }*/
 
-                   /* if (isEditMode) {
-                        *//*jsonObject.put("id",bookingData.getId() );*//*
+                    /* if (isEditMode) {
+                     *//*jsonObject.put("id",bookingData.getId() );*//*
 
                         String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
                         if(userType.equals("Other")){
@@ -312,7 +608,12 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
 
 
 
-                    jsonObject.put("id", JSONObject.NULL);
+                    if(guestId.isEmpty()){
+                        jsonObject.put("id", JSONObject.NULL);
+                    }else {
+                        jsonObject.put("id", guestId);
+                    }
+
                     if(getIntent().getStringExtra(MyConstant.ACCOUNT_ID).isEmpty()){
                         jsonObject.put("accountID", JSONObject.NULL);
                     }else {
@@ -322,7 +623,18 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                     jsonObject.put("partyCode", SharedPref.read(SharedPref.PARTY_CODE, ""));
                     jsonObject.put("guestName", binding.guestName.getText().toString());
                     jsonObject.put("frontDocPath", img_string);
-                    jsonObject.put("backDocPath", img_string2);
+
+                    if(img_string2!=null){
+                        if(img_string2.equals("")){
+                            jsonObject.put("backDocPath", JSONObject.NULL);
+                        }else {
+                            jsonObject.put("backDocPath", img_string2);
+                        }
+                    }else {
+                        jsonObject.put("backDocPath", JSONObject.NULL);
+                    }
+
+
                     jsonObject.put("activeStatus", true);
                     jsonString = jsonObject.toString();
                     System.out.println(jsonString);
@@ -357,6 +669,29 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
+
+    private boolean validate() {
+        boolean temp = true;
+        if (binding.guestName.getText().toString().isEmpty()) {
+            binding.guestName.setError("Can't be empty");
+            Toast.makeText(this, "Please enter a guest name!", Toast.LENGTH_SHORT).show();
+            return false;
+        } if (img_string == null || img_string.isEmpty()) {
+            binding.etFront.setError("");
+            Toast.makeText(this, "Please select front side image!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+     /*   if (img_string2 == null || img_string2.isEmpty()) {
+            binding.etBack.setError("");
+
+            Toast.makeText(this, "Please select back side image!", Toast.LENGTH_SHORT).show();
+            return false;
+        }*/
+        return temp;
+
+    }
+
     private void BottomSheet(int ReqCode) {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.image_picker_bottom_sheet, null);
         BottomSheetDialog dialog = new BottomSheetDialog(this);
@@ -366,31 +701,37 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
 
         fromCamera.setOnClickListener(v -> {
             dialog.cancel();
-            if (ReqCode == 101) {
+            if (isPlaceHolderSelect.equals("1")) {
                 binding.progress1.setVisibility(View.VISIBLE);
                 binding.placeholder1.setVisibility(View.GONE);
-            }
-            if (ReqCode == 102) {
+            }else
+            {
                 binding.progress2.setVisibility(View.VISIBLE);
                 binding.placeholder2.setVisibility(View.GONE);
             }
-            pickCameraImage(ReqCode);
+            launchCamera(101);
+         //   pickImageFromCamera(101);
+             // pickCameraImage(ReqCode);
         });
         fromGallery.setOnClickListener(v -> {
 
             dialog.cancel();
-            if (ReqCode == 101) {
-                binding.progress1.setVisibility(View.VISIBLE);
-                binding.placeholder1.setVisibility(View.GONE);
-            }
-            if (ReqCode == 102) {
+            if (isPlaceHolderSelect.equals("2")) {
                 binding.progress2.setVisibility(View.VISIBLE);
                 binding.placeholder2.setVisibility(View.GONE);
+
+            }
+            else  {
+                binding.progress1.setVisibility(View.VISIBLE);
+                binding.placeholder1.setVisibility(View.GONE);
             }
 
 
 //            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
-            pickGalleryImage(ReqCode);
+            launchGallery(102);
+      //      pickImageFromGallery(102);
+            //    launchGallery(ReqCode);
+            //  pickGalleryImage(ReqCode);
 //            }
 
         });
@@ -427,8 +768,10 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
     public void placeholderClick(View view) {
         int id = view.getId();
         if (id == R.id.placeholder1) {
+            isPlaceHolderSelect="1";
             BottomSheet(101);
         } else if (id == R.id.placeholder2) {
+            isPlaceHolderSelect="2";
             BottomSheet(102);
         } else if (id == R.id.placeholder3) {
             BottomSheet(103);
@@ -450,6 +793,7 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
         System.out.println("my-request-code " + reqCode);
         imageRequestCode = reqCode;
         checkAndRequestPermissions(reqCode);
+
         // ImagePicker.Companion.with(this).galleryOnly().compress(150).start(reqCode);
     }
     private static final int REQUEST_CODE = 100;
@@ -576,19 +920,47 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                         bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        binding.image1.setImageBitmap(bitmap);
+                        if (isPlaceHolderSelect.equals("1")){
+                            binding.image1.setImageBitmap(bitmap);
+                            img_string = getStringImage(bitmap);
+                            binding.etFront.setError("",null);
+                            System.out.println("");
+                            // binding.removeFront.setVisibility(View.VISIBLE);
+                            byte[] imageInByte = stream.toByteArray();
+                            imgFlag = true;
+                            binding.image1.setVisibility(View.VISIBLE);
+                            binding.removeImage1.setVisibility(View.VISIBLE);
+                            binding.progress1.setVisibility(View.GONE);
+                        }else {
+                            binding.image2.setImageBitmap(bitmap);
+                            img_string2 = getStringImage(bitmap);
+                            binding.etBack.setError("",null);
+                            byte[] imageInByte = stream.toByteArray();
+                            long lengthbmp = imageInByte.length;
+                            Log.e("img2", lengthbmp + "");
+                            Log.e("kb3", String.format("Size : %s", getReadableFileSize(lengthbmp)));
+                            //  Log.e("img_string2", img_string2 + "");
+                            //Toast.makeText(mContext, "Img2", Toast.LENGTH_SHORT).show();
+                            imgFlag = true;
+                            binding.image2.setVisibility(View.VISIBLE);
+                            binding.removeImage2.setVisibility(View.VISIBLE);
+                            binding.placeholder2.setVisibility(View.GONE);
+                        }
+                   /*     binding.image1.setImageBitmap(bitmap);
                         img_string = getStringImage(bitmap);
+                        binding.etFront.setError("",null);
                         System.out.println("");
                         // binding.removeFront.setVisibility(View.VISIBLE);
                         byte[] imageInByte = stream.toByteArray();
                         imgFlag = true;
                         binding.image1.setVisibility(View.VISIBLE);
                         binding.removeImage1.setVisibility(View.VISIBLE);
-                        binding.progress1.setVisibility(View.GONE);
+                        binding.progress1.setVisibility(View.GONE);*/
 
                     } catch (Exception e) {
                         Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                         Log.e("bit", e.toString());
+
                         imgFlag = false;
                         binding.image1.setVisibility(View.GONE);
                         binding.removeImage1.setVisibility(View.GONE);
@@ -596,17 +968,36 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                         binding.placeholder1.setVisibility(View.VISIBLE);
                     }
                 } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                    binding.image1.setVisibility(View.GONE);
-                    binding.removeImage1.setVisibility(View.GONE);
-                    binding.progress1.setVisibility(View.GONE);
-                    binding.placeholder1.setVisibility(View.VISIBLE);
-                    Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
+
+                    if (isPlaceHolderSelect.equals("1")){
+                        binding.image1.setVisibility(View.GONE);
+                        binding.removeImage1.setVisibility(View.GONE);
+                        binding.progress1.setVisibility(View.GONE);
+                        binding.placeholder1.setVisibility(View.VISIBLE);
+                        Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
+                        binding.image2.setVisibility(View.GONE);
+                        binding.removeImage2.setVisibility(View.GONE);
+                        binding.progress2.setVisibility(View.GONE);
+                        binding.placeholder2.setVisibility(View.VISIBLE);
+                    }
+
                 } else {
-                    binding.image1.setVisibility(View.GONE);
-                    binding.removeImage1.setVisibility(View.GONE);
-                    binding.progress1.setVisibility(View.GONE);
-                    binding.placeholder1.setVisibility(View.VISIBLE);
-                    Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                    if (isPlaceHolderSelect.equals("1")){
+                        binding.image1.setVisibility(View.GONE);
+                        binding.removeImage1.setVisibility(View.GONE);
+                        binding.progress1.setVisibility(View.GONE);
+                        binding.placeholder1.setVisibility(View.VISIBLE);
+                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                    }else {
+                        binding.image2.setVisibility(View.GONE);
+                        binding.removeImage2.setVisibility(View.GONE);
+                        binding.progress2.setVisibility(View.GONE);
+                        binding.placeholder2.setVisibility(View.VISIBLE);
+                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
             if (requestCode == 102) {
@@ -616,18 +1007,33 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                         bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        binding.image2.setImageBitmap(bitmap);
-                        img_string2 = getStringImage(bitmap);
-                        byte[] imageInByte = stream.toByteArray();
-                        long lengthbmp = imageInByte.length;
-                        Log.e("img2", lengthbmp + "");
-                        Log.e("kb3", String.format("Size : %s", getReadableFileSize(lengthbmp)));
-                        //  Log.e("img_string2", img_string2 + "");
-                        //Toast.makeText(mContext, "Img2", Toast.LENGTH_SHORT).show();
-                        imgFlag = true;
-                        binding.image2.setVisibility(View.VISIBLE);
-                        binding.removeImage2.setVisibility(View.VISIBLE);
-                        binding.placeholder2.setVisibility(View.GONE);
+                        if (isPlaceHolderSelect.equals("2")){
+                            binding.image2.setImageBitmap(bitmap);
+                            img_string2 = getStringImage(bitmap);
+                            binding.etBack.setError("",null);
+                            byte[] imageInByte = stream.toByteArray();
+                            long lengthbmp = imageInByte.length;
+                            Log.e("img2", lengthbmp + "");
+                            Log.e("kb3", String.format("Size : %s", getReadableFileSize(lengthbmp)));
+                            //  Log.e("img_string2", img_string2 + "");
+                            //Toast.makeText(mContext, "Img2", Toast.LENGTH_SHORT).show();
+                            imgFlag = true;
+                            binding.image2.setVisibility(View.VISIBLE);
+                            binding.removeImage2.setVisibility(View.VISIBLE);
+                            binding.placeholder2.setVisibility(View.GONE);
+                        }else {
+                            binding.image1.setImageBitmap(bitmap);
+                            img_string = getStringImage(bitmap);
+                            binding.etFront.setError("",null);
+                            System.out.println("");
+                            // binding.removeFront.setVisibility(View.VISIBLE);
+                            byte[] imageInByte = stream.toByteArray();
+                            imgFlag = true;
+                            binding.image1.setVisibility(View.VISIBLE);
+                            binding.removeImage1.setVisibility(View.VISIBLE);
+                            binding.progress1.setVisibility(View.GONE);
+                        }
+
                     } catch (Exception e) {
                         Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                         Log.e("bit", e.toString());
@@ -639,17 +1045,37 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                     }
 
                 } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                    Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
-                    binding.image2.setVisibility(View.GONE);
-                    binding.removeImage2.setVisibility(View.GONE);
-                    binding.progress2.setVisibility(View.GONE);
-                    binding.placeholder2.setVisibility(View.VISIBLE);
+
+                    if (isPlaceHolderSelect.equals("2")){
+                        Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
+                        binding.image2.setVisibility(View.GONE);
+                        binding.removeImage2.setVisibility(View.GONE);
+                        binding.progress2.setVisibility(View.GONE);
+                        binding.placeholder2.setVisibility(View.VISIBLE);
+                    }else {
+                        binding.image1.setVisibility(View.GONE);
+                        binding.removeImage1.setVisibility(View.GONE);
+                        binding.progress1.setVisibility(View.GONE);
+                        binding.placeholder1.setVisibility(View.VISIBLE);
+                        Toast.makeText(this, ImagePicker.Companion.getError(data), Toast.LENGTH_SHORT).show();
+                    }
+
                 } else {
-                    binding.image2.setVisibility(View.GONE);
-                    binding.removeImage2.setVisibility(View.GONE);
-                    binding.progress2.setVisibility(View.GONE);
-                    binding.placeholder2.setVisibility(View.VISIBLE);
-                    Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                    if (isPlaceHolderSelect.equals("2")){
+                        binding.image2.setVisibility(View.GONE);
+                        binding.removeImage2.setVisibility(View.GONE);
+                        binding.progress2.setVisibility(View.GONE);
+                        binding.placeholder2.setVisibility(View.VISIBLE);
+                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                    }else {
+                        binding.image1.setVisibility(View.GONE);
+                        binding.removeImage1.setVisibility(View.GONE);
+                        binding.progress1.setVisibility(View.GONE);
+                        binding.placeholder1.setVisibility(View.VISIBLE);
+                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                    }
+
+
                 }
             }
 
@@ -679,7 +1105,8 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                     binding.progress1.setVisibility(View.GONE);
                     binding.placeholder1.setVisibility(View.VISIBLE);
                 }
-            } else if (cameraRequestCode == 102) {
+            }
+            else if (cameraRequestCode == 102) {
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -727,4 +1154,94 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
+
+
+    private void pickImageFromCamera(int requestCode) {
+     /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES},
+                        requestCode);
+            } else {
+                launchCamera(requestCode);
+            }
+        } else*/ {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        requestCode);
+            } else {
+                launchCamera(requestCode);
+            }
+        }
+    }
+
+    private void pickImageFromGallery(int requestCode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_MEDIA_IMAGES},
+                        requestCode);
+            } else {
+                launchGallery(requestCode);
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        requestCode);
+            } else {
+                launchGallery(requestCode);
+            }
+        }
+    }
+
+    private void launchGallery(int requestCode) {
+        ImagePicker.Companion.with(this)
+                .galleryOnly()
+                .crop()
+                .compress(1024)
+                .maxResultSize(1080, 1080)
+                .start(requestCode);
+    }
+
+    private void launchCamera(int requestCode) {
+        ImagePicker.Companion.with(this)
+                .cameraOnly()
+                .crop()
+                .compress(1024)
+                .maxResultSize(1080, 1080)
+                .start(requestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            // Check which request it was
+            if (requestCode == 101) {
+                // This was for Gallery
+                launchCamera(101);
+                //      launchGallery(101);
+
+            } else if (requestCode == 102) {
+                // This was for Camera
+          //      launchGallery(102);
+            }
+
+        } else {
+            Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
+
 }

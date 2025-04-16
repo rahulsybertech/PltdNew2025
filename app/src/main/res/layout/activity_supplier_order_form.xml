@@ -266,34 +266,157 @@
                                   android:visibility="visible" />
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/radio_subparty"
+
+
+                        <RadioGroup
+                            android:visibility="gone"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="20dp"
+                            android:id="@+id/radioGroup"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="2dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_weight="1"
-                            android:checked="true"
-                            android:fontFamily="@font/roboto_light"
-                            android:gravity="start|center"
-                            android:singleLine="true"
-                            android:text="@string/sub_party"
-                            android:textColor="@color/black"
-                            android:textSize="16dp" />
+                            android:orientation="horizontal">
+                              <RadioButton
+                                  android:layout_marginStart="10dp"
+                                  android:id="@+id/rbSubparty"
+                                  android:checked="true"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="@string/sub_party" />
+
+                              <RadioButton
+                                  android:layout_marginStart="10dp"
+                                  android:id="@+id/rbRemark"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="@string/sub_party_remark" />
+                        </RadioGroup>
+
+
+                        <LinearLayout
+                            android:visibility="visible"
+                            android:id="@+id/tilRadioSubParty"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:layout_marginTop="16dp"
+                            android:background="@drawable/otp_line"
+                            android:enabled="false"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            >
+
+                              <RadioGroup
+                                  android:id="@+id/rg_subparty"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="horizontal">
+
+                                    <RadioButton
+                                        android:id="@+id/radio_subparty"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="2dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_weight="1"
+                                        android:checked="true"
+                                        android:fontFamily="@font/roboto_light"
+                                        android:gravity="start|center"
+                                        android:singleLine="true"
+                                        android:text="@string/sub_party"
+                                        android:textColor="@color/black"
+                                        android:textSize="16dp" />
+
+                                    <RadioButton
+                                        android:id="@+id/radio_subparty_remark"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="2dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_weight="0.8"
+                                        android:fontFamily="@font/roboto_light"
+                                        android:gravity="start|center"
+                                        android:singleLine="true"
+                                        android:text="@string/sub_party_remark"
+                                        android:textColor="@color/black"
+                                        android:textSize="16dp" />
+
+                              </RadioGroup>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/llSubparty"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                              <TextView
+                                  android:visibility="gone"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:checked="true"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/sub_party"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+                              <RelativeLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="10dp"
+                                  android:background="@drawable/otp_line">
+
+                                    <TextView
+                                        android:id="@+id/sub_party"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="45dp"
+                                        android:layout_toStartOf="@+id/clear_subparty"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/roboto_light"
+                                        android:freezesText="true"
+                                        android:gravity="start|center"
+                                        android:paddingLeft="10dp"
+                                        android:singleLine="true"
+                                        android:textColor="@color/black"
+                                        android:textSize="16dp" />
+
+                                    <ImageView
+                                        android:id="@+id/clear_subparty"
+                                        android:layout_width="30dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginEnd="5dp"
+                                        android:onClick="handleClear"
+                                        android:padding="7dp"
+                                        android:src="@drawable/ic_cross2"
+                                        app:tint="@color/red" />
+                              </RelativeLayout>
+                        </LinearLayout>
 
                         <RelativeLayout
+
+                            android:id="@+id/ll_radio_rubparty_remark"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
                             android:layout_marginTop="10dp"
-                            android:background="@drawable/otp_line">
+                            android:background="@drawable/otp_line"
+                            android:orientation="vertical"
+                            android:visibility="gone">
 
-                              <TextView
-                                  android:id="@+id/sub_party"
+                              <EditText
+                                  android:id="@+id/sub_party_remark"
                                   android:layout_width="match_parent"
                                   android:layout_height="45dp"
-                                  android:layout_toStartOf="@+id/clear_subparty"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginEnd="5dp"
                                   android:layout_weight="1"
+                                  android:background="@null"
+                                  android:layout_toStartOf="@id/clearSubPartyRemark"
                                   android:fontFamily="@font/roboto_light"
                                   android:freezesText="true"
                                   android:gravity="start|center"
@@ -301,9 +424,8 @@
                                   android:singleLine="true"
                                   android:textColor="@color/black"
                                   android:textSize="16dp" />
-
                               <ImageView
-                                  android:id="@+id/clear_subparty"
+                                  android:id="@+id/clearSubPartyRemark"
                                   android:layout_width="30dp"
                                   android:layout_height="match_parent"
                                   android:layout_alignParentEnd="true"
@@ -313,31 +435,6 @@
                                   android:padding="7dp"
                                   android:src="@drawable/ic_cross2"
                                   app:tint="@color/red" />
-                        </RelativeLayout>
-
-
-                        <LinearLayout
-                            android:id="@+id/ll_radio_rubparty_remark"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone">
-
-                              <EditText
-                                  android:id="@+id/sub_party_remark"
-                                  android:layout_width="match_parent"
-                                  android:layout_height="45dp"
-                                  android:layout_marginLeft="2dp"
-                                  android:layout_marginTop="10dp"
-                                  android:layout_weight="1"
-                                  android:background="@drawable/otp_line"
-                                  android:fontFamily="@font/roboto_light"
-                                  android:freezesText="true"
-                                  android:gravity="start|center"
-                                  android:paddingLeft="10dp"
-                                  android:singleLine="true"
-                                  android:textColor="@color/black"
-                                  android:textSize="16dp" />
 
                               <TextView
                                   android:layout_width="match_parent"
@@ -370,7 +467,7 @@
                                   android:textSize="16dp"
                                   android:visibility="gone" />
 
-                        </LinearLayout>
+                        </RelativeLayout>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -745,8 +842,8 @@
 
                               <ImageView
                                   android:id="@+id/clear_dispatchType"
-                                  android:layout_width="30dp"
-                                  android:visibility="gone"
+                                  android:layout_width="20dp"
+                                  android:visibility="visible"
                                   android:layout_height="match_parent"
                                   android:layout_alignParentEnd="true"
                                   android:layout_centerInParent="true"
@@ -793,7 +890,7 @@
                             android:freezesText="true"
                             android:gravity="center"
                             android:singleLine="true"
-                            android:text="Dispatch Date"
+                            android:text="@string/dispatch_date"
                             android:textColor="@color/red"
                             android:textSize="18dp"
                             android:visibility="visible" />

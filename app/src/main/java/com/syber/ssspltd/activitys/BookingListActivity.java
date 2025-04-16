@@ -9,6 +9,7 @@ import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingTime;
 import static com.syber.ssspltd.Constants.NewErpUrls.TRANSPORT;
+import static com.syber.ssspltd.Constants.NewErpUrls.UpdateStayBookingActualTime;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -68,8 +69,11 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class BookingListActivity extends AppCompatActivity implements  BookingListAdapter.OnBookingCancelListener{
@@ -90,7 +94,7 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
         stayBookingList = new ArrayList<>();
         filterList = new ArrayList<>();
        ImageView backBookingList = findViewById(R.id.backBookingList);
-        LinearLayout plusButton = findViewById(R.id.plusButton);
+        RelativeLayout plusButton = findViewById(R.id.plusButton);
         backBookingList.setOnClickListener(v -> onBackPressed());
 
 
@@ -114,12 +118,20 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 filterList.clear();
                 for (int p = 0; p < stayBookingList.size(); p++) {
                     if (stayBookingList.get(p).getBranchName().toLowerCase().contains(charSequence.toString().toLowerCase())
-                            || stayBookingList.get(p).getBranchName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                            || stayBookingList.get(p).getCompanyID().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || stayBookingList.get(p).getCheckInDate().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || stayBookingList.get(p).getCheckoutDate().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || stayBookingList.get(p).getNoOfPerson().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || stayBookingList.get(p).getBookingID().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || stayBookingList.get(p).getaccountName().toLowerCase().contains(charSequence.toString().toLowerCase())
+
+                    ) {
                         filterList.add(stayBookingList.get(p));
                     }
                 }
@@ -136,6 +148,7 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
     }
 
     void filterBc(ArrayList<BookingData> bc) {
+        binding.noOfRecord.setText("(" + bc.size() + " records )");
         adapter = new BookingListAdapter(this, bc,this);
         binding.recyler.setAdapter(adapter);
     }
@@ -175,7 +188,7 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
                 if (pojo.isResponseStatus()) {
                     stayBookingList.clear();
                     stayBookingList.addAll(pojo.getStayBookingList());
-                  //  binding.noOfRecord.setText("(" + pojo.getBlackListedName().size() + " records)");
+                    binding.noOfRecord.setText("(" + pojo.getStayBookingList().size() + " records)");
                     adapter.notifyDataSetChanged();
                 } else {
                     AlertUtil.responseElse(this, "", pojo.getResponseMessage() + "");
@@ -236,6 +249,11 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
                 })
                 .setNegativeButton("No", null)
                 .show();
+    }
+
+    @Override
+    public void onCheckInClicked(int position, BookingData data) {
+        bookingCheckInCheckOut(position,data);
     }
 
 
@@ -344,6 +362,163 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
 
                 return jsonString.getBytes();
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(800000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+    }
+    private void bookingCheckInCheckOut(int position,BookingData data) {
+        //test code for disable all views
+//        for(int i = 0; i < binding.llLl.getChildCount(); i++){
+//            View v = binding.llLl.getChildAt(i);
+//            v.setEnabled(false);
+//        }
+        String checkIn = data.getActualCheckInDate();
+        String checkOut = data.getActualCheckoutDate();
+
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        String url;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
+        String currentDateTime = sdf.format(new Date());
+        Log.d("DateTime", currentDateTime);
+        if ((checkIn == null || checkIn.isEmpty()) && (checkOut == null || checkOut.isEmpty())) {
+             url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "&actualCheckInDate=" + currentDateTime;
+        } else if (checkOut == null || checkOut.isEmpty()) {
+             url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "&actualCheckoutDate=" +currentDateTime ;
+        } else {
+            url = "";
+        }
+        // Append recordId as a query parameter in the URL
+
+
+//        myProgress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
+            Util.getInstance().logLargeString("TaG", "Response " + url + "---> " + response);
+//            Log.i("TaG", "Response " + SAVE_ORDER  +"---> " + response);
+
+
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getInt("ResponseCode") == 200) {
+                    progressDialog.dismiss();
+                    if ((checkIn == null || checkIn.isEmpty()) && (checkOut == null || checkOut.isEmpty())) {
+                        data.setActualCheckInDate(currentDateTime); // Update check-in
+                    } else if (checkOut == null || checkOut.isEmpty()) {
+                        data.setActualCheckoutDate(currentDateTime); // Update check-out
+                    }
+                    // Notify the adapter that item has changed
+                    adapter.notifyItemChanged(position);  // 🔁 Refresh this item in RecyclerView
+
+
+                    //    adapter.removeItem(position); // Remove item from RecyclerView
+                    Toast.makeText(this, jsonObject.getString("ResponseMessage") + "", Toast.LENGTH_SHORT).show();
+                } else if (jsonObject.getInt("ResponseCode") == 204) {
+//                    myProgress.dismiss();
+                    Toast.makeText(this, jsonObject.getString("ResponseMessage") + "", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    AlertUtil.responseElse(this, "", jsonObject.getString("ResponseMessage"));
+                } else {
+//                    myProgress.dismiss();
+                    progressDialog.dismiss();
+                    new AlertDialog.Builder(this).setMessage(jsonObject.getString("ResponseMessage") + "").setPositiveButton("Retry", (arg0, arg1) -> bookingCancel(position,data)).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show();
+                }
+            } catch (JSONException e) {
+                progressDialog.dismiss();
+                e.printStackTrace();
+            }
+        }, error -> {
+//            myProgress.dismiss();
+            progressDialog.dismiss();
+            NetworkResponse response = error.networkResponse;
+            if (error instanceof ServerError && response != null) {
+                try {
+                    String res = new String(response.data,
+                            HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                    // Now you can use any deserializer to make sense of data
+                    JSONObject obj = new JSONObject(res);
+                    System.out.println("GETTING_ERROR_IN_ORDER " + obj);
+                } catch (UnsupportedEncodingException e1) {
+                    // Couldn't properly decode data to string
+                    e1.printStackTrace();
+                } catch (JSONException e2) {
+                    // returned data is not JSONObject?
+                    e2.printStackTrace();
+                }
+            }
+
+            // isPlacedOrderBtnEnabled = true;
+            new AlertDialog.Builder(this).setMessage("Try again.. Somthing went wrong").setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+//                    myProgress.dismiss();
+                    progressDialog.dismiss();
+                    bookingCheckInCheckOut(position,data);
+                }
+            }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show();
+        }) {
+           /* @Override
+            public byte[] getBody() throws AuthFailureError {
+
+
+                String jsonString = "";
+                try {
+                    JSONObject jsonObject = new JSONObject();
+
+                *//*    {
+                        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                            "companyID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                            "branchID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                            "accountID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                            "date": "2025-02-17T12:36:59.862Z",
+                            "checkInDate": "2025-02-17T12:36:59.862Z",
+                            "checkInTime": "string",
+                            "checkoutDate": "2025-02-17T12:36:59.862Z",
+                            "checkoutTime": "string",
+                            "noOfPerson": 0,
+                            "updatedDate": "2025-02-17T12:36:59.862Z"
+                    }*//*
+
+
+                    if ((checkIn == null || checkIn.isEmpty()) && (checkOut == null || checkOut.isEmpty())) {
+                        jsonObject.put("actualCheckInDate", currentDateTime);
+                        jsonObject.put("actualCheckoutDate", JSONObject.NULL);
+
+                     //   url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "?actualCheckInDate=" + currentDateTime + "?actualCheckoutDate=" + JSONObject.NULL;
+                    } else if (checkIn == null || checkIn.isEmpty()) {
+                        jsonObject.put("actualCheckInDate", JSONObject.NULL);
+                        jsonObject.put("actualCheckoutDate", currentDateTime);
+                     //   url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "?actualCheckInDate=" + JSONObject.NULL + "?actualCheckoutDate=" +currentDateTime ;
+                    } else {
+                        *//*jsonObject.put("actualCheckInDate", currentDateTime);
+                        jsonObject.put("actualCheckoutDate", currentDateTime);*//*
+                    }
+                    jsonObject.put("bookingId", data.getId());
+
+                    jsonString = jsonObject.toString();
+                    System.out.println(jsonString);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Log.i("TaG", "Request " + CancelStayBooking + "---> " + jsonString);
+                Util.getInstance().logLargeString("TaG", "Request " + CancelStayBooking + "---> " + jsonString);
+
+                return jsonString.getBytes();
+            }*/
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {

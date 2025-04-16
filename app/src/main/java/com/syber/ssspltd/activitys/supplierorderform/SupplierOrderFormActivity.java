@@ -44,6 +44,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -204,7 +205,9 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         System.out.println("GETTING_TOKEN " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+        Constants.SettingHeader();
         salepartyModelList = new ArrayList<>();
         saleData = new ArrayList<>();
         subpartyModelList = new ArrayList<>();
@@ -245,8 +248,6 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 //        binding.date.setText(CurrentDateTime.getCurrentDateStringDDMMYYYY());
 //        dattAhead(CurrentDateTime.getCurrentDateStringDDMMYYYY());
 //        binding.dateTo.setText(CurrentDateTime.getCurrentDateStringDDMMYYYY());
-
-
 
 
 
@@ -544,6 +545,24 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         });
 
 
+
+        remark();
+    }
+    private void remark(){
+        // Handle selection
+       binding.rgSubparty.setOnCheckedChangeListener((group, checkedId) -> {
+           if (checkedId == binding.radioSubparty.getId()) {
+               binding.subPartyRemark.getText().clear();
+               binding.subPartyRemark.setError(null);
+               binding.llRadioRubpartyRemark.setVisibility(View.GONE);
+               binding.llSubparty.setVisibility(View.VISIBLE);
+           } else {
+               binding.subPartyRemark.setError(null);
+               binding.llRadioRubpartyRemark.setVisibility(View.VISIBLE);
+               binding.llSubparty.setVisibility(View.GONE);
+
+           }
+       });
     }
 
    /* public void showDialog(Activity activity, String msg){
@@ -3130,6 +3149,11 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         } else {
             binding.clearSubparty.setVisibility(View.GONE);
         }
+        if (!binding.subPartyRemark.getText().toString().isEmpty()) {
+            binding.clearSubPartyRemark.setVisibility(View.VISIBLE);
+        } else {
+            binding.clearSubPartyRemark.setVisibility(View.GONE);
+        }
         if (!binding.transport.getText().toString().isEmpty()) {
             binding.clearTransport.setVisibility(View.VISIBLE);
         } else {
@@ -3249,12 +3273,29 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
 //            Toast.makeText(mContext, "4", Toast.LENGTH_SHORT).show();
             binding.scroll.smoothScrollTo(binding.saleParty.getScrollX(), binding.saleParty.getScrollY());
             temp = false;
-        } else if (binding.subParty.getText().toString().isEmpty()) {
+        }
+        else  if(binding.radioSubparty.isChecked() && binding.radioSubparty.getText().toString().isEmpty()){
             binding.subParty.setError("Can't be empty");
 //            Toast.makeText(mContext, "5", Toast.LENGTH_SHORT).show();
             binding.scroll.smoothScrollTo(binding.subParty.getScrollX(), binding.subParty.getScrollY());
             temp = false;
-        } else if (binding.transport.getText().toString().isEmpty()) {
+
+        }
+        else if (binding.radioSubpartyRemark.isChecked() && binding.subPartyRemark.getText().toString().isEmpty()){
+            binding.subPartyRemark.setError("Can't be empty");
+//            Toast.makeText(mContext, "5", Toast.LENGTH_SHORT).show();
+            binding.scroll.smoothScrollTo(binding.subPartyRemark.getScrollX(), binding.subPartyRemark.getScrollY());
+            temp = false;
+        }
+
+
+
+       /* else if (binding.subParty.getText().toString().isEmpty()) {
+            binding.subParty.setError("Can't be empty");
+//            Toast.makeText(mContext, "5", Toast.LENGTH_SHORT).show();
+            binding.scroll.smoothScrollTo(binding.subParty.getScrollX(), binding.subParty.getScrollY());
+            temp = false;
+        }*/ else if (binding.transport.getText().toString().isEmpty()) {
             binding.transport.setError("Can,t be empty");
 //            Toast.makeText(mContext, "6", Toast.LENGTH_SHORT).show();
             binding.scroll.smoothScrollTo(binding.transport.getScrollX(), binding.transport.getScrollY());
@@ -3416,7 +3457,14 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("AccountID", selectedAccountId);
                     jsonObject.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
-                    jsonObject.put("SubPartyID", subPartyId);
+
+                    if(binding.radioSubparty.isChecked()){
+                        jsonObject.put("SubPartyID", subPartyId);
+                    }else {
+                        jsonObject.put("SubPartyID", null);
+                    }
+                 //   jsonObject.put("SubPartyID", subPartyId);
+                    jsonObject.put("SubPartyasRemark", binding.subPartyRemark.getText().toString().trim());
                     jsonObject.put("dispatchTypeID", dispatchTypeID);
                     jsonObject.put("Marketer", binding.marketer.getText().toString());
                     jsonObject.put("OrderRatio", selected2Star);

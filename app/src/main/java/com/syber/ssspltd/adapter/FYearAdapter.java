@@ -1,5 +1,11 @@
 package com.syber.ssspltd.adapter;
 
+import static com.syber.ssspltd.activitys.MainActivity.def_db;
+import static com.syber.ssspltd.activitys.MainActivity.fy_EndDate;
+import static com.syber.ssspltd.activitys.MainActivity.fy_StartDate;
+import static com.syber.ssspltd.activitys.MainActivity.selectedYr;
+import static com.syber.ssspltd.activitys.MainActivity.set_year;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +36,26 @@ public class FYearAdapter extends RecyclerView.Adapter<FYearAdapter.MyViewHolder
         this.mContext = mContext;
         this.fYearListDetails = detailList;
         this.topicClickListener = topicClickListener;
+        // Initialize default position
+        String savedPos = SharedPref.read(SharedPref.default_db, "-1");
+        lastSelectedPosition = savedPos.equals("-1") ? 0 : Integer.parseInt(savedPos);
+        def_db =  lastSelectedPosition+"";
+        set_year =  fYearListDetails.get(lastSelectedPosition).getFYEAR();
+        MainActivity.id_financial_year =  fYearListDetails.get(lastSelectedPosition).getId();
+        String id_financial_year = fYearListDetails.get(lastSelectedPosition).getId();
+        db_name = fYearListDetails.get(lastSelectedPosition).getDBNAME();
+        selectedYr = fYearListDetails.get(lastSelectedPosition).getFYEAR();
+        Log.e("getDBNAME",fYearListDetails.get(lastSelectedPosition).getDBNAME());
+        fy_StartDate=fYearListDetails.get(lastSelectedPosition).getmFY_StartDate();
+        fy_EndDate=fYearListDetails.get(lastSelectedPosition).getmFY_EndDate();
+
+        SharedPref.write(SharedPref.default_db, def_db);
+        SharedPref.write(SharedPref.DB_NAME, db_name);
+        SharedPref.write(SharedPref.SET_YEAR, set_year);
+        Log.e("dh", db_name + "null");
+        SharedPref.write(SharedPref.selected_default_yr, selectedYr);
+        SharedPref.write(SharedPref.FY_StartDate, fy_StartDate);
+        SharedPref.write(SharedPref.FY_EndDate, fy_EndDate);
     }
 
     public FYearAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,12 +68,13 @@ public class FYearAdapter extends RecyclerView.Adapter<FYearAdapter.MyViewHolder
 
         final FYearListResult datum = fYearListDetails.get(position);
         holder.fyear_check.setText(datum.getFYEAR());
-       if(lastSelectedPosition == -1) {
+        holder.fyear_check.setChecked(lastSelectedPosition == position);
+      /* if(lastSelectedPosition == -1) {
            String defaultFY = fYearListDetails.get(position).getmDEFAULTDB();
            holder.fyear_check.setChecked(defaultFY.equals(datum.getFYEAR()));
        } else {
            holder.fyear_check.setChecked(lastSelectedPosition == position);
-       }
+       }*/
        /*if (SharedPref.read(SharedPref.selected_default_yr,"").equals("")) {
            MainActivity.def_db = position + "";
            MainActivity.set_year = fYearListDetails.get(position).getFYEAR();
@@ -101,13 +128,14 @@ public class FYearAdapter extends RecyclerView.Adapter<FYearAdapter.MyViewHolder
 //                SharedPref.write(SharedPref.FY_StartDate, fYearListDetails.get(getAdapterPosition()).getmFY_StartDate());
 //                SharedPref.write(SharedPref.FY_EndDate, fYearListDetails.get(getAdapterPosition()).getmFY_EndDate());
 
-                MainActivity.def_db =  getAdapterPosition()+"";
-                MainActivity.set_year =  fYearListDetails.get(getAdapterPosition()).getFYEAR();
+                def_db =  getAdapterPosition()+"";
+                set_year =  fYearListDetails.get(getAdapterPosition()).getFYEAR();
+                MainActivity.id_financial_year =  fYearListDetails.get(getAdapterPosition()).getId();
                 MainActivity.db_name = fYearListDetails.get(getAdapterPosition()).getDBNAME();
-                MainActivity.selectedYr = fYearListDetails.get(getAdapterPosition()).getFYEAR();
+                selectedYr = fYearListDetails.get(getAdapterPosition()).getFYEAR();
                 Log.e("getDBNAME",fYearListDetails.get(getAdapterPosition()).getDBNAME());
-                MainActivity.fy_StartDate=fYearListDetails.get(getAdapterPosition()).getmFY_StartDate();
-                MainActivity.fy_EndDate=fYearListDetails.get(getAdapterPosition()).getmFY_EndDate();
+                fy_StartDate=fYearListDetails.get(getAdapterPosition()).getmFY_StartDate();
+                fy_EndDate=fYearListDetails.get(getAdapterPosition()).getmFY_EndDate();
 //                String FY_StartDate=fYearListDetails.get(getAdapterPosition()).getmFY_StartDate();
 //                String FY_EndDate=fYearListDetails.get(getAdapterPosition()).getmFY_EndDate();
 //                SharedPref.write(SharedPref.FY_StartDate,FY_StartDate);

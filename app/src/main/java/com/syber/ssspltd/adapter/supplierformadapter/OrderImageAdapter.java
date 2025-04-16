@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -48,6 +49,8 @@ public class OrderImageAdapter extends RecyclerView.Adapter<OrderImageAdapter.My
         ImageList gallery = galleryList.get(position);
         Glide.with(mContext)
                 .load(gallery.getImagepath())
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .placeholder(R.drawable.ic_supermarket)
                 .listener(new RequestListener<>() {
                     @Override

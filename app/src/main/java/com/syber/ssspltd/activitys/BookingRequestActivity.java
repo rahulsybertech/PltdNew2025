@@ -1,6 +1,7 @@
 package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.BRANCH_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountIdByNickName;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountNameList;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetGuestMasterListByCustomerId;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetNickNameList;
@@ -58,6 +59,7 @@ import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.SnackbarUtils;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
+import com.syber.ssspltd.activitys.supplierorderform.OrderImageActivity;
 import com.syber.ssspltd.adapter.AccountListAdapter;
 import com.syber.ssspltd.adapter.GuestListBookingAdapter;
 import com.syber.ssspltd.adapter.NickNameListAdapter;
@@ -123,6 +125,12 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getGuestList(accountNameId);
+    }
+
     private void populateData(com.syber.ssspltd.model.booking.BookingData bookingData) {
       String checkin=  convertDateFormat(bookingData.getCheckInDate());
       String checkOut=  convertDateFormat(bookingData.getCheckoutDate());
@@ -185,10 +193,42 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             }
         } );
 
-        binding.ivGuest.setOnClickListener(v ->{
-            startActivity(new Intent(this, AddGuestInBookingActivity.class)
-                    .putExtra(MyConstant.ACCOUNT_ID,accountNameId)
-            );
+        binding.ivGuestNew.setOnClickListener(v ->{
+            String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+            if(userType.equals("Other")){
+                if(isCustomerCode){
+                    if (binding.tvAccountName.getText().toString().isEmpty()) {
+                        binding.clearAccountName.setVisibility(View.GONE);
+                        binding.tvAccountName.setError("Can't be empty");
+                        Toast.makeText(this, "Please select Customer Code!", Toast.LENGTH_SHORT).show();
+
+                    }else {
+                        startActivity(new Intent(this, AddGuestInBookingActivity.class)
+                                .putExtra(MyConstant.ACCOUNT_ID,accountNameId)
+                                .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST)
+                        );
+                    }
+                }else {
+                    if (binding.tvNickName.getText().toString().isEmpty()) {
+                        binding.imgClearNickName.setVisibility(View.GONE);
+                        binding.tvNickName.setError("Can't be empty");
+                        Toast.makeText(this, "Please select NickName!", Toast.LENGTH_SHORT).show();
+                    }else {
+                        startActivity(new Intent(this, AddGuestInBookingActivity.class)
+                                .putExtra(MyConstant.ACCOUNT_ID,accountNameId)
+                                .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST)
+                        );
+                    }
+                }}else {
+
+                startActivity(new Intent(this, AddGuestInBookingActivity.class)
+                        .putExtra(MyConstant.ACCOUNT_ID,accountNameId)
+                        .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST)
+                );
+            }
+
+
+
         } );
         binding.buttonMinus.setOnClickListener(v ->{
             if (count > 1) {
@@ -206,11 +246,15 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     binding.tvNickName.setText("");
                         binding.llCustomer.setVisibility(View.VISIBLE);
                         binding.llNickName.setVisibility(View.GONE);
+                    binding.llGuest.setVisibility(View.GONE);
+                    binding.recycler.setVisibility(View.GONE);
                 } else {
                     isCustomerCode=false;
                     binding.tvAccountName.setText("");
                     binding.llNickName.setVisibility(View.VISIBLE);
                     binding.llCustomer.setVisibility(View.GONE);
+                    binding.llGuest.setVisibility(View.GONE);
+                    binding.recycler.setVisibility(View.GONE);
                 }
             }
         });
@@ -230,12 +274,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         }*/
 
 
-        binding.tvAccountName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchDialog("");
-            }
-        });
+        binding.tvAccountName.setOnClickListener(v -> searchDialog(""));
 
         binding.tvNickName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,6 +284,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         });
 
         binding.save.setOnClickListener(v ->{
+
             if (validate() && isPlacedOrderBtnEnabled) {
                 List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
                 if (selectedGuests.size() >= 1 && selectedGuests.size() <= 9) {
@@ -515,9 +555,13 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
     public void handleClear(View view) {
         if (view.getId() == R.id.clearAccountName) {
+            binding.llGuest.setVisibility(View.GONE);
+            binding.recycler.setVisibility(View.GONE);
             binding.tvAccountName.setText("");
         }
         if(view.getId() == R.id.imgClearNickName){
+            binding.llGuest.setVisibility(View.GONE);
+            binding.recycler.setVisibility(View.GONE);
             binding.tvNickName.setText("");
         }
     }
@@ -576,6 +620,16 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         if (binding.tvCheckOutTime.getText().toString().isEmpty()) {
             binding.tvCheckOutTime.setError("Can't be empty");
             Toast.makeText(this, "Please select a check-out time!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        try {
+            List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
+            if (selectedGuests == null || selectedGuests.isEmpty()) {
+                Toast.makeText(this, "Please add Guest!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Please add  guests!", Toast.LENGTH_SHORT).show();
             return false;
         }
       /*  if (binding.editNoOfPerson.getText().toString().isEmpty()) {
@@ -1115,7 +1169,6 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                             dialog.dismiss();  // Close the dialog
                             isPlacedOrderBtnEnabled = true;
                             binding.save.setEnabled(false);
-
                             binding.save.setBackgroundColor(Color.parseColor("#2bab1c"));
                             binding.tvSave.setText("Save");
                         }
@@ -1393,7 +1446,9 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             sDialog.dismiss();
            binding.tvAccountName.setText(account.getName());
             accountNameId=account.getId();
-            binding.ivGuest.setVisibility(View.VISIBLE);
+            binding.clearAccountName.setVisibility(View.VISIBLE);
+            binding.tvAccountName.setError(null, null);
+            binding.ivGuest.setVisibility(View.GONE);
             binding.recycler.setVisibility(View.VISIBLE);
             getGuestList(accountNameId);
         });
@@ -1409,6 +1464,11 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             sDialog.dismiss();
             binding.tvAccountName.setText(account.getName());
             accountNameId=account.getId();
+            binding.clearAccountName.setVisibility(View.VISIBLE);
+            binding.tvAccountName.setError(null, null);
+            binding.ivGuest.setVisibility(View.GONE);
+            binding.recycler.setVisibility(View.VISIBLE);
+            getGuestList(accountNameId);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(accountListAdapter);
@@ -1581,7 +1641,10 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         nickNameListAdapter = new NickNameListAdapter(this, nickNameList, account -> {
             sDialog.dismiss();
             binding.tvNickName.setText(account.getName());
+            binding.imgClearNickName.setVisibility(View.VISIBLE);
+            binding.tvNickName.setError(null, null);
             accountNameId=account.getId();
+           // getAccountIdByNickName(accountNameId);
             getGuestList(accountNameId);
 
         });
@@ -1596,7 +1659,11 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         nickNameListAdapter = new NickNameListAdapter(this, bc, account -> {
             sDialog.dismiss();
             binding.tvNickName.setText(account.getName());
+            binding.imgClearNickName.setVisibility(View.VISIBLE);
+            binding.tvNickName.setError(null, null);
             accountNameId=account.getId();
+            // getAccountIdByNickName(accountNameId);
+            getGuestList(accountNameId);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(nickNameListAdapter);
@@ -1778,6 +1845,71 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             }
 
         };
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
+
+
+    private void getAccountIdByNickName(String nickNameId) {
+        String getGuestMasterListByCustomerId="";
+        final MyProgress myProgress = new MyProgress(this);
+        getGuestMasterListByCustomerId = GetAccountIdByNickName+ "?nickNameId=" + nickNameId;
+        myProgress.show();
+        String finalGetGuestMasterListByCustomerId = getGuestMasterListByCustomerId;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, getGuestMasterListByCustomerId, response -> {
+            Util.getInstance().logLargeString("TaG", "Response " + finalGetGuestMasterListByCustomerId + " -=-=-=>" + response);
+            myProgress.dismiss();
+            try {
+
+             //   Gson gson = new Gson();
+             //   ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
+
+             /*   JSONObject jsonObject = new JSONObject(newresponse);
+                JSONArray jsonArray = jsonObject.getJSONArray("salesPartyNames");
+                salepartyModelList.clear();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject ob = jsonArray.getJSONObject(i);
+                    String name = ob.optString("NickName");
+                    String accountId = ob.optString("AccountCode");
+                    salepartyModel = new SalepartyModel(name, false, "", accountId);
+                    salepartyModelList.add(salepartyModel);
+
+                }*/
+            //    nickNameList.addAll(newresponse.getNickNameList());
+             //   nickNameListAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Log.e("Exce", e.toString());
+            }
+        }, error -> {
+            myProgress.dismiss();
+            Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+//                String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE, "") + "\",\"Filter\":\"" + "selected" + "\"}";
+                String str = "{}";
+                Log.i("TaG", "Request " + finalGetGuestMasterListByCustomerId + " -=-=-=>" + str);
+
+                return str.getBytes();
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
+        stringRequest.setShouldCache(true);
+        stringRequest.shouldCache();
         RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(retryPolicy);
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);

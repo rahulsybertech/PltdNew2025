@@ -173,6 +173,7 @@ Front page per ek SALE REPORT ka option arha hai us per click kriye apka sale re
       <string name="sale_party_mobile">Sale Party Mobile No. <font color='#D81B60'></font> </string>
       <string name="sale_party_email">Sale Party Email<font color='#D81B60'></font> </string>
       <string name="sub_party">Sub Party <font color='#D81B60'>*</font> </string>
+      <string name="sub_party_remark">Sub Party Remark <font color='#D81B60'>*</font> </string>
       <string name="sub_party_mobile">Sub Party Mobile No. </string>
       <string name="transport">Transport <font color='#D81B60'>*</font> </string>
       <string name="b_station">B.Station </string>
@@ -202,5 +203,7 @@ Front page per ek SALE REPORT ka option arha hai us per click kriye apka sale re
       <string name="front_side">Front Side</string>
       <string name="back_side">Back Side</string>
       <string name="aadhar_card">Aadhar Card</string>
+      <string name="action">Action</string>
+      <string name="dispatch_date">Dispatch Date</string>
 
 </resources>

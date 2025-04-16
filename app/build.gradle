@@ -8,8 +8,8 @@ android {
         applicationId "com.syber.ssspltd"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 48
-        versionName "3.1.9"
+        versionCode 49
+        versionName "3.1.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -120,8 +120,8 @@ dependencies {
 //    implementation 'com.theartofdev.edmodo:android-image-cropper:'
     implementation "com.theartofdev.edmodo:android-image-cropper:2.8.0"
 
-    //ImagePicker
-    implementation 'com.github.dhaval2404:imagepicker-support:1.7.1'
+   /* //ImagePicker
+    implementation 'com.github.dhaval2404:imagepicker-support:1.7.1'*/
 
 
     //html textview
@@ -142,7 +142,13 @@ dependencies {
     implementation 'ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:1.2.1'
     implementation 'io.github.afreakyelf:Pdf-Viewer:2.1.1'
 
-  //  implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
+
+    debugImplementation "com.github.chuckerteam.chucker:library:4.0.0"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:4.0.0"
+
+
+    //  implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
 
 
 

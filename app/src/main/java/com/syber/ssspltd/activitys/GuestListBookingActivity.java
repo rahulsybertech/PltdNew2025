@@ -84,6 +84,7 @@ public class GuestListBookingActivity extends AppCompatActivity implements Guest
                 Gson gson = new Gson();
                 GuestMasterResponse bookingResponse = gson.fromJson(response, GuestMasterResponse.class);
                 //   JSONObject jsonObject = new JSONObject(response);
+
                 guestList.addAll(bookingResponse.getGuestMasterDetailList());
 
                 List<String> checkGuestList = Arrays.asList("id1", "id2"); // List of IDs to be checked
@@ -146,6 +147,7 @@ public class GuestListBookingActivity extends AppCompatActivity implements Guest
                 .show();
     }
 
+
     private void bookingCancel(int position, GuestMasterDetail data) {
         //test code for disable all views
 //        for(int i = 0; i < binding.llLl.getChildCount(); i++){
@@ -170,6 +172,7 @@ public class GuestListBookingActivity extends AppCompatActivity implements Guest
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getInt("ResponseCode") == 200) {
                     progressDialog.dismiss();
+
                     guestListBookingAdapter.removeItem(position); // Remove item from RecyclerView
                     Toast.makeText(this, jsonObject.getString("ResponseMessage") + "", Toast.LENGTH_SHORT).show();
                 } else if (jsonObject.getInt("ResponseCode") == 204) {

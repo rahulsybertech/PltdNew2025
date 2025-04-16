@@ -40,19 +40,16 @@
       <RelativeLayout
           android:layout_width="match_parent"
           android:layout_height="match_parent">
-            <ScrollView
-                android:id="@+id/scroll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+
                   <LinearLayout
+                      android:layout_above="@+id/rlbottom"
+                      android:id="@+id/llMain"
                       android:layout_marginStart="15dp"
                       android:layout_marginEnd="15dp"
                       android:layout_marginTop="20dp"
                       android:orientation="vertical"
                       android:layout_width="match_parent"
-                      android:layout_height="wrap_content">
-
-
+                      android:layout_height="match_parent">
                         <LinearLayout
                             android:id="@+id/llEmployee"
                             android:orientation="vertical"
@@ -95,7 +92,7 @@
                                         android:orientation="vertical"
                                         android:layout_weight="1"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content">
+                                        android:layout_height="65dp">
                                           <TextView
                                               android:layout_width="wrap_content"
                                               android:layout_height="wrap_content"
@@ -145,7 +142,7 @@
                                         android:orientation="vertical"
                                         android:layout_weight="1"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content">
+                                        android:layout_height="65dp">
                                           <TextView
                                               android:layout_width="wrap_content"
                                               android:layout_height="wrap_content"
@@ -520,6 +517,7 @@
                               </LinearLayout>
 
                         </LinearLayout>
+
                         <LinearLayout
                             android:visibility="gone"
                             android:id="@+id/llGuest"
@@ -531,7 +529,7 @@
                               <RelativeLayout
                                   android:paddingBottom="10dp"
                                   android:paddingStart="10dp"
-                                  android:layout_weight="1.4"
+                                  android:layout_weight="1.6"
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content">
                                     <TextView
@@ -565,7 +563,7 @@
                                   app:autoSizeTextType="none"
                                   android:id="@+id/ledger_credit"
                                   android:gravity="center"
-                                  android:layout_weight="1.4"
+                                  android:layout_weight="1.2"
                                   android:layout_width="match_parent"
                                   android:layout_height="match_parent">
                                     <TextView
@@ -583,24 +581,71 @@
 
 
                         </LinearLayout>
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:visibility="gone"
-                            android:layout_marginTop="5dp"
-                            android:id="@+id/recycler"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+
+                        <androidx.core.widget.NestedScrollView
+                            android:layout_marginTop="10dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
+                              <LinearLayout
+                                  android:orientation="vertical"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content">
 
-                        </androidx.recyclerview.widget.RecyclerView>
+                                    <androidx.recyclerview.widget.RecyclerView
+                                        android:visibility="visible"
+                                        android:layout_marginTop="5dp"
+                                        android:id="@+id/recycler"
+                                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+                                    </androidx.recyclerview.widget.RecyclerView>
+                                    <RelativeLayout
+                                        android:id="@+id/ivGuestNew"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_width="200dp"
+                                        android:layout_marginBottom="15dp"
+                                        android:layout_gravity="center"
+                                        android:layout_height="45dp">
+                                          <LinearLayout
+                                              android:layout_centerInParent="true"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              >
+                                                <androidx.appcompat.widget.AppCompatImageView
+                                                    android:visibility="visible"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_marginStart="15dp"
+                                                    android:layout_gravity="center_vertical"
+                                                    android:layout_height="wrap_content"
+                                                    android:tint="@color/blue"
+                                                    android:layout_centerVertical="true"
+                                                    android:layout_marginEnd="10dp"
+                                                    android:src="@drawable/guests"/>
+                                                <TextView
+                                                    android:layout_gravity="center_vertical"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_marginEnd="10dp"
+                                                    android:fontFamily="@font/roboto_regular"
+                                                    android:layout_height="wrap_content"
+                                                    android:textStyle="bold"
+                                                    android:textColor="@color/blue"
+                                                    android:textSize="15dp"
+                                                    android:text="Add New Guest"/>
 
 
+                                          </LinearLayout>
+                                    </RelativeLayout>
+
+
+                              </LinearLayout>
+                        </androidx.core.widget.NestedScrollView>
 
 
 
                   </LinearLayout>
-            </ScrollView>
 
             <RelativeLayout
+                android:id="@+id/rlbottom"
                 android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:layout_height="45dp">
@@ -624,20 +669,28 @@
                                   android:textColor="@color/white"
                                   android:layout_centerInParent="true"
                                   android:textSize="14dp"
-
                                   android:text="@string/save"/>
 
                         </RelativeLayout>
                   </androidx.cardview.widget.CardView>
-                  <androidx.appcompat.widget.AppCompatImageView
+                  <RelativeLayout
+                      android:visibility="gone"
                       android:id="@+id/ivGuest"
-                      android:visibility="visible"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_centerVertical="true"
-                      android:layout_marginEnd="10dp"
                       android:layout_alignParentRight="true"
-                      android:src="@drawable/guests"/>
+                      android:layout_width="100dp"
+                      android:layout_height="70dp">
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:visibility="visible"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:tint="@color/green"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:src="@drawable/guests"/>
+
+                  </RelativeLayout>
+
             </RelativeLayout>
       </RelativeLayout>
 

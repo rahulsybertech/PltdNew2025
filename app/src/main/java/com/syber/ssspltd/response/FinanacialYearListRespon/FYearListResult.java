@@ -11,6 +11,8 @@ public class FYearListResult {
     private String mFYEAR;
     @SerializedName("SRNO")
     private String mSRNO;
+    @SerializedName("ID")
+    private String mID;
 
     @SerializedName("FY_StartDate")
     private String mFY_StartDate;
@@ -71,6 +73,14 @@ public class FYearListResult {
 
     public void setmFY_EndDate(String mFY_EndDate) {
         this.mFY_EndDate = mFY_EndDate;
+    }
+
+    public String getId() {
+        return mID;
+    }
+
+    public void setId(String id) {
+        this.mID = id;
     }
 
     public String getmDEFAULTDB() {

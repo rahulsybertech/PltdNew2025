@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
+import com.chuckerteam.chucker.api.Chucker;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
@@ -49,6 +50,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         SharedPref.init(mContext);
+
         imageView = findViewById(R.id.logo);
 
         if (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("DIAMOND")) {

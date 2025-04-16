@@ -116,7 +116,7 @@ public class NewDashBoardActivity extends AppCompatActivity {
 //            GetPendingOrder();
 //            GetBalanceTillDate();
 //            GetInterest_Discount("discount");
-//            GetInterest_Discount("Interest");
+       //    GetInterest_Discount("Interest");
         } else {
             networkConnetion3(mContext);
         }

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.MyConstant;
+import com.syber.ssspltd.activitys.AddGuestInBookingActivity;
 import com.syber.ssspltd.activitys.supplierorderform.OrderImageActivity;
 import com.syber.ssspltd.model.booking.branchlist.GuestMasterDetail;
 import com.syber.ssspltd.response.SupplierOrderReport.OrderDetail;
@@ -64,11 +65,15 @@ public class GuestListBookingAdapter extends RecyclerView.Adapter<GuestListBooki
         boolean isCheckedByDefault = checkGuestIds.contains(datum.getId());
 
         if(bookingPage.equals(MyConstant.BOOKING_PAGE)){
+            holder.checkBox.setVisibility(View.VISIBLE);
+            holder.tvSrNo.setVisibility(View.GONE);
             holder.viewImage.setVisibility(View.VISIBLE);
             holder.delete.setVisibility(View.VISIBLE);
         }else {
+            holder.checkBox.setVisibility(View.GONE);
             holder.viewImage.setVisibility(View.GONE);
             holder.delete.setVisibility(View.VISIBLE);
+            holder.tvSrNo.setVisibility(View.VISIBLE);
         }
         // Update CheckBox state
         if (isCheckedByDefault) {
@@ -76,20 +81,30 @@ public class GuestListBookingAdapter extends RecyclerView.Adapter<GuestListBooki
         }
 
        holder. viewImage.setOnClickListener(v -> {
-
             Intent i = new Intent(mContext, OrderImageActivity.class);
             i.putExtra(MyConstant.SCREEN,MyConstant.GUEST);
             i.putExtra("imgList",new Gson().toJson(datum));
             Log.e("imgList", new Gson().toJson(datum));
             mContext.startActivity(i);
         });
+
+        holder. tvGuestName.setOnClickListener(v -> {
+            Intent i = new Intent(mContext, AddGuestInBookingActivity.class);
+            i.putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
+             i .putExtra(MyConstant.ACCOUNT_ID,datum.getAccountId());
+            i.putExtra("imgList",new Gson().toJson(datum));
+            Log.e("imgList", new Gson().toJson(datum));
+            mContext.startActivity(i);
+        });
+
+
         holder.checkBox.setOnCheckedChangeListener(null); // Remove previous listener to prevent duplicate calls
 
         // Update CheckBox state
         holder.checkBox.setChecked(selectedPositions.contains(position));
 
         // Disable checkbox if max limit reached
-        holder.checkBox.setEnabled(selectedPositions.size() < MAX_SELECTION || selectedPositions.contains(position));
+  //      holder.checkBox.setEnabled(selectedPositions.size() < MAX_SELECTION || selectedPositions.contains(position));
 
 
 
