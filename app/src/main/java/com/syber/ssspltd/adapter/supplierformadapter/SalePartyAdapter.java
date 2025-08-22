@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.activitys.FairOrderActivity;
 import com.syber.ssspltd.response.SalepartyModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 
@@ -64,7 +65,18 @@ public class SalePartyAdapter extends RecyclerView.Adapter<SalePartyAdapter.MyVi
             name = itemView.findViewById(R.id.name);
             ll = itemView.findViewById(R.id.ll);
             cardView = itemView.findViewById(R.id.product_card);
-            itemView.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSaleParty(data.get(getAdapterPosition())));
+
+
+            itemView.setOnClickListener(v ->
+            {
+                if (mContext instanceof SupplierOrderFormActivity) {
+                    ((SupplierOrderFormActivity) mContext).setSaleParty(data.get(getAdapterPosition()));
+                }else if(mContext instanceof FairOrderActivity){
+                    ((FairOrderActivity) mContext).setSaleParty(data.get(getAdapterPosition()));
+                }
+            }
+
+            );
 
         }
     }

@@ -183,7 +183,7 @@ public class ChooseCategries extends AppCompatActivity {
                         String psrty = ob.optString("PartyCode");
                         String mobNo = ob.optString("UserMobileNo");
                         Log.e("name", mobNo);
-                        salepartyModelList.add(new SupplierListResult("", name, psrty, "", mobNo, ""));
+                        salepartyModelList.add(new SupplierListResult("", name, psrty, "", mobNo, "",""));
                     }
                     chooseCatagriesAdp.notifyDataSetChanged();
                 } else {
@@ -562,6 +562,10 @@ public class ChooseCategries extends AppCompatActivity {
         String n = supplierListResult.getName();
         SharedPref.write(SharedPref.SELECTED, n);
         SharedPref.write(SharedPref.PARTY_CODE, supplierListResult.getPartyCode());
+        SharedPref.write(SharedPref.
+                PURCHASE_PARTY_ID, supplierListResult.getID());
+        SharedPref.write(SharedPref.
+                PERMISSION_TYPE, supplierListResult.getPermissionType());
         //SharedPref.write(SharedPref.USERMOBILE, supplierListResult.getUserMobileNo());
         Log.e("SharedPref.USERMOBILE", supplierListResult.getUserMobileNo());
         Log.e("party_code", supplierListResult.getPartyCode());

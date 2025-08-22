@@ -270,7 +270,7 @@ public class OTPActivity extends AppCompatActivity {
                             SharedPref.write(SharedPref.TYPE, "notAdmin");
                             SharedPref.write(SharedPref.WHERE_TO_GO, "reg_msg");
                             SharedPref.write(SharedPref.IS_BACK_VISIBLE, "true");
-                            finish();
+                             finish();
                         } else {
                             Log.e("Uaertype", pojo.getUsersTypeListResult().get(0).getUserType());
                             startActivity(new Intent(mContext, SplashActivity.class));

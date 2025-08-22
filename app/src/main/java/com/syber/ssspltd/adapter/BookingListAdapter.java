@@ -4,17 +4,21 @@ import static android.text.format.DateUtils.formatDateTime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
@@ -84,7 +88,8 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
            holder.llActualCheckoutDate.setVisibility(View.VISIBLE);
 
 
-        }else {
+        }
+        else {
             holder.cardCheckIn.setVisibility(View.GONE);
             holder.rlActualCheckInOut.setVisibility(View.GONE);
             holder.rlActualCheckInOut.setVisibility(View.GONE);
@@ -92,19 +97,24 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         }
 
         if ((checkIn == null || checkIn.isEmpty()) && (checkOut == null || checkOut.isEmpty())) {
+       //     holder.llSwitch.setVisibility(View.GONE);
             holder.tvStatus.setText("Mark Check In");
             holder.llActualCheckoutDate.setVisibility(View.GONE);
-        } else if (checkIn == null || checkIn.isEmpty()) {
+        }
+        else if (checkIn == null || checkIn.isEmpty()) {
+         //   holder.llSwitch.setVisibility(View.GONE);
             holder.llActualCheckoutDate.setVisibility(View.GONE);
             holder.tvStatus.setText("Mark Check In");
         } else if (checkOut == null || checkOut.isEmpty()) {
             holder.llActualCheckoutDate.setVisibility(View.GONE);
+        //    holder.llSwitch.setVisibility(View.VISIBLE);
             holder.tvStatus.setText("Mark Check Out");
-        } else {
+        }
+        else {
             holder.llActualCheckoutDate.setVisibility(View.VISIBLE);
             holder.tvStatus.setText("Completed");
-
-            holder.tvActualCheckoutDate.setText(CurrentDateTime.formatDateTimeDDMMYYYY(datum.getActualCheckoutDate()));
+        //    holder.llSwitch.setVisibility(View.VISIBLE);
+            holder.tvActualCheckoutDate.setText(" "+CurrentDateTime.formatDateTimeDDMMYYYY(datum.getActualCheckoutDate()));
             holder.rlActualCheckInOut.setVisibility(View.GONE);
             holder.cardCheckIn.setVisibility(View.GONE);
             holder.tvStatus.setText("Completed");
@@ -140,29 +150,65 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         );
         holder.cardCheckIn.setOnClickListener(v -> {
             if (cancelListener != null) {
-                cancelListener.onCheckInClicked(position, datum); // 👈 Trigger callback
+                cancelListener.onCheckInClicked(position, datum,"CheckInOut"); // 👈 Trigger callback
             }
         });
-    /*    holder.itemView.setOnClickListener(v->{
-            if (datum.getOrderdetail().size()>0) {
-                mContext.startActivity(new Intent(mContext, PendingOrderItemDetailsActivity.class)
-                        .putExtra("orderlist",datum));
-            }else {
-                Toast.makeText(mContext, "No Details found for this order", Toast.LENGTH_SHORT).show();
+
+// Remove previous listener to avoid unwanted callbacks during recycling
+//        holder.yesNoSwitch.setOnCheckedChangeListener(null);
+
+// Safely get isStay value (nullable Boolean)
+        Boolean isStayObj = datum.getIsStay();
+        boolean isStay = isStayObj != null && isStayObj;
+
+// Set switch state based on data
+      //  holder.yesNoSwitch.setChecked(isStay);
+
+// Set label text and color
+   /*     holder.toggleLabel.setText(isStay ? "STAY YES" : "STAY NO");
+        holder.toggleLabel.setTextColor(ContextCompat.getColor(
+                holder.itemView.getContext(),
+                isStay ? R.color.green : R.color.red
+        ));
+*/
+// Re-attach listener
+        /*holder.yesNoSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // Update label and color on toggle
+            holder.toggleLabel.setText(isChecked ? "STAY YES" : "STAY NO");
+            holder.toggleLabel.setTextColor(ContextCompat.getColor(
+                    holder.itemView.getContext(),
+                    isChecked ? R.color.green : R.color.red
+            ));
+
+            // Optional: Call your listener callback
+            if (cancelListener != null) {
+                cancelListener.onCheckInClicked(position, datum,"Stay");
             }
         });*/
 
-//        if (datum.getDebitAmt().equals("")){
-//            holder.dr_amt.setVisibility(View.GONE);
-//            holder.dr_txt.setVisibility(View.GONE);
-//        }else {
-//            holder.dr_amt.setVisibility(View.VISIBLE);
-//            holder.dr_txt.setVisibility(View.VISIBLE);
-//            holder.dr_amt.setText(datum.getDebitAmt());
-//        }
-//
-//        holder.bal_name.setText(tt);
 
+
+        if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")){
+
+        }
+        else {
+            if (datum.getNoOfPerson().equals("0")){
+                holder.llCheckInDate.setVisibility(View.VISIBLE);
+                holder.rlCheckOutDate.setVisibility(View.GONE);
+                holder.rlNoOfPerson.setVisibility(View.GONE);
+                holder.rlActualCheckInOut.setVisibility(View.GONE);
+                holder.tvStatus.setVisibility(View.GONE);
+            //    holder.llSwitch.setVisibility(View.GONE);
+            }
+        }
+      /*  if (datum.getNoOfPerson().equals("0")){
+            holder.llCheckInDate.setVisibility(View.VISIBLE);
+            holder.rlCheckOutDate.setVisibility(View.GONE);
+            holder.rlNoOfPerson.setVisibility(View.GONE);
+            holder.rlActualCheckInOut.setVisibility(View.GONE);
+            holder.tvStatus.setVisibility(View.GONE);
+        }
+        holder.llSwitch.setVisibility(View.GONE);*/
     }
     // Remove item from the list
     public void removeItem(int position) {
@@ -194,16 +240,25 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView visitId,tvStatus,tvActualCheckoutDate,checkInTimeAndDate,checkOutDateAndTime,noOfPerson,branchName,pendingAmt,marketer_pending;
+        TextView visitId,tvStatus,tvActualCheckoutDate,checkInTimeAndDate,checkOutDateAndTime,noOfPerson,branchName,  toggleLabel, pendingAmt,marketer_pending;
         CardView cardCheckIn;
-        LinearLayout llCancel,llfull;
+        LinearLayout llfull,llSwitch,llCheckInDate;
         LinearLayout llActualCheckoutDate;
-        RelativeLayout rlActualCheckInOut;
-        LinearLayout edit;
+        RelativeLayout rlActualCheckInOut,rlCheckOutDate,rlNoOfPerson;
+        SwitchCompat yesNoSwitch;
+        ImageView edit;
+
+        ImageView llCancel;
         TextView netAmt_pending;
         public MyViewHolder(View itemView) {
             super(itemView);
             visitId = itemView.findViewById(R.id.visitId);
+        //     toggleLabel =itemView. findViewById(R.id.toggleLabel);
+         //   llSwitch =itemView. findViewById(R.id.llSwitch);
+            yesNoSwitch =itemView. findViewById(R.id.yesNoSwitch);
+            rlCheckOutDate =itemView. findViewById(R.id.rlCheckOutDate);
+            rlNoOfPerson =itemView. findViewById(R.id.rlNoOfPerson);
+            llCheckInDate =itemView. findViewById(R.id.llCheckInDate);
             checkInTimeAndDate = itemView.findViewById(R.id.checkInTimeAndDate);
             tvActualCheckoutDate = itemView.findViewById(R.id.tvActualCheckoutDate);
             rlActualCheckInOut = itemView.findViewById(R.id.rlActualCheckInOut);
@@ -222,6 +277,6 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
     //  the interface
     public interface OnBookingCancelListener {
         void onBookingCancel(int position,BookingData data); // Method to notify activity
-        void onCheckInClicked(int position, BookingData data);
+        void onCheckInClicked(int position, BookingData data,String value);
     }
 }

@@ -44,6 +44,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
 //by rahul
             SharedPref.write(SharedPref.PARTY_CODE,datum.getmPartyCode());
+            SharedPref.write(SharedPref.ADMIN_ID, datum.getID());
         });
 
         if (datum.getmUserType().equals("5")) {

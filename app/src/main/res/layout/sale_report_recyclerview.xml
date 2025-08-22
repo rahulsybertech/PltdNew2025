@@ -260,6 +260,7 @@
                     android:textSize="12dp" />
 
                 <ImageView
+                    android:visibility="gone"
                     android:id="@+id/plusClick"
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
@@ -273,6 +274,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/otp_line">
+
 
                 <TextView
                     android:layout_width="match_parent"
@@ -321,13 +323,25 @@
                     android:text="Amount"
                     android:textColor="@color/black"
                     android:textSize="12dp" />
+                <TextView
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.2"
+                    android:background="@drawable/otp_line"
+                    android:fontFamily="@font/helvetica_regular"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="P.slip"
+                    android:textColor="@color/black"
+                    android:textSize="12dp" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reclerItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"></androidx.recyclerview.widget.RecyclerView>
+                android:visibility="visible"></androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
 

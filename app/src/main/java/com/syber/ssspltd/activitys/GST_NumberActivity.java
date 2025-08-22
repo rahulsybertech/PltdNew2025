@@ -1,13 +1,18 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.CHECK_OTP_GO;
+import static com.syber.ssspltd.Constants.NewErpUrls.LOGIN;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_NEW_USER_DETAILS;
 import static com.syber.ssspltd.Constants.NewErpUrls.VERIFY_REFERRAL;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,8 +30,10 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,20 +41,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
+import com.syber.ssspltd.adapter.LoginNoAdap.LoginNumberAdapter;
 import com.syber.ssspltd.databinding.ActivityGstNumberBinding;
+import com.syber.ssspltd.response.LoginNoResponse.LoginNoPojo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -67,6 +80,7 @@ public class GST_NumberActivity extends AppCompatActivity {
     String pan_gst="gst";
     String station_add;
     boolean isVaildReferal = false;
+    Type listType;
 
 
     @Override
@@ -74,7 +88,8 @@ public class GST_NumberActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding=ActivityGstNumberBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        listType = new TypeToken<LoginNoPojo>() {
+        }.getType();
         station_add =binding.stationAdd.getText().toString();
         binding.userName.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
         binding.firmName.setFilters(new InputFilter[] {new InputFilter.AllCaps()});
@@ -169,9 +184,11 @@ public class GST_NumberActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         Log.e("jsonObject", jsonObject + "");
+
                         if (jsonObject.getBoolean("ResponseStatus")) {
                             //  SharedPref.write(SharedPref.USERMOBILE, enter_mobile_number.getText().toString());
-                            startActivity(new Intent(mContext,MainActivity.class));
+                            getLogin(mob);
+                       /*     startActivity(new Intent(mContext,MainActivity.class));
                             SharedPref.write(SharedPref.PARTY_CODE,"new");
                             SharedPref.write(SharedPref.USER_TYPE,"new");
                             SharedPref.write(SharedPref.DASHBOARD_TYPE,"New User");
@@ -179,7 +196,7 @@ public class GST_NumberActivity extends AppCompatActivity {
                             SharedPref.write(SharedPref.WHERE_TO_GO,"main_act");
                             SharedPref.write(SharedPref.TYPE,"notAdmin");
                             SharedPref.write(SharedPref.isLogin, "true");
-                            finish();
+                            finish();*/
                         } else
                         {
                             //  Toast.makeText(mContext, "" + jsonObject.getString("ResponseMessage"), Toast.LENGTH_SHORT).show();
@@ -197,7 +214,7 @@ public class GST_NumberActivity extends AppCompatActivity {
             @Override
             public byte[] getBody() {
                 String str = "{\"MOBILENO\":\"" + mob + "\",\"REFERRAL\":\"" + referal + "\",\"GSTNO\":\"" + gst + "\",\"Name\":\"" + name + "\",\"Address\":\"" + add_result+ "\"" +
-                        ",\"Lattitude\":\"" + latitude + "\",\"Longitude\":\"" + longitude + "\",\"FirmName\":\"" + firmName + "\"}";
+                        ",\"Lattitude\":\"" + JSONObject.NULL + "\",\"Longitude\":\"" + JSONObject.NULL + "\",\"FirmName\":\"" + firmName + "\"}";
                 //key - new
                 Log.e("str", str);
                 return str.getBytes();
@@ -214,6 +231,127 @@ public class GST_NumberActivity extends AppCompatActivity {
 
         };
 
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
+    }
+
+
+
+    private void getLogin(String mob) {
+        final ProgressDialog progressBar = new ProgressDialog(mContext);
+        progressBar.setTitle("Login");
+        progressBar.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, LOGIN,
+                response -> {
+                    Log.e("loginRespo", response);
+                    progressBar.dismiss();
+                    LoginNoPojo pojo = new Gson().fromJson(response, listType);
+                    if (pojo.getResponseStatus()) {
+                        SharedPref.write(SharedPref.USERMOBILE, mob);
+                        Log.e("login_sharedPref", mob);
+                        if (pojo.getUserStatus().equals("NEWUSER")) {
+
+                            OTP2(pojo.getResponseOTP().toString());
+
+                        }
+                    }
+
+
+                }, error -> {
+            progressBar.dismiss();
+            networkConnetion3(mContext);
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+
+                String str = "{\"MOBILENO\":\"" + mob + "\"}";
+                //key - new
+                Log.e("str", str);
+                return str.getBytes();
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
+    }
+
+    private void OTP2(String otp) {
+//        final ProgressDialog progressBar = new ProgressDialog(mContext);
+//        progressBar.setTitle("GENERATE OTP");
+//        progressBar.show();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, CHECK_OTP_GO, response -> {
+            Log.e("OtpRespo", response);
+            // progressBar.dismiss();
+            // Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getBoolean("ResponseStatus")) {
+                    Log.e("ResponseStatus", jsonObject.getBoolean("ResponseStatus") + "");
+                 //   Toast.makeText(mContext, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
+                    String StartDate = jsonObject.getString("StartDate");
+                    String EndDate = jsonObject.getString("EndDate");
+                    SharedPref.write(SharedPref.FY_StartDate, StartDate);
+                    SharedPref.write(SharedPref.FY_EndDate, EndDate);
+                    //here_is_the_token
+                    SharedPref.write(SharedPref.ACCCESS_TOKEN, jsonObject.getString("AccessToken"));
+                    // finish();
+                    SharedPref.write(SharedPref.isLogin, "true");
+
+                    startActivity(new Intent(mContext, MainActivity.class)
+                            .putExtra("reg_status",""));
+                    SharedPref.write(SharedPref.isLogin, "true");
+                    SharedPref.write(SharedPref.USER_TYPE, "new");
+                    SharedPref.write(SharedPref.PARTY_CODE, "new");
+                    SharedPref.write(SharedPref.DASHBOARD_TYPE, "New User");
+                    SharedPref.write(SharedPref.SELECTED, "");
+                    SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
+                    SharedPref.write(SharedPref.TYPE, "notAdmin");
+                    finish();
+/*
+                    if (getIntent().getStringExtra("reg_status").equals("NOTUSER")) {
+                        SharedPref.write(SharedPref.USER_TYPE, "new");
+                        startActivity(new Intent(mContext, GST_NumberActivity.class)
+                                .putExtra("ref_code", getIntent().getStringExtra("ref_code")));
+                        finish();
+                    } else {
+                        GetUsersTypeList();
+                    }*/
+
+                } else {
+                    Toast.makeText(mContext, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error ->
+                networkConnetion3(mContext)) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String mob = SharedPref.read(SharedPref.USERMOBILE, "");
+                // String mob=mobile_no_otp.getText().toString();
+
+                String otpp = otp;
+                String str = "{\"MOBILENO\":\"" + mob + "\",\"OTP\":\"" + otpp + "\",\"usertype\":\"" + "NEWUSER" + "\"}";
+                Log.e("str", str);
+                return str.getBytes();
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 

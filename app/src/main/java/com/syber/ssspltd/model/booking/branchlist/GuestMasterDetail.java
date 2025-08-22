@@ -40,6 +40,8 @@ public class GuestMasterDetail implements Serializable {
 
     @SerializedName("partyCode")
     private String partyCode;
+    @SerializedName("mobileNo")
+    private String mobileNo;
 
     @SerializedName("nameCount")
     private String nameCount;
@@ -47,6 +49,8 @@ public class GuestMasterDetail implements Serializable {
     // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+    public String getMobileNo() { return mobileNo; }
+    public void setMobileNo(String id) { this.mobileNo = mobileNo; }
 
     public String getCompanyId() { return companyId; }
     public void setCompanyId(String companyId) { this.companyId = companyId; }

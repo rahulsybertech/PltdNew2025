@@ -10,10 +10,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.chuckerteam.chucker.api.ChuckerCollector;
-import com.chuckerteam.chucker.api.ChuckerInterceptor;
-import com.chuckerteam.chucker.api.RetentionManager;
-import okhttp3.OkHttpClient;
 public class VolleySingleton {
 
     private static VolleySingleton mInstance;

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="37dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardBackgroundColor="@color/white"
     android:layout_marginBottom="0.5dp"
-    android:padding="3dp"
     xmlns:tools="http://schemas.android.com/tools">
 
 
@@ -17,7 +16,6 @@
 
             <RelativeLayout
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp"
                 android:paddingStart="10dp"
                 android:layout_weight="1.6"
                 android:background="@drawable/bg_grey_corner"
@@ -27,17 +25,20 @@
 
                   <CheckBox
                       android:id="@+id/checkbox"
+                      android:visibility="visible"
+                      android:layout_centerInParent="true"
                       android:layout_width="30dp"
                       android:layout_height="30dp"/>
                   <TextView
                       android:visibility="gone"
                       android:textSize="12sp"
+                      android:layout_centerInParent="true"
                       android:id="@+id/tvSrNo"
-                      android:layout_width="match_parent"
+                      android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:gravity="left"
                       android:padding="2dp"
-                      android:text="BillDate"
+                      android:text="1"
                       android:textColor="@color/black" />
 
 

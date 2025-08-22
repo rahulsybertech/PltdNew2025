@@ -43,7 +43,6 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.StringRequest;
-import com.chuckerteam.chucker.api.Chucker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -176,6 +175,9 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         tv3 = findViewById(R.id.home3);
         more = findViewById(R.id.home4);
 
+
+
+
         rll.setOnClickListener(v -> {
             if (isRecyclerOpen == true) {
                 adminName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_arrow_drop_up_24, 0);
@@ -194,6 +196,19 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         adminName = findViewById(R.id.adminName);
         singleName = findViewById(R.id.singleName);
         checked = SharedPref.read(SharedPref.CHECK, "");
+        if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("New User")) {
+            adminName.setVisibility(View.GONE);
+
+        }else {
+
+            adminName.setVisibility(View.VISIBLE);
+
+            adminName.setText(SharedPref.read(SharedPref.SELECTED, ""));
+            singleName.setVisibility(View.GONE);
+            adminName.setVisibility(View.VISIBLE);
+            adminName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_arrow_drop_down_24, 0);
+
+        }
 //        if (SharedPref.read(SharedPref.TYPE, "").equals("notAdmin")) {
 //            adminName.setText(SharedPref.read(SharedPref.SELECTED, ""));
 //            singleName.setVisibility(View.VISIBLE);
@@ -207,11 +222,11 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
 //        }
 
 
-        adminName.setText(SharedPref.read(SharedPref.SELECTED, ""));
+     /*   adminName.setText(SharedPref.read(SharedPref.SELECTED, ""));
         singleName.setVisibility(View.GONE);
         adminName.setVisibility(View.VISIBLE);
         adminName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_arrow_drop_down_24, 0);
-
+*/
         adminName.setOnClickListener(v -> {
             if (adapter.getItemCount() == 1) {
                 adminName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -355,8 +370,14 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
 
         });
         if (Lazy.haveNetworkConnection(mContext)) {
-            GetUsersTypeList();
-            GetFYearList();
+
+            if(SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("New User")){
+
+            }else {
+                GetUsersTypeList();
+                GetFYearList();
+            }
+
         } else {
             networkConnetion3(mContext);
         }
@@ -396,11 +417,13 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
                         psrty = ob.optString("PartyCode");
                         String sn = ob.optString("SRNO");
                         String mobNo = ob.optString("UserType");
+                        String id = ob.optString("ID");
+                        String permissionType = ob.optString("PermissionType");
                         Log.e("name", name);
                         Log.e("partycode", psrty);
                         if (!mobNo.equals("5")) {
 
-                            rowItemList.add(new RowItem(name, psrty, sn, mobNo));
+                            rowItemList.add(new RowItem(name, psrty, sn, mobNo,id,permissionType));
                         }
 
 //                                    SharedPref.write(SharedPref.PARTY_CODE,psrty);
@@ -496,10 +519,6 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
             } else {
                 Toast.makeText(this, "Please select year", Toast.LENGTH_SHORT).show();
             }
-
-
-
-
         });
 
 
@@ -621,6 +640,10 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
         SharedPref.write(SharedPref.LIST_TYPE, rowItem.getmUserType());
         SharedPref.write(SharedPref.SELECTED, n);
         SharedPref.write(SharedPref.PARTY_CODE, rowItem.getmPartyCode());
+        SharedPref.write(SharedPref.PURCHASE_PARTY_ID, rowItem.getID());
+        SharedPref.write(SharedPref.PERMISSION_TYPE, rowItem.getPermissionType());
+        SharedPref.write(SharedPref.ADMIN_ID, rowItem.getID());
+
 
         Log.e("DB_NAME", rowItem.getmUserType());
         Log.e("part", rowItem.getmPartyCode());

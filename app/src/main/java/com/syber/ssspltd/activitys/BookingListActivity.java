@@ -1,14 +1,9 @@
 package com.syber.ssspltd.activitys;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.CancelStayBooking;
-import static com.syber.ssspltd.Constants.NewErpUrls.GET_BLACK_LIST_NAME;
-import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountNameList;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetStayBookingDataListByBranchId;
-import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
-import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingTime;
-import static com.syber.ssspltd.Constants.NewErpUrls.TRANSPORT;
 import static com.syber.ssspltd.Constants.NewErpUrls.UpdateStayBookingActualTime;
 
 import android.app.AlertDialog;
@@ -22,17 +17,10 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -45,24 +33,17 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.syber.ssspltd.R;
-import com.syber.ssspltd.Responses.customer.BlackListedName;
-import com.syber.ssspltd.Responses.customer.CustomerListPojo;
 import com.syber.ssspltd.Utils.AlertUtil;
 import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.MyConstant;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
-import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
-import com.syber.ssspltd.adapter.AccountListAdapter;
 import com.syber.ssspltd.adapter.BookingListAdapter;
-import com.syber.ssspltd.adapter.PendingOrderReportAdapter;
 import com.syber.ssspltd.databinding.ActivityBookingListBinding;
-import com.syber.ssspltd.databinding.ActivityPendingOrderBinding;
 import com.syber.ssspltd.model.booking.BookingData;
 
 import com.syber.ssspltd.model.booking.StayBookingResponse;
-import com.syber.ssspltd.model.booking.branchlist.Account;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +52,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -98,13 +81,14 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
         backBookingList.setOnClickListener(v -> onBackPressed());
 
 
-        plusButton.setOnClickListener(v ->
-               startActivity(new Intent(this, BookingRequestActivity.class)
-                        .putExtra(MyConstant.EXTRA_IS_EDIT,false)
-                       .putExtra(MyConstant.SCREEN,MyConstant.BOOKINGlIST)
-                       .putExtra(MyConstant.USERTYPE, SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
-                )
-        );
+        plusButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, BookingRequestActivity.class)
+                    .putExtra(MyConstant.EXTRA_IS_EDIT, false)
+                    .putExtra(MyConstant.SCREEN, MyConstant.BOOKINGlIST)
+                    .putExtra(MyConstant.USERTYPE, SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
+            );
+      //      this.finish(); // now inside the lambda
+        });
         setRecyler();
         getBookingList();
 
@@ -130,6 +114,8 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
                             || stayBookingList.get(p).getNoOfPerson().toLowerCase().contains(charSequence.toString().toLowerCase())
                             || stayBookingList.get(p).getBookingID().toLowerCase().contains(charSequence.toString().toLowerCase())
                             || stayBookingList.get(p).getaccountName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || stayBookingList.get(p).getNickName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || stayBookingList.get(p).getNickNameID().toLowerCase().contains(charSequence.toString().toLowerCase())
 
                     ) {
                         filterList.add(stayBookingList.get(p));
@@ -188,6 +174,15 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
                 if (pojo.isResponseStatus()) {
                     stayBookingList.clear();
                     stayBookingList.addAll(pojo.getStayBookingList());
+                    Collections.sort(stayBookingList, new Comparator<BookingData>() {
+                        @Override
+                        public int compare(BookingData o1, BookingData o2) {
+                            return Integer.compare(
+                                    Integer.parseInt(o2.getBookingID()),
+                                    Integer.parseInt(o1.getBookingID())
+                            );
+                        }
+                    });
                     binding.noOfRecord.setText("(" + pojo.getStayBookingList().size() + " records)");
                     adapter.notifyDataSetChanged();
                 } else {
@@ -252,8 +247,8 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
     }
 
     @Override
-    public void onCheckInClicked(int position, BookingData data) {
-        bookingCheckInCheckOut(position,data);
+    public void onCheckInClicked(int position, BookingData data,String value) {
+        bookingCheckInCheckOut(position,data,value);
     }
 
 
@@ -379,12 +374,13 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
         stringRequest.setRetryPolicy(retryPolicy);
         VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
-    private void bookingCheckInCheckOut(int position,BookingData data) {
+    private void bookingCheckInCheckOut(int position, BookingData data, String value) {
         //test code for disable all views
 //        for(int i = 0; i < binding.llLl.getChildCount(); i++){
 //            View v = binding.llLl.getChildAt(i);
 //            v.setEnabled(false);
 //        }
+        Boolean isStaySucess; // Nullable Boolean
         String checkIn = data.getActualCheckInDate();
         String checkOut = data.getActualCheckoutDate();
 
@@ -396,19 +392,42 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
         String currentDateTime = sdf.format(new Date());
         Log.d("DateTime", currentDateTime);
-        if ((checkIn == null || checkIn.isEmpty()) && (checkOut == null || checkOut.isEmpty())) {
-             url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "&actualCheckInDate=" + currentDateTime;
-        } else if (checkOut == null || checkOut.isEmpty()) {
-             url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "&actualCheckoutDate=" +currentDateTime ;
-        } else {
-            url = "";
+        if(value.equals("Stay")){
+            Boolean isStay = data.getIsStay(); // Nullable Boolean
+
+
+
+
+            if (isStay == null) {
+                url = UpdateStayBookingActualTime + "?bookingId=" + data.getId()+"&isStay=" + true;
+                isStaySucess=true;
+            } else if (isStay) {
+                url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "&isStay=" +false;
+                isStaySucess=false;
+            } else {
+                url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "&isStay=" +true;
+                isStaySucess=true;
+            }
+
+        }else {
+            isStaySucess = data.getIsStay();
+            if ((checkIn == null || checkIn.isEmpty()) && (checkOut == null || checkOut.isEmpty())) {
+                url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "&actualCheckInDate=" + currentDateTime;
+            } else if (checkOut == null || checkOut.isEmpty()) {
+
+                url = UpdateStayBookingActualTime + "?bookingId=" + data.getId() + "&actualCheckoutDate=" +currentDateTime;
+            } else {
+                url = "";
+            }
         }
+
         // Append recordId as a query parameter in the URL
 
 
 //        myProgress.show();
+        String finalUrl = url;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
-            Util.getInstance().logLargeString("TaG", "Response " + url + "---> " + response);
+            Util.getInstance().logLargeString("TaG", "Response " + finalUrl + "---> " + response);
 //            Log.i("TaG", "Response " + SAVE_ORDER  +"---> " + response);
 
 
@@ -419,8 +438,20 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
                     if ((checkIn == null || checkIn.isEmpty()) && (checkOut == null || checkOut.isEmpty())) {
                         data.setActualCheckInDate(currentDateTime); // Update check-in
                     } else if (checkOut == null || checkOut.isEmpty()) {
-                        data.setActualCheckoutDate(currentDateTime); // Update check-out
+                        if(value.equals("Stay")){
+                            data.setIsStay(isStaySucess);
+                        }else {
+                            data.setActualCheckoutDate(currentDateTime); // Update check-out
+                        }
+
                     }
+                    if(value.equals("Stay")){{
+                          if (checkOut!= null && checkIn!=null) {
+                            //  data.setActualCheckoutDate(currentDateTime); // Update check-out
+                            data.setIsStay(isStaySucess); // Update check-out
+                        }
+                    }}
+
                     // Notify the adapter that item has changed
                     adapter.notifyItemChanged(position);  // 🔁 Refresh this item in RecyclerView
 
@@ -466,7 +497,7 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
                 public void onClick(DialogInterface arg0, int arg1) {
 //                    myProgress.dismiss();
                     progressDialog.dismiss();
-                    bookingCheckInCheckOut(position,data);
+                    bookingCheckInCheckOut(position,data, value);
                 }
             }).setNegativeButton("Cancel", (dialog, which) -> dialog.cancel()).create().show();
         }) {

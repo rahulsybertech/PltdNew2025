@@ -1,6 +1,1033 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_ll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".activitys.supplierorderform.SupplierOrderFormActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+      <com.google.android.material.appbar.AppBarLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:theme="@style/AppTheme.AppBarOverlay">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:title="Fair Order" />
+
+      </com.google.android.material.appbar.AppBarLayout>
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/ll"
+                android:scrollbars="vertical">
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
+                      android:padding="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                              <TextView
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="center|start"
+                                  android:singleLine="true"
+                                  android:text="@string/sale_party"
+                                  android:textColor="@color/black"
+                                  android:textSize="16sp" />
+
+                              <TextView
+                                  android:id="@+id/avl_limit"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="10dp"
+                                  android:layout_marginTop="5dp"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="center|start"
+                                  android:singleLine="true"
+                                  android:textColor="@color/green"
+                                  android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/otp_line">
+
+                              <TextView
+                                  android:id="@+id/sale_party"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_alignParentStart="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_toStartOf="@id/clear_saleparty"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:paddingStart="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16sp"
+                                  android:visibility="visible" />
+
+
+                              <ImageView
+                                  android:id="@+id/clear_saleparty"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:padding="7dp"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:id="@+id/llSubparty"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                              <TextView
+                                  android:visibility="visible"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:checked="true"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/sub_party"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+                              <RelativeLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="10dp"
+                                  android:background="@drawable/otp_line">
+
+                                    <TextView
+                                        android:id="@+id/sub_party"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="45dp"
+                                        android:layout_toStartOf="@+id/clear_subparty"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/roboto_light"
+                                        android:freezesText="true"
+                                        android:gravity="start|center"
+                                        android:paddingLeft="10dp"
+                                        android:singleLine="true"
+                                        android:textColor="@color/black"
+                                        android:textSize="16dp" />
+
+                                    <ImageView
+                                        android:id="@+id/clear_subparty"
+                                        android:layout_width="30dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginEnd="5dp"
+                                        android:onClick="handleClear"
+                                        android:padding="7dp"
+                                        android:src="@drawable/ic_cross2"
+                                        app:tint="@color/red" />
+                              </RelativeLayout>
+                        </LinearLayout>
+
+                        <RelativeLayout
+
+                            android:id="@+id/ll_radio_rubparty_remark"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/otp_line"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                              <EditText
+                                  android:id="@+id/sub_party_remark"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_weight="1"
+                                  android:background="@null"
+                                  android:layout_toStartOf="@id/clearSubPartyRemark"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="start|center"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+                              <ImageView
+                                  android:id="@+id/clearSubPartyRemark"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:padding="7dp"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+
+                              <TextView
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/sub_party_mobile"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp"
+                                  android:visibility="gone" />
+
+                              <EditText
+                                  android:id="@+id/mobile_sub_party_remark"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="10dp"
+                                  android:layout_weight="1"
+                                  android:background="@drawable/otp_line"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="start|center"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp"
+                                  android:visibility="gone" />
+
+                        </RelativeLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/llTransportAndStation"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                              <TextView
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="start|center"
+                                  android:imeOptions="actionNext"
+                                  android:saveEnabled="false"
+                                  android:singleLine="true"
+                                  android:text="@string/transport_fair"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <RelativeLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="10dp"
+                                  android:background="@drawable/otp_line">
+
+
+                                    <TextView
+                                        android:id="@+id/transport"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="45dp"
+                                        android:layout_toStartOf="@id/clear_transport"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/roboto_light"
+                                        android:freezesText="true"
+                                        android:gravity="start|center"
+                                        android:imeOptions="actionNext"
+                                        android:paddingLeft="10dp"
+                                        android:singleLine="true"
+                                        android:textColor="@color/black"
+                                        android:textSize="16dp" />
+
+                                    <ImageView
+                                        android:id="@+id/clear_transport"
+                                        android:layout_width="30dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginEnd="5dp"
+                                        android:onClick="handleClear"
+                                        android:padding="7dp"
+                                        android:src="@drawable/ic_cross2"
+                                        app:tint="@color/red" />
+                              </RelativeLayout>
+
+                              <TextView
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/b_station"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <RelativeLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="10dp"
+                                  android:background="@drawable/otp_line">
+
+
+                                    <TextView
+                                        android:id="@+id/b_station"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="45dp"
+                                        android:layout_toStartOf="@id/clear_station"
+                                        android:layout_weight="1"
+                                        android:fontFamily="@font/roboto_light"
+                                        android:freezesText="true"
+                                        android:gravity="start|center"
+                                        android:imeOptions="actionNext"
+                                        android:paddingLeft="10dp"
+                                        android:singleLine="true"
+                                        android:textColor="@color/black"
+                                        android:textSize="16dp" />
+
+                                    <ImageView
+                                        android:id="@+id/clear_station"
+                                        android:layout_width="30dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginEnd="5dp"
+                                        android:onClick="handleClear"
+                                        android:padding="7dp"
+                                        android:src="@drawable/ic_cross2"
+                                        app:tint="@color/red" />
+                              </RelativeLayout>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/roboto_light"
+                            android:gravity="center|start"
+                            android:singleLine="true"
+                            android:text="@string/marketer12"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/otp_line">
+
+                              <TextView
+                                  android:id="@+id/marketer"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_alignParentStart="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:layout_toStartOf="@id/clear_marketer"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:paddingStart="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16sp"
+                                  android:visibility="visible" />
+
+
+                              <ImageView
+                                  android:id="@+id/clear_marketer"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:padding="7dp"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto_light"
+                            android:gravity="center|start"
+                            android:singleLine="true"
+                            android:text="@string/scheme"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/otp_line">
+
+                              <TextView
+                                  android:id="@+id/scheme"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:layout_toStartOf="@id/clear_scheme"
+                                  android:layout_weight="1"
+                                  android:fontFamily="@font/roboto_light"
+                                  android:freezesText="true"
+                                  android:gravity="center|start"
+                                  android:imeOptions="actionNext"
+                                  android:paddingLeft="10dp"
+                                  android:singleLine="true"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <ImageView
+                                  android:id="@+id/clear_scheme"
+                                  android:layout_width="30dp"
+                                  android:layout_height="match_parent"
+                                  android:layout_alignParentEnd="true"
+                                  android:layout_centerInParent="true"
+                                  android:layout_marginEnd="5dp"
+                                  android:onClick="handleClear"
+                                  android:padding="5dp"
+                                  android:src="@drawable/ic_cross2"
+                                  app:tint="@color/red" />
+                        </RelativeLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/ll_2star"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="2dp"
+                            android:background="@drawable/otp_line"
+                            android:gravity="center"
+                            android:padding="7dp"
+                            android:visibility="gone">
+
+                              <RadioGroup
+                                  android:id="@+id/two_star_readio_option"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="horizontal">
+
+                                    <RadioButton
+                                        android:id="@+id/radio_a"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:checked="true"
+                                        android:text="A"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                                    <RadioButton
+                                        android:id="@+id/radio_b"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="B"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                                    <RadioButton
+                                        android:id="@+id/radio_c"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="C"
+                                        android:textSize="20dp"></RadioButton>
+
+                                    <RadioButton
+                                        android:id="@+id/radio_d"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="D"
+                                        android:textSize="20dp">
+
+                                    </RadioButton>
+
+                              </RadioGroup>
+                        </LinearLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/LoginTextInputLayoutStyle"
+                            android:id="@+id/textInNoRemark"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:visibility="visible">
+
+                              <EditText
+                                  android:id="@+id/no_remark"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="70dp"
+                                  android:layout_marginLeft="2dp"
+                                  android:gravity="top|start"
+                                  android:hint="@string/dis"
+                                  android:imeOptions="actionDone"
+                                  android:maxWidth="70dp"
+                                  android:maxEms="3"
+                                  android:maxLength="150"
+                                  android:maxLines="3"
+                                  android:paddingLeft="10dp"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            android:id="@+id/attach_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|start"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/roboto_light"
+                            android:freezesText="true"
+                            android:gravity="center"
+                            android:singleLine="true"
+                            android:text="@string/dispatch_date"
+                            android:textColor="@color/red"
+                            android:textSize="18dp"
+                            android:visibility="visible" />
+
+                        <LinearLayout
+                            android:id="@+id/llDispatchDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                              <LinearLayout
+                                  android:id="@+id/llFromDate"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1">
+
+                                    <TextView
+                                        android:id="@+id/date"
+                                        android:layout_width="130dp"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line"
+                                        android:fontFamily="monospace"
+                                        android:gravity="center"
+                                        android:hint="Date From"
+                                        android:imeOptions="actionNext"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp" />
+
+                                    <TextView
+                                        android:id="@+id/set_date"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_weight="1.5"
+                                        android:drawableStart="@drawable/ic_baseline_calendar_today_24"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textSize="14sp" />
+                              </LinearLayout>
+
+                              <LinearLayout
+                                  android:id="@+id/llToDate"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1">
+
+                                    <TextView
+                                        android:id="@+id/date_to"
+                                        android:layout_width="130dp"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line"
+                                        android:fontFamily="monospace"
+                                        android:gravity="center"
+                                        android:hint="Date To"
+                                        android:imeOptions="actionNext"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp" />
+                                    <TextView
+                                        android:id="@+id/set_date_to"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_weight="1.5"
+                                        android:drawableStart="@drawable/ic_baseline_calendar_today_24"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textSize="14sp" />
+                              </LinearLayout>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                              <LinearLayout
+                                  android:id="@+id/llAddItem"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1">
+
+                                    <TextView
+                                        android:id="@+id/addITem"
+                                        android:layout_width="130dp"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line"
+                                        android:fontFamily="monospace"
+                                        android:gravity="center"
+                                        android:hint="Add Item"
+                                        android:imeOptions="actionNext"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_weight="1.5"
+                                        android:drawableStart="@drawable/baseline_assignment_add_24"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textSize="14sp" />
+                              </LinearLayout>
+
+                              <LinearLayout
+
+                                  android:id="@+id/llAddImage1"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1">
+
+                                    <TextView
+                                        android:layout_width="130dp"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line"
+                                        android:fontFamily="monospace"
+                                        android:gravity="center"
+                                        android:hint="Add Image"
+                                        android:imeOptions="actionNext"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp" />
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="40dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_weight="1.5"
+                                        android:drawableStart="@drawable/baseline_add_a_photo_24"
+                                        android:maxLines="1"
+                                        android:padding="8dp"
+                                        android:textSize="14sp" />
+                              </LinearLayout>
+                        </LinearLayout>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerPackItem"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                        <include
+                            android:id="@+id/ll_row"
+                            android:visibility="visible"
+                            layout="@layout/summery"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp" />
+                        <LinearLayout
+                            android:visibility="gone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp">
+
+                              <Button
+                                  android:id="@+id/text_add_image"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:backgroundTint="@color/active_color"
+                                  android:drawableEnd="@drawable/ic_baseline_add_a_photo_24"
+                                  android:text="Add Image"
+                                  android:textColor="@color/white"
+                                  android:visibility="visible" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_img"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                              <LinearLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="20dp"
+                                  android:layout_marginEnd="20dp"
+                                  android:orientation="horizontal">
+
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line">
+
+                                          <ImageView
+                                              android:id="@+id/placeholder1"
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:layout_gravity="center"
+                                              android:onClick="placeholderClick" />
+
+                                          <ProgressBar
+                                              android:id="@+id/progress1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
+                                          <ImageView
+                                              android:id="@+id/image1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:layout_weight="1"
+                                              android:padding="1dp"
+                                              android:scaleType="fitXY"
+                                              android:visibility="visible" />
+
+                                          <ImageView
+                                              android:id="@+id/removeImage1"
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:layout_margin="12dp"
+                                              android:onClick="removeImage"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
+                                              app:tint="@color/error_text" />
+
+                                    </FrameLayout>
+
+                                    <FrameLayout
+                                        android:visibility="visible"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line">
+
+                                          <ImageView
+                                              android:id="@+id/placeholder2"
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:layout_gravity="center"
+                                              android:onClick="placeholderClick" />
+
+                                          <ProgressBar
+                                              android:id="@+id/progress2"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
+                                          <ImageView
+                                              android:id="@+id/image2"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:layout_weight="1"
+                                              android:padding="1dp"
+                                              android:scaleType="fitXY"
+                                              android:visibility="visible" />
+
+                                          <ImageView
+                                              android:id="@+id/removeImage2"
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:layout_margin="12dp"
+                                              android:onClick="removeImage"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
+                                              app:tint="@color/error_text" />
+
+                                    </FrameLayout>
+                              </LinearLayout>
+
+                              <LinearLayout
+                                  android:id="@+id/ll_img1"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="20dp"
+                                  android:layout_marginEnd="20dp"
+                                  android:orientation="horizontal"
+                                  android:visibility="visible">
+
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line">
+
+                                          <ImageView
+                                              android:id="@+id/placeholder3"
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:layout_gravity="center"
+                                              android:onClick="placeholderClick" />
+
+                                          <ProgressBar
+                                              android:id="@+id/progress3"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
+                                          <ImageView
+                                              android:id="@+id/image3"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:layout_weight="1"
+                                              android:scaleType="fitXY"
+                                              android:visibility="visible" />
+
+                                          <ImageView
+                                              android:id="@+id/removeImage3"
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:layout_margin="12dp"
+                                              android:onClick="removeImage"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
+                                              app:tint="@color/error_text" />
+
+                                    </FrameLayout>
+
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:layout_weight="1"
+                                        android:visibility="invisible"
+                                        android:background="@drawable/otp_line">
+
+                                          <ImageView
+                                              android:id="@+id/placeholder4"
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:layout_gravity="center"
+                                              android:onClick="placeholderClick" />
+
+                                          <ProgressBar
+                                              android:id="@+id/progress4"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
+                                          <ImageView
+                                              android:id="@+id/image4"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:scaleType="fitXY"
+                                              android:visibility="visible" />
+
+                                          <ImageView
+                                              android:id="@+id/removeImage4"
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:layout_margin="12dp"
+                                              android:onClick="removeImage"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
+                                              app:tint="@color/error_text" />
+                                    </FrameLayout>
+
+                              </LinearLayout>
+
+                              <LinearLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="20dp"
+                                  android:layout_marginEnd="20dp"
+
+                                  android:visibility="gone"
+                                  android:weightSum="1">
+
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp"
+                                        android:layout_margin="10dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/otp_line">
+
+                                          <ImageView
+                                              android:id="@+id/placeholder5"
+                                              android:layout_width="76dp"
+                                              android:layout_height="76dp"
+                                              android:layout_gravity="center"
+                                              android:onClick="placeholderClick" />
+
+                                          <ProgressBar
+                                              android:id="@+id/progress5"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
+                                          <ImageView
+                                              android:id="@+id/image5"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:layout_weight="1"
+                                              android:padding="1dp"
+                                              android:scaleType="fitXY"
+                                              android:visibility="visible" />
+
+                                          <ImageView
+                                              android:id="@+id/removeImage5"
+                                              android:layout_width="32dp"
+                                              android:layout_height="32dp"
+                                              android:layout_margin="12dp"
+                                              android:onClick="removeImage"
+                                              android:src="@drawable/cross_button"
+                                              android:visibility="gone"
+                                              app:tint="@color/error_text" />
+
+                                    </FrameLayout>
+
+
+                              </LinearLayout>
+                        </LinearLayout>
+
+                  </LinearLayout>
+
+            </ScrollView>
+
+            <LinearLayout
+                android:id="@+id/ll"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_height="wrap_content">
+                  <LinearLayout
+                      android:id="@+id/llAddImage"
+                      android:layout_width="match_parent"
+                      android:background="@drawable/btn_add_image"
+                      android:layout_height="45dp"
+                      android:layout_marginEnd="10dp"
+                      android:layout_weight="1">
+
+                        <TextView
+                            android:layout_width="130dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:layout_gravity="center_vertical"
+                            android:fontFamily="monospace"
+                            android:gravity="center"
+                            android:text="Add Image"
+                            android:imeOptions="actionNext"
+                            android:maxLines="1"
+                            android:padding="8dp"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:tint="@color/white"
+                            android:layout_weight="1.5"
+                            android:src="@drawable/baseline_add_a_photo_24"
+                            android:maxLines="1"
+                            android:padding="8dp"
+                            android:textSize="14sp" />
+                  </LinearLayout>
+                  <RelativeLayout
+                      android:layout_marginStart="10dp"
+                      android:id="@+id/ll4"
+                      android:layout_weight="1"
+                      android:layout_width="match_parent"
+                      android:background="@drawable/btn_green"
+                      android:layout_height="45dp"
+                      android:layout_alignParentBottom="true">
+
+                        <TextView
+                            android:id="@+id/place_order"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:layout_centerInParent="true"
+                            android:fontFamily="@font/roboto_medium"
+                            android:text="Place Your Order"
+                            android:textAllCaps="false"
+                            android:textColor="#fff"
+                            android:textSize="14sp" />
+
+                  </RelativeLayout>
+            </LinearLayout>
+
+      </RelativeLayout>
+</LinearLayout>

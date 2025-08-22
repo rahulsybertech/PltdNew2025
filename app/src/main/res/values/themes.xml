@@ -8,6 +8,15 @@
   <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
   <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-
+  <style name="Theme.Widget.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+    <item name="boxCornerRadiusBottomEnd">1dp</item>
+    <item name="boxCornerRadiusBottomStart">1dp</item>
+    <item name="boxCornerRadiusTopEnd">1dp</item>
+    <item name="boxCornerRadiusTopStart">1dp</item>
+    <item name="boxStrokeColor">@drawable/selector_text_input_layout_stroke</item>
+    <item name="boxStrokeWidth">1dp</item>
+    <item name="boxStrokeWidthFocused">1dp</item>
+    <item name="boxBackgroundMode">outline</item>
+  </style>
 
 </resources>

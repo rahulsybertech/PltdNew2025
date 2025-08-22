@@ -1,5 +1,7 @@
 package com.syber.ssspltd.activitys;
 
+import static com.syber.ssspltd.Constants.NewErpUrls.CHECK_OTP_GO;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.LOGIN;
 
 import android.app.Dialog;
@@ -41,10 +43,16 @@ import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.LoginNoAdap.LoginNumberAdapter;
 import com.syber.ssspltd.response.LoginNoResponse.AccountDetail;
 import com.syber.ssspltd.response.LoginNoResponse.LoginNoPojo;
+import com.syber.ssspltd.response.UsersTypeResponse.UsersTypePoojo;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LoginPage extends AppCompatActivity {
     public static EditText enter_mobile_number;
@@ -141,7 +149,10 @@ public class LoginPage extends AppCompatActivity {
                                     .putExtra("reg_status", pojo.getUserStatus()));
                             finish();
                         } else if (pojo.getUserStatus().equals("NEWUSER")) {
-                            startActivity(new Intent(mContext, MainActivity.class)
+
+
+                            OTP2(pojo.getResponseOTP().toString());
+                         /*   startActivity(new Intent(mContext, MainActivity.class)
                                     .putExtra("reg_status", pojo.getUserStatus()));
                             SharedPref.write(SharedPref.isLogin, "true");
                             SharedPref.write(SharedPref.USER_TYPE, "new");
@@ -150,7 +161,7 @@ public class LoginPage extends AppCompatActivity {
                             SharedPref.write(SharedPref.SELECTED, "");
                             SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
                             SharedPref.write(SharedPref.TYPE, "notAdmin");
-                            finish();
+                            finish();*/
                         } else {
                             startActivity(new Intent(mContext, GST_NumberActivity.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -212,6 +223,80 @@ public class LoginPage extends AppCompatActivity {
         VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
+    private void OTP2(String otp) {
+//        final ProgressDialog progressBar = new ProgressDialog(mContext);
+//        progressBar.setTitle("GENERATE OTP");
+//        progressBar.show();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, CHECK_OTP_GO, response -> {
+            Log.e("OtpRespo", response);
+            // progressBar.dismiss();
+            // Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getBoolean("ResponseStatus")) {
+                    Log.e("ResponseStatus", jsonObject.getBoolean("ResponseStatus") + "");
+                    Toast.makeText(mContext, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
+                    String StartDate = jsonObject.getString("StartDate");
+                    String EndDate = jsonObject.getString("EndDate");
+                    SharedPref.write(SharedPref.FY_StartDate, StartDate);
+                    SharedPref.write(SharedPref.FY_EndDate, EndDate);
+                    //here_is_the_token
+                    SharedPref.write(SharedPref.ACCCESS_TOKEN, jsonObject.getString("AccessToken"));
+                    // finish();
+                    SharedPref.write(SharedPref.isLogin, "true");
+
+                    startActivity(new Intent(mContext, MainActivity.class)
+                            .putExtra("reg_status",""));
+                    SharedPref.write(SharedPref.isLogin, "true");
+                    SharedPref.write(SharedPref.USER_TYPE, "new");
+                    SharedPref.write(SharedPref.PARTY_CODE, "new");
+                    SharedPref.write(SharedPref.DASHBOARD_TYPE, "New User");
+                    SharedPref.write(SharedPref.SELECTED, "");
+                    SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
+                    SharedPref.write(SharedPref.TYPE, "notAdmin");
+                    finish();
+/*
+                    if (getIntent().getStringExtra("reg_status").equals("NOTUSER")) {
+                        SharedPref.write(SharedPref.USER_TYPE, "new");
+                        startActivity(new Intent(mContext, GST_NumberActivity.class)
+                                .putExtra("ref_code", getIntent().getStringExtra("ref_code")));
+                        finish();
+                    } else {
+                        GetUsersTypeList();
+                    }*/
+
+                } else {
+                    Toast.makeText(mContext, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error ->
+                networkConnetion3(mContext, error.toString())) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String mob = SharedPref.read(SharedPref.USERMOBILE, "");
+                // String mob=mobile_no_otp.getText().toString();
+
+                String otpp = otp;
+                String str = "{\"MOBILENO\":\"" + mob + "\",\"OTP\":\"" + otpp + "\",\"usertype\":\"" + "NEWUSER" + "\"}";
+                Log.e("str", str);
+                return str.getBytes();
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
+    }
+
     public void networkConnetion3(Context mContext, String errorMsg) {
 
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.network_connetion_dailog, null);
@@ -238,6 +323,116 @@ public class LoginPage extends AppCompatActivity {
             }
         });
         alertDialog.show();
+    }
+    private void GetUsersTypeList() {
+        final ProgressDialog progressBar = new ProgressDialog(mContext);
+        progressBar.setTitle("Fetching Data");
+        // progressBar.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_TYPE_LIST,
+                response -> {
+                    Log.e("Data", response);
+                    progressBar.dismiss();
+                    //Toast.makeText(mContext, response, Toast.LENGTH_SHORT).show()
+                    UsersTypePoojo pojo = new Gson().fromJson(response, listType);
+                    if (pojo.getResponseStatus()) {
+                        if (pojo.getUsersTypeListResult().size() == 1) {
+                            Log.e("getUserType", pojo.getUsersTypeListResult().get(0).getUserType());
+                            if (pojo.getUsersTypeListResult().get(0).getUserType().equals("5")) {
+                                startActivity(new Intent(mContext, SplashActivity.class));
+                                SharedPref.write(SharedPref.IS_BACK_VISIBLE, "true");
+                                SharedPref.write(SharedPref.WHERE_TO_GO, "choose_cat");
+                                finish();
+                            } else if (pojo.getUsersTypeListResult().get(0).getUserType().equals("2")) {
+                                SharedPref.write(SharedPref.PARTY_CODE, pojo.getUsersTypeListResult().get(0).getPartyCode());
+                                SharedPref.write(SharedPref.SELECTED, pojo.getUsersTypeListResult().get(0).getName());
+                                startActivity(new Intent(mContext, SplashActivity.class));
+                                finish();
+                                SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
+                                SharedPref.write(SharedPref.DASHBOARD_TYPE, "Supplier");
+                                SharedPref.write(SharedPref.TYPE, "notAdmin");
+                            } else if (pojo.getUsersTypeListResult().get(0).getUserType().equals("1")) {
+                                startActivity(new Intent(mContext, SplashActivity.class));
+                                SharedPref.write(SharedPref.PARTY_CODE, pojo.getUsersTypeListResult().get(0).getPartyCode());
+                                SharedPref.write(SharedPref.DASHBOARD_TYPE, "Customer");
+                                SharedPref.write(SharedPref.SELECTED, pojo.getUsersTypeListResult().get(0).getName());
+                                SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
+                                SharedPref.write(SharedPref.TYPE, "notAdmin");
+                                finish();
+                            } else if (pojo.getUsersTypeListResult().get(0).getUserType().equals("3")) {
+                                startActivity(new Intent(mContext, SplashActivity.class));
+                                SharedPref.write(SharedPref.PARTY_CODE, pojo.getUsersTypeListResult().get(0).getPartyCode());
+                                SharedPref.write(SharedPref.DASHBOARD_TYPE, "Other");
+                                SharedPref.write(SharedPref.SELECTED, pojo.getUsersTypeListResult().get(0).getName());
+                                SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
+                                SharedPref.write(SharedPref.TYPE, "notAdmin");
+                                finish();
+                            } else if (pojo.getUsersTypeListResult().get(0).getUserType().equals("7")) {
+                                Log.e("reg_status", getIntent().getStringExtra("reg_status"));
+                                Log.e("getUserType", pojo.getUsersTypeListResult().get(0).getUserType());
+                                startActivity(new Intent(mContext, SplashActivity.class));
+                                SharedPref.write(SharedPref.USER_TYPE, "new");
+                                SharedPref.write(SharedPref.PARTY_CODE, pojo.getUsersTypeListResult().get(0).getPartyCode());
+                                SharedPref.write(SharedPref.DASHBOARD_TYPE, "New User");
+                                SharedPref.write(SharedPref.SELECTED, pojo.getUsersTypeListResult().get(0).getName());
+                                SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
+                                SharedPref.write(SharedPref.TYPE, "notAdmin");
+                                finish();
+                            } else if (pojo.getUsersTypeListResult().get(0).getUserType().equals("4")) {
+                                startActivity(new Intent(mContext, SplashActivity.class));
+                                SharedPref.write(SharedPref.IS_BACK_VISIBLE, "true");
+                                SharedPref.write(SharedPref.WHERE_TO_GO, "choose_cat");
+                                SharedPref.write(SharedPref.typeNumber, "4");
+                                finish();
+                            } else {
+                                Toast.makeText(mContext, "Invalid User Type..", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } else if (pojo.getUsersTypeListResult().size() > 1) {
+                            startActivity(new Intent(mContext, SplashActivity.class));
+                            SharedPref.write(SharedPref.PARTY_CODE, pojo.getUsersTypeListResult().get(0).getPartyCode());
+                            SharedPref.write(SharedPref.DASHBOARD_TYPE, "Other");
+                            SharedPref.write(SharedPref.SELECTED, pojo.getUsersTypeListResult().get(0).getName());
+                            SharedPref.write(SharedPref.WHERE_TO_GO, "main_act");
+                            SharedPref.write(SharedPref.TYPE, "notAdmin");
+                            SharedPref.write(SharedPref.WHERE_TO_GO, "reg_msg");
+                            SharedPref.write(SharedPref.IS_BACK_VISIBLE, "true");
+                            finish();
+                        } else {
+                            Log.e("Uaertype", pojo.getUsersTypeListResult().get(0).getUserType());
+                            startActivity(new Intent(mContext, SplashActivity.class));
+                            SharedPref.write(SharedPref.WHERE_TO_GO, "reg_msg");
+                            SharedPref.write(SharedPref.IS_BACK_VISIBLE, "true");
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(mContext, pojo.getResponseMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }, error -> {
+            progressBar.cancel();
+            networkConnetion3(mContext, error.toString());
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                //  String mob = SharedPref.read(SharedPref.USERMOBILE,"");
+                String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
+                // String otpp = otp.getText().toString();
+                String str = "{\"MOBILENO\":\"" + mob3 + "\"}";
+                Log.e("str", str);
+                return str.getBytes();
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
     }
 
     private void showCustomDialog() {

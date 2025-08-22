@@ -11,6 +11,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.activitys.FairOrderActivity;
 import com.syber.ssspltd.response.StationModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 
@@ -73,7 +74,13 @@ public class StationAdapter extends RecyclerView.Adapter<StationAdapter.MyViewHo
                 @Override
                 public void onClick(View v) {
 
-                            ((SupplierOrderFormActivity) mContext).setStation(data.get(getAbsoluteAdapterPosition()));
+
+                    if (mContext instanceof SupplierOrderFormActivity) {
+                        ((SupplierOrderFormActivity) mContext).setStation(data.get(getAbsoluteAdapterPosition()));
+                    }else if(mContext instanceof FairOrderActivity){
+                        ((FairOrderActivity) mContext).setStation(data.get(getAbsoluteAdapterPosition()));
+                    }
+
 
                 }
             });

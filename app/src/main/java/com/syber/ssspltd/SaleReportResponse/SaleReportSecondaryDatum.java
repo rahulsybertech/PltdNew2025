@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class SaleReportSecondaryDatum {
 
+    @SerializedName("PackingSlipPath")
+    private String PackingSlipPath;
     @SerializedName("PAmount")
     private String mPAmount;
     @SerializedName("Pcs")
@@ -25,6 +27,14 @@ public class SaleReportSecondaryDatum {
 
     public void setPAmount(String pAmount) {
         mPAmount = pAmount;
+    }
+
+    public String getPackingSlipPath() {
+        return PackingSlipPath;
+    }
+
+    public void setPackingSlipPatht(String pAmount) {
+        PackingSlipPath = pAmount;
     }
 
     public String getPcs() {

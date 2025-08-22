@@ -41,13 +41,21 @@ public class GuestListBookingAdapter extends RecyclerView.Adapter<GuestListBooki
 
     private String bookingPage;
     private Set<String> checkGuestIds; // Set of checked guest IDs
+    private View.OnClickListener clickListener;
+    private OnItemClickListener listener;
 
-    public GuestListBookingAdapter(Context mContext,/*, List<PendingOrderReportResult> detailList*/ArrayList<GuestMasterDetail> stayBookingList, OnCancelListener cancelListener, List<String> checkGuestList, String bookingPage) {
+    public interface OnItemClickListener {
+        void onItemClick(GuestMasterDetail guest);
+    }
+
+
+    public GuestListBookingAdapter(Context mContext,/*, List<PendingOrderReportResult> detailList*/ArrayList<GuestMasterDetail> stayBookingList, OnCancelListener cancelListener, List<String> checkGuestList, String bookingPage,  OnItemClickListener listener) {
         this.mContext = mContext;
         this.stayBookingList = stayBookingList;
         this.cancelListener = cancelListener;
         this.checkGuestIds = new HashSet<>(checkGuestList);
         this.bookingPage = bookingPage;
+        this.listener = listener;
     }
 
     @Override
@@ -81,6 +89,7 @@ public class GuestListBookingAdapter extends RecyclerView.Adapter<GuestListBooki
         }
 
        holder. viewImage.setOnClickListener(v -> {
+         //  listener.onItemClick(datum);
             Intent i = new Intent(mContext, OrderImageActivity.class);
             i.putExtra(MyConstant.SCREEN,MyConstant.GUEST);
             i.putExtra("imgList",new Gson().toJson(datum));
@@ -89,12 +98,13 @@ public class GuestListBookingAdapter extends RecyclerView.Adapter<GuestListBooki
         });
 
         holder. tvGuestName.setOnClickListener(v -> {
-            Intent i = new Intent(mContext, AddGuestInBookingActivity.class);
+              listener.onItemClick(datum);
+           /* Intent i = new Intent(mContext, AddGuestInBookingActivity.class);
             i.putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
              i .putExtra(MyConstant.ACCOUNT_ID,datum.getAccountId());
             i.putExtra("imgList",new Gson().toJson(datum));
             Log.e("imgList", new Gson().toJson(datum));
-            mContext.startActivity(i);
+            mContext.startActivity(i);*/
         });
 
 
@@ -114,11 +124,13 @@ public class GuestListBookingAdapter extends RecyclerView.Adapter<GuestListBooki
                 if (isChecked) {
                     if (selectedPositions.size() < MAX_SELECTION) {
                         selectedPositions.add(position);
+                        cancelListener.onChanged();
                     } else {
                         holder.checkBox.setChecked(false); // Prevent selection beyond max
                         Toast.makeText(mContext, "You can select a maximum of " + MAX_SELECTION + " guests", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    cancelListener.onChanged();
                     selectedPositions.remove(position);
                     if (selectedPositions.size() < MIN_SELECTION) {
                         holder.checkBox.setChecked(true); // Prevent deselection below min
@@ -193,6 +205,7 @@ public class GuestListBookingAdapter extends RecyclerView.Adapter<GuestListBooki
     //  the interface
     public interface OnCancelListener {
         void onBookingCancel(int position, GuestMasterDetail data); // Method to notify activity
+        void onChanged(); // Method to notify activity
     }
 
     // Method to get selected items

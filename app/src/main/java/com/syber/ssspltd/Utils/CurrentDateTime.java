@@ -40,15 +40,12 @@ public class CurrentDateTime {
     }
 
     public static String formatDateTimeDDMMYYYY(String input) {
-        // Input format
         String[] inputFormats = {
-                "yyyy-MM-dd'T'HH:mm:ss",        // e.g., 2025-04-10T17:44:23
-                "yyyy-MM-dd HH:mm:ss.SSS"       // e.g., 2025-04-10 17:44:23.176
+                "yyyy-MM-dd'T'HH:mm:ss",
+                "yyyy-MM-dd HH:mm:ss.SSS"
         };
-      //  SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
 
-        // Output format
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm a", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy\nhh:mm a", Locale.getDefault());
 
         for (String format : inputFormats) {
             try {
@@ -58,7 +55,7 @@ public class CurrentDateTime {
                     return outputFormat.format(date);
                 }
             } catch (ParseException e) {
-                // Try the next format
+                // Try next format
             }
         }
 

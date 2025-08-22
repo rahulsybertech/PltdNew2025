@@ -408,6 +408,7 @@ public class LedgerActivity extends AppCompatActivity implements DatePickerDialo
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
+                Log.i("TaG", "token --=-==> " + Constants.SettingHeader());
                 headers.put("Authorization", Constants.SettingHeader());
                 return headers;
             }

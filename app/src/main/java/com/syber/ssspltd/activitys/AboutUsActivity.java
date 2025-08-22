@@ -43,12 +43,9 @@ public class AboutUsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
 
-
-
-
-//xml
 
 
 

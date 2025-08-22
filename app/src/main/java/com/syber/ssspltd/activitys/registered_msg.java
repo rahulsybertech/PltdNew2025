@@ -90,6 +90,7 @@ public class registered_msg extends AppCompatActivity {
                 SharedPref.write(SharedPref.DASHBOARD_TYPE, "Supplier");
 //                        SharedPref.write(SharedPref.TYPE,"Admin");
                 Log.e("pos", typePos);
+                
                 Log.e("praty_code", praty_code);
                 SharedPref.write(SharedPref.IS_SUPPER_SELECTED, "false");
             } else if (SharedPref.read(SharedPref.LIST_TYPE, "").equals("1")) {

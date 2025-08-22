@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class SaleReportResult {
 
+    @SerializedName("PackingSlipPath")
+    private String packingSlipPath;
     @SerializedName("BillDate")
     private String mBillDate;
     @SerializedName("BillNo")
@@ -54,6 +56,14 @@ public class SaleReportResult {
     }
 
     public void setBillDate(String billDate) {
+        mBillDate = billDate;
+    }
+
+    public String getPackingSlipPath() {
+        return mBillDate;
+    }
+
+    public void setPackingSlipPath(String billDate) {
         mBillDate = billDate;
     }
 

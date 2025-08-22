@@ -176,7 +176,9 @@ Front page per ek SALE REPORT ka option arha hai us per click kriye apka sale re
       <string name="sub_party_remark">Sub Party Remark <font color='#D81B60'>*</font> </string>
       <string name="sub_party_mobile">Sub Party Mobile No. </string>
       <string name="transport">Transport <font color='#D81B60'>*</font> </string>
+      <string name="transport_fair">Transport</string>
       <string name="b_station">B.Station </string>
+      <string name="b_station_">B.Station<font color='#D81B60'>*</font> </string>
       <string name="pvt_marka">Pvt Marka <font color='#D81B60'>*</font> </string>
       <string name="rate">Rate <font color='#D81B60'>*</font> </string>
       <string name="amt">Amt <font color='#D81B60'>*</font> </string>
@@ -190,8 +192,10 @@ Front page per ek SALE REPORT ka option arha hai us per click kriye apka sale re
       <string name="type">Type</string>
       <string name="item">Item <font color='#D81B60'>*</font> </string>
       <string name="qty">Qty <font color='#D81B60'>*</font> </string>
+      <string name="item_name">Item Name <font color='#D81B60'>*</font> </string>
       <string name="amount1">Amount <font color='#D81B60'>*</font></string>
       <string name="marketer1">Marketer <font color='#D81B60'>*</font> </string>
+      <string name="marketer12">Marketer</string>
       <string name="status">Status</string>
       <string name="save">Save</string>
       <string name="no_purchase_no_stay">No Purchase,No Stay</string>

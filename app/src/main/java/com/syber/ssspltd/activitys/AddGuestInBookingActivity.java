@@ -110,143 +110,7 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAddGuestInBookingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
-
         initUi();
-/*        // Initialize the launcher
-        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            //getting status code for all images - 1
-            System.out.println("GETTING_REQUEST_CODE = " + result.getResultCode() + ", "
-                    + "DATA = " + result.getData().getData() + ", " + imageRequestCode);
-            // here code is used for only image 1
-            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                imgUri = result.getData().getData();
-                // Use the selected image URI
-                System.out.println("MY_NEW_IMAGE_URI " + imgUri);
-
-                if (imageRequestCode == 101) {
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        System.out.println("MY_YOUNG_BITMAP : " + bitmap);
-                        binding.image1.setImageBitmap(bitmap);
-
-                        img_string = getStringImage(bitmap);
-                        System.out.println("getting_my_test_image " + img_string);
-                        // binding.removeFront.setVisibility(View.VISIBLE);
-                        byte[] imageInByte = stream.toByteArray();
-                        imgFlag = true;
-                        binding.image1.setVisibility(View.VISIBLE);
-                        binding.removeImage1.setVisibility(View.VISIBLE);
-                        binding.progress1.setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-                        Log.e("bit", e.toString());
-                        imgFlag = false;
-                        binding.image1.setVisibility(View.GONE);
-                        binding.removeImage1.setVisibility(View.GONE);
-                        binding.progress1.setVisibility(View.GONE);
-                        binding.placeholder1.setVisibility(View.VISIBLE);
-                    }
-                } else if (imageRequestCode == 102) {
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        binding.image2.setImageBitmap(bitmap);
-                        img_string2 = getStringImage(bitmap);
-                        byte[] imageInByte = stream.toByteArray();
-                        long lengthbmp = imageInByte.length;
-                        Log.e("img2", lengthbmp + "");
-                        Log.e("kb3", String.format("Size : %s", getReadableFileSize(lengthbmp)));
-                        //  Log.e("img_string2", img_string2 + "");
-                        //Toast.makeText(mContext, "Img2", Toast.LENGTH_SHORT).show();
-                        imgFlag = true;
-                        binding.image2.setVisibility(View.VISIBLE);
-                        binding.removeImage2.setVisibility(View.VISIBLE);
-                        binding.placeholder2.setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-                        Log.e("bit", e.toString());
-                        imgFlag = false;
-                        binding.image2.setVisibility(View.GONE);
-                        binding.removeImage2.setVisibility(View.GONE);
-                        binding.progress2.setVisibility(View.GONE);
-                        binding.placeholder2.setVisibility(View.VISIBLE);
-                    }
-                }
-
-            }
-        });
-
-        pickCameraImageLauncher = registerForActivityResult(new ActivityResultContracts.
-                StartActivityForResult(), result -> {
-            //getting status code for all images - 1
-            // URI is correct, 101
-            System.out.println("GETTING_REQUEST_CODE_Camera = " + photoURI + ", "
-                    + cameraRequestCode);
-            // here code is used for only image 1
-            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                // Use the selected image URI
-                System.out.println("MY_NEW_IMAGE_URI " + photoURI);
-
-                if (cameraRequestCode == 101) {
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        System.out.println("MY_YOUNG_BITMAP : " + bitmap);
-                        binding.image1.setImageBitmap(bitmap);
-
-                        img_string = getStringImage(bitmap);
-                        System.out.println("getting_my_test_image " + img_string);
-                        // binding.removeFront.setVisibility(View.VISIBLE);
-                        byte[] imageInByte = stream.toByteArray();
-                        imgFlag = true;
-                        binding.image1.setVisibility(View.VISIBLE);
-                        binding.removeImage1.setVisibility(View.VISIBLE);
-                        binding.progress1.setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-                        Log.e("bit", e.toString());
-                        imgFlag = false;
-                        binding.image1.setVisibility(View.GONE);
-                        binding.removeImage1.setVisibility(View.GONE);
-                        binding.progress1.setVisibility(View.GONE);
-                        binding.placeholder1.setVisibility(View.VISIBLE);
-                    }
-                } else if (cameraRequestCode == 102) {
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        binding.image2.setImageBitmap(bitmap);
-                        img_string2 = getStringImage(bitmap);
-                        byte[] imageInByte = stream.toByteArray();
-                        long lengthbmp = imageInByte.length;
-                        Log.e("img2", lengthbmp + "");
-                        Log.e("kb3", String.format("Size : %s", getReadableFileSize(lengthbmp)));
-                        //  Log.e("img_string2", img_string2 + "");
-                        //Toast.makeText(mContext, "Img2", Toast.LENGTH_SHORT).show();
-                        imgFlag = true;
-                        binding.image2.setVisibility(View.VISIBLE);
-                        binding.removeImage2.setVisibility(View.VISIBLE);
-                        binding.placeholder2.setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-                        Log.e("bit", e.toString());
-                        imgFlag = false;
-                        binding.image2.setVisibility(View.GONE);
-                        binding.removeImage2.setVisibility(View.GONE);
-                        binding.progress2.setVisibility(View.GONE);
-                        binding.placeholder2.setVisibility(View.VISIBLE);
-                    }
-                }
-
-            }
-        });*/
     }
 
     private void initUi() {
@@ -278,22 +142,27 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                                     .load("https://images.ssspltd.com/SyberERP/IMAGES//6ecf6d4e-7dc1-4b76-a3f7-0187303b9b581_FrontImage.jpg")
                                     .placeholder(R.drawable.ic_supermarket)
                                     .into(binding.image1);*/
-                            ImageHelper.imageUrlToBase64(imgList.getFrontDocPath(), new ImageHelper.Base64Callback() {
-                                @Override
-                                public void onResult(String base64) {
-                                    if (base64 != null) {
-                                        img_string=base64;
-                                        runOnUiThread(() -> {
-                                            binding.image1.setImageBitmap(base64ToBitmap(img_string));
-                                        });
+                            String imageUrl = imgList.getFrontDocPath();
+                            if (imageUrl != null && !imageUrl.isEmpty() &&
+                                    (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))) {
 
-                                        Log.d("Base64", base64);
-                                        // use the base64 string here
-                                    } else {
-                                        Log.e("Base64", "Conversion failed");
+                                ImageHelper.imageUrlToBase64(imageUrl, new ImageHelper.Base64Callback() {
+                                    @Override
+                                    public void onResult(String base64) {
+                                        if (base64 != null) {
+                                            img_string = base64;
+                                            runOnUiThread(() -> binding.image1.setImageBitmap(base64ToBitmap(img_string)));
+                                            Log.d("Base64", base64);
+                                        } else {
+                                            Log.e("Base64", "Conversion failed");
+                                        }
                                     }
-                                }
-                            });
+                                });
+
+                            } else {
+                                Log.e("Image URL", "Invalid or empty image URL: " + imageUrl);
+                            }
+
 
 
 
@@ -379,7 +248,12 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
 
 
 
-        binding.backBookingList.setOnClickListener(v -> finish());
+        binding.backBookingList.setOnClickListener(v ->{
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("updatedData", "Modified in SecondActivity");
+            setResult(RESULT_OK, resultIntent);
+            finish();
+        });
         binding.tvManageGuest.setOnClickListener(v ->
                 clickManageGuest()
 
@@ -405,6 +279,7 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
         if(guestList.size()>0){
             startActivity(  new Intent(this,GuestListBookingActivity.class)
                     .putExtra(MyConstant.ACCOUNT_ID,getIntent().getStringExtra(MyConstant.ACCOUNT_ID))
+                    .putExtra(MyConstant.MOBILE_NUMBER,getIntent().getStringExtra(MyConstant.MOBILE_NUMBER))
             );
         }else {
             SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content), "No data in list.");
@@ -414,8 +289,18 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
     }
     private void getGuestList(String account_id) {
         String getGuestMasterListByCustomerId="";
-        getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + account_id+ "&partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
-        //      getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+
+        String mobileNumber = getIntent().getStringExtra(MyConstant.MOBILE_NUMBER);
+
+        if (mobileNumber == null || mobileNumber.isEmpty()) {
+            getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId
+                    + "?accountId=" + account_id
+                    + "&partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+        } else {
+            getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId
+                    + "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "")
+                    + "&mobileNo=" + mobileNumber;
+        }
         String finalGetGuestMasterListByCustomerId = getGuestMasterListByCustomerId;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, getGuestMasterListByCustomerId, response -> {
             Log.i("TaG", "Response " + finalGetGuestMasterListByCustomerId + "---> " + response);
@@ -487,6 +372,10 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getInt("ResponseCode") == 200) {
                     progressDialog.dismiss();
+
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("updatedData", "Modified in SecondActivity");
+                    setResult(RESULT_OK, resultIntent);
                     finish();
                     Toast.makeText(this, jsonObject.getString("ResponseMessage") + "", Toast.LENGTH_SHORT).show();
                 } else if (jsonObject.getInt("ResponseCode") == 204) {
@@ -562,63 +451,40 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject();
 
-              /*      {
-                        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                            "companyID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                            "accountID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                            "customerName": "string",
-                            "guestName": "string",
-                            "frontDocPath": "string",
-                            "backDocPath": "string",
-                            "date": "2025-03-28T11:16:37.749Z",
-                            "updatedDate": "2025-03-28T11:16:37.749Z",
-                            "activeStatus": true,
-                            "deletedStatus": true,
-                            "partyCode": "string",
-                            "nameCount": 0
-                    }*/
-
-                    /* if (isEditMode) {
-                     *//*jsonObject.put("id",bookingData.getId() );*//*
-
-                        String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
-                        if(userType.equals("Other")){
-                            jsonObject.put("accountID", "");
-
-
-                        }else {
-                            jsonObject.put("id", JSONObject.NULL);
-                            jsonObject.put("accountID", "a3b605ba-f20a-4dd5-9544-784ad0243a1f");
-
-                        }
-                    }
-                    else {
-                        jsonObject.put("id", JSONObject.NULL);
-                        String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
-                        if(userType.equals("Other")){
-                            jsonObject.put("accountID", "accountNameId");
-
-                        }else {
-                            jsonObject.put("accountID", JSONObject.NULL);
-
-                        }
-                    }*/
-
-
-
-
-
                     if(guestId.isEmpty()){
                         jsonObject.put("id", JSONObject.NULL);
                     }else {
                         jsonObject.put("id", guestId);
                     }
 
-                    if(getIntent().getStringExtra(MyConstant.ACCOUNT_ID).isEmpty()){
+                    String mobileNumber = getIntent().getStringExtra(MyConstant.MOBILE_NUMBER);
+                    if (mobileNumber == null || mobileNumber.isEmpty()) {
+                        if(getIntent().getStringExtra(MyConstant.ACCOUNT_ID).isEmpty()){
+                            jsonObject.put("accountID", JSONObject.NULL);
+                        }else {
+                            jsonObject.put("accountID", getIntent().getStringExtra(MyConstant.ACCOUNT_ID));
+                        }
+                        jsonObject.put("mobileNo", JSONObject.NULL);
+                        jsonObject.put("isNewUser", false);
+                    } else {
+                        // jsonObject.put("accountID", getIntent().getStringExtra(MyConstant.ACCOUNT_ID));
                         jsonObject.put("accountID", JSONObject.NULL);
-                    }else {
-                        jsonObject.put("accountID", getIntent().getStringExtra(MyConstant.ACCOUNT_ID));
+                        jsonObject.put("mobileNo", mobileNumber);
+                        jsonObject.put("isNewUser", true);
                     }
+
+                  /*  if(getIntent().getStringExtra(MyConstant.ACCOUNT_ID).isEmpty()){
+                        jsonObject.put("accountID", JSONObject.NULL);
+                        jsonObject.put("mobileNo", JSONObject.NULL);
+                        jsonObject.put("isNewUser",false);
+                    }else {
+
+                   //     jsonObject.put("accountID", getIntent().getStringExtra(MyConstant.ACCOUNT_ID));
+                        jsonObject.put("accountID", JSONObject.NULL);
+                        jsonObject.put("mobileNo", getIntent().getStringExtra(MyConstant.MOBILE_NUMBER));
+                        jsonObject.put("isNewUser",true);
+
+                    }*/
 
                     jsonObject.put("partyCode", SharedPref.read(SharedPref.PARTY_CODE, ""));
                     jsonObject.put("guestName", binding.guestName.getText().toString());
@@ -639,7 +505,7 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                     jsonString = jsonObject.toString();
                     System.out.println(jsonString);
 
-
+                    Log.i("TaG", "Response " + SaveUpdateGuestMasterDetails  +"---> " + jsonString.toString());
 
 
                 } catch (Exception e) {
@@ -989,13 +855,13 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                         binding.removeImage1.setVisibility(View.GONE);
                         binding.progress1.setVisibility(View.GONE);
                         binding.placeholder1.setVisibility(View.VISIBLE);
-                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                   //     Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
                     }else {
                         binding.image2.setVisibility(View.GONE);
                         binding.removeImage2.setVisibility(View.GONE);
                         binding.progress2.setVisibility(View.GONE);
                         binding.placeholder2.setVisibility(View.VISIBLE);
-                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -1066,13 +932,13 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                         binding.removeImage2.setVisibility(View.GONE);
                         binding.progress2.setVisibility(View.GONE);
                         binding.placeholder2.setVisibility(View.VISIBLE);
-                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
                     }else {
                         binding.image1.setVisibility(View.GONE);
                         binding.removeImage1.setVisibility(View.GONE);
                         binding.progress1.setVisibility(View.GONE);
                         binding.placeholder1.setVisibility(View.VISIBLE);
-                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
+                     //   Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
                     }
 
 

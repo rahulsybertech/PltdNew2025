@@ -16,6 +16,7 @@ public class NewErpUrls {
     public static String GET_BRANCH_BILLING                                     = BASE_URL + "GetBranchBilling";
     public static String GET_BRANCH_DETAILS                                     = BASE_URL + "GetBranchDetails";
     public static String GET_BRANCHES                                           = BASE_URL + "GetBranches";
+    public static String GetBrands                                           = BASE_URL + "GetBrands";
     public static String GET_BRANCHES_GODOWN_PACKING                            = BASE_URL + "GetBranchGodownPacking";
     public static String GET_BRANCHES_GOODS_RETURN                              = BASE_URL + "GetBranchGoodsReturn";
     public static String GET_BRANCHES_MARKETERS                                 = BASE_URL + "GetBranchMarketer";
@@ -68,7 +69,7 @@ public class NewErpUrls {
     public static String GET_ALL_EVENT_IMAGE                                    = "http://App.ssspltd.com/apipltd/GetAllEventImages";
 
 //    public static String GET_BRAND_MASTER_DETAIL                                = BASE_URL + "GetBrandMasterDetails";
-    public static String GET_BRAND_MASTER_DETAIL                                = "http://app.ssspltd.com/apipltd/GetBrandMasterDetails";
+    public static String GET_BRAND_MASTER_DETAIL                                = BASE_URL+"GetBrandMasterDetails";
 
 //    public static String GET_APP_VERSION                                        = BASE_URL + "GetAppVersion";
     public static String GET_APP_VERSION                                        = "http://app.ssspltd.com/apipltd/GetAppVersion";
@@ -104,13 +105,14 @@ public class NewErpUrls {
     public static String GetDispatchTypeList               = BASE_URL + "GetDispatchTypeList";
     //Booking order module
     public static String BRANCH_LIST               = DOMAIN + "Api/StayBooking/GetBranchDetailList";
-    public static String SAVE_UPDATEBOOKING = DOMAIN + "Api/StayBooking/SaveAndUpdateStayBooking";
+    public static String SAVE_UPDATEBOOKING = DOMAIN + "Api/StayBooking/SaveAndUpdateStayBooking1";
     public static String StayBookingDataList = DOMAIN + "api/StayBooking/GetStayBookingDataList";
     public static String GetStayBookingDataListByBranchId = DOMAIN + "api/StayBooking/GetStayBookingDataListByBranchId";
     public static String CancelStayBooking = DOMAIN + "api/StayBooking/CancelStayBooking";
     public static String StayBookingTime = DOMAIN + "api/StayBooking/StayBookingTime";
     public static String GetAccountNameList = DOMAIN + "api/StayBooking/GetAccountNameList";
     public static String GetNickNameList = DOMAIN + "api/StayBooking/GetNickNameList";
+    public static String GetMainPartyAndSubPartyList = DOMAIN + "api/StayBooking/GetMainPartyAndSubPartyList";
     public static String SaveUpdateGuestMasterDetails = DOMAIN + "Api/StayBooking/SaveUpdateGuestMasterDetails";
     public static String GetGuestMasterListByCustomerId = DOMAIN + "Api/StayBooking/GetGuestMasterListByCustomerId";
     public static String DeleteGuestMasterData = DOMAIN + "Api/StayBooking/DeleteGuestMasterData";
@@ -118,5 +120,16 @@ public class NewErpUrls {
     public static String GetAccountIdByNickName = DOMAIN + "api/OrderBook/GetAccountIdByNickName";
     public static String SwitchFinancialYear = DOMAIN + "api/PltdApp/SwitchFinancialYear";
     public static String UpdateStayBookingActualTime = DOMAIN + "api/StayBooking/UpdateStayBookingActualTime";
+
+
+    //Fair order
+    public static String GetMarketerNameByCustomerId              = BASE_URL + "GetMarketerNameByCustomerId";
+    public static String GetMarketerNameBySupplierId              = BASE_URL + "GetMarketerNameBySupplierId";
+    public static String GetNewTraceIdentifierId              = BASE_URL + "GetNewTraceIdentifierId";
+    public static String GetFairCustomerList              = BASE_URL + "GetFairCustomerList";
+    public static String GetFairSchemeDetail              = BASE_URL + "GetFairSchemeDetail";
+    public static String SAVE_ORDER_FAIR                 = BASE_URL + "SavePltdFairOrder";
+    public static String ITEM_LIST_FAIR                 = BASE_URL + "GetItemDeptList";
+    public static String GetFairPartyDetailsByAccountId                 = BASE_URL + "GetFairPartyDetailsByAccountId";
 
   }

@@ -8,6 +8,7 @@ import static com.syber.ssspltd.Constants.NewErpUrls.STATION_LIST;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -68,14 +69,32 @@ public class GuestListBookingActivity extends AppCompatActivity implements Guest
         getGuestList(account_id);
         List<String> checkGuestList = Arrays.asList("id1", "id2", "id3"); // List of IDs to be checked
 
-        guestListBookingAdapter = new GuestListBookingAdapter(this, guestList,this,checkGuestList, MyConstant.GUEST);
+        guestListBookingAdapter = new GuestListBookingAdapter(this, guestList,this,checkGuestList, MyConstant.GUEST,guest -> {
+            Intent i = new Intent(this, AddGuestInBookingActivity.class);
+            i.putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
+            i .putExtra(MyConstant.ACCOUNT_ID,guest.getAccountId());
+            i.putExtra("imgList",new Gson().toJson(guest));
+            Log.e("imgList", new Gson().toJson(guest));
+           startActivity(i);
+        });
         binding.recycler.setAdapter(guestListBookingAdapter);
 
     }
 
     private void getGuestList(String account_id) {
         String getGuestMasterListByCustomerId="";
-        getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + account_id+ "&partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+      //  getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + account_id+ "&partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+
+        String mobileNumber = getIntent().getStringExtra(MyConstant.MOBILE_NUMBER);
+        if (mobileNumber == null || mobileNumber.isEmpty()) {
+            getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId
+                    + "?accountId=" + account_id
+                    + "&partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+        } else {
+            getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId
+                    + "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "")
+                    + "&mobileNo=" + mobileNumber;
+        }
         String finalGetGuestMasterListByCustomerId = getGuestMasterListByCustomerId;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, getGuestMasterListByCustomerId, response -> {
             Log.i("TaG", "Response " + finalGetGuestMasterListByCustomerId + "---> " + response);
@@ -88,7 +107,14 @@ public class GuestListBookingActivity extends AppCompatActivity implements Guest
                 guestList.addAll(bookingResponse.getGuestMasterDetailList());
 
                 List<String> checkGuestList = Arrays.asList("id1", "id2"); // List of IDs to be checked
-                guestListBookingAdapter = new GuestListBookingAdapter(this, guestList,this,checkGuestList, MyConstant.GUEST);
+                guestListBookingAdapter = new GuestListBookingAdapter(this, guestList,this,checkGuestList, MyConstant.GUEST,guest -> {
+                    Intent i = new Intent(this, AddGuestInBookingActivity.class);
+                    i.putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
+                    i .putExtra(MyConstant.ACCOUNT_ID,guest.getAccountId());
+                    i.putExtra("imgList",new Gson().toJson(guest));
+                    Log.e("imgList", new Gson().toJson(guest));
+                    startActivity(i);
+                });
                 binding.recycler.setAdapter(guestListBookingAdapter);
                 guestListBookingAdapter.notifyDataSetChanged();
 
@@ -145,6 +171,11 @@ public class GuestListBookingActivity extends AppCompatActivity implements Guest
                 })
                 .setNegativeButton("No", null)
                 .show();
+    }
+
+    @Override
+    public void onChanged() {
+
     }
 
 

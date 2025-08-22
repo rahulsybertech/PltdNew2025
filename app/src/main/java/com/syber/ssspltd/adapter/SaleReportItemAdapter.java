@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,23 +41,47 @@ public class SaleReportItemAdapter  extends RecyclerView.Adapter<SaleReportItemA
         holder.saleSupplier.setText(datum.getSupplier());
         holder.salePCS.setText(datum.getPcs());
         holder.saleAmount.setText(datum.getPAmount());
-        holder.salePuchaseNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if(datum.getPackingSlipPath().equals("")){
+            holder.rlPdf.setVisibility(View.INVISIBLE);
+        }else {
+            holder.rlPdf.setVisibility(View.VISIBLE);
+        }
+        holder.salePuchaseNo.setOnClickListener(v -> {
+            String originalUrl = datum.getPurPDFPath();
 
-                if (datum.getPurchaseNo().equals(""))
-                {
-
-                }
-                else {
-                    String url = (!datum.getPurPDFPath().equals("")) ? datum.getPurPDFPath() :"http://nopdffound";
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(url));
-                    mContext.startActivity(i);
-                    Log.e("url",url);
-                }
-
+            if (originalUrl == null || originalUrl.isEmpty()) {
+                Toast.makeText(mContext, "No PDF found.", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // Add timestamp to bypass cache
+            String finalUrl = originalUrl + (originalUrl.contains("?") ? "&" : "?") + "t=" + System.currentTimeMillis();
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(finalUrl));
+            mContext.startActivity(intent);
+
+            Log.e("PDF_URL", finalUrl); // Check this in Logcat
+        });
+
+
+        holder.rlPdf.setOnClickListener(v -> {
+            String originalUrl = datum.getPackingSlipPath();
+            if (originalUrl == null || originalUrl.isEmpty())
+            {
+                Toast.makeText(mContext, "No P.Slip Found.", Toast.LENGTH_SHORT).show();
+            }
+            else {
+
+                // Add timestamp to bypass cache
+                String finalUrl = originalUrl + (originalUrl.contains("?") ? "&" : "?") + "t=" + System.currentTimeMillis();
+
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(finalUrl));
+                mContext.startActivity(i);
+                Log.e("url",finalUrl);
+            }
+
         });
 
     }
@@ -71,11 +97,13 @@ public class SaleReportItemAdapter  extends RecyclerView.Adapter<SaleReportItemA
 
         TextView salePuchaseNo,saleSupplier,salePCS,saleAmount;
         RecyclerView ceateNote_itemRecyler;
+        RelativeLayout rlPdf;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             salePuchaseNo = itemView.findViewById(R.id.salePuchaseNo);
+            rlPdf = itemView.findViewById(R.id.rlPdf);
             saleSupplier = itemView.findViewById(R.id.saleSupplier);
             salePCS = itemView.findViewById(R.id.salePCS);
             saleAmount = itemView.findViewById(R.id.saleAmount);

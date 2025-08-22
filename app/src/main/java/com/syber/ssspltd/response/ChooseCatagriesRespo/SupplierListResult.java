@@ -19,14 +19,17 @@ public class SupplierListResult {
     private String mUserMobileNo;
     @SerializedName("UserType")
     private String mUserType;
+    @SerializedName("PermissionType")
+    private String permissionType;
 
-    public SupplierListResult(String mID, String mName, String mPartyCode, String mSRNO, String mUserMobileNo, String mUserType) {
+    public SupplierListResult(String mID, String mName, String mPartyCode, String mSRNO, String mUserMobileNo, String mUserType,String permissionType) {
         this.mID = mID;
         this.mName = mName;
         this.mPartyCode = mPartyCode;
         this.mSRNO = mSRNO;
         this.mUserMobileNo = mUserMobileNo;
         this.mUserType = mUserType;
+        this.permissionType = permissionType;
     }
 
     public String getID() {
@@ -75,6 +78,14 @@ public class SupplierListResult {
 
     public void setUserType(String userType) {
         mUserType = userType;
+    }
+
+    public String getPermissionType() {
+        return permissionType;
+    }
+
+    public void setPermissionType(String permissionType) {
+        mUserType = permissionType;
     }
 
 }

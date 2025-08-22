@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.activitys.FairOrderActivity;
 import com.syber.ssspltd.response.MarketerModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 
@@ -67,7 +68,11 @@ public class MarketerAdapter extends RecyclerView.Adapter<MarketerAdapter.MyView
             cardView = itemView.findViewById(R.id.product_card);
             itemView.setOnClickListener(v -> {
 //                Toast.makeText(mContext, data.get(getAbsoluteAdapterPosition()).getMarketerName()+"", Toast.LENGTH_SHORT).show();
-                ((SupplierOrderFormActivity) mContext).setMarketer(data.get(getBindingAdapterPosition()));
+                if (mContext instanceof SupplierOrderFormActivity) {
+                    ((SupplierOrderFormActivity) mContext).setMarketer(data.get(getBindingAdapterPosition()));
+                }else if(mContext instanceof FairOrderActivity){
+                    ((FairOrderActivity) mContext).setMarketer(data.get(getBindingAdapterPosition()));
+                }
             });
 
         }

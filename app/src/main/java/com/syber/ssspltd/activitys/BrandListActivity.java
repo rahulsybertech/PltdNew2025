@@ -5,6 +5,7 @@ import static com.syber.ssspltd.activitys.Const.BRANDNAME;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,9 +40,12 @@ import com.syber.ssspltd.response.brand.BrandsPojo;
 import org.json.JSONException;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class BrandListActivity extends AppCompatActivity {
@@ -62,6 +66,45 @@ public class BrandListActivity extends AppCompatActivity {
                 Lazy.openDialog(mContext));
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+
+
+
+/*
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+        sdf.setLenient(false); // Avoids auto-fixing bad dates
+
+// Format current date to remove time part
+        String todayStr = sdf.format(new Date());
+        Date currentDate = null; // currentDate now has only date part
+        try {
+            currentDate = sdf.parse(todayStr);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        Date startDate = null;
+        try {
+            startDate = sdf.parse("01-Jul-2025");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        Date endDate = null;
+        try {
+            endDate = sdf.parse("31-Jul-2025");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        String title = "Brands";
+        if (startDate != null && endDate != null && currentDate != null &&
+                currentDate.compareTo(startDate) >= 0 && currentDate.compareTo(endDate) <= 0) {
+
+
+            toolbar.setTitle("Brands");
+
+        } else {
+            toolbar.setTitle(getIntent().getStringExtra(BRANDNAME));
+
+        }*/
         toolbar.setTitle(getIntent().getStringExtra(BRANDNAME));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

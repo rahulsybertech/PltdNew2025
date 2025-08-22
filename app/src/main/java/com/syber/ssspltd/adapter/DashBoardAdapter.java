@@ -6,6 +6,7 @@ import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -26,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.syber.ssspltd.R;
@@ -44,6 +47,7 @@ import com.syber.ssspltd.activitys.CreditNoteActivity;
 import com.syber.ssspltd.activitys.CustomerReviewsActivity;
 import com.syber.ssspltd.activitys.DR_Note_Customer;
 import com.syber.ssspltd.activitys.DrNoteActivity;
+import com.syber.ssspltd.activitys.FairOrderActivity;
 import com.syber.ssspltd.activitys.FeedbackActivity2;
 import com.syber.ssspltd.activitys.GalleryActivity;
 import com.syber.ssspltd.activitys.LedgerActivity;
@@ -65,9 +69,12 @@ import com.syber.ssspltd.response.DeasbordListType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -107,8 +114,66 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
         final DeasbordListType lists;
         lists = OfferList.get(position);
         System.out.println("GETTING_LIST " + new Gson().toJson(lists));
-        holder.imageViewIMG.setImageResource(lists.getImg());
-        holder.titleText.setText(lists.getName());
+
+
+        // Set title by default
+        String title = lists.getName(); // This could be "Brand", "Stall", etc.
+
+        if(title.equals("Brands")){
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+            sdf.setLenient(false); // Avoids auto-fixing bad dates
+
+// Format current date to remove time part
+            String todayStr = sdf.format(new Date());
+            Date currentDate = null; // currentDate now has only date part
+            try {
+                currentDate = sdf.parse(todayStr);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+            Date startDate = null;
+            try {
+                startDate = sdf.parse("01-Jul-2025");
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            Date endDate = null;
+            try {
+                endDate = sdf.parse("31-Jul-2025");
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (startDate != null && endDate != null && currentDate != null &&
+                    currentDate.compareTo(startDate) >= 0 && currentDate.compareTo(endDate) <= 0) {
+                // Date is within range
+                if ("Brands".equalsIgnoreCase(title)) {
+                    title = "Stall Details";
+                    title = "";
+                }
+                Glide.with(context)
+                        .asGif()
+                        .load(R.drawable.fair_dhamaka_one) // or load from URL
+                        .into(holder.imageViewIMG);
+                holder.rlImage.setBackground(ContextCompat.getDrawable(context, R.drawable.button_twelve));
+
+                holder.titleText.setText(title);
+            } else {
+               // holder.rlImage.setBackgroundColor(Color.TRANSPARENT);
+                holder.rlImage.setBackground(ContextCompat.getDrawable(context, R.drawable.button_twelve));
+                holder.titleText.setText(title);
+            }
+
+        }else {
+            holder.imageViewIMG.setImageResource(lists.getImg());
+            holder.rlImage.setBackgroundColor(Color.TRANSPARENT);
+            holder.titleText.setText(title);
+        }
+
+
+
+      //  holder.titleText.setText(lists.getName());
         if (lists.getOnClickId().equals("24") && (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("SSSPLTD") || SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("N/A") || SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("NA") || SharedPref.read(SharedPref.clubType, "").equals(""))) {
             holder.rl.setVisibility(View.GONE);
         } else if (lists.getOnClickId().equals("24")) {
@@ -117,6 +182,7 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
         holder.itemView.setOnClickListener(v -> {
             if (lists.getOnClickId().equals("1")) {
                 context.startActivity(new Intent(context, LedgerActivity.class));
+               // context.startActivity(new Intent(context, FairOrderActivity.class));
             } else if (lists.getOnClickId().equals("2")) {
                 context.startActivity(new Intent(context, DrNoteActivity.class));
             } else if (lists.getOnClickId().equals("3")) {
@@ -166,6 +232,8 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
                 context.startActivity(new Intent(context, SupplierReportActivity.class));
             } else if (lists.getOnClickId().equals("24")) {
                 context.startActivity(new Intent(context, ClubTypeActivity.class));
+            } else if (lists.getOnClickId().equals("27")) {
+                context.startActivity(new Intent(context, FairOrderActivity.class));
             }
             else if (lists.getOnClickId().equals("25")) {
                 context.startActivity(new Intent(context, CustomerListActivity.class));
@@ -174,7 +242,8 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
 
             }
         });
-        if (newuser && position > 7) {
+
+        if (newuser && position > 6) {
             holder.imgFade.setImageResource(R.drawable.button_fade);
             holder.itemView.setOnClickListener(v -> {
                 SweetAlertDialog alertDialog = new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
@@ -214,13 +283,14 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
         TextView titleText;
         CircleImageView c_image;
         LinearLayout linear, ll;
-        RelativeLayout rl;
+        RelativeLayout rl,rlImage;
 
 
         public MyViewHolder(View view) {
             super(view);
 
             imgFade = view.findViewById(R.id.img_fade);
+            rlImage = view.findViewById(R.id.rlImage);
             imageViewIMG = view.findViewById(R.id.imageViewIMG);
             titleText = view.findViewById(R.id.titleText);
             c_image = view.findViewById(R.id.image_color);

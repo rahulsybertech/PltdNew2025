@@ -6,9 +6,12 @@ public class MyConstant {
     public static final String BOOKING_PAGE = "booking";
     public static final String GUEST = "guest";
     public static final String ADDREQUEQEST = "addreq";
+    public static final String MOBILE_NUMBER = "mobile_number";
+
     public static final String USERTYPE = "user_type";
     public static final String HOME = "home";
     public static final String BOOKINGlIST = "bookingList";
     public static final String ORDER = "orderlist";
     public static final String ACCOUNT_ID = "account-id";
+    public static Boolean ISNEWPARTY = false;
 }

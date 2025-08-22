@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.activitys.FairOrderActivity;
 import com.syber.ssspltd.response.SubpartyModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 
@@ -51,7 +52,17 @@ public class SubPartyAdapter extends RecyclerView.Adapter<SubPartyAdapter.MyView
 
         }
 
-        holder.name.setOnClickListener(v -> ((SupplierOrderFormActivity) mContext).setSubParty(product,position));
+        holder.name.setOnClickListener(v ->
+        {
+            if (mContext instanceof SupplierOrderFormActivity) {
+                ((SupplierOrderFormActivity) mContext).setSubParty(product,position);
+            }else if(mContext instanceof FairOrderActivity){
+                ((FairOrderActivity) mContext).setSubParty(product,position);
+            }
+
+        });
+
+
 
 
 

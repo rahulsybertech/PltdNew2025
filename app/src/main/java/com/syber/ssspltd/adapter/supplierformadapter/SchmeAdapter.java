@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.activitys.FairOrderActivity;
 import com.syber.ssspltd.response.SchemeModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 
@@ -72,7 +73,13 @@ public class SchmeAdapter extends RecyclerView.Adapter<SchmeAdapter.MyViewHolder
                 @Override
                 public void onClick(View v) {
 
-                            ((SupplierOrderFormActivity) mContext).setScheme(data.get(getAdapterPosition()));
+
+                    if (mContext instanceof SupplierOrderFormActivity) {
+                        ((SupplierOrderFormActivity) mContext).setScheme(data.get(getAdapterPosition()));
+                    }else if(mContext instanceof FairOrderActivity){
+                        ((FairOrderActivity) mContext).setScheme(data.get(getAdapterPosition()));
+                    }
+
 
                 }
             });

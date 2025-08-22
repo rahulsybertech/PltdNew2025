@@ -219,6 +219,8 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
 
         saleReportAdapter = new SaleReportAdapter(mContext, saleReportDetails);
         binding.saleReportRecy.setAdapter(saleReportAdapter);
+        binding.saleReportRecy.setNestedScrollingEnabled(false);
+
 
         binding.l.back3.setImageDrawable(ContextCompat.getDrawable(SaleReportActivity.this, R.drawable.ic_baseline_keyboard_backspace));
         binding.l.back3.setOnClickListener(v -> onBackPressed());

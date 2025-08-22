@@ -10,6 +10,7 @@
         android:id="@+id/ll_2"
         android:background="@drawable/otp_line"
         >
+
         <TextView
             android:textSize="12dp"
             android:layout_width="match_parent"
@@ -59,6 +60,24 @@
             android:background="@drawable/otp_line"
             android:id="@+id/saleAmount"                                android:textColor="@color/black"
             android:fontFamily="@font/helvetica_regular"/>
+        <RelativeLayout
+            android:visibility="visible"
+            android:id="@+id/rlPdf"
+            android:textSize="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:text="1"
+            android:padding="2dp"
+            android:background="@drawable/otp_line"
+            android:gravity="center" >
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivPdf"
+                android:layout_centerInParent="true"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/pdf"/>
+        </RelativeLayout>
     </LinearLayout>
 
 </RelativeLayout>

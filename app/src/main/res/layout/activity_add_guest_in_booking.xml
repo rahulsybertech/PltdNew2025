@@ -117,139 +117,158 @@
                       android:layout_height="wrap_content"
                       android:orientation="horizontal">
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="160dp"
                             android:layout_margin="10dp"
                             android:layout_weight="1">
-                              <FrameLayout
+
+                              <LinearLayout
+                                  android:orientation="vertical"
                                   android:layout_width="match_parent"
+                                  android:layout_margin="10dp"
                                   android:layout_height="140dp"
-                                  android:background="@drawable/otp_line">
+                                  android:layout_weight="1">
+
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="120dp"
+                                        android:background="@drawable/otp_line">
+                                          <TextView
+                                              android:id="@+id/etFront"
+                                              android:layout_gravity="end"
+                                              android:layout_width="30dp"
+                                              android:layout_height="30dp"
+                                              android:singleLine="true"
+                                              android:enabled="true"
+                                              android:background="@null"
+                                              android:maxLength="10"
+                                              android:paddingBottom="10dp" />
+
+                                          <ImageView
+                                              android:id="@+id/placeholder1"
+                                              android:layout_width="76dp"
+                                              android:src="@drawable/ic_baseline_add_a_photo_blue"
+                                              android:layout_height="76dp"
+                                              android:layout_gravity="center"
+                                              android:onClick="placeholderClick" />
+
+                                          <ProgressBar
+                                              android:id="@+id/progress1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
+                                          <ImageView
+                                              android:id="@+id/image1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:layout_weight="1"
+                                              android:padding="1dp"
+                                              android:scaleType="fitXY"
+                                              android:visibility="visible" />
+
+
+                                    </FrameLayout>
                                     <TextView
-                                        android:id="@+id/etFront"
-                                        android:layout_gravity="end"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:singleLine="true"
-                                        android:enabled="true"
-                                        android:background="@null"
-                                        android:maxLength="10"
-                                        android:paddingBottom="10dp" />
-
-                                    <ImageView
-                                        android:id="@+id/placeholder1"
-                                        android:layout_width="76dp"
-                                        android:src="@drawable/ic_baseline_add_a_photo_blue"
-                                        android:layout_height="76dp"
-                                        android:layout_gravity="center"
-                                        android:onClick="placeholderClick" />
-
-                                    <ProgressBar
-                                        android:id="@+id/progress1"
                                         android:layout_width="match_parent"
+                                        android:textAlignment="center"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:visibility="gone" />
+                                        android:textStyle="bold"
+                                        android:text="@string/front_side"
+                                        android:textColor="@color/black"
+                                        android:textSize="14dp"
+                                        />
+                              </LinearLayout>
+                              <ImageView
+                                  android:id="@+id/removeImage1"
+                                  android:layout_width="32dp"
+                                  android:layout_height="32dp"
+                                  android:layout_alignParentRight="true"
+                                  android:onClick="removeImage"
+                                  android:src="@drawable/cross_button"
+                                  android:visibility="gone"
+                                  app:tint="@color/error_text" />
+                        </RelativeLayout>
 
-                                    <ImageView
-                                        android:id="@+id/image1"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="140dp"
-                                        android:layout_weight="1"
-                                        android:padding="1dp"
-                                        android:scaleType="fitXY"
-                                        android:visibility="visible" />
-
-                                    <ImageView
-                                        android:id="@+id/removeImage1"
-                                        android:layout_width="32dp"
-                                        android:layout_height="32dp"
-                                        android:layout_margin="12dp"
-                                        android:onClick="removeImage"
-                                        android:src="@drawable/cross_button"
-                                        android:visibility="gone"
-                                        app:tint="@color/error_text" />
-
-                              </FrameLayout>
-                              <TextView
-                                  android:layout_width="match_parent"
-                                  android:textAlignment="center"
-                                  android:layout_height="wrap_content"
-                                  android:textStyle="bold"
-                                  android:text="@string/front_side"
-                                  android:textColor="@color/black"
-                                  android:textSize="14dp"
-                                  />
-                        </LinearLayout>
-                        <LinearLayout
+                        <RelativeLayout
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="160dp"
                             android:layout_margin="10dp"
                             android:layout_weight="1">
-                              <FrameLayout
+                              <LinearLayout
+                                  android:orientation="vertical"
                                   android:layout_width="match_parent"
                                   android:layout_height="140dp"
-                                  android:background="@drawable/otp_line">
+                                  android:layout_margin="10dp"
+                                  android:layout_weight="1">
+                                    <FrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="120dp"
+                                        android:background="@drawable/otp_line">
+                                          <TextView
+                                              android:id="@+id/etBack"
+                                              android:layout_gravity="end"
+                                              android:layout_width="30dp"
+                                              android:layout_height="30dp"
+                                              android:singleLine="true"
+                                              android:enabled="true"
+                                              android:background="@null"
+                                              android:maxLength="10"
+                                              android:paddingBottom="10dp" />
+
+                                          <ImageView
+                                              android:id="@+id/placeholder2"
+                                              android:layout_width="76dp"
+                                              android:src="@drawable/ic_baseline_add_a_photo_blue"
+                                              android:layout_height="76dp"
+                                              android:layout_gravity="center"
+                                              android:onClick="placeholderClick" />
+
+                                          <ProgressBar
+                                              android:id="@+id/progress2"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_gravity="center"
+                                              android:visibility="gone" />
+
+                                          <ImageView
+                                              android:id="@+id/image2"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="140dp"
+                                              android:layout_weight="1"
+                                              android:padding="1dp"
+                                              android:scaleType="fitXY"
+                                              android:visibility="visible" />
+
+
+
+                                    </FrameLayout>
                                     <TextView
-                                        android:id="@+id/etBack"
-                                        android:layout_gravity="end"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:singleLine="true"
-                                        android:enabled="true"
-                                        android:background="@null"
-                                        android:maxLength="10"
-                                        android:paddingBottom="10dp" />
-
-                                    <ImageView
-                                        android:id="@+id/placeholder2"
-                                        android:layout_width="76dp"
-                                        android:src="@drawable/ic_baseline_add_a_photo_blue"
-                                        android:layout_height="76dp"
-                                        android:layout_gravity="center"
-                                        android:onClick="placeholderClick" />
-
-                                    <ProgressBar
-                                        android:id="@+id/progress2"
+                                        android:layout_toRightOf="@+id/backBookingList"
+                                        android:textAlignment="center"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:visibility="gone" />
+                                        android:textStyle="bold"
+                                        android:text="@string/back_side"
+                                        android:textColor="@color/black"
+                                        android:textSize="14dp"
+                                        />
+                              </LinearLayout>
+                              <ImageView
+                                  android:id="@+id/removeImage2"
+                                  android:layout_width="32dp"
+                                  android:layout_height="32dp"
+                                  android:onClick="removeImage"
+                                  android:layout_alignParentRight="true"
+                                  android:src="@drawable/cross_button"
+                                  android:visibility="gone"
+                                  app:tint="@color/error_text" />
+                        </RelativeLayout>
 
-                                    <ImageView
-                                        android:id="@+id/image2"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="140dp"
-                                        android:layout_weight="1"
-                                        android:padding="1dp"
-                                        android:scaleType="fitXY"
-                                        android:visibility="visible" />
-
-                                    <ImageView
-                                        android:id="@+id/removeImage2"
-                                        android:layout_width="32dp"
-                                        android:layout_height="32dp"
-                                        android:layout_margin="12dp"
-                                        android:onClick="removeImage"
-                                        android:src="@drawable/cross_button"
-                                        android:visibility="gone"
-                                        app:tint="@color/error_text" />
-
-                              </FrameLayout>
-                              <TextView
-                                  android:layout_toRightOf="@+id/backBookingList"
-                                  android:textAlignment="center"
-                                  android:layout_width="match_parent"
-                                  android:layout_height="wrap_content"
-                                  android:textStyle="bold"
-                                  android:text="@string/back_side"
-                                  android:textColor="@color/black"
-                                  android:textSize="14dp"
-                                  />
-                        </LinearLayout>
 
                   </LinearLayout>
 

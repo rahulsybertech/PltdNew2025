@@ -21,9 +21,17 @@ public class BookingData implements Parcelable {
     private String actualCheckoutDate;
     private String bookingID;
     private List<String> guestIds;
+    private String nickName;
+    private String nickNameID;
+    private String mobileNo;
+    private String firmName;
+    private String isNewUser;
+    private Boolean isStay; // Nullable Boolean
 
     // Constructor
-    public BookingData(String id, String companyID, String branchID, String checkInDate, String checkInTime, String checkoutDate, String checkoutTime, String noOfPerson, String branchName,List<String> guestIds) {
+    public BookingData(String id, String companyID, String branchID, String checkInDate, String checkInTime,
+                       String checkoutDate, String checkoutTime, String noOfPerson, String branchName,
+                       List<String> guestIds, String nickName, String nickNameID) {
         this.id = id;
         this.companyID = companyID;
         this.branchID = branchID;
@@ -34,9 +42,11 @@ public class BookingData implements Parcelable {
         this.noOfPerson = noOfPerson;
         this.branchName = branchName;
         this.guestIds = guestIds;
+        this.nickName = nickName;
+        this.nickNameID = nickNameID;
     }
 
-    // Parcelable Implementation
+    // Parcelable Constructor
     protected BookingData(Parcel in) {
         id = in.readString();
         companyID = in.readString();
@@ -52,7 +62,21 @@ public class BookingData implements Parcelable {
         actualCheckInDate = in.readString();
         actualCheckoutDate = in.readString();
         bookingID = in.readString();
-        guestIds = in.createStringArrayList(); // Read guestIds list from Parcel
+        guestIds = in.createStringArrayList();
+        nickName = in.readString();
+        nickNameID = in.readString();
+        mobileNo = in.readString();
+        firmName = in.readString();
+        isNewUser = in.readString();
+
+        byte isStayByte = in.readByte();
+        if (isStayByte == 0) {
+            isStay = null;
+        } else if (isStayByte == 1) {
+            isStay = true;
+        } else {
+            isStay = false;
+        }
     }
 
     public static final Creator<BookingData> CREATOR = new Creator<BookingData>() {
@@ -83,8 +107,14 @@ public class BookingData implements Parcelable {
         dest.writeString(actualCheckInDate);
         dest.writeString(actualCheckoutDate);
         dest.writeString(bookingID);
-        dest.writeStringList(guestIds); // Write guestIds list to Parcel
+        dest.writeStringList(guestIds);
+        dest.writeString(nickName);
+        dest.writeString(nickNameID);
+        dest.writeString(mobileNo);
+        dest.writeString(firmName);
+        dest.writeString(isNewUser);
 
+        dest.writeByte(isStay == null ? (byte) 0 : (isStay ? (byte) 1 : (byte) 2));
     }
 
     @Override
@@ -107,12 +137,24 @@ public class BookingData implements Parcelable {
     public String getActualCheckInDate() { return actualCheckInDate; }
     public String getActualCheckoutDate() { return actualCheckoutDate; }
     public String getBookingID() { return bookingID; }
-    public List<String> getGuestIds() { return guestIds; } // Getter for guestIds
+    public List<String> getGuestIds() { return guestIds; }
+    public String getNickName() { return nickName; }
+    public String getNickNameID() { return nickNameID; }
+    public String getMobileNo() { return mobileNo; }
+    public String getfirmName() { return firmName; }
+    public String getIsNewUser() { return isNewUser; }
+    public Boolean getIsStay() { return isStay; }
 
-    public void setActualCheckInDate(String currentDateTime) {
-        this.actualCheckInDate = currentDateTime;
+    // Setters (as needed)
+    public void setActualCheckInDate(String actualCheckInDate) {
+        this.actualCheckInDate = actualCheckInDate;
     }
-    public void setActualCheckoutDate(String currentDateTime) {
-        this.actualCheckoutDate = currentDateTime;
+
+    public void setActualCheckoutDate(String actualCheckoutDate) {
+        this.actualCheckoutDate = actualCheckoutDate;
+    }
+
+    public void setIsStay(Boolean isStay) {
+        this.isStay = isStay;
     }
 }

@@ -1,2 +1,107 @@
-package com.syber.ssspltd.adapter;public class SalePartyAdapterFair {
+package com.syber.ssspltd.adapter;
+
+import android.app.Activity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.syber.ssspltd.R;
+import com.syber.ssspltd.activitys.FairOrderActivity;
+import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
+
+import com.syber.ssspltd.model.fairOrder.PackDataInputAdapter;
+import com.syber.ssspltd.model.fairOrder.model.SalepartyModelFair;
+import com.syber.ssspltd.response.SalepartyModel;
+
+import java.util.List;
+
+public class SalePartyAdapterFair extends RecyclerView.Adapter<SalePartyAdapterFair.MyViewHolder> {
+
+    private Activity mContext;
+    private List<SalepartyModelFair> data;
+    private final ItemClickCall callback;
+
+    public interface ItemClickCall {
+        void onItemClick(SalepartyModelFair salepartyModelFair);
+    }
+
+    public SalePartyAdapterFair(Activity mContext, List<SalepartyModelFair> data, ItemClickCall callback1) {
+        this.mContext = mContext;
+        this.data = data;
+        this.callback = callback1;
+    }
+
+    @Override
+    public SalePartyAdapterFair.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sarch_list, parent, false);
+        return new SalePartyAdapterFair.MyViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(final SalePartyAdapterFair.MyViewHolder holder, final int position) {
+
+        final SalepartyModelFair product;
+        product = data.get(position);
+        holder.name.setText(product.getAccountId());
+
+        if (position % 2 == 0) {
+            holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+        } else {
+            holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.eee));
+        }
+       holder. itemView.setOnClickListener(v ->
+                {
+                    if (mContext instanceof SupplierOrderFormActivity) {
+
+                    }else if(mContext instanceof FairOrderActivity){
+                        //   ((FairOrderActivity) mContext).setSaleParty(data.get(getAdapterPosition()));
+                        callback.onItemClick(data.get(position));
+                    }
+                }
+
+        );
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return data.size();
+    }
+
+    class MyViewHolder extends RecyclerView.ViewHolder {
+
+        TextView emp, name;
+        LinearLayout ll;
+        CardView cardView;
+
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            name = itemView.findViewById(R.id.name);
+            ll = itemView.findViewById(R.id.ll);
+            cardView = itemView.findViewById(R.id.product_card);
+
+
+            /*itemView.setOnClickListener(v ->
+                    {
+                        if (mContext instanceof SupplierOrderFormActivity) {
+                        }else if(mContext instanceof FairOrderActivity){
+                         //   ((FairOrderActivity) mContext).setSaleParty(data.get(getAdapterPosition()));
+                            callback.onItemClick(data);
+                        }
+                    }
+
+            );*/
+
+        }
+    }
+
+
+
 }
+

@@ -84,13 +84,13 @@ public class SaleReportAdapter extends RecyclerView.Adapter<SaleReportAdapter.My
             }
 
         });
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         holder.reclerItem.setLayoutManager(linearLayoutManager);
         SaleReportItemAdapter finanacialYearListAdapter = new SaleReportItemAdapter(mContext, datum.getSaleReportSecondaryData());
         holder.reclerItem.setAdapter(finanacialYearListAdapter);
         holder.videoLink.setOnClickListener(view -> {
-
             Intent viewIntent =
                     new Intent("android.intent.action.VIEW",
                             Uri.parse(datum.getPackingVideoURL()));
@@ -98,18 +98,28 @@ public class SaleReportAdapter extends RecyclerView.Adapter<SaleReportAdapter.My
         });
 //        holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_down));
 
-        if (datum.isOpenItem() == true) {
+
+
+
+
+//new code
+      /*  if (datum.isOpenItem() == true) {
+            holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_arrow_drop_down_24));
+            holder.reclerItem.setVisibility(View.GONE);
+            datum.setOpenItem(false);
+        } else if (datum.isOpenItem() == false) {
             holder.reclerItem.setVisibility(View.VISIBLE);
             datum.setOpenItem(true);
             holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_arrow_drop_up_24));
 
+        }*/
+      /*  if (datum.isOpenItem()) {
+            holder.reclerItem.setVisibility(View.VISIBLE);
+            holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_arrow_drop_up_24));
         } else {
             holder.reclerItem.setVisibility(View.GONE);
-            datum.setOpenItem(false);
             holder.plusClick.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_arrow_drop_down_24));
-
-
-        }
+        }*/
         holder.plusClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

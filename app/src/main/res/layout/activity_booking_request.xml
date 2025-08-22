@@ -46,16 +46,44 @@
                       android:id="@+id/llMain"
                       android:layout_marginStart="15dp"
                       android:layout_marginEnd="15dp"
-                      android:layout_marginTop="20dp"
                       android:orientation="vertical"
                       android:layout_width="match_parent"
                       android:layout_height="match_parent">
+                        <LinearLayout
+                            android:id="@+id/llSwitch"
+                            android:layout_gravity="end"
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                              <TextView
+                                  android:id="@+id/toggleLabel"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="STAY No"
+                                  android:textAllCaps="true"
+                                  android:textStyle="bold"
+                                  android:textColor="@color/red"
+                                  android:textSize="12sp"
+                                  />
+
+                              <androidx.appcompat.widget.SwitchCompat
+                                  android:id="@+id/yesNoSwitch"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="40dp"
+                                  android:text=""
+                                  android:splitTrack="true"
+                                  android:thumb="@drawable/thumb_drawable"
+                                  android:track="@drawable/track_drawable"
+                                  android:padding="4dp" />
+                        </LinearLayout>
                         <LinearLayout
                             android:id="@+id/llEmployee"
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                               <LinearLayout
+                                  android:id="@+id/llRadioGroup"
                                   android:background="@drawable/otp_line"
                                   android:orientation="horizontal"
                                   android:layout_width="match_parent"
@@ -83,7 +111,6 @@
 
                               </LinearLayout>
                               <LinearLayout
-                                  android:layout_marginTop="10dp"
                                   android:orientation="vertical"
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content">
@@ -97,7 +124,8 @@
                                               android:layout_width="wrap_content"
                                               android:layout_height="wrap_content"
                                               android:textSize="12dp"
-                                              android:text="Select Customer"
+                                              android:textStyle="bold"
+                                              android:text="Select Nick Name"
                                               android:textColor="@color/black"/>
                                           <RelativeLayout
                                               android:layout_width="match_parent"
@@ -125,6 +153,7 @@
 
                                                 <ImageView
                                                     android:id="@+id/clearAccountName"
+                                                    android:visibility="gone"
                                                     android:layout_width="30dp"
                                                     android:layout_height="match_parent"
                                                     android:layout_alignParentEnd="true"
@@ -136,6 +165,7 @@
                                                     app:tint="@color/red" />
                                           </RelativeLayout>
                                     </LinearLayout>
+
                                     <LinearLayout
                                         android:visibility="gone"
                                         android:id="@+id/llNickName"
@@ -147,6 +177,7 @@
                                               android:layout_width="wrap_content"
                                               android:layout_height="wrap_content"
                                               android:textSize="12dp"
+                                              android:textStyle="bold"
                                               android:text="Select Nick Name"
                                               android:textColor="@color/black"/>
                                           <LinearLayout
@@ -181,6 +212,7 @@
                                                       <ImageView
                                                           android:id="@+id/imgClearNickName"
                                                           android:layout_width="30dp"
+                                                          android:visibility="gone"
                                                           android:layout_height="match_parent"
                                                           android:layout_alignParentEnd="true"
                                                           android:layout_centerInParent="true"
@@ -192,7 +224,190 @@
                                                 </RelativeLayout>
                                           </LinearLayout>
                                     </LinearLayout>
+
+                                    <LinearLayout
+                                        android:visibility="gone"
+                                        android:id="@+id/llNewParty"
+                                        android:orientation="vertical"
+                                        android:layout_width="match_parent"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_height="wrap_content">
+                                          <LinearLayout
+                                              android:id="@+id/llFirstName"
+                                              android:orientation="vertical"
+                                              android:layout_weight="1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="45dp">
+                                                <TextView
+                                                    android:visibility="gone"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:textSize="12dp"
+                                                    android:text="First Name"
+                                                    android:textColor="@color/black"/>
+                                                <RelativeLayout
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_marginStart="2dp"
+                                                    android:layout_marginTop="5dp"
+                                                    android:background="@drawable/otp_line">
+
+
+                                                      <EditText
+                                                          android:id="@+id/etFirstName"
+                                                          android:layout_width="match_parent"
+                                                          android:layout_toStartOf="@id/clearFirstName"
+                                                          android:layout_height="45dp"
+                                                          android:layout_alignParentStart="true"
+                                                          android:fontFamily="@font/roboto_light"
+                                                          android:freezesText="true"
+                                                          android:hint="Enter Firm Name"
+                                                          android:background="@null"
+                                                          android:inputType="textCapSentences"
+                                                          android:gravity="center|start"
+                                                          android:paddingStart="10dp"
+                                                          android:singleLine="true"
+                                                          android:textStyle="bold"
+                                                          android:textColor="@color/black"
+                                                          android:textSize="12sp"
+                                                          android:visibility="visible" />
+
+
+                                                      <ImageView
+                                                          android:visibility="gone"
+                                                          android:id="@+id/clearFirstName"
+                                                          android:layout_width="30dp"
+                                                          android:layout_height="match_parent"
+                                                          android:layout_alignParentEnd="true"
+                                                          android:layout_centerInParent="true"
+                                                          android:layout_marginEnd="5dp"
+                                                          android:onClick="handleClear"
+                                                          android:padding="7dp"
+                                                          android:src="@drawable/ic_cross2"
+                                                          app:tint="@color/red" />
+                                                </RelativeLayout>
+                                          </LinearLayout>
+                                          <LinearLayout
+                                              android:id="@+id/llMobileNumber"
+                                              android:orientation="vertical"
+                                              android:layout_weight="1"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="45dp">
+                                                <TextView
+                                                    android:visibility="gone"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:textSize="12dp"
+                                                    android:text="First Name"
+                                                    android:textColor="@color/black"/>
+                                                <RelativeLayout
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_marginStart="2dp"
+                                                    android:layout_marginTop="5dp"
+                                                    android:background="@drawable/otp_line">
+
+
+                                                      <EditText
+                                                          android:id="@+id/etMobileNumber"
+                                                          android:layout_width="match_parent"
+                                                          android:layout_toStartOf="@id/clearMobileNumber"
+                                                          android:layout_height="45dp"
+                                                          android:layout_alignParentStart="true"
+                                                          android:fontFamily="@font/roboto_light"
+                                                          android:freezesText="true"
+                                                          android:inputType="number"
+                                                          android:hint="Enter Mobile Number"
+                                                          android:background="@null"
+                                                          android:textStyle="bold"
+                                                          android:gravity="center|start"
+                                                          android:paddingStart="10dp"
+                                                          android:singleLine="true"
+                                                          android:textColor="@color/black"
+                                                          android:textSize="12sp"
+                                                          android:visibility="visible" />
+
+
+                                                      <ImageView
+                                                          android:visibility="gone"
+                                                          android:id="@+id/clearMobileNumber"
+                                                          android:layout_width="30dp"
+                                                          android:layout_height="match_parent"
+                                                          android:layout_alignParentEnd="true"
+                                                          android:layout_centerInParent="true"
+                                                          android:layout_marginEnd="5dp"
+                                                          android:onClick="handleClear"
+                                                          android:padding="7dp"
+                                                          android:src="@drawable/ic_cross2"
+                                                          app:tint="@color/red" />
+                                                </RelativeLayout>
+                                          </LinearLayout>
+                                    </LinearLayout>
+
+
+
                               </LinearLayout>
+                              <LinearLayout
+                                  android:id="@+id/ll1"
+                                  android:visibility="visible"
+                                  android:layout_marginTop="10dp"
+                                  android:orientation="vertical"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content">
+                                    <LinearLayout
+                                        android:id="@+id/llMainPrtyAndSubParty"
+                                        android:orientation="vertical"
+                                        android:layout_weight="1"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="65dp">
+                                          <TextView
+                                              android:textStyle="bold"
+                                              android:layout_width="wrap_content"
+                                              android:layout_height="wrap_content"
+                                              android:textSize="12dp"
+                                              android:text="Select Customer"
+                                              android:textColor="@color/black"/>
+                                          <RelativeLayout
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:layout_marginStart="2dp"
+                                              android:layout_marginTop="5dp"
+                                              android:background="@drawable/otp_line">
+
+
+                                                <TextView
+                                                    android:id="@+id/tvMainPrtyAndSubParty"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_toStartOf="@id/clearMainPrtyAndSubParty"
+                                                    android:layout_height="45dp"
+                                                    android:layout_alignParentStart="true"
+                                                    android:fontFamily="@font/roboto_light"
+                                                    android:freezesText="true"
+                                                    android:gravity="center|start"
+                                                    android:paddingStart="10dp"
+                                                    android:singleLine="true"
+                                                    android:textColor="@color/black"
+                                                    android:textSize="16sp"
+                                                    android:visibility="visible" />
+
+
+                                                <ImageView
+                                                    android:visibility="gone"
+                                                    android:id="@+id/clearMainPrtyAndSubParty"
+                                                    android:layout_width="30dp"
+                                                    android:layout_height="match_parent"
+                                                    android:layout_alignParentEnd="true"
+                                                    android:layout_centerInParent="true"
+                                                    android:layout_marginEnd="5dp"
+                                                    android:onClick="handleClear"
+                                                    android:padding="7dp"
+                                                    android:src="@drawable/ic_cross2"
+                                                    app:tint="@color/red" />
+                                          </RelativeLayout>
+                                    </LinearLayout>
+
+                              </LinearLayout>
+
                               <RelativeLayout
                                   android:visibility="gone"
                                   tools:layout_editor_absoluteX="16dp"
@@ -234,8 +449,17 @@
                                   tools:layout_editor_absoluteX="16dp"
                                   tools:layout_editor_absoluteY="8dp" />
                         </RelativeLayout>
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:visibility="gone"
+                            android:id="@+id/clearAll"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:tint="@color/red"
+                            android:layout_marginTop="5dp"
+                            android:layout_gravity="end"
+                            android:src="@drawable/reset"/>
                         <LinearLayout
-                            android:layout_marginTop="20dp"
+                            android:layout_marginTop="5dp"
                             android:id="@+id/llDispatchDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -250,27 +474,20 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:textSize="12dp"
+                                        android:textStyle="bold"
                                         android:text="Check in date"
                                         android:textColor="@color/black"/>
                                     <LinearLayout
+                                        android:id="@+id/llCheckInDate"
                                         android:layout_marginTop="10dp"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         >
-                                          <androidx.appcompat.widget.AppCompatImageView
-                                              android:id="@+id/set_date"
-                                              android:layout_width="wrap_content"
-                                              android:layout_height="wrap_content"
-                                              android:layout_gravity="center_vertical"
-                                              android:src="@drawable/calendar"
-                                              />
                                           <TextView
                                               android:id="@+id/tvCheckInDate"
                                               android:layout_width="130dp"
                                               android:layout_height="40dp"
-                                              android:layout_marginEnd="10dp"
                                               android:layout_weight="1"
-                                              android:layout_marginStart="10dp"
                                               android:background="@drawable/otp_line"
                                               android:fontFamily="monospace"
                                               android:gravity="center"
@@ -280,6 +497,15 @@
                                               android:padding="8dp"
                                               android:textColor="@color/black"
                                               android:textSize="14sp" />
+                                          <androidx.appcompat.widget.AppCompatImageView
+                                              android:id="@+id/set_date"
+                                              android:layout_width="wrap_content"
+                                              android:layout_marginEnd="10dp"
+                                              android:layout_marginStart="10dp"
+                                              android:layout_height="wrap_content"
+                                              android:layout_gravity="center_vertical"
+                                              android:src="@drawable/calendar"
+                                              />
 
 
                                     </LinearLayout>
@@ -298,22 +524,16 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:textSize="12dp"
+                                        android:textStyle="bold"
                                         android:text="Check out date"
                                         android:textColor="@color/black"/>
 
                                     <LinearLayout
+                                        android:id="@+id/llCheckOutDate"
                                         android:layout_width="match_parent"
                                         android:layout_marginTop="10dp"
                                         android:layout_height="wrap_content"
                                         >
-                                          <androidx.appcompat.widget.AppCompatImageView
-                                              android:id="@+id/set_date_to"
-                                              android:layout_width="wrap_content"
-                                              android:layout_gravity="center_vertical"
-                                              android:layout_height="wrap_content"
-                                              android:src="@drawable/calendar"
-
-                                              />
                                           <TextView
                                               android:id="@+id/tvCheckOutDate"
                                               android:layout_width="130dp"
@@ -330,12 +550,22 @@
                                               android:padding="8dp"
                                               android:textColor="@color/black"
                                               android:textSize="14sp" />
+                                          <androidx.appcompat.widget.AppCompatImageView
+                                              android:id="@+id/set_date_to"
+                                              android:layout_width="wrap_content"
+                                              android:layout_marginStart="10dp"
+                                              android:layout_gravity="center_vertical"
+                                              android:layout_height="wrap_content"
+                                              android:src="@drawable/calendar"
+
+                                              />
 
                                     </LinearLayout>
 
                               </LinearLayout>
                         </LinearLayout>
                         <LinearLayout
+                            android:id="@+id/llDispatchOutDate"
                             android:layout_marginTop="20dp"
                             android:layout_width="match_parent"
                             android:weightSum="2"
@@ -351,6 +581,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:textSize="12dp"
+                                        android:textStyle="bold"
                                         android:text="Check in time"
                                         android:textColor="@color/black"/>
                                     <LinearLayout
@@ -358,17 +589,10 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1">
-                                          <androidx.appcompat.widget.AppCompatImageView
-                                              android:layout_width="wrap_content"
-                                              android:layout_height="wrap_content"
-                                              android:layout_gravity="center_vertical"
-                                              android:src="@drawable/stopwatch"/>
                                           <TextView
                                               android:id="@+id/tvCheckInTime"
                                               android:layout_width="wrap_content"
                                               android:layout_height="40dp"
-                                              android:layout_marginEnd="10dp"
-                                              android:layout_marginStart="10dp"
                                               android:layout_weight="1"
                                               android:background="@drawable/otp_line"
                                               android:fontFamily="monospace"
@@ -379,6 +603,13 @@
                                               android:padding="8dp"
                                               android:textColor="@color/black"
                                               android:textSize="14sp" />
+                                          <androidx.appcompat.widget.AppCompatImageView
+                                              android:layout_width="wrap_content"
+                                              android:layout_height="wrap_content"
+                                              android:layout_marginStart="10dp"
+                                              android:layout_marginEnd="10dp"
+                                              android:layout_gravity="center_vertical"
+                                              android:src="@drawable/stopwatch"/>
                                     </LinearLayout>
 
                               </LinearLayout>
@@ -395,25 +626,22 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:textSize="12dp"
+                                        android:textStyle="bold"
                                         android:text="Check out time"
                                         android:textColor="@color/black"/>
 
                                     <LinearLayout
+
                                         android:layout_width="match_parent"
                                         android:layout_marginTop="10dp"
                                         android:layout_height="wrap_content"
                                         android:weightSum="1">
-                                          <androidx.appcompat.widget.AppCompatImageView
-                                              android:layout_width="wrap_content"
-                                              android:layout_height="wrap_content"
-                                              android:layout_gravity="center_vertical"
-                                              android:src="@drawable/stopwatch"
-                                              />
+
                                           <TextView
                                               android:id="@+id/tvCheckOutTime"
                                               android:layout_width="130dp"
                                               android:layout_height="40dp"
-                                              android:layout_marginStart="10dp"
+
                                               android:layout_marginEnd="5dp"
                                               android:layout_weight="1"
                                               android:background="@drawable/otp_line"
@@ -425,6 +653,13 @@
                                               android:padding="8dp"
                                               android:textColor="@color/black"
                                               android:textSize="14sp" />
+                                          <androidx.appcompat.widget.AppCompatImageView
+                                              android:layout_width="wrap_content"
+                                              android:layout_height="wrap_content"
+                                              android:layout_marginStart="10dp"
+                                              android:layout_gravity="center_vertical"
+                                              android:src="@drawable/stopwatch"
+                                              />
 
                                     </LinearLayout>
 
@@ -518,42 +753,35 @@
 
                         </LinearLayout>
 
+
                         <LinearLayout
-                            android:visibility="gone"
-                            android:id="@+id/llGuest"
-                            android:layout_marginTop="10dp"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
-                            android:layout_height="15dp"
-                     >
+                            android:id="@+id/llGuest"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/bg_grey_corner">
+
                               <RelativeLayout
                                   android:paddingBottom="10dp"
+                                  android:paddingTop="10dp"
                                   android:paddingStart="10dp"
                                   android:layout_weight="1.6"
+                                  android:background="@drawable/bg_grey_corner"
                                   android:layout_width="match_parent"
-                                  android:layout_height="wrap_content">
-                                    <TextView
-                                        android:visibility="gone"
-                                        android:textSize="12sp"
-                                        android:id="@+id/tvSrNo"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="left"
-                                        android:padding="2dp"
-                                        android:text="BillDate"
-                                        android:textColor="@color/black" />
-
-
+                                  android:layout_height="match_parent">
 
 
                               </RelativeLayout>
 
                               <TextView
+                                  android:padding="2dp"
                                   app:autoSizeTextType="none"
                                   android:textSize="14sp"
+                                  android:id="@+id/tvGuestName"
                                   android:layout_weight="1"
+                                  android:fontFamily="@font/helvetica_neue_bold"
                                   android:textColor="@color/black"
-                                android:textStyle="bold"
                                   android:text="@string/guest_name"
                                   android:gravity="center"
                                   android:layout_width="match_parent"
@@ -561,29 +789,33 @@
 
                               <RelativeLayout
                                   app:autoSizeTextType="none"
-                                  android:id="@+id/ledger_credit"
+                                  android:textSize="12sp"
+                                  android:background="@drawable/bg_grey_corner"
                                   android:gravity="center"
                                   android:layout_weight="1.2"
                                   android:layout_width="match_parent"
                                   android:layout_height="match_parent">
-                                    <TextView
-                                        android:textStyle="bold"
-                                        app:autoSizeTextType="none"
-                                        android:textSize="14sp"
-                                        android:layout_weight="1"
-                                        android:textColor="@color/black"
-                                        android:text="@string/aadhar_card"
-                                        android:gravity="center"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"/>
 
+                                    <TextView
+                                        android:id="@+id/viewImage"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="end"
+                                        android:textSize="14sp"
+                                        android:layout_weight="1.2"
+                                        android:textStyle="bold"
+                                        android:fontFamily="@font/helvetica_neue_bold"
+                                        android:gravity="center|start"
+                                        android:background="@drawable/btnnn"
+                                        android:text="@string/aadhar_card"
+                                        android:textColor="@color/black"
+                                        android:visibility="visible" />
                               </RelativeLayout>
 
 
                         </LinearLayout>
 
                         <androidx.core.widget.NestedScrollView
-                            android:layout_marginTop="10dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                               <LinearLayout
@@ -593,7 +825,6 @@
 
                                     <androidx.recyclerview.widget.RecyclerView
                                         android:visibility="visible"
-                                        android:layout_marginTop="5dp"
                                         android:id="@+id/recycler"
                                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                         android:layout_width="match_parent"
@@ -648,10 +879,10 @@
                 android:id="@+id/rlbottom"
                 android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="10dp"
                 android:layout_height="45dp">
                   <androidx.cardview.widget.CardView
                       android:layout_marginTop="50dp"
-                      android:layout_marginBottom="10dp"
                       android:layout_centerInParent="true"
                       app:cardCornerRadius="10dp"
                       android:layout_width="150dp"

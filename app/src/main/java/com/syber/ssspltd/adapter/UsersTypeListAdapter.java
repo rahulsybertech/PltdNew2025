@@ -77,6 +77,8 @@ public class UsersTypeListAdapter extends RecyclerView.Adapter<UsersTypeListAdap
                 bundle.putInt("position", lastSelectedPosition);
                 registered_msg.pos=getAbsoluteAdapterPosition();
                 SharedPref.write(SharedPref.SELECTED,TypeListDetails.get(getAbsoluteAdapterPosition()).getName());
+                SharedPref.write(SharedPref.PURCHASE_PARTY_ID,TypeListDetails.get(getAbsoluteAdapterPosition()).getmID());
+                SharedPref.write(SharedPref.PERMISSION_TYPE,TypeListDetails.get(getAbsoluteAdapterPosition()).getPermissionType());
                 registered_msg.typePos = TypeListDetails.get(getAbsoluteAdapterPosition()).getUserType();
                // Toast.makeText(mContext, registered_msg.typePos+"op", Toast.LENGTH_SHORT).show();
                 registered_msg.praty_code = TypeListDetails.get(getAbsoluteAdapterPosition()).getPartyCode();

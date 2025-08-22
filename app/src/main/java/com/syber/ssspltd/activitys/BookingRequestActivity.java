@@ -4,12 +4,15 @@ import static com.syber.ssspltd.Constants.NewErpUrls.BRANCH_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountIdByNickName;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetAccountNameList;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetGuestMasterListByCustomerId;
+import static com.syber.ssspltd.Constants.NewErpUrls.GetMainPartyAndSubPartyList;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetNickNameList;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetStayBookingDataById;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.STATION_LIST;
+import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingTime;
+import static com.syber.ssspltd.Utils.AppController.mContext;
 import static com.syber.ssspltd.Utils.MyConstant.EXTRA_IS_EDIT;
 
 
@@ -37,7 +40,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,6 +68,7 @@ import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.activitys.supplierorderform.OrderImageActivity;
 import com.syber.ssspltd.adapter.AccountListAdapter;
 import com.syber.ssspltd.adapter.GuestListBookingAdapter;
+import com.syber.ssspltd.adapter.MainPartySubPartyAdapter;
 import com.syber.ssspltd.adapter.NickNameListAdapter;
 import com.syber.ssspltd.databinding.ActivityBookingRequestBinding;
 import com.syber.ssspltd.model.booking.BookingDetails;
@@ -95,6 +102,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     private Calendar checkInCalendar, checkOutCalendar;
     private Calendar checkInTimeCalendar, checkOutTimeCalendar;
     private boolean isTodaySelected = false;
+    private boolean isNewParty = false;
     ArrayList<BookingData> branchList;
     private Boolean isPlacedOrderBtnEnabled = true;
     private Boolean notAllowllTime = false;
@@ -102,15 +110,20 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     private int count = 1;  // Initial value
     private int minHoursSelect=0;
     boolean isEditMode;
-    boolean isCustomerCode=true;
+    boolean isCustomerCode=false;
     com.syber.ssspltd.model.booking.BookingData bookingData;
     private String selectedDateTextCheckIn="";
     private String selectedDateTextCheckOut="";
+    private String branchID="";
     AccountListAdapter accountListAdapter;
     NickNameListAdapter nickNameListAdapter;
+    MainPartySubPartyAdapter mainPartySubPartyAdapter;
     ArrayList<GuestMasterDetail> guestList;
     private GuestListBookingAdapter guestListBookingAdapter;
     List<String> checkGuestList = new ArrayList<>(); // List of IDs to be checked
+
+    private ActivityResultLauncher<Intent> secondActivityLauncher;
+    private Boolean isBack=false;
 
     TextView titile;
 
@@ -121,6 +134,24 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         setContentView(binding.getRoot());
 
         initUi();
+        setupListeners();
+        secondActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        isBack=true;
+                        if (data != null) {
+                            String updatedValue = data.getStringExtra("updatedData");
+                            getGuestList(mainParttSubPartyId);
+                            binding.ivGuestNew.setVisibility(View.VISIBLE);
+                            // Use the updated data to update UI or variables
+                            Log.d("FirstActivity", "Received: " + updatedValue);
+                        }
+                    }
+                }
+        );
+
 
 
     }
@@ -128,27 +159,173 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     @Override
     protected void onResume() {
         super.onResume();
-        getGuestList(accountNameId);
+        String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+
+        if(userType.equals("Other")){
+            if(isBack){
+
+                binding.ivGuestNew.setVisibility(View.VISIBLE);
+            }else {
+                binding.ivGuestNew.setVisibility(View.GONE);
+            }
+            if(isEditMode){
+                if (stayBooking){
+                    binding.ivGuestNew.setVisibility(View.VISIBLE);
+                }else {
+                    binding.ivGuestNew.setVisibility(View.GONE);
+                }
+
+
+            }else {
+                if(isBack){
+                    binding.ivGuestNew.setVisibility(View.VISIBLE);
+                }else {
+                    binding.ivGuestNew.setVisibility(View.GONE);
+                }
+
+            }
+
+        }else {
+            binding.ivGuestNew.setVisibility(View.VISIBLE);
+            getGuestList(mainParttSubPartyId);
+        }
+
+
     }
 
     private void populateData(com.syber.ssspltd.model.booking.BookingData bookingData) {
-      String checkin=  convertDateFormat(bookingData.getCheckInDate());
-      String checkOut=  convertDateFormat(bookingData.getCheckoutDate());
+        String checkin=  convertDateFormat(bookingData.getCheckInDate());
+
+        String checkOut=  convertDateFormat(bookingData.getCheckoutDate());
+        branchID=bookingData.getBranchID();
         binding.tvCheckInDate.setText(checkin);
         existingCheckInDate=checkin;
         existingCheckOutDate=checkOut;
-        binding.tvAccountName.setText(bookingData.getaccountName());
-        accountNameId=bookingData.getaccountID();
-        binding.tvCheckOutDate.setText(checkOut);
-        binding.tvCheckInTime.setText(bookingData.getCheckInTime());
-        existingCheckOutTime=bookingData.getCheckInTime();
-        existingCheckOutDateNew=bookingData.getCheckoutTime();
-        selectedDateTextCheckIn=bookingData.getCheckInDate();
-        selectedDateTextCheckOut=bookingData.getCheckoutDate();
-        binding.tvCheckOutTime.setText(bookingData.getCheckoutTime());
-        binding.textViewNumber.setText(bookingData.getNoOfPerson());
-        int number = Integer.valueOf(bookingData.getNoOfPerson());
-        count=number;
+
+        binding.clearMainPrtyAndSubParty.setVisibility(View.VISIBLE);
+        binding.imgClearNickName.setVisibility(View.VISIBLE);
+        //     binding.tvAccountName.setText(bookingData.getaccountName());
+        binding.tvMainPrtyAndSubParty.setText(bookingData.getaccountName());
+
+        binding.tvNickName.setText(bookingData.getNickName());
+
+        if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")){
+            if ("NEW PARTY".equals(bookingData.getNickName())) {
+                isNewParty = true;
+                binding.llNewParty.setVisibility(View.VISIBLE);
+                binding.ll1.setVisibility(View.GONE);
+
+                // Optional null checks before setting text
+                if (bookingData.getMobileNo() != null) {
+                    binding.etMobileNumber.setText(bookingData.getMobileNo());
+                }
+
+                if (bookingData.getfirmName() != null) {
+                    binding.etFirstName.setText(bookingData.getfirmName());
+                }
+            } else {
+                isNewParty = false;
+                binding.llNewParty.setVisibility(View.GONE);
+                binding.ll1.setVisibility(View.VISIBLE);
+            }
+
+            accountNameId=bookingData.getNickNameID();
+            //   accountNameId=bookingData.getaccountID();
+            mainParttSubPartyId=bookingData.getaccountID();
+            binding.tvCheckOutDate.setText(checkOut);
+            binding.tvCheckInTime.setText(bookingData.getCheckInTime());
+            existingCheckOutTime=bookingData.getCheckInTime();
+            existingCheckOutDateNew=bookingData.getCheckoutTime();
+            selectedDateTextCheckIn=bookingData.getCheckInDate();
+            selectedDateTextCheckOut=bookingData.getCheckoutDate();
+            binding.tvCheckOutTime.setText(bookingData.getCheckoutTime());
+            binding.textViewNumber.setText(bookingData.getNoOfPerson());
+            int number = Integer.valueOf(bookingData.getNoOfPerson());
+            count=number;
+        }else {
+            if ("NEW PARTY".equals(bookingData.getNickName())) {
+                if(bookingData.getNoOfPerson().equals("0")){
+                    isNewParty = true;
+                    stayBooking=false;
+                    binding.llNewParty.setVisibility(View.VISIBLE);
+                    binding.ll1.setVisibility(View.GONE);
+                    if (bookingData.getMobileNo() != null) {
+                        binding.etMobileNumber.setText(bookingData.getMobileNo());
+                    }
+
+                    if (bookingData.getfirmName() != null) {
+                        binding.etFirstName.setText(bookingData.getfirmName());
+                    }
+                }else {
+                    isNewParty = true;
+                    stayBooking=true;
+                    binding.llNewParty.setVisibility(View.VISIBLE);
+                    binding.ll1.setVisibility(View.GONE);
+
+                    // Optional null checks before setting text
+                    if (bookingData.getMobileNo() != null) {
+                        binding.etMobileNumber.setText(bookingData.getMobileNo());
+                    }
+
+                    if (bookingData.getfirmName() != null) {
+                        binding.etFirstName.setText(bookingData.getfirmName());
+                    }
+                }
+
+            }
+            else {
+                if(bookingData.getNoOfPerson().equals("0")){
+                    stayBooking=false;
+                }else {
+                    stayBooking=true;
+                }
+
+             /*   if(bookingData.getIsStay()){
+                    stayBooking=true;
+                }else {
+                    stayBooking=false;
+                }*/
+                isNewParty = false;
+                binding.llNewParty.setVisibility(View.GONE);
+                binding.ll1.setVisibility(View.VISIBLE);
+            }
+
+            binding.yesNoSwitch.setChecked(stayBooking);
+            binding.toggleLabel.setText(stayBooking ? "STAY YES" : "STAY NO");
+            binding.toggleLabel.setTextColor(ContextCompat.getColor(this, stayBooking ? R.color.green : R.color.red));
+
+            accountNameId=bookingData.getNickNameID();
+            //   accountNameId=bookingData.getaccountID();
+            mainParttSubPartyId=bookingData.getaccountID();
+            binding.tvCheckOutDate.setText(checkOut);
+            binding.tvCheckInTime.setText(bookingData.getCheckInTime());
+            existingCheckOutTime=bookingData.getCheckInTime();
+            existingCheckOutTime=bookingData.getCheckInTime();
+            existingCheckOutDateNew=bookingData.getCheckoutTime();
+            selectedDateTextCheckIn=bookingData.getCheckInDate();
+            selectedDateTextCheckOut=bookingData.getCheckoutDate();
+            binding.tvCheckOutTime.setText(bookingData.getCheckoutTime());
+            //  binding.etMobileNumberStayNo.setText(bookingData.getMobileNo());
+
+            binding.textViewNumber.setText(bookingData.getNoOfPerson());
+            int number = Integer.valueOf(bookingData.getNoOfPerson());
+            count=number;
+            if(count==0){
+                stayBooking=false;
+                binding.llDispatchDate.setVisibility(View.GONE);
+                binding.llDispatchOutDate.setVisibility(View.GONE);
+                //     binding.llMobileNumberStayNo.setVisibility(View.VISIBLE);
+                //  binding.tvMainPrtyAndSubParty.setText("");
+                //    mainParttSubPartyId="";
+                binding.ivGuestNew.setVisibility(View.GONE);
+            }else {
+                binding.llDispatchDate.setVisibility(View.VISIBLE);
+                binding.llDispatchOutDate.setVisibility(View.VISIBLE);
+            }
+        }
+
+
+
         initializeCheckInDateTime(existingCheckInDate);
     }
     public String convertDateFormat(String inputDate) {
@@ -169,7 +346,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         branchList = new ArrayList<>();
         guestList = new ArrayList<>();
         backBookingList.setOnClickListener(v -> onBackPressed());
-       // setSpinner();
+        // setSpinner();
         checkInCalendar = Calendar.getInstance();
         checkOutCalendar = Calendar.getInstance();
 
@@ -178,10 +355,19 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
         binding.llCheckIn.setOnClickListener(v ->showCheckInDatePicker() );
         binding.llCheckOut.setOnClickListener(v ->showCheckOutDatePicker() );
+
+
         updateUI();
         getStayBookingTime();
 
 
+
+        binding.clearAll.setOnClickListener(v -> {
+            binding.tvCheckInDate.setText("");
+            binding.tvCheckOutDate.setText("");
+            binding.tvCheckInTime.setText("");
+            binding.tvCheckOutTime.setText("");
+        });
 
 
 
@@ -196,6 +382,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         binding.ivGuestNew.setOnClickListener(v ->{
             String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
             if(userType.equals("Other")){
+                String  mobileNumber=binding.etMobileNumber.getText().toString();
                 if(isCustomerCode){
                     if (binding.tvAccountName.getText().toString().isEmpty()) {
                         binding.clearAccountName.setVisibility(View.GONE);
@@ -203,28 +390,46 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                         Toast.makeText(this, "Please select Customer Code!", Toast.LENGTH_SHORT).show();
 
                     }else {
-                        startActivity(new Intent(this, AddGuestInBookingActivity.class)
+                    /*    startActivity(new Intent(this, AddGuestInBookingActivity.class)
                                 .putExtra(MyConstant.ACCOUNT_ID,accountNameId)
                                 .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST)
-                        );
+                                .putExtra(MyConstant.MOBILE_NUMBER,mobileNumber)
+                        );*/
+                        Intent intent = new Intent(this, AddGuestInBookingActivity.class);
+                        intent.putExtra("originalData", "Hello from FirstActivity");
+                        intent    .putExtra(MyConstant.ACCOUNT_ID,accountNameId);
+                        intent  .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
+                        intent   .putExtra(MyConstant.MOBILE_NUMBER,mobileNumber);
+                        secondActivityLauncher.launch(intent);
                     }
-                }else {
-                    if (binding.tvNickName.getText().toString().isEmpty()) {
-                        binding.imgClearNickName.setVisibility(View.GONE);
-                        binding.tvNickName.setError("Can't be empty");
-                        Toast.makeText(this, "Please select NickName!", Toast.LENGTH_SHORT).show();
-                    }else {
-                        startActivity(new Intent(this, AddGuestInBookingActivity.class)
-                                .putExtra(MyConstant.ACCOUNT_ID,accountNameId)
-                                .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST)
-                        );
-                    }
+                }
+                else {
+                    Intent intent = new Intent(this, AddGuestInBookingActivity.class);
+                    intent.putExtra("originalData", "Hello from FirstActivity");
+                    intent    .putExtra(MyConstant.ACCOUNT_ID,mainParttSubPartyId);
+                    intent  .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
+                    intent   .putExtra(MyConstant.MOBILE_NUMBER,mobileNumber);
+                    secondActivityLauncher.launch(intent);
+                    //  }
                 }}else {
 
-                startActivity(new Intent(this, AddGuestInBookingActivity.class)
-                        .putExtra(MyConstant.ACCOUNT_ID,accountNameId)
-                        .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST)
-                );
+                if(userType.equals("Other")){
+                    Intent intent = new Intent(this, AddGuestInBookingActivity.class);
+                    intent.putExtra("originalData", "Hello from FirstActivity");
+                    intent    .putExtra(MyConstant.ACCOUNT_ID,accountNameId);
+                    intent  .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
+                    intent   .putExtra(MyConstant.MOBILE_NUMBER,"");
+                    secondActivityLauncher.launch(intent);
+                }
+                else {
+                    Intent intent = new Intent(this, AddGuestInBookingActivity.class);
+                    intent.putExtra("originalData", "Hello from FirstActivity");
+                    intent    .putExtra(MyConstant.ACCOUNT_ID,mainParttSubPartyId);
+                    intent  .putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
+                    intent   .putExtra(MyConstant.MOBILE_NUMBER,"");
+                    secondActivityLauncher.launch(intent);
+                }
+
             }
 
 
@@ -236,43 +441,12 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 updateUI();
             }
         });
-        // Handle Radio Button Clicks
-        binding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton selectedRadioButton = findViewById(checkedId);
-                if (selectedRadioButton.getId() == R.id.rbCustomerCode) {
-                    isCustomerCode=true;
-                    binding.tvNickName.setText("");
-                        binding.llCustomer.setVisibility(View.VISIBLE);
-                        binding.llNickName.setVisibility(View.GONE);
-                    binding.llGuest.setVisibility(View.GONE);
-                    binding.recycler.setVisibility(View.GONE);
-                } else {
-                    isCustomerCode=false;
-                    binding.tvAccountName.setText("");
-                    binding.llNickName.setVisibility(View.VISIBLE);
-                    binding.llCustomer.setVisibility(View.GONE);
-                    binding.llGuest.setVisibility(View.GONE);
-                    binding.recycler.setVisibility(View.GONE);
-                }
-            }
-        });
-
-    /*  binding.plusButton.setOnClickListener {
-            if (count < 9) {
-                count++
-                updateUI()
-            }
-        }
-
-     binding.buttonMinus.setOnClickListener {
-            if (count > 1) {
-                count--
-                updateUI()
-            }
-        }*/
-
+        isCustomerCode=false;
+        binding.tvAccountName.setText("");
+        binding.llNickName.setVisibility(View.VISIBLE);
+        binding.llCustomer.setVisibility(View.GONE);
+        binding.llGuest.setVisibility(View.GONE);
+        binding.recycler.setVisibility(View.GONE);
 
         binding.tvAccountName.setOnClickListener(v -> searchDialog(""));
 
@@ -282,33 +456,48 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 nickNameDialog("");
             }
         });
+        binding.tvMainPrtyAndSubParty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(binding.tvNickName.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(),"Please Select Nick Name First!", Toast.LENGTH_SHORT).show();
+                }else {
+                    mainParttAndSubPArtyDialog("");
+                }
+
+            }
+        });
 
         binding.save.setOnClickListener(v ->{
 
-            if (validate() && isPlacedOrderBtnEnabled) {
-                List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
-                if (selectedGuests.size() >= 1 && selectedGuests.size() <= 9) {
-                    // Proceed with selected guests
+            if (validate()) {
+                if(stayBooking){
+                    List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
+                    if (selectedGuests.size() >= 1 && selectedGuests.size() <= 9) {
+                        // Proceed with selected guests
+                    }
                 }
-                isPlacedOrderBtnEnabled = false;
-                binding.save.setEnabled(false);
-                binding.save.setBackgroundColor(Color.parseColor("#808080"));
-                binding.tvSave.setText("Please Wait...");
-           //    startActivity(new Intent(this, AddGuestInBookingActivity.class));
-                sendData();
+
+
+                if(isPlacedOrderBtnEnabled){
+                    sendData();
+                }else {
+                    Toast.makeText(this, "Booking Already Saved", Toast.LENGTH_SHORT).show();
+                }
+
 
             }
 
         } );
 
         binding.llCheckInTime.setOnClickListener(v -> {
-          //  showCheckInTimePicker(notAllowllTime);
-       //     showCheckInTimePicker1();
+            //  showCheckInTimePicker(notAllowllTime);
+            //     showCheckInTimePicker1();
             showCheckInTimePicker24Hours(true);
         } );
 
         binding.llCheckOutTime.setOnClickListener(v -> {
-         //   showCheckOutTimePicker();
+            //   showCheckOutTimePicker();
             showCheckOutTimePicker24Hours();
         } );
 
@@ -317,18 +506,19 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         if (isEditMode) {
             bookingData = getIntent().getParcelableExtra("data");
             binding.tvSave.setText(R.string.update);
-
             String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
             if(userType.equals("Other")){
                 binding.llEmployee.setVisibility(View.VISIBLE);
+                binding.llRadioGroup.setVisibility(View.GONE);
+
                 binding.llBranch.setVisibility(View.GONE);
             }else {
-               // getGuestList("");
+                // getGuestList("");
                 binding.llEmployee.setVisibility(View.GONE);
                 binding.llBranch.setVisibility(View.VISIBLE);
             }
             if (bookingData != null) {
-               getStayBookingDataById(bookingData.getId(),bookingData.getaccountID());
+                getStayBookingDataById(bookingData.getId(),bookingData.getaccountID());
                 populateData(bookingData); // Load existing data into UI fields
             }
         }
@@ -337,6 +527,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
             if(userType.equals("Other")){
                 binding.llEmployee.setVisibility(View.VISIBLE);
+                binding.llRadioGroup.setVisibility(View.GONE);
                 binding.llBranch.setVisibility(View.GONE);
             }else {
                 getGuestList("");
@@ -347,16 +538,169 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             binding.tvSave.setText(R.string.save);
         }
 
-       // binding.plusButton.setOnClickListener(v ->   startActivity(new Intent(this, BookingRequestActivity.class)));
+
+        binding.etMobileNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No-op
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No-op
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s == null) return;
+
+                // If user enters more than 10 digits, trim the text and show a hint
+                if (s.length() > 10) {
+                    binding.etMobileNumber.setText(s.subSequence(0, 10));
+                    binding.etMobileNumber.setSelection(10); // Move cursor to end
+                    binding.etMobileNumber.setError("Not greater than 10 digits");
+                    return;
+                }
+
+                if(stayBooking){
+                    if (s.length() == 10) {
+                        getGuestList(s.toString());
+                        binding.ivGuestNew.setVisibility(View.VISIBLE);
+                        //  binding.llGuest.setVisibility(View.VISIBLE);
+                    } else {
+                        guestList.clear();
+                        binding.ivGuestNew.setVisibility(View.GONE);
+                        binding.recycler.setVisibility(View.GONE);
+                        binding.llGuest.setVisibility(View.GONE);
+                    }
+                }
+
+            }
+        });
+
+        // binding.plusButton.setOnClickListener(v ->   startActivity(new Intent(this, BookingRequestActivity.class)));
+
+
+        if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")){
+            binding.llSwitch.setVisibility(View.GONE);
+        }else {
+            binding.llSwitch.setVisibility(View.VISIBLE);
+         /*   binding.toggleLabel.setText("STAY YES");
+            binding.toggleLabel.setTextColor(ContextCompat.getColor(this,   R.color.green));
+          */  binding.llDispatchDate.setVisibility(View.GONE);
+            binding.llDispatchOutDate.setVisibility(View.GONE);
+
+            binding.yesNoSwitch.setChecked(true);
+            stayBooking=true;
+            binding.llDispatchDate.setVisibility(View.VISIBLE);
+            binding.llDispatchOutDate.setVisibility(View.VISIBLE);
+
+            binding.recycler.setVisibility(View.VISIBLE);
+      //      binding.llGuest.setVisibility(View.VISIBLE);
+            getGuestList(mainParttSubPartyId);
+            binding.yesNoSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                // Update label and color on toggle
+                binding.toggleLabel.setText(isChecked ? "STAY YES" : "STAY NO");
+                binding.toggleLabel.setTextColor(ContextCompat.getColor(this, isChecked ? R.color.green : R.color.red));
+                if(isChecked){
+                    stayBooking=true;
+                    binding.llDispatchDate.setVisibility(View.VISIBLE);
+                    binding.llDispatchOutDate.setVisibility(View.VISIBLE);
+                    if(isEditMode){
+                        if ("NEW PARTY".equals(bookingData.getNickName())) {
+                            if(!bookingData.getMobileNo().isEmpty()){
+                                binding.recycler.setVisibility(View.VISIBLE);
+                                binding.llGuest.setVisibility(View.VISIBLE);
+                                getGuestList(mainParttSubPartyId);
+                            }
+                        }else {
+                            binding.recycler.setVisibility(View.VISIBLE);
+                            binding.llGuest.setVisibility(View.VISIBLE);
+                            getGuestList(mainParttSubPartyId);
+                        }
+                    }else {
+                        binding.recycler.setVisibility(View.VISIBLE);
+                  //      binding.llGuest.setVisibility(View.VISIBLE);
+                        getGuestList(mainParttSubPartyId);
+                    }
+
+                    //    binding.llMobileNumberStayNo.setVisibility(View.GONE);
+                    // binding.tvMainPrtyAndSubParty.setText("");
+                    // mainParttSubPartyId="";
+
+                    //   binding.recycler.setVisibility(View.VISIBLE);
+                }else {
+                    stayBooking=false;
+                    binding.llDispatchDate.setVisibility(View.GONE);
+                    binding.llDispatchOutDate.setVisibility(View.GONE);
+                    binding.ivGuestNew.setVisibility(View.GONE);
+                    binding.recycler.setVisibility(View.GONE);
+                    binding.llGuest.setVisibility(View.GONE);
+
+                    //  binding.llMobileNumberStayNo.setVisibility(View.VISIBLE);
+                  /*  binding.tvMainPrtyAndSubParty.setText("");
+                    mainParttSubPartyId="";*/
+
+
+                    //   binding.recycler.setVisibility(View.GONE);
+                }
+            });
+        }
 
     }
+    private void enableSaveButtonIfNeeded() {
+        if (!isPlacedOrderBtnEnabled) {
+            isPlacedOrderBtnEnabled = true;
+            binding.save.setEnabled(true);
+            binding.save.setBackgroundColor(Color.parseColor("#2bab1c")); // original color
+            binding.tvSave.setText("Save");
+        }else {
+        }
+    }
+
+    private void setupListeners() {
+        binding.etMobileNumber.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) { enableSaveButtonIfNeeded(); }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+        binding.etFirstName.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) { enableSaveButtonIfNeeded(); }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+        binding.tvCheckInTime.setOnClickListener(v -> {
+            // Your time picker logic
+            showCheckInTimePicker24Hours(true);
+
+        });
+
+        binding.tvCheckOutTime.setOnClickListener(v -> {
+            // Your time picker logic
+            showCheckOutTimePicker24Hours();
+            //  enableSaveButtonIfNeeded();
+        });
+
+        binding.tvCheckInDate.setOnClickListener(v -> {
+            // Your date picker logic
+            showCheckInDatePicker();
+        });
+
+        binding.tvCheckOutDate.setOnClickListener(v -> {
+            // Your date picker logic
+            showCheckOutDatePicker();
+        });
+    }
+
 
     private void updateUI() {
-      binding.textViewNumber.setText(Integer.toString(count));
+        binding.textViewNumber.setText(Integer.toString(count));
     }
 
-  String  existingCheckInDate="";
-  String  existingCheckOutTime="";
+    String  existingCheckInDate="";
+    String  existingCheckOutTime="";
     private void initializeCheckInDateTime(String existingCheckInDate) {
 
 
@@ -377,7 +721,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     // Convert 12-hour format to 24-hour format
                     SimpleDateFormat inputFormat = new SimpleDateFormat("hh:mm a", Locale.US);
                     SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
-                //    String[] timeParts = existingCheckOutTime.split(":");
+                    //    String[] timeParts = existingCheckOutTime.split(":");
                     Date date = inputFormat.parse(existingCheckOutTime); // Parse input time
                     String time24HourFormat = outputFormat.format(date); // Convert to 24-hour format
 
@@ -500,7 +844,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
                     // Set the values in the UI
                     binding.tvCheckOutTime.setText(checkInTimeText);
-                //    binding.tvCheckOutTime.setText("");
+                    //    binding.tvCheckOutTime.setText("");
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -556,13 +900,32 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     public void handleClear(View view) {
         if (view.getId() == R.id.clearAccountName) {
             binding.llGuest.setVisibility(View.GONE);
+            binding.clearAccountName.setVisibility(View.GONE);
             binding.recycler.setVisibility(View.GONE);
             binding.tvAccountName.setText("");
+
         }
         if(view.getId() == R.id.imgClearNickName){
             binding.llGuest.setVisibility(View.GONE);
+            binding.imgClearNickName.setVisibility(View.GONE);
+            binding.ivGuestNew.setVisibility(View.GONE);
             binding.recycler.setVisibility(View.GONE);
+            binding.clearMainPrtyAndSubParty.setVisibility(View.GONE);
             binding.tvNickName.setText("");
+            binding.tvMainPrtyAndSubParty.setText("");
+            mainParttSubPartyId="";
+            binding.llNewParty.setVisibility(View.GONE);
+            binding.etFirstName.setText("");
+            binding.etMobileNumber.setText("");
+        }
+        if(view.getId() == R.id.clearMainPrtyAndSubParty){
+
+            binding.llGuest.setVisibility(View.GONE);
+            binding.ivGuestNew.setVisibility(View.GONE);
+            binding.clearMainPrtyAndSubParty.setVisibility(View.GONE);
+            binding.recycler.setVisibility(View.GONE);
+            binding.tvMainPrtyAndSubParty.setText("");
+            mainParttSubPartyId="";
         }
     }
 
@@ -584,6 +947,34 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     Toast.makeText(this, "Please select NickName!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
+              /*  if (binding.tvMainPrtyAndSubParty.getText().toString().isEmpty()) {
+                    Toast.makeText(this, "Please select Customer!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }*/
+
+
+                if(isNewParty){
+                    if (binding.etFirstName.getText().toString().isEmpty()) {
+                        Toast.makeText(this, "Please enter firm  name!", Toast.LENGTH_SHORT).show();
+                        binding.etFirstName.setError("Enter first name");
+                        return false;
+                    }
+
+                    String mobile =binding.etMobileNumber.getText().toString();
+                    if (mobile.length() >= 9 && mobile.length() <= 10) {
+                        // Valid number
+                    } else {
+                        binding.etMobileNumber.setError("Enter 9 or 10 digit mobile number");
+                        return false;
+                    }
+                }else {
+                    if (binding.tvMainPrtyAndSubParty.getText().toString().isEmpty()) {
+                        Toast.makeText(this, "Please select Customer!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+
+
             }
 
         }else {
@@ -594,61 +985,91 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         }
 
 
-
-        // Check if check-in date is selected
-        if (binding.tvCheckInDate.getText().toString().isEmpty()) {
-            binding.tvCheckInDate.setError("Can't be empty");
-            Toast.makeText(this, "Please select a check-in date!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        // Check if check-in time is selected
-        if (binding.tvCheckInTime.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Please select a check-in time!", Toast.LENGTH_SHORT).show();
-          binding.tvCheckInTime.setError("Can't be empty");
-            return false;
-        }
-
-        // Check if check-out date is selected
-        if (binding.tvCheckOutDate.getText().toString().isEmpty()) {
-            binding.tvCheckOutDate.setError("Can't be empty");
-            Toast.makeText(this, "Please select a check-out date!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        // Check if check-out time is selected
-        if (binding.tvCheckOutTime.getText().toString().isEmpty()) {
-            binding.tvCheckOutTime.setError("Can't be empty");
-            Toast.makeText(this, "Please select a check-out time!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        try {
-            List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
-            if (selectedGuests == null || selectedGuests.isEmpty()) {
-                Toast.makeText(this, "Please add Guest!", Toast.LENGTH_SHORT).show();
+        if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")){
+            // Check if check-in date is selected
+            if (binding.tvCheckInDate.getText().toString().isEmpty()) {
+                binding.tvCheckInDate.setError("Can't be empty");
+                Toast.makeText(this, "Please select a check-in date!", Toast.LENGTH_SHORT).show();
                 return false;
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Please add  guests!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-      /*  if (binding.editNoOfPerson.getText().toString().isEmpty()) {
-            binding.editNoOfPerson.setError("Can't be empty");
-            Toast.makeText(this, "Please enter No of person", Toast.LENGTH_SHORT).show();
-            binding.scroll.smoothScrollTo(binding.editNoOfPerson.getScrollX(), binding.editNoOfPerson.getScrollY());
-            temp = false;
+
+            // Check if check-in time is selected
+            if (binding.tvCheckInTime.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Please select a check-in time!", Toast.LENGTH_SHORT).show();
+                binding.tvCheckInTime.setError("Can't be empty");
+                return false;
+            }
+
+            // Check if check-out date is selected
+            if (binding.tvCheckOutDate.getText().toString().isEmpty()) {
+                binding.tvCheckOutDate.setError("Can't be empty");
+                Toast.makeText(this, "Please select a check-out date!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            // Check if check-out time is selected
+            if (binding.tvCheckOutTime.getText().toString().isEmpty()) {
+                binding.tvCheckOutTime.setError("Can't be empty");
+                Toast.makeText(this, "Please select a check-out time!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            try {
+                List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
+                if (selectedGuests == null || selectedGuests.isEmpty()) {
+                    Toast.makeText(this, "Please add Guest!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Please add  guests!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }else {
+            if(!stayBooking){
+
+            }else {
+                // Check if check-in date is selected
+                if (binding.tvCheckInDate.getText().toString().isEmpty()) {
+                    binding.tvCheckInDate.setError("Can't be empty");
+                    Toast.makeText(this, "Please select a check-in date!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                // Check if check-in time is selected
+                if (binding.tvCheckInTime.getText().toString().isEmpty()) {
+                    Toast.makeText(this, "Please select a check-in time!", Toast.LENGTH_SHORT).show();
+                    binding.tvCheckInTime.setError("Can't be empty");
+                    return false;
+                }
+
+                // Check if check-out date is selected
+                if (binding.tvCheckOutDate.getText().toString().isEmpty()) {
+                    binding.tvCheckOutDate.setError("Can't be empty");
+                    Toast.makeText(this, "Please select a check-out date!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                // Check if check-out time is selected
+                if (binding.tvCheckOutTime.getText().toString().isEmpty()) {
+                    binding.tvCheckOutTime.setError("Can't be empty");
+                    Toast.makeText(this, "Please select a check-out time!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                try {
+                    List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
+                    if (selectedGuests == null || selectedGuests.isEmpty()) {
+                        Toast.makeText(this, "Please add Guest!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(this, "Please add  guests!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
         }
 
-        // Check if number of persons is valid
-        String persons = binding.editNoOfPerson.getText().toString();
-        if (persons.isEmpty() || Integer.parseInt(persons) <= 0) {
-            binding.editNoOfPerson.setError("Can't be empty");
-            Toast.makeText(this, "Please enter a valid number of persons!", Toast.LENGTH_SHORT).show();
-            binding.scroll.smoothScrollTo(binding.editNoOfPerson.getScrollX(), binding.editNoOfPerson.getScrollY());
 
-            return false;
-        }*/
-           return temp;
+
+        return temp;
 
     }
     private void setSpinner() {
@@ -676,20 +1097,20 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
         // Set adapter to Spinner
         binding.spinner.setAdapter(adapter);
-        if (isEditMode){
-            String savedValue = bookingData.getBranchName();
-            // Find the position of the saved value
-            int position = adapter.getPosition(savedValue);
-
-// Set the Spinner selection
-            if (position >= 0) {
-            binding.spinner.setSelection(position);
-                selectBranch = branchList.get(position - 1).getId(); // Adjust for "Select Branch"
+        if (isEditMode) {
+            String savedValue = branchID; // e.g., "BLR"
+            if (savedValue != null && !savedValue.trim().isEmpty()) {
+                for (int i = 0; i < branchList.size(); i++) {
+                    if (savedValue.trim().equalsIgnoreCase(branchList.get(i).getId())) {
+                        int spinnerPosition = i + 1; // +1 to account for "Select Branch"
+                        binding.spinner.setSelection(spinnerPosition);
+                        selectBranch = branchList.get(i).getId(); // ✅ Correct ID
+                        enableSaveButtonIfNeeded();
+                        break;
+                    }
+                }
             }
         }
-
-
-
 
 
         // Handle item selection
@@ -706,13 +1127,13 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
                     // Log or show a message based on availability
                     if (isStayAvailable.equals("1")) {
-                    //    Toast.makeText(BookingRequestActivity.this, selectedBranch + " has Stay Facility", Toast.LENGTH_SHORT).show();
+                        //    Toast.makeText(BookingRequestActivity.this, selectedBranch + " has Stay Facility", Toast.LENGTH_SHORT).show();
                     } else {
                         binding.spinner.setSelection(0);
                         selectBranch = ""; // Adjust for default item
                         customToast("Stay facility is not available at this branch");
-                     //   showSuccessSnackbar(binding,"");
-                       // Toast.makeText(BookingRequestActivity.this,  " Stay facility is not available at this branch", Toast.LENGTH_SHORT).show();
+                        //   showSuccessSnackbar(binding,"");
+                        // Toast.makeText(BookingRequestActivity.this,  " Stay facility is not available at this branch", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -723,6 +1144,10 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             }
         });
     }
+
+
+
+
 
     public void customToast(String msg){
         // Example: Show success Snackbar when the activity starts
@@ -748,6 +1173,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             String selectCheckInDate = formattedDay + "-" + formattedMonth + "-" + selectedYear;
 
             binding.tvCheckInDate.setText(selectCheckInDate);
+            enableSaveButtonIfNeeded();
             binding.tvCheckInDate.setError(null, null);
             binding.tvCheckInTime.setText(""); // Reset Check-In Time
             binding.tvCheckOutTime.setText(""); // Reset Check-Out Time
@@ -766,17 +1192,38 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             // Dismiss dialog after selection
             datePickerDialog.dismiss();
         });
+        String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+        if(!userType.equals("Other")){
+            // Allow past selection if needed
+            Calendar minDate = Calendar.getInstance();
+            minDate.add(Calendar.DAY_OF_MONTH, -2);
+            datePickerDialog.getDatePicker().setMinDate(minDate.getTimeInMillis());
 
-        // Disable past dates
-        datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+            // When shown, change selection to 2 days ago
+            datePickerDialog.setOnShowListener(dialog -> {
+                Calendar twoDaysAgo = Calendar.getInstance();
+                twoDaysAgo.add(Calendar.DAY_OF_MONTH, -2);
 
-        // Auto-close when a date is selected
-        datePickerDialog.setOnShowListener(dialog -> {
-            DatePicker datePicker = datePickerDialog.getDatePicker();
-            datePicker.init(year, month, day, (view, selectedYear, selectedMonth, selectedDay) -> {
-                datePickerDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+                datePickerDialog.getDatePicker().updateDate(
+                        twoDaysAgo.get(Calendar.YEAR),
+                        twoDaysAgo.get(Calendar.MONTH),
+                        twoDaysAgo.get(Calendar.DAY_OF_MONTH)
+                );
             });
-        });
+        }else {
+            // Disable past dates
+            datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+            // Auto-close when a date is selected
+            datePickerDialog.setOnShowListener(dialog -> {
+                DatePicker datePicker = datePickerDialog.getDatePicker();
+                datePicker.init(year, month, day, (view, selectedYear, selectedMonth, selectedDay) -> {
+                    datePickerDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+                });
+            });
+        }
+
+
+
 
         datePickerDialog.show();
     }
@@ -788,7 +1235,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     private void showCheckInTimePicker24Hours(boolean enforce12HourRestriction) {
         // ✅ Ensure Check-In Date is selected
         String selectedDateTextCheckIn = binding.tvCheckInDate.getText().toString().trim();
-       String date= convertDateFormatnew(selectedDateTextCheckIn);
+        String date= convertDateFormatnew(selectedDateTextCheckIn);
         if (selectedDateTextCheckIn.isEmpty()) {
             Toast.makeText(this, "Please select Check-In date first!", Toast.LENGTH_SHORT).show();
             return;
@@ -892,10 +1339,11 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
                         binding.tvCheckInTime.setError(null);
                         binding.tvCheckInTime.setText(formatTime(hourOfDay, minute));
+                        enableSaveButtonIfNeeded();
 
                         // ✅ Reset Check-Out Date & Time when Check-In changes
                         binding.tvCheckOutTime.setText("");
-                      //  binding.tvCheckOutDate.setText("");
+                        //  binding.tvCheckOutDate.setText("");
                     }
                 },
                 initialHour,
@@ -964,10 +1412,9 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             binding.tvCheckOutDate.setError(null, null);
             binding.tvCheckOutDate.setText(selectedCheckOutDate);
             binding.tvCheckOutTime.setText(""); // Reset Check-Out Time
-
             // Automatically show Check-Out Time Picker after selecting a date
             showCheckOutTimePicker24Hours();
-
+            enableSaveButtonIfNeeded();
             // Dismiss dialog after selection
             datePickerDialog.dismiss();
         });
@@ -1069,6 +1516,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     checkOutTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     checkOutTimeCalendar.set(Calendar.MINUTE, minute);
                     binding.tvCheckOutTime.setText(formatTime(hourOfDay, minute));
+                    enableSaveButtonIfNeeded();
                 },
                 initialHour,  // ✅ Show last selected time or reset to 00:00 if date changed
                 initialMinute, // ✅ Show last selected time or reset to 00:00 if date changed
@@ -1084,7 +1532,8 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 //            View v = binding.llLl.getChildAt(i);
 //            v.setEnabled(false);
 //        }
-
+        isPlacedOrderBtnEnabled = false;
+        // binding.save.setEnabled(false);
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
@@ -1095,22 +1544,52 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             Util.getInstance().logLargeString("TaG", "Response " + SAVE_UPDATEBOOKING + "---> " + response);
 //            Log.i("TaG", "Response " + SAVE_ORDER  +"---> " + response);
 
-            isPlacedOrderBtnEnabled = true;
+            isPlacedOrderBtnEnabled = false;
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if (jsonObject.getInt("ResponseCode") == 200) {
                     progressDialog.dismiss();
-                   String screen = getIntent().getStringExtra(MyConstant.SCREEN);
-                   if(screen.equals(MyConstant.HOME)){
-                       startActivity(new Intent(this, BookingListActivity.class)
-                               .putExtra(MyConstant.USERTYPE,SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
-                       );
-                       finish();
-                   }else {
-                       finish();
-                   }
+                    String screen = getIntent().getStringExtra(MyConstant.SCREEN);
 
-                    finish();
+
+                    if (isEditMode) {
+                        startActivity(new Intent(this, BookingListActivity.class)
+                                .putExtra(MyConstant.USERTYPE,SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
+                        );
+                        finish();
+                    }else {
+                        if (addNewParty){
+                            String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
+                            if(userType.equals("Other")){
+                                binding.llGuest.setVisibility(View.GONE);
+                                binding.imgClearNickName.setVisibility(View.GONE);
+                                binding.recycler.setVisibility(View.GONE);
+                                binding.clearMainPrtyAndSubParty.setVisibility(View.GONE);
+                                binding.ll1.setVisibility(View.VISIBLE);
+                                binding.tvNickName.setText("");
+                                binding.tvMainPrtyAndSubParty.setText("");
+                                mainParttSubPartyId="";
+                                binding.llNewParty.setVisibility(View.GONE);
+                                binding.etFirstName.setText("");
+                                binding.etMobileNumber.setText("");
+                                enableSaveButtonIfNeeded();
+
+                            }else {
+                                startActivity(new Intent(this, BookingListActivity.class)
+                                        .putExtra(MyConstant.USERTYPE,SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
+                                );
+                                finish();
+                            }
+
+                        }else {
+                            startActivity(new Intent(this, BookingListActivity.class)
+                                    .putExtra(MyConstant.USERTYPE,SharedPref.read(SharedPref.DASHBOARD_TYPE, ""))
+                            );
+                            finish();
+                        }
+
+                    }
+
                     Toast.makeText(this, jsonObject.getString("ResponseMessage") + "", Toast.LENGTH_SHORT).show();
                 } else if (jsonObject.getInt("ResponseCode") == 204) {
 //                    myProgress.dismiss();
@@ -1135,6 +1614,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         }, error -> {
 //            myProgress.dismiss();
             progressDialog.dismiss();
+            isPlacedOrderBtnEnabled = true;
             NetworkResponse response = error.networkResponse;
             if (error instanceof ServerError && response != null) {
                 try {
@@ -1152,7 +1632,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 }
             }
 
-           // isPlacedOrderBtnEnabled = true;
+            // isPlacedOrderBtnEnabled = true;
             new AlertDialog.Builder(this)
                     .setMessage("Try again.. Something went wrong")
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
@@ -1184,40 +1664,73 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 try {
                     JSONObject jsonObject = new JSONObject();
 
-                /*    {
-                        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                            "companyID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                            "branchID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                            "accountID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                            "date": "2025-02-17T12:36:59.862Z",
-                            "checkInDate": "2025-02-17T12:36:59.862Z",
-                            "checkInTime": "string",
-                            "checkoutDate": "2025-02-17T12:36:59.862Z",
-                            "checkoutTime": "string",
-                            "noOfPerson": 0,
-                            "updatedDate": "2025-02-17T12:36:59.862Z"
-                    }*/
-
                     if (isEditMode) {
                         jsonObject.put("id",bookingData.getId() );
                         String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
                         if(userType.equals("Other")){
-                            jsonObject.put("accountID", accountNameId);
-                            jsonObject.put("branchID", JSONObject.NULL);
+                            if(isNewParty){
+                                jsonObject.put("accountID", JSONObject.NULL);
+                                jsonObject.put("isNewUser", true);
+                                jsonObject.put("mobileNo", binding.etMobileNumber.getText().toString());
+                                jsonObject.put("firmName", binding.etFirstName.getText().toString());
+                            }else {
+                                jsonObject.put("accountID", mainParttSubPartyId);
+                                jsonObject.put("isNewUser", false);
+                                jsonObject.put("mobileNo", JSONObject.NULL);
+                                jsonObject.put("firmName", JSONObject.NULL);
+                            }
 
                         }else {
                             jsonObject.put("accountID", JSONObject.NULL);
                             jsonObject.put("branchID", selectBranch);
+                            jsonObject.put("isNewUser", false);
+                            jsonObject.put("mobileNo", JSONObject.NULL);
+                            jsonObject.put("firmName", JSONObject.NULL);
                         }
-                    }else {
+                    }
+                    else {
                         jsonObject.put("id", JSONObject.NULL);
                         String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
                         if(userType.equals("Other")){
-                            jsonObject.put("accountID", accountNameId);
+                            if(isNewParty){
+                                jsonObject.put("accountID", JSONObject.NULL);
+                                jsonObject.put("isNewUser", true);
+                                jsonObject.put("mobileNo", binding.etMobileNumber.getText().toString());
+                                jsonObject.put("firmName", binding.etFirstName.getText().toString());
+                            }else {
+                                jsonObject.put("accountID", mainParttSubPartyId);
+                                jsonObject.put("isNewUser", false);
+
+
+                                if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")){
+                                    jsonObject.put("mobileNo", JSONObject.NULL);
+                                    jsonObject.put("firmName", JSONObject.NULL);
+                                }else {
+                                    if(stayBooking){
+                                        if(binding.etMobileNumber.getText().toString().isEmpty()){
+                                            jsonObject.put("mobileNo", JSONObject.NULL);
+                                        }else {
+                                            jsonObject.put("mobileNo",binding.etMobileNumber.getText().toString());
+                                        }
+                                        jsonObject.put("mobileNo", JSONObject.NULL);
+                                    }else {
+                                        jsonObject.put("mobileNo",binding.etMobileNumber.getText().toString());
+                                    }
+
+                                    jsonObject.put("firmName", JSONObject.NULL);
+                                }
+
+                            }
+
                             jsonObject.put("branchID", JSONObject.NULL);
-                        }else {
+
+                        }
+                        else {
                             jsonObject.put("accountID", JSONObject.NULL);
                             jsonObject.put("branchID", selectBranch);
+                            jsonObject.put("isNewUser", false);
+                            jsonObject.put("mobileNo", JSONObject.NULL);
+                            jsonObject.put("firmName", JSONObject.NULL);
                         }
                     }
 
@@ -1231,22 +1744,48 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     jsonObject.put("checkInDate", selectedDateTextCheckIn.toString());
                     jsonObject.put("checkInTime", binding.tvCheckInTime.getText().toString());
                     jsonObject.put("checkoutDate", selectedDateTextCheckOut);
-                    jsonObject.put("partyCode", Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, "")));
                     jsonObject.put("checkoutTime", binding.tvCheckOutTime.getText().toString());
+                    jsonObject.put("isStay", stayBooking);
+                    jsonObject.put("partyCode", Uri.encode(SharedPref.read(SharedPref.PARTY_CODE, "")));
+
                     // jsonObject.put("noOfPerson", binding.editNoOfPerson.getText().toString());
 
-                    jsonObject.put("updatedDate", JSONObject.NULL);
-
                     // Guest IDs
-                    JSONArray guestIdsArray = new JSONArray();
-                    List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
-                    for (GuestMasterDetail guest : selectedGuests) {
-                        guestIdsArray.put(guest.getId()); // Assuming GuestMasterDetail has a getId() method
+                    if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")){
+                        JSONArray guestIdsArray = new JSONArray();
+                        List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
+                        for (GuestMasterDetail guest : selectedGuests) {
+                            guestIdsArray.put(guest.getId()); // Assuming GuestMasterDetail has a getId() method
+                        }
+                        jsonObject.put("guestIds", guestIdsArray);
+                        jsonObject.put("noOfPerson", (String.valueOf(selectedGuests.size())));
+                        jsonString = jsonObject.toString();
+                        System.out.println(jsonString);
+                    }else {
+                        if(stayBooking){
+                            JSONArray guestIdsArray = new JSONArray();
+                            List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
+                            for (GuestMasterDetail guest : selectedGuests) {
+                                guestIdsArray.put(guest.getId()); // Assuming GuestMasterDetail has a getId() method
+                            }
+                            jsonObject.put("guestIds", guestIdsArray);
+                            jsonObject.put("noOfPerson", (String.valueOf(selectedGuests.size())));
+                            jsonString = jsonObject.toString();
+                            System.out.println(jsonString);
+                        }else {
+
+
+                            jsonObject.put("guestIds", JSONObject.NULL);
+                            jsonObject.put("noOfPerson", "0");
+                            jsonString = jsonObject.toString();
+                            System.out.println(jsonString);
+                        }
                     }
-                    jsonObject.put("guestIds", guestIdsArray);
-                    jsonObject.put("noOfPerson", (String.valueOf(selectedGuests.size())));
-                    jsonString = jsonObject.toString();
-                    System.out.println(jsonString);
+
+
+
+
+
 
 
 
@@ -1254,8 +1793,8 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Log.i("TaG", "Request " + SAVE_ORDER + "---> " + jsonString);
-                Util.getInstance().logLargeString("TaG", "Request " + SAVE_ORDER + "---> " + jsonString);
+                Log.i("TaG", "Request " + SAVE_UPDATEBOOKING + "---> " + jsonString);
+                Util.getInstance().logLargeString("TaG", "Request " + SAVE_UPDATEBOOKING + "---> " + jsonString);
 
                 return jsonString.getBytes();
             }
@@ -1284,10 +1823,10 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             try {
                 Gson gson = new Gson();
                 BookingResponse bookingResponse = gson.fromJson(response, BookingResponse.class);
-             //   JSONObject jsonObject = new JSONObject(response);
+                //   JSONObject jsonObject = new JSONObject(response);
                 branchList.addAll(bookingResponse.getData());
                 setSpinner();
-               // stationAdapter.notifyDataSetChanged();
+                // stationAdapter.notifyDataSetChanged();
             } catch (Exception e) {
                 Log.e("Exce", e.toString());
             }
@@ -1302,7 +1841,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 try {
 
 //                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
-               //     jsonBody.put("SupplierAccountID", selectedAccountId);
+                    //     jsonBody.put("SupplierAccountID", selectedAccountId);
 
                     Log.i("TaG", "Request " + STATION_LIST + "---> " + jsonBody);
                     return jsonBody.toString().getBytes("utf-8");
@@ -1341,7 +1880,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 int bookingTime = jsonObject.optInt("BookingTime");
 
                 minHoursSelect=bookingTime;
-              //  initializeCheckInDateTime();
+                //  initializeCheckInDateTime();
                 // Print BookingTime
                 System.out.println("Booking Time: " + bookingTime);
             } catch (Exception e) {
@@ -1386,16 +1925,24 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     }
 
 
-   // ArrayList<SalepartyModel> salepartyModelList, saleData;
+    // ArrayList<SalepartyModel> salepartyModelList, saleData;
     public static ArrayList<SalepartyModel> sData = new ArrayList<>();
     private ArrayList<Account> accountNameList= new ArrayList<>();;
     private ArrayList<Account> saleData= new ArrayList<>();
 
     private ArrayList<NickNameList> nickNameList= new ArrayList<>();;
-    private ArrayList<NickNameList> filternicNameList= new ArrayList<>();;
+    private ArrayList<NickNameList> filternicNameList= new ArrayList<>();
+
+    private ArrayList<Account> mainPartyAndSubPartyList= new ArrayList<>();
+    private ArrayList<Account> filterPartyAndSubPartyList= new ArrayList<>();
+
+
 
     private String nickNameId="";
     private String accountNameId="";
+    private Boolean addNewParty=false;
+    private Boolean stayBooking=false;
+    private String mainParttSubPartyId="";
 
     EditText search;
     RecyclerView recyclerView;
@@ -1444,13 +1991,23 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
         accountListAdapter = new AccountListAdapter(this, accountNameList, account -> {
             sDialog.dismiss();
-           binding.tvAccountName.setText(account.getName());
+            binding.tvAccountName.setText(account.getName());
+            if(account.getName().equals("NEW PARTY")){
+                addNewParty=true ;
+                //      binding.llMobileNumberStayNo.setVisibility(View.GONE);
+            }else {
+                addNewParty=false;
+                //    binding.llMobileNumberStayNo.setVisibility(View.VISIBLE);
+            }
+
             accountNameId=account.getId();
             binding.clearAccountName.setVisibility(View.VISIBLE);
             binding.tvAccountName.setError(null, null);
             binding.ivGuest.setVisibility(View.GONE);
             binding.recycler.setVisibility(View.VISIBLE);
             getGuestList(accountNameId);
+
+
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(accountListAdapter);
@@ -1596,6 +2153,56 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
     }
 
+    private void getMainPartySubParty(final String url) {
+        final MyProgress myProgress = new MyProgress(this);
+        myProgress.show();
+        var  urlWithNickNameId = url + "?nickNameId=" + accountNameId;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithNickNameId, response -> {
+            Util.getInstance().logLargeString("TaG", "Response " + url + " -=-=-=>" + response);
+            myProgress.dismiss();
+            try {
+                mainPartyAndSubPartyList.clear();
+                Gson gson = new Gson();
+                ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
+                mainPartyAndSubPartyList.addAll(newresponse.getAccountNameList());
+                mainPartySubPartyAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Log.e("Exce", e.toString());
+            }
+        }, error -> {
+            myProgress.dismiss();
+            Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+//                String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE, "") + "\",\"Filter\":\"" + "selected" + "\"}";
+                String str = "{}";
+                Log.i("TaG", "Request " + url + " -=-=-=>" + str);
+
+                return str.getBytes();
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
+        stringRequest.setShouldCache(true);
+        stringRequest.shouldCache();
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
+
     private void nickNameDialog(final String title) {
 
         sDialog = new Dialog(this);
@@ -1640,12 +2247,30 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
         nickNameListAdapter = new NickNameListAdapter(this, nickNameList, account -> {
             sDialog.dismiss();
+            if(account.getName().equals("NEW PARTY")){
+                isNewParty=true;
+                binding.llNewParty.setVisibility(View.VISIBLE);
+                binding.ll1.setVisibility(View.GONE);
+            }else {
+                isNewParty=false;
+                binding.llNewParty.setVisibility(View.GONE);
+                binding.ll1.setVisibility(View.VISIBLE);
+
+            }
+            if(account.getName().equals("NEW PARTY")){
+                addNewParty=true ;
+            }else {
+                addNewParty=false;
+            }
             binding.tvNickName.setText(account.getName());
             binding.imgClearNickName.setVisibility(View.VISIBLE);
+            binding.clearMainPrtyAndSubParty.setVisibility(View.GONE);
+            binding.tvMainPrtyAndSubParty.setText("");
+            mainParttSubPartyId="";
             binding.tvNickName.setError(null, null);
             accountNameId=account.getId();
-           // getAccountIdByNickName(accountNameId);
-            getGuestList(accountNameId);
+            // getAccountIdByNickName(accountNameId);
+            //   getGuestList(accountNameId);
 
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -1655,18 +2280,120 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
     }
 
+
+    private void mainParttAndSubPArtyDialog(final String title) {
+
+        sDialog = new Dialog(this);
+        sDialog.setContentView(R.layout.search_dialog);
+        sDialog.setCancelable(true);
+
+        titile = sDialog.findViewById(R.id.title);
+        titile.setText(title);
+        recyclerView = sDialog.findViewById(R.id.dist_recycler);
+        search = sDialog.findViewById(R.id.search);
+        if (mainPartyAndSubPartyList.size() > 0) {
+            sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+        }
+        sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+        sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
+
+        if (!mainPartyAndSubPartyList.isEmpty()) {
+            filterMainPartySubPartyList(mainPartyAndSubPartyList);
+        } else {
+
+            getMainPartySubParty(GetMainPartyAndSubPartyList);
+        }
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                filterPartyAndSubPartyList.clear();
+                for (int p = 0; p < mainPartyAndSubPartyList.size(); p++) {
+                    if (mainPartyAndSubPartyList.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || mainPartyAndSubPartyList.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        filterPartyAndSubPartyList.add(mainPartyAndSubPartyList.get(p));
+                    }
+                }
+                filterMainPartySubPartyList(filterPartyAndSubPartyList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        mainPartySubPartyAdapter = new MainPartySubPartyAdapter(this, mainPartyAndSubPartyList, account -> {
+            sDialog.dismiss();
+            binding.tvMainPrtyAndSubParty.setText(account.getName());
+
+            binding.clearMainPrtyAndSubParty.setVisibility(View.VISIBLE);
+            binding.tvMainPrtyAndSubParty.setError(null, null);
+            mainParttSubPartyId=account.getId();
+            enableSaveButtonIfNeeded();
+            if(stayBooking){
+                binding.ivGuestNew.setVisibility(View.VISIBLE);
+                // getAccountIdByNickName(accountNameId);
+                getGuestList(mainParttSubPartyId);
+            }else {
+
+            }
+
+
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(mainPartySubPartyAdapter);
+        getMainPartySubParty(GetMainPartyAndSubPartyList);
+        sDialog.show();
+
+    }
+
+
     void filternicNameList(ArrayList<NickNameList> bc) {
         nickNameListAdapter = new NickNameListAdapter(this, bc, account -> {
+
+            if(account.getName().equals("NEW PARTY")){
+                binding.llNewParty.setVisibility(View.VISIBLE);
+                binding.ll1.setVisibility(View.GONE);
+                isNewParty=true;
+            }else {
+                isNewParty=false;
+                binding.llNewParty.setVisibility(View.GONE);
+                binding.ll1.setVisibility(View.VISIBLE);
+            }
             sDialog.dismiss();
+            if(account.getName().equals("NEW PARTY")){
+                addNewParty=true ;
+            }else {
+                addNewParty=false;
+            }
             binding.tvNickName.setText(account.getName());
             binding.imgClearNickName.setVisibility(View.VISIBLE);
             binding.tvNickName.setError(null, null);
             accountNameId=account.getId();
             // getAccountIdByNickName(accountNameId);
-            getGuestList(accountNameId);
+            //    getGuestList(accountNameId);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(nickNameListAdapter);
+    }
+    void filterMainPartySubPartyList(ArrayList<Account> bc) {
+        mainPartySubPartyAdapter = new MainPartySubPartyAdapter(this, bc, account -> {
+            sDialog.dismiss();
+            binding.tvMainPrtyAndSubParty.setText(account.getName());
+            binding.clearMainPrtyAndSubParty.setVisibility(View.VISIBLE);
+            binding.tvMainPrtyAndSubParty.setError(null, null);
+            mainParttSubPartyId=account.getId();
+            enableSaveButtonIfNeeded();
+            binding.ivGuestNew.setVisibility(View.VISIBLE);
+            // getAccountIdByNickName(accountNameId);
+            getGuestList(mainParttSubPartyId);
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(mainPartySubPartyAdapter);
     }
 
     private void parseTime(String time12HourFormat) {
@@ -1698,9 +2425,22 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
     private void getGuestList(String accountId) {
         String getGuestMasterListByCustomerId="";
-       // getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + "a3b605ba-f20a-4dd5-9544-784ad0243a1f";
-        getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + accountId+ "&partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
-    //    getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+        // getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?accountId=" + "a3b605ba-f20a-4dd5-9544-784ad0243a1f";
+        String mobileNumber = binding.etMobileNumber.getText().toString().trim();
+        String partyCode = SharedPref.read(SharedPref.PARTY_CODE, "");
+
+        if (!isNewParty) {
+            MyConstant.ISNEWPARTY=isNewParty;
+            getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId
+                    + "?accountId=" + accountId
+                    + "&partyCode=" + partyCode;
+        } else {
+            getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId
+                    + "?partyCode=" + partyCode
+                    + "&mobileNo=" + mobileNumber;
+        }
+
+        //    getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
 
         String finalGetGuestMasterListByCustomerId = getGuestMasterListByCustomerId;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, getGuestMasterListByCustomerId, response -> {
@@ -1713,15 +2453,59 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
                 guestList.addAll(bookingResponse.getGuestMasterDetailList());
                 if(guestList.size()>0){
-                    binding.llGuest.setVisibility(View.VISIBLE);
-                    binding.recycler.setVisibility(View.VISIBLE);
-                    guestListBookingAdapter = new GuestListBookingAdapter(this, guestList,this,checkGuestList,MyConstant.BOOKING_PAGE);
+
+                    if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")){
+                        binding.llGuest.setVisibility(View.VISIBLE);
+                        binding.recycler.setVisibility(View.VISIBLE);
+                    }else {
+                        if(!stayBooking){
+                            binding.llGuest.setVisibility(View.GONE);
+                            binding.recycler.setVisibility(View.GONE);
+                        }else {
+                            binding.llDispatchDate.setVisibility(View.VISIBLE);
+                            binding.llDispatchOutDate.setVisibility(View.VISIBLE);
+                            binding.llGuest.setVisibility(View.VISIBLE);
+                            binding.recycler.setVisibility(View.VISIBLE);
+                            binding.ivGuestNew.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+
+
+                    guestListBookingAdapter = new GuestListBookingAdapter(this, guestList,this,checkGuestList,MyConstant.BOOKING_PAGE,guest -> {
+
+
+                        Intent i = new Intent(this, AddGuestInBookingActivity.class);
+                        i.putExtra("originalData", "Hello from FirstActivity");
+                        i.putExtra(MyConstant.SCREEN,MyConstant.ADDREQUEQEST);
+                        i .putExtra(MyConstant.ACCOUNT_ID,guest.getAccountId());
+                        i.putExtra(MyConstant.MOBILE_NUMBER,guest.getMobileNo());
+                        i.putExtra("imgList",new Gson().toJson(guest));
+                        Log.e("imgList", new Gson().toJson(guest));
+                        secondActivityLauncher.launch(i);
+
+
+                    });
                     binding.recycler.setAdapter(guestListBookingAdapter);
 
                     guestListBookingAdapter.notifyDataSetChanged();
                 }else {
-                    binding.llGuest.setVisibility(View.GONE);
-                    binding.recycler.setVisibility(View.GONE);
+                    if(stayBooking){
+                        if(binding.tvMainPrtyAndSubParty.getText().toString().isEmpty()){
+                            binding.ivGuestNew.setVisibility(View.GONE);
+                        }else {
+                            binding.ivGuestNew.setVisibility(View.VISIBLE);
+                        }
+
+                        binding.llGuest.setVisibility(View.GONE);
+                        binding.recycler.setVisibility(View.GONE);
+
+                    }else {
+                        binding.llGuest.setVisibility(View.GONE);
+                        binding.recycler.setVisibility(View.GONE);
+                    }
+
+
                 }
 
 
@@ -1771,10 +2555,15 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
     }
 
+    @Override
+    public void onChanged() {
+        enableSaveButtonIfNeeded();
+    }
+
     private void getStayBookingDataById(String recordId, String accountId) {
         String getGuestMasterListByCustomerId="";
         getGuestMasterListByCustomerId = GetStayBookingDataById+ "?recordId=" + recordId;
-      //  getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
+        //  getGuestMasterListByCustomerId = GetGuestMasterListByCustomerId+ "?partyCode=" + SharedPref.read(SharedPref.PARTY_CODE, "");
 
         String finalGetGuestMasterListByCustomerId1 = getGuestMasterListByCustomerId;
         StringRequest stringRequest = new StringRequest(Request.Method.POST, getGuestMasterListByCustomerId, response -> {
@@ -1791,7 +2580,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     BookingDetails bookingData = pojo.getStayBookingData();
 
                     // Extract guestId and guestIds list
-                  checkGuestList.clear();
+                    checkGuestList.clear();
 
                     // Add single guestId if exists
                     if (bookingData.getGuestId() != null) {
@@ -1802,7 +2591,12 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     if (bookingData.getGuestIds() != null && !bookingData.getGuestIds().isEmpty()) {
                         checkGuestList.addAll(bookingData.getGuestIds());
                     }
-                    getGuestList(accountId);
+                    if(isNewParty){
+                        getGuestList(accountId);
+                    }else {
+                        getGuestList(accountId);
+                    }
+
 
                     // Log the result
                     Log.i("GuestList", "Guest IDs: " + checkGuestList);
@@ -1863,8 +2657,8 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             myProgress.dismiss();
             try {
 
-             //   Gson gson = new Gson();
-             //   ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
+                //   Gson gson = new Gson();
+                //   ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
 
              /*   JSONObject jsonObject = new JSONObject(newresponse);
                 JSONArray jsonArray = jsonObject.getJSONArray("salesPartyNames");
@@ -1877,8 +2671,8 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     salepartyModelList.add(salepartyModel);
 
                 }*/
-            //    nickNameList.addAll(newresponse.getNickNameList());
-             //   nickNameListAdapter.notifyDataSetChanged();
+                //    nickNameList.addAll(newresponse.getNickNameList());
+                //   nickNameListAdapter.notifyDataSetChanged();
             } catch (Exception e) {
                 Log.e("Exce", e.toString());
             }

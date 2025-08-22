@@ -40,7 +40,7 @@
             <!-- Confirm Button -->
             <RelativeLayout
                 android:id="@+id/rlButton"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:background="@color/red"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"

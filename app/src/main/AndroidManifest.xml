@@ -6,11 +6,12 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
-      <uses-permission android:name="android.permission.CAMERA"/>
-      <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-      <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
-      <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
+      <uses-permission android:name="android.permission.CAMERA" />
+      <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+      <uses-permission
+          android:name="android.permission.READ_EXTERNAL_STORAGE"
+          android:maxSdkVersion="32" />
+      <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
       <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
       <uses-permission android:name="android.permission.INTERNET" />
       <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
@@ -52,9 +53,12 @@
           android:supportsRtl="true"
           android:theme="@style/AppTheme"
           android:usesCleartextTraffic="true">
-
+            <activity
+                android:name=".activitys.FairOrderActivity"
+                android:exported="false" />
             <activity
                 android:name=".activitys.BookingListActivity"
+                android:launchMode="singleTask"
                 android:exported="false" />
             <activity
                 android:name=".activitys.BookingRequestActivity"
@@ -64,7 +68,8 @@
                 android:exported="false" />
             <activity
                 android:name=".activitys.AddGuestInBookingActivity"
-                android:exported="false" />
+                android:exported="false"
+                android:screenOrientation="portrait" />
             <activity
                 android:name=".activitys.GuestListBookingActivity"
                 android:exported="false" />
@@ -308,12 +313,12 @@
             </activity>
 
             <activity-alias
-                android:name=".helper.GoldActivityAlias"
+                android:name=".helper.DiamondActivityAlias"
                 android:enabled="false"
                 android:exported="true"
-                android:icon="@mipmap/ic_launcher__new_gold"
+                android:icon="@mipmap/ic_launcher__new_diamond"
                 android:label="@string/app_name"
-                android:roundIcon="@mipmap/ic_launcher__new_gold"
+                android:roundIcon="@mipmap/ic_launcher__new_diamond"
                 android:targetActivity=".activitys.SplashActivity">
                   <intent-filter>
                         <action android:name="android.intent.action.MAIN" />
@@ -322,12 +327,12 @@
                   </intent-filter>
             </activity-alias>
             <activity-alias
-                android:name=".helper.DiamondActivityAlias"
+                android:name=".helper.GoldActivityAlias"
                 android:enabled="false"
                 android:exported="true"
-                android:icon="@mipmap/ic_launcher__new_diamond"
+                android:icon="@mipmap/ic_launcher__new_gold"
                 android:label="@string/app_name"
-                android:roundIcon="@mipmap/ic_launcher__new_diamond"
+                android:roundIcon="@mipmap/ic_launcher__new_gold"
                 android:targetActivity=".activitys.SplashActivity">
                   <intent-filter>
                         <action android:name="android.intent.action.MAIN" />

@@ -7,12 +7,17 @@ public class UsersTypeListResult {
 
     @SerializedName("Name")
     private String mName;
+    @SerializedName("ID")
+    private String mID;
     @SerializedName("PartyCode")
     private String mPartyCode;
     @SerializedName("SRNO")
     private String mSRNO;
     @SerializedName("UserType")
     private String mUserType;
+
+    @SerializedName("PermissionType")
+    private String permissionType;
 
     private  boolean isSelected=false;
 
@@ -56,6 +61,19 @@ public class UsersTypeListResult {
 
     public void setUserType(String userType) {
         mUserType = userType;
+    }
+    public String getmID() {
+        return mID;
+    }
+    public void setmID(String mID) {
+        mID = mID;
+    }
+
+    public String getPermissionType() {
+        return permissionType;
+    }
+    public void setPermissionType(String permissionType) {
+        permissionType = permissionType;
     }
 
 }

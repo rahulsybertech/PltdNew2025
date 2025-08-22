@@ -2,6 +2,7 @@ package com.syber.ssspltd.fragment;
 
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_BANNER_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_SECURITY_CHECK_REPORT;
+import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 
 import android.app.Activity;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -49,6 +51,7 @@ import com.syber.ssspltd.model.booking.StayBookingResponse;
 import com.syber.ssspltd.response.BannerResponse.Banner.BannerList;
 import com.syber.ssspltd.response.BannerResponse.Banner.BannerPojo;
 import com.syber.ssspltd.response.DeasbordListType;
+import com.syber.ssspltd.response.ModelClass.RowItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,6 +59,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,43 +80,49 @@ public class HomeFragment extends Fragment {
     CarouselView carouselView;
     TextView pending_order, courier_report, ledger, sale_report, stock_in_office, sale_service, dash_board, Dr_Note, create_note, cr_noteSuppl, dr_NoteCust;
     Type listType, bannerType;
-    String[] list1_name = {"Ledger", "Debit Note", "Credit Note To Supplier", "Sale Service", "Brands", "Customer Review", "Pending Order", "Honhar Khiladi", "Add Order"};
-    String[] list1_onclickId = {"1", "2", "3", "4", "13", "16", "23", "25", "22"};
-    Integer list1_Img[] = {R.drawable.button_two, R.drawable.button_nine, R.drawable.button_eleven, R.drawable.button_eight, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_two, R.drawable.button_thirteen, R.drawable.button_four};
+    String[] list1_name = {"Ledger", "Debit Note", "Credit Note To Supplier", "Sale Service", "Brands", "Customer Review", "Pending Order", "Honhar Khiladi","Fair Order", "Add Order"};
+    String[] list1_onclickId = {"1", "2", "3", "4", "13", "16", "23", "25", "27","22"};
+    Integer list1_Img[] = {R.drawable.button_two, R.drawable.button_nine, R.drawable.button_eleven, R.drawable.button_eight, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_two,R.drawable.button_six, R.drawable.button_thirteen,R.drawable.button_six, R.drawable.button_four};
 
     String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service", "Why SSS", "Brands"
             , "Customer Review", "Club Features", "Stay Booking","Honhar Khiladi"};
-   /* String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service", "Why SSS", "Brands"
+  /*  String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer",
+          "Credit Note", "Sale Service", "Why SSS", "Brands"
             , "Customer Review", "Club Features","Honhar Khiladi"};*/
- //   String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24", "26","25"};
+  //  String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24","25"};
     String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24","26","25"};
     Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
             , R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten,
             R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_nine,
             R.drawable.button_two,R.drawable.button_thirteen};
-    /*Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
+   /* Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
             , R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten,
             R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve,
             R.drawable.button_nine,R.drawable.button_thirteen};*/
-    String[] list_newuser = {"Why SSS", "Branches", "Brands", "Offers", "Customer Review", "Gallery", "Bank Details", "Feedback", "Apply KYC", "DashBoard", "Ledger"
+    String[] list_newuser = {"Why SSS", "Branches", "Brands", "Customer Review", "Gallery", "Bank Details", "Feedback","Offers", "Apply KYC", "DashBoard", "Ledger"
             , "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service"};
-    String[] newuser_onclickId = {"12", "14", "13", "21", "16", "15", "18", "19", "17", "20", "5", "1", "6", "7", "8", "9", "10", "11", "4"};
-    Integer newuser_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three, R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
+    String[] newuser_onclickId = {"12", "14", "13", "16", "15", "18", "19","21","13", "17", "20", "5", "1", "6", "7", "8", "9", "10", "11", "4"};
+    // Define what to hide for USER type
+    List<String> hiddenItemsForUser = Arrays.asList("Ledger", "Debit Note To Customer", "Credit Note", "Sale Service");
+
+    Integer newuser_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight,
+            R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three,R.drawable.button_three
             , R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten,
             R.drawable.button_grey, R.drawable.button_three};
 
     String[] list3_name = {"Why SSS", "Ledger", "Brands", "Customer Review","Stay Booking"};
-  //  String[] list3_name = {"Why SSS", "Ledger", "Brands", "Customer Review"};
+  // String[] list3_name = {"Why SSS", "Ledger", "Brands", "Customer Review"};
     String[] list3_onclickId = {"12", "1", "13", "16","26"};
   //  String[] list3_onclickId = {"12", "1", "13", "16"};
     Integer list3_Img[] = {R.drawable.button_two, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve,R.drawable.button_two};
- //   Integer list3_Img[] = {R.drawable.button_two, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve};
+  //  Integer list3_Img[] = {R.drawable.button_two, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve};
     String[] list4_name = {"Kavita"};
     String[] list4_onclickId = {"1"};
     Integer list4_Img[] = {R.drawable.button_one};
     List<DeasbordListType> deasbordListTypeList;
 
     DeasbordListType deasbordListType;
+    RelativeLayout ll;
     DashBoardAdapter dashBoardAdapter;
     RecyclerView recyclerView;
     String uploadImg_click = "";
@@ -128,6 +138,7 @@ public class HomeFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler);
         pending_order = view.findViewById(R.id.pending_order);
+        ll = view.findViewById(R.id.ll);
         courier_report = view.findViewById(R.id.courier_report);
         sale_report = view.findViewById(R.id.sale_report);
         stock_in_office = view.findViewById(R.id.stock_in_office);
@@ -146,6 +157,8 @@ public class HomeFragment extends Fragment {
         pen_bel = view.findViewById(R.id.pen_bel);
         support_fab = view.findViewById(R.id.support_fab);
 
+    //    GetUsersTypeList();
+
         deasbordListTypeList = new ArrayList<>();
         GridLayoutManager linearLayoutManager = new GridLayoutManager(getContext(), 3);
      //   linearLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -158,9 +171,27 @@ public class HomeFragment extends Fragment {
             Log.e("DASHBOARD_TYPE", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
             for (int i = 0; i < list1_name.length; i++) {
                 Log.e("list1_name", list1_name[i]);
-                deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
-                deasbordListTypeList.add(deasbordListType);
+                String name = list1_name[i];
+                String permissionType=SharedPref.read(SharedPref.PERMISSION_TYPE, "");
+                // Skip unwanted items
+
+                if(permissionType.equals("USER")){
+                    if (name.trim().equals("Ledger") ||
+                            name.trim().equals("Debit Note") ||
+                            name.trim().equals("Credit Note To Supplier") ||
+                            name.trim().equals("Sale Service")) {
+                        continue;
+                    }
+                    deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
+                    deasbordListTypeList.add(deasbordListType);
+                }else {
+                    deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
+                    deasbordListTypeList.add(deasbordListType);
+                }
+
+
             }
+
             dashBoardAdapter = new DashBoardAdapter(getContext(), deasbordListTypeList, false);
             recyclerView.setAdapter(dashBoardAdapter);
 
@@ -176,7 +207,8 @@ public class HomeFragment extends Fragment {
                 if(list2_onclickId[i].equals("24")){
                     if (list2_onclickId[i].equals("24") && (SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("SSSPLTD") || SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("N/A") || SharedPref.read(SharedPref.clubType, "").equalsIgnoreCase("NA") || SharedPref.read(SharedPref.clubType, "").equals(""))) {
                      //   holder.rl.setVisibility(View.GONE);
-                    } else if (list2_onclickId[i].equals("24")) {
+                    }
+                    else if (list2_onclickId[i].equals("24")) {
                         deasbordListType = new DeasbordListType(list2_onclickId[i], list2_name[i], list2_Img[i]);
                         deasbordListTypeList.add(deasbordListType);
                     }
@@ -239,7 +271,15 @@ public class HomeFragment extends Fragment {
             getBanner();
         }
         if (Lazy.haveNetworkConnection(getContext())) {
-            GetSecurityCheckReport(getContext());
+
+            if(SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("New User")){
+
+                getBanner();
+            }else {
+                ll.setVisibility(View.VISIBLE);
+                GetSecurityCheckReport(getContext());
+            }
+
         } else {
             //abhinav_poor_connection
             networkConnetion3(getContext());
@@ -258,30 +298,35 @@ public class HomeFragment extends Fragment {
                     try {
                         BannerPojo bannerPojo = new Gson().fromJson(response, bannerType);
                         if (bannerPojo.getResponseStatus()) {
-                            bannerList = new ArrayList<>();
-                            bannerList.addAll(bannerPojo.getBannerList());
+                            bannerList = new ArrayList<>(bannerPojo.getBannerList());
+
+                            // ✅ Add first item again at the end only once
+                            if (!bannerList.isEmpty()) {
+                                bannerList.add(bannerList.get(0)); // Duplicate first item at the end
+                            }
+
                             carouselView.setSize(bannerList.size());
-                            Log.e("size", bannerList.size() + "");
                             carouselView.setResource(R.layout.image_view_page);
                             carouselView.setAutoPlay(true);
+                            carouselView.setAutoPlayDelay(3000);
                             carouselView.setIndicatorAnimationType(IndicatorAnimationType.THIN_WORM);
                             carouselView.setCarouselOffset(OffsetType.CENTER);
+
                             carouselView.setCarouselViewListener((view, position) -> {
-                                // Example here is setting up a full image carousel
                                 BannerList img = bannerList.get(position);
-                                Log.e("size", img + "");
                                 ImageView imageView = view.findViewById(R.id.iamge_list);
                                 imageView.setOnClickListener(v -> {
-                                    // startActivity(new Intent(getContext(), BranchWithLogoActivity.class));
+                                    // Your click handling here
                                 });
+
                                 Picasso.with(getContext())
                                         .load(img.getLinkPath())
                                         .into(imageView);
                             });
-                            // After you finish setting up, show the CarouselView
-                            carouselView.show();
 
-                        } else {
+                            carouselView.show();
+                        }
+                        else {
                             //Toast.makeText(getContext(), jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
@@ -317,7 +362,76 @@ public class HomeFragment extends Fragment {
         };
         VolleySingleton.getInstance(getContext()).addToRequestQueue(stringRequest);
     }
+    List<RowItem> rowItemList;
+    private void GetUsersTypeList() {
+        final ProgressDialog progressBar = new ProgressDialog(getContext());
+        progressBar.setTitle("Fetching Data");
+        // progressBar.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_USER_TYPE_LIST, response -> {
+            Log.e("response", response);
+            Log.i("TaG", "res ==================> " + GET_USER_TYPE_LIST + " " + response);
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if (jsonObject.getBoolean("ResponseStatus")) {
 
+                    JSONArray BankListData = jsonObject.getJSONArray("UsersTypeListResult");
+                    Log.e("UsersTypeListResult", BankListData + "");
+                    rowItemList.clear();
+                    for (int i = 0; i < BankListData.length(); i++) {
+                        JSONObject ob = BankListData.getJSONObject(i);
+                        String name = ob.optString("Name");
+                    String    psrty = ob.optString("PartyCode");
+                        String sn = ob.optString("SRNO");
+                        String mobNo = ob.optString("UserType");
+                        String id = ob.optString("ID");
+                        String permissionType = ob.optString("PermissionType");
+                        Log.e("name", name);
+                        Log.e("partycode", psrty);
+                        if (!mobNo.equals("5")) {
+
+                            rowItemList.add(new RowItem(name, psrty, sn, mobNo,id,permissionType));
+                        }
+
+//                                    SharedPref.write(SharedPref.PARTY_CODE,psrty);
+                        // supplierListResult = new SupplierListResult(name);
+
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            System.out.println("Error_Checking_Abhinav " + new Gson().toJson(error.networkResponse.headers));
+            System.out.println("Error_Checking_Abhinav 2 " + new Gson().toJson(error.networkResponse.data));
+            System.out.println("Error_Checking_Abhinav 3 " + error.getMessage());
+            networkConnetion3(getContext());
+
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                //  String mob = SharedPref.read(SharedPref.USERMOBILE,"");
+                String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
+                // String otpp = otp.getText().toString();
+                String str = "{\"MOBILENO\":\"" + mob3 + "\"}";
+                Log.e("str", str);
+                Log.i("TaG", "req ==================> " + GET_USER_TYPE_LIST + " " + str);
+                return str.getBytes();
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                //need_to_change
+                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+        };
+        VolleySingleton.getInstance(getContext()).addToRequestQueue(stringRequest);
+    }
 
     public void GetSecurityCheckReport(Context context) {
         // Toast.makeText(context, "goodtogo", Toast.LENGTH_SHORT).show();
@@ -331,30 +445,86 @@ public class HomeFragment extends Fragment {
                     System.out.println();
                     Log.e("SecurityCheckRespo", response);
                     Log.i("TaG", "resp----->" + GET_SECURITY_CHECK_REPORT + " " + response);
+                    String permissionType=SharedPref.read(SharedPref.PERMISSION_TYPE, "");
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.getBoolean("ResponseStatus")) {
                             if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer") && !jsonObject.getBoolean("BlackListReportStatus")) {
                                 deasbordListTypeList.clear();
                                 for (int i = 0; i < (list2_name.length) - 1; i++) {
-                                    deasbordListType = new DeasbordListType(list2_onclickId[i], list2_name[i], list2_Img[i]);
-                                    deasbordListTypeList.add(deasbordListType);
+
+                                    String name = list2_name[i];
+                                    if(permissionType.equals("USER")){
+                                  /*      if (name.equals("Ledger") ||
+                                                name.equals("Debit Note To Customer") ||
+                                                name.equals("Debit Note") ||
+                                                name.equals("Credit Note to Supplier") ||
+                                                name.equals("Sale Service")) {
+                                            continue; // Skip these items
+                                        }*/
+
+                                        deasbordListType = new DeasbordListType(list2_onclickId[i], list2_name[i], list2_Img[i]);
+                                        deasbordListTypeList.add(deasbordListType);
+                                    }else {
+                                        deasbordListType = new DeasbordListType(list2_onclickId[i], list2_name[i], list2_Img[i]);
+                                        deasbordListTypeList.add(deasbordListType);
+                                    }
+
+                              /*      deasbordListType = new DeasbordListType(list2_onclickId[i], list2_name[i], list2_Img[i]);
+                                    deasbordListTypeList.add(deasbordListType);*/
                                 }
                                 dashBoardAdapter = new DashBoardAdapter(getContext(), deasbordListTypeList, false);
                                 recyclerView.setAdapter(dashBoardAdapter);
-                            } else if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier") && !jsonObject.getBoolean("SupplierOrderStatus") && !jsonObject.getBoolean("BlackListReportStatus")) {
+                            }
+                            else if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier") && !jsonObject.getBoolean("SupplierOrderStatus") && !jsonObject.getBoolean("BlackListReportStatus")) {
                                 deasbordListTypeList.clear();
                                 for (int i = 0; i < (list1_name.length) - 2; i++) {
-                                    deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
-                                    deasbordListTypeList.add(deasbordListType);
+
+                                    String name = list1_name[i];
+
+
+                                    if(permissionType.equals("USER")){
+                                        if (name.trim().equals("Ledger") ||
+                                                name.trim().equals("Debit Note") ||
+                                                name.trim().equals("Credit Note To Supplier") ||
+                                                name.trim().equals("Sale Service")) {
+                                            continue;
+                                        }
+
+                                        deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
+                                        deasbordListTypeList.add(deasbordListType);
+                                    }else {
+                                        deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
+                                        deasbordListTypeList.add(deasbordListType);
+                                    }
+
+                                   /* deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
+                                    deasbordListTypeList.add(deasbordListType);*/
+
                                 }
                                 dashBoardAdapter.notifyDataSetChanged();
                                 securityCheck_vi.setVisibility(View.GONE);
                             } else if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier") && !jsonObject.getBoolean("SupplierOrderStatus") && jsonObject.getBoolean("BlackListReportStatus")) {
                                 deasbordListTypeList.clear();
-                                for (int i = 0; i < (list1_name.length) - 1; i++) {
-                                    deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
-                                    deasbordListTypeList.add(deasbordListType);
+                                for (int i = 0; i < (list1_name.length) - 2; i++) {
+                                    String name = list1_name[i];
+
+                                    if(permissionType.equals("USER")){
+                                        if (name.trim().equals("Ledger") ||
+                                                name.trim().equals("Debit Note") ||
+                                                name.trim().equals("Credit Note To Supplier") ||
+                                                name.trim().equals("Sale Service")) {
+                                            continue;
+
+                                        }
+
+                                        deasbordListType = new DeasbordListType(list1_onclickId[i], name, list1_Img[i]);
+                                        deasbordListTypeList.add(deasbordListType);
+                                    }else {
+                                        deasbordListType = new DeasbordListType(list1_onclickId[i], name, list1_Img[i]);
+                                        deasbordListTypeList.add(deasbordListType);
+                                    }
+
                                 }
                                 dashBoardAdapter.notifyDataSetChanged();
                                 securityCheck_vi.setVisibility(View.GONE);
@@ -366,15 +536,28 @@ public class HomeFragment extends Fragment {
                             Log.e("BankListData", securityCheck + "");
                             if (jsonObject.getBoolean("StatusLock")) {
                                 lockStatusDialog(jsonObject.getString("LockMsg"));
+                            //    lockStatusDialog("Lock this is account. dbdbdbdbd bbebbbbwfbb bsbdbdbb sbdbdbb bsdbsbsbsbs sbsbsbsb sbsdbsdbsdb bsbsbsdbsdbsdb sbsdbdbd");
                             }
                             for (int i = 0; i < securityCheck.length(); i++) {
                                 JSONObject ob = securityCheck.getJSONObject(i);
                                 String Count = ob.optString("Count");
                                 String CurrentBalance = ob.optString("CurrentBalance");
                                 if (CurrentBalance != null) {
-                                    current_bel.setText(CurrentBalance.equals("") ? "0" : CurrentBalance);
+                                    if(SharedPref.read(SharedPref.PERMISSION_TYPE, "").equals("USER")){
+                                        current_bel.setText("-----");
+                                    }else {
+                                        current_bel.setText(CurrentBalance.equals("") ? "0" : CurrentBalance);
+
+                                    }
+
                                 } else {
-                                    current_bel.setText("0");
+                                    if(SharedPref.read(SharedPref.PERMISSION_TYPE, "").equals("USER")){
+                                        current_bel.setText("-----");
+                                    }else {
+                                        current_bel.setText("0");
+
+                                    }
+
                                 }
 
                                 SharedPref.write(SharedPref.Current_Bal, CurrentBalance);
@@ -411,7 +594,14 @@ public class HomeFragment extends Fragment {
                             //   chooseCatagriesAdp.notifyDataSetChanged();
                         } else {
                             //logout
-                            current_bel.setText("0");
+
+                           // current_bel.setText("0");
+                            if(SharedPref.read(SharedPref.PERMISSION_TYPE, "").equals("USER")){
+                                current_bel.setText("-----");
+                            }else {
+                                current_bel.setText("0");
+
+                            }
                                 String s = SharedPref.read(SharedPref.clubType,"");
                                 SharedPref.clear();
                                 SharedPref.write(SharedPref.clubType,s);
@@ -423,11 +613,23 @@ public class HomeFragment extends Fragment {
                             // Toast.makeText(context, jsonObject.optString("ResponseMessage"), Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
-                        current_bel.setText("0");
+                        if(SharedPref.read(SharedPref.PERMISSION_TYPE, "").equals("USER")){
+                            current_bel.setText("-----");
+                        }else {
+                            current_bel.setText("0");
+
+                        }
+               //         current_bel.setText("0");
                         e.printStackTrace();
                     }
                 }, error -> {
-            current_bel.setText("0");
+            if(SharedPref.read(SharedPref.PERMISSION_TYPE, "").equals("USER")){
+                current_bel.setText("-----");
+            }else {
+                current_bel.setText("0");
+
+            }
+         //   current_bel.setText("0");
             progressBar.cancel();
         }) {
             @Override
@@ -444,6 +646,7 @@ public class HomeFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                Log.i("Token", "--------------->" + GET_SECURITY_CHECK_REPORT + " " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
 

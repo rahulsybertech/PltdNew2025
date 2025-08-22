@@ -43,6 +43,7 @@
         android:drawableLeft="@drawable/menu_search_white_24dp"
         android:padding="9dp"
         android:maxLines="1"
+        android:imeOptions="actionSearch"
         android:singleLine="true"
         android:gravity="center|left"
         android:drawablePadding="10dp"

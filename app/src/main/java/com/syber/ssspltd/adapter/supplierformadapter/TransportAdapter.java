@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.activitys.FairOrderActivity;
 import com.syber.ssspltd.response.TransportModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 
@@ -73,7 +74,14 @@ public class TransportAdapter extends RecyclerView.Adapter<TransportAdapter.MyVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((SupplierOrderFormActivity) mContext).setTransport(data.get(getAdapterPosition()));
+
+                    if (mContext instanceof SupplierOrderFormActivity) {
+                        ((SupplierOrderFormActivity) mContext).setTransport(data.get(getAdapterPosition()));
+                    }else if(mContext instanceof FairOrderActivity){
+                        ((FairOrderActivity) mContext).setTransport(data.get(getAdapterPosition()));
+                    }
+
+
                 }
             });
 

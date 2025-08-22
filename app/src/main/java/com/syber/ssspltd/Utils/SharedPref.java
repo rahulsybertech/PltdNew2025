@@ -23,6 +23,9 @@ public class SharedPref {
     public static final String LIST_TYPE            = "list_type";
     public static final String D_ID                 = "did";
     public static final String PARTY_CODE           = "party_code";
+    public static final String PURCHASE_PARTY_ID    = "purchase_party_id";
+    public static final String PERMISSION_TYPE    = "PermissionType";
+    public static final String ADMIN_ID           = "admin_id";
     public static final String ACCOUND_ID           = "account_id";
     public static final String CUM_NUM              = "Com_Num";
     public static final String WALLET               = "wallet";

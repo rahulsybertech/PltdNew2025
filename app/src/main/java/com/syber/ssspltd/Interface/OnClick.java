@@ -1,5 +1,6 @@
 package com.syber.ssspltd.Interface;
 
+import com.syber.ssspltd.model.fairOrder.model.SalepartyModelFair;
 import com.syber.ssspltd.response.DispatchResponse;
 import com.syber.ssspltd.response.ItemModel;
 import com.syber.ssspltd.response.MarketerModel;

@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.syber.ssspltd.R;
+import com.syber.ssspltd.activitys.FairOrderActivity;
 import com.syber.ssspltd.response.ItemModel;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 
@@ -69,8 +70,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> 
             ll = itemView.findViewById(R.id.ll);
             cardView = itemView.findViewById(R.id.product_card);
             itemView.setOnClickListener(v -> {
+                if (mContext instanceof SupplierOrderFormActivity) {
+                    ((SupplierOrderFormActivity) mContext).setItemName(data.get(getAdapterPosition()));
+                }else if(mContext instanceof FairOrderActivity){
+                    ((FairOrderActivity) mContext).setItemName(data.get(getAdapterPosition()));
+                }
 
-                        ((SupplierOrderFormActivity) mContext).setItemName(data.get(getAdapterPosition()));
 
             });
 
