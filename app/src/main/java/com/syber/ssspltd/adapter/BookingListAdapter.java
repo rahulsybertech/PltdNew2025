@@ -92,7 +92,6 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         else {
             holder.cardCheckIn.setVisibility(View.GONE);
             holder.rlActualCheckInOut.setVisibility(View.GONE);
-            holder.rlActualCheckInOut.setVisibility(View.GONE);
             holder.llActualCheckoutDate.setVisibility(View.GONE);
         }
 
@@ -197,18 +196,12 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
                 holder.rlCheckOutDate.setVisibility(View.GONE);
                 holder.rlNoOfPerson.setVisibility(View.GONE);
                 holder.rlActualCheckInOut.setVisibility(View.GONE);
+
                 holder.tvStatus.setVisibility(View.GONE);
             //    holder.llSwitch.setVisibility(View.GONE);
             }
         }
-      /*  if (datum.getNoOfPerson().equals("0")){
-            holder.llCheckInDate.setVisibility(View.VISIBLE);
-            holder.rlCheckOutDate.setVisibility(View.GONE);
-            holder.rlNoOfPerson.setVisibility(View.GONE);
-            holder.rlActualCheckInOut.setVisibility(View.GONE);
-            holder.tvStatus.setVisibility(View.GONE);
-        }
-        holder.llSwitch.setVisibility(View.GONE);*/
+
     }
     // Remove item from the list
     public void removeItem(int position) {
