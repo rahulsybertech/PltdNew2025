@@ -1,0 +1,1033 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="TextSizeCheck,TextContrastCheck,TouchTargetSizeCheck">
+
+      <!-- Toolbar -->
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="50dp"
+          android:layout_alignParentTop="true"
+          android:background="@color/white">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivBack"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="16dp"
+                android:tint="@color/black"
+                android:src="@drawable/ic_back_arrow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:src="@drawable/sss_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/ivBack"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+      <androidx.core.widget.NestedScrollView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fillViewport="true"
+          android:layout_marginTop="50dp"
+          app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+          app:layout_constraintEnd_toStartOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
+                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tillMarketarName"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginStart="16dp"
+                      android:layout_marginEnd="4dp"
+                      android:fontFamily="@font/poppins_medium"
+                      android:enabled="false"
+                      app:hintTextColor="@color/black"
+                      android:hint=""
+                      app:layout_constraintEnd_toStartOf="@id/tilSerialNo"
+                      app:layout_constraintHorizontal_weight="1"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etSupplierNickName"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="text|textCapSentences"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilSerialNo"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginStart="4dp"
+                      android:layout_marginEnd="16dp"
+                      android:enabled="false"
+                      android:fontFamily="@font/poppins_medium"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintHorizontal_weight="1"
+                      app:layout_constraintStart_toEndOf="@id/tillMarketarName"
+                      app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etSerialNo"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:inputType="text|textCapSentences"
+                            android:paddingHorizontal="12dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilMarketer"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:hint="@string/Marketer"
+                      android:fontFamily="@font/poppins_medium"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/tillMarketarName">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/etMarketerName"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:imeOptions="actionNext"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="textFilter"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilSaletParty"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:hint="@string/sale_party_with_ast"
+                      android:fontFamily="@font/poppins_medium"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/tilMarketer">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/etSalePartyName"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:imeOptions="actionNext"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="textFilter"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilAvailableLimit"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginStart="16dp"
+                      android:layout_marginTop="16dp"
+                      android:layout_marginEnd="4dp"
+                      android:fontFamily="@font/poppins_medium"
+                      android:enabled="false"
+                      android:hint="Mobile Number"
+                      app:layout_constraintEnd_toStartOf="@id/tilAverageDays"
+                      app:layout_constraintHorizontal_weight="1"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/tilSaletParty">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etAvailableLimit"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:inputType="text|textCapSentences"
+                            android:paddingHorizontal="12dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilAverageDays"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginStart="4dp"
+                      android:layout_marginTop="16dp"
+                      android:layout_marginEnd="16dp"
+                      android:enabled="false"
+                      android:fontFamily="@font/poppins_medium"
+                      android:hint="Email"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintHorizontal_weight="1"
+                      app:layout_constraintStart_toEndOf="@id/tilAvailableLimit"
+                      app:layout_constraintTop_toBottomOf="@id/tilSaletParty">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etAverageDays"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="text|textCapSentences"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+                  <LinearLayout
+                      android:visibility="visible"
+                      android:id="@+id/tilRadioSubParty"
+                      android:layout_width="0dp"
+                      android:fontFamily="@font/poppins_medium"
+                      android:layout_height="45dp"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:background="@drawable/layout_outline"
+                      android:enabled="false"
+                      android:hint="@string/avail_limit"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/tilAvailableLimit">
+
+                        <RadioGroup
+                            android:id="@+id/rg_subparty"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                              <RadioButton
+                                  android:id="@+id/radio_subparty"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:fontFamily="@font/poppins_regular"
+                                  android:layout_weight="1"
+                                  android:checked="true"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/sub_party"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <RadioButton
+                                  android:id="@+id/radio_subparty_remark"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="0.8"
+                                  android:fontFamily="@font/poppins_regular"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/sub_party_as_remark"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                        </RadioGroup>
+                  </LinearLayout>
+
+                  <RadioGroup
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/tilRadioSubParty"
+                      android:visibility="gone"
+                      android:layout_marginLeft="2dp"
+                      android:layout_marginTop="20dp"
+                      android:id="@+id/radioGroup"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+                        <RadioButton
+                            android:layout_marginStart="10dp"
+                            android:id="@+id/rbSubparty"
+                            android:checked="true"
+                            android:fontFamily="@font/poppins_regular"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sub_party" />
+
+                        <RadioButton
+                            android:layout_marginStart="10dp"
+                            android:id="@+id/rbRemark"
+                            android:layout_width="wrap_content"
+                            android:fontFamily="@font/poppins_regular"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sub_party_remark" />
+                  </RadioGroup>
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilSubParty"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:hint="@string/sub_party_ats"
+                      android:fontFamily="@font/poppins_medium"
+                      android:visibility="visible"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/radioGroup">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/etSubParty"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:imeOptions="actionNext"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="textFilter"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilSubPartyRemak"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:visibility="gone"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:fontFamily="@font/poppins_medium"
+                      android:hint="@string/remark"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/radioGroup">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/etSubPartyRemark"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:imeOptions="actionNext"
+                            android:inputType="text|textCapSentences"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+                  <androidx.constraintlayout.widget.Barrier
+                      android:id="@+id/barrierChips"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      app:barrierDirection="bottom"
+                      app:constraint_referenced_ids="tilSubParty, tilSubPartyRemak" />
+
+
+                  <LinearLayout
+                      android:id="@+id/llTransPortAndStation"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/barrierChips"
+                      android:orientation="vertical"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content">
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilTransport"
+                            style="@style/Theme.Widget.TextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/poppins_medium"
+                            app:endIconMode="clear_text"
+                            android:hint="@string/transport_ats"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/barrierChips">
+
+                              <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                  android:id="@+id/etTransport"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:fontFamily="@font/poppins_medium"
+                                  android:imeOptions="actionNext"
+                                  android:inputType="text|textCapSentences"
+                                  android:paddingHorizontal="12dp"
+                                  android:paddingVertical="0dp"
+                                  android:textColor="@color/dark_gray"
+                                  android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilStation"
+                            style="@style/Theme.Widget.TextInputLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="16dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:layout_marginTop="16dp"
+                            android:hint="@string/station_ats"
+                            app:endIconMode="clear_text"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tilTransport">
+
+                              <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                  android:id="@+id/etStation"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:fontFamily="@font/poppins_medium"
+                                  android:imeOptions="actionNext"
+                                  android:inputType="textFilter"
+                                  android:paddingHorizontal="12dp"
+                                  android:paddingVertical="0dp"
+                                  android:textColor="@color/dark_gray"
+                                  android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                  </LinearLayout>
+
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilScheme"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:fontFamily="@font/poppins_medium"
+                      android:hint="@string/scheme"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/llTransPortAndStation">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/etScheme"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:imeOptions="actionNext"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="text|textCapSentences"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+
+                  </com.google.android.material.textfield.TextInputLayout>
+
+                  <LinearLayout
+                      android:visibility="gone"
+                      android:id="@+id/llPurchasePatyType"
+                      android:layout_width="0dp"
+                      android:layout_height="45dp"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:background="@drawable/layout_outline"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/tilScheme">
+
+                        <RadioGroup
+                            android:id="@+id/rgPurchaseParty"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                              <RadioButton
+                                  android:id="@+id/radioByNickName"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:checked="true"
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/nick_name"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <RadioButton
+                                  android:id="@+id/radioBySupplierName"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginStart="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:checked="false"
+
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="@string/supplier"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                        </RadioGroup>
+                  </LinearLayout>
+
+
+                  <LinearLayout
+                      android:visibility="gone"
+                      android:orientation="horizontal"
+                      android:id="@+id/llNicName"
+                      android:weightSum="2"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      android:layout_marginHorizontal="16dp"
+                      app:layout_constraintTop_toBottomOf="@+id/llPurchasePatyType"
+                      android:layout_marginTop="16dp"
+                      android:layout_width="match_parent"
+                      android:layout_height="40dp">
+                        <LinearLayout
+                            android:layout_weight="1.5"
+                            android:orientation="horizontal"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/rac_shap"
+
+                            >
+
+                              <EditText
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:hint="Nick Name"
+                                  android:singleLine="true"
+                                  android:textSize="13sp"
+                                  android:background="@null">
+
+                              </EditText>
+                        </LinearLayout>
+                        <RelativeLayout
+                            android:layout_weight="0.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+                              <androidx.cardview.widget.CardView
+                                  android:layout_margin="1dp"
+                                  android:layout_width="match_parent"
+                                  app:cardCornerRadius="5dp"
+                                  android:layout_height="match_parent">
+                                    <RelativeLayout
+                                        android:id="@+id/searchByNickName"
+                                        android:background="@color/red_2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent">
+                                          <TextView
+                                              android:layout_centerInParent="true"
+                                              android:layout_width="wrap_content"
+                                              android:layout_height="wrap_content"
+                                              android:textSize="12sp"
+                                              android:textColor="@color/white"
+                                              android:text="Search"
+                                              />
+                                    </RelativeLayout>
+
+
+                              </androidx.cardview.widget.CardView>
+
+                        </RelativeLayout>
+                  </LinearLayout>
+
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:visibility="gone"
+                      android:id="@+id/tilNickNameList"
+                      style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:fontFamily="@font/poppins_medium"
+                      android:hint="@string/nichkpurchase_party_ats"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/llNicName">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/etNicName"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:imeOptions="actionNext"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="textFilter"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+
+                  </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+                  <LinearLayout
+                      android:visibility="gone"
+                      android:id="@+id/ll"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/tilNickNameList"
+                      android:orientation="vertical"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content">
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilPurchasePartyNew"
+                            android:visibility="gone"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:layout_marginHorizontal="16dp"
+                            android:layout_marginTop="16dp"
+                            android:hint="@string/purchase_party_ats"
+                            app:endIconMode="clear_text"
+                            >
+
+                              <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                  android:id="@+id/etPurchasePartyNew"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:imeOptions="actionNext"
+                                  android:inputType="textFilter"
+                                  android:fontFamily="@font/poppins_medium"
+                                  android:paddingHorizontal="12dp"
+                                  android:paddingVertical="0dp"
+                                  android:textColor="@color/dark_gray"
+                                  android:textSize="14sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilPurchaseParty"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="16dp"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:hint="@string/purchase_party_ats"
+                            app:endIconMode="clear_text">
+
+                              <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                  android:id="@+id/etPurchaseParty"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="45dp"
+                                  android:imeOptions="actionNext"
+                                  android:inputType="textFilter"
+                                  android:fontFamily="@font/poppins_medium"
+                                  android:paddingHorizontal="12dp"
+                                  android:paddingVertical="0dp"
+                                  android:textColor="@color/dark_gray"
+                                  android:textSize="14sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+                  </LinearLayout>
+
+
+
+                  <LinearLayout
+                      android:id="@+id/tilRadioStar"
+                      android:layout_width="0dp"
+                      android:layout_height="45dp"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:background="@drawable/layout_outline"
+                      android:enabled="false"
+                      android:hint="@string/avail_limit"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/tilStatus">
+
+                        <RadioGroup
+                            android:id="@+id/rgStartype"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:paddingStart="50dp"
+                            android:orientation="horizontal">
+
+                              <RadioButton
+                                  android:id="@+id/star1"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:checked="true"
+
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="*"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp">
+
+                              </RadioButton>
+
+                              <RadioButton
+                                  android:id="@+id/star2"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:checked="false"
+
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="* *"
+                                  android:visibility="gone"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp" />
+
+                              <RadioButton
+                                  android:id="@+id/star3"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_marginLeft="2dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_weight="1"
+                                  android:checked="false"
+
+                                  android:gravity="start|center"
+                                  android:singleLine="true"
+                                  android:text="* * *"
+                                  android:textColor="@color/black"
+                                  android:textSize="16dp">
+
+                              </RadioButton>
+
+                        </RadioGroup>
+                  </LinearLayout>
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilPVTMarka"
+                      android:visibility="gone"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:fontFamily="@font/poppins_medium"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:hint="@string/pvt_marka"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/tilRadioStar">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etpvtMarka"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:imeOptions="actionNext"
+                            android:inputType="text|textCapSentences"
+                            android:maxLength="200"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilDispatchType"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:hint="@string/dispatch_type"
+                      android:fontFamily="@font/poppins_medium"
+                      android:visibility="visible"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/tilPVTMarka">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/etDispatchType"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:imeOptions="actionNext"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="textFilter"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilDiscription"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:hint="@string/discription"
+                      android:fontFamily="@font/poppins_medium"
+                      app:endIconMode="clear_text"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/tilDispatchType">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/etDiscription"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:imeOptions="actionNext"
+                            android:fontFamily="@font/poppins_medium"
+                            android:inputType="text|textCapSentences"
+                            android:maxLength="200"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="0dp"
+                            android:textColor="@color/dark_gray"
+                            android:textSize="14sp" />
+                  </com.google.android.material.textfield.TextInputLayout>
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/tvDispatchDate"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="16dp"
+                      android:gravity="start|center"
+                      android:hint="@string/from_date"
+                      android:fontFamily="@font/poppins_medium"
+                      android:text="@string/dispatch_date_ats"
+                      android:textColor="@color/black"
+                      app:layout_constrainedWidth="true"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintHorizontal_bias="0"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/tilDiscription" />
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/tvDispatchFromDate"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="45dp"
+                      android:layout_marginStart="16dp"
+                      android:layout_marginTop="10dp"
+                      android:fontFamily="@font/poppins_medium"
+                      android:layout_marginEnd="4dp"
+                      android:background="@drawable/layout_outline"
+                      android:drawableEnd="@drawable/baseline_calendar_month_24"
+                      android:gravity="start|center"
+                      android:hint="@string/from_date"
+                      android:paddingHorizontal="10dp"
+                      app:layout_constraintEnd_toStartOf="@id/tvDispatchToDate"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/tvDispatchDate" />
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/tvDispatchToDate"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="45dp"
+                      android:layout_marginStart="4dp"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginEnd="16dp"
+                      android:background="@drawable/layout_outline"
+                      android:drawableEnd="@drawable/baseline_calendar_month_24"
+                      android:gravity="center|start"
+                      android:hint="@string/to_date"
+                      android:fontFamily="@font/poppins_medium"
+                      android:paddingHorizontal="10dp"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toEndOf="@id/tvDispatchFromDate"
+                      app:layout_constraintTop_toBottomOf="@id/tvDispatchDate" />
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/tvAddItem"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginStart="16dp"
+                      android:layout_marginTop="16dp"
+                      android:layout_marginEnd="4dp"
+                      android:background="@drawable/gray_300_bg"
+                      android:drawableEnd="@drawable/baseline_assignment_add_24"
+                      android:gravity="center"
+                      android:fontFamily="@font/poppins_medium"
+                      android:paddingHorizontal="5dp"
+                      android:paddingVertical="7dp"
+                      android:text="Add Item*"
+                      app:layout_constraintEnd_toStartOf="@id/tvAddItemDetails"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/tvDispatchFromDate" />
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/tvAddItemDetails"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginHorizontal="4dp"
+                      android:layout_marginTop="16dp"
+                      android:background="@drawable/gray_300_bg"
+                      android:drawableEnd="@drawable/baseline_assignment_add_24"
+                      android:gravity="center"
+                      android:fontFamily="@font/poppins_medium"
+                      android:visibility="gone"
+                      android:paddingHorizontal="5dp"
+                      android:paddingVertical="7dp"
+                      android:text="Add Detail"
+                      app:layout_constraintEnd_toStartOf="@+id/tvItemImage"
+                      app:layout_constraintStart_toEndOf="@id/tvAddItem"
+                      app:layout_constraintTop_toBottomOf="@id/tvDispatchFromDate" />
+
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/tvItemImage"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginStart="16dp"
+                      android:fontFamily="@font/poppins_medium"
+                      android:layout_marginTop="16dp"
+                      android:layout_marginEnd="16dp"
+                      android:background="@drawable/gray_300_bg"
+                      android:drawableEnd="@drawable/baseline_add_a_photo_24"
+                      android:gravity="center"
+                      android:paddingHorizontal="5dp"
+                      android:paddingVertical="7dp"
+                      android:text="Add Image"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toEndOf="@id/tvAddItemDetails"
+                      app:layout_constraintTop_toBottomOf="@id/tvDispatchFromDate" />
+
+                  <androidx.appcompat.widget.LinearLayoutCompat
+                      android:id="@+id/llImageCount"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginStart="152dp"
+                      android:layout_marginBottom="28dp"
+                      android:background="@drawable/red_circle_bg"
+                      android:gravity="center"
+                      android:visibility="gone"
+                      app:layout_constraintBottom_toBottomOf="@+id/tvItemImage"
+                      app:layout_constraintStart_toStartOf="@+id/tvItemImage">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvImageCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="05"
+                            android:textAlignment="center"
+                            android:textColor="@color/white"
+                            android:textSize="9sp" />
+
+                  </androidx.appcompat.widget.LinearLayoutCompat>
+
+                  <LinearLayout
+                      android:id="@+id/imageContainer"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/recyclerViewAddItem"
+                      app:layout_goneMarginTop="20dp">
+                  </LinearLayout>
+
+                  <androidx.recyclerview.widget.RecyclerView
+                      android:id="@+id/recyclerViewAddItem"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="16dp"
+                      android:nestedScrollingEnabled="false"
+                      android:orientation="vertical"
+                      app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/tvAddItem"
+                      tools:itemCount="2"
+                      tools:listitem="@layout/item_pack_type_header" />
+
+                  <androidx.appcompat.widget.AppCompatTextView
+                      android:id="@+id/placeOrder"
+                      android:layout_width="match_parent"
+                      android:layout_height="45dp"
+                      android:layout_centerInParent="true"
+                      android:layout_marginHorizontal="16dp"
+                      android:layout_marginTop="20dp"
+                      android:layout_marginBottom  ="30dp"
+                      android:background="@drawable/bg_btn_effect_red"
+                      android:gravity="center"
+                      android:fontFamily="@font/poppins_regular"
+                      android:text="@string/Submit"
+                      android:textAllCaps="true"
+                      android:textColor="@color/white"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@+id/recyclerViewAddItem"
+                      app:layout_goneMarginTop="20dp" />
+
+                  <com.google.android.material.textfield.TextInputLayout
+                      android:id="@+id/tilStatus"
+                      style="@style/Theme.Widget.TextInputLayout"
+                      android:layout_width="match_parent"
+                      android:layout_height="45dp"
+                      android:layout_marginTop="20dp"
+                      android:layout_marginHorizontal="17dp"
+                      app:layout_constraintTop_toBottomOf="@+id/ll"
+                      app:layout_constraintBottom_toTopOf="@+id/tilRadioStar">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoCompleteStatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:inputType="none"
+                            android:text="PENDING"
+                            android:paddingStart="10dp"
+                            android:focusable="false"
+                            android:background="@null" />
+
+                  </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+      </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
