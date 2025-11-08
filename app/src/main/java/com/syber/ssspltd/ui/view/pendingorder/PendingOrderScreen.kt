@@ -41,6 +41,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,40 +61,37 @@ fun PendingOrderList(
     val context = LocalContext.current
     val activity = (context as? Activity)
 
-/*    val orders = listOf(
-        Order(
-            saleParty = "DL3331 WRONG TEST SYBER PARTY A/C",
-            item = "BABY POTTY SEAT",
-            type = "BORA",
-            subParty = "MUM23915 SUB PARTY 2",
-            orderNo = "24-25/DLO 28405",
-            orderDate = "31/03/2025 03:46:18 PM",
-            amount = 33.0,
-            qty = 1
-        ),
-        Order(
-            saleParty = "DL3331 WRONG TEST SYBER PARTY A/C",
-            item = "A4 75GSM PAPER",
-            type = "PETI",
-            subParty = "SELF",
-            orderNo = "24-25/DLO 27020",
-            orderDate = "12/03/2025 10:24:49 AM",
-            amount = 60000.0,
-            qty = 1
-        )
-    )*/
+    /*    val orders = listOf(
+            Order(
+                saleParty = "DL3331 WRONG TEST SYBER PARTY A/C",
+                item = "BABY POTTY SEAT",
+                type = "BORA",
+                subParty = "MUM23915 SUB PARTY 2",
+                orderNo = "24-25/DLO 28405",
+                orderDate = "31/03/2025 03:46:18 PM",
+                amount = 33.0,
+                qty = 1
+            ),
+            Order(
+                saleParty = "DL3331 WRONG TEST SYBER PARTY A/C",
+                item = "A4 75GSM PAPER",
+                type = "PETI",
+                subParty = "SELF",
+                orderNo = "24-25/DLO 27020",
+                orderDate = "12/03/2025 10:24:49 AM",
+                amount = 60000.0,
+                qty = 1
+            )
+        )*/
 
     val listState = rememberLazyListState()
     val orderList by viewModel1.pendingOrder.collectAsState()
     val isLoading by viewModel1.loading.collectAsState()
+    var selectedStatus by remember { mutableStateOf("PENDING") }
 
     // Call API when screen first opens
     LaunchedEffect(Unit) {
-        val jsonObject = JsonObject().apply {
-            addProperty("AccountID", "DL3331")
-            addProperty("OrderStatus", "HOLD")
-        }
-        viewModel1.fetchPendingOrder(jsonObject)
+        fetchOrders(viewModel1, "PENDING")
     }
     Scaffold(
         topBar = {
@@ -114,24 +114,72 @@ fun PendingOrderList(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
+                    // Pending Order Button
                     Button(
-                        onClick = { /* Confirm logic */ },
-                        modifier = Modifier.weight(1f)
+                        onClick = {
+                            selectedStatus = "PENDING"
+                            fetchOrders(viewModel1, selectedStatus)
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (selectedStatus == "PENDING")
+                                MaterialTheme.colorScheme.primary   // highlighted
+                            else
+                                MaterialTheme.colorScheme.secondaryContainer // normal
+                        )
                     ) {
-                        Icon(Icons.Default.ShoppingCart, contentDescription = "Confirm")
+                        Icon(
+                            Icons.Default.ShoppingCart,
+                            contentDescription = "Pending Order",
+                            tint = if (selectedStatus == "PENDING")
+                                Color.White
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
                         Spacer(Modifier.width(6.dp))
-                        Text("Confirm")
+                        Text(
+                            "Pending Order",
+                            color = if (selectedStatus == "PENDING")
+                                Color.White
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
                     }
-                    OutlinedButton(
-                        onClick = { /* Hold logic */ },
-                        modifier = Modifier.weight(1f)
+
+                    // Hold Order Button
+                    Button(
+                        onClick = {
+                            selectedStatus = "HOLD"
+                            fetchOrders(viewModel1, selectedStatus)
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (selectedStatus == "HOLD")
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.secondaryContainer
+                        )
                     ) {
-                        Icon(Icons.Default.ShoppingCart, contentDescription = "Hold")
+                        Icon(
+                            Icons.Default.ShoppingCart,
+                            contentDescription = "Hold Order",
+                            tint = if (selectedStatus == "HOLD")
+                                Color.White
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
                         Spacer(Modifier.width(6.dp))
-                        Text("Hold")
+                        Text(
+                            "Hold Order",
+                            color = if (selectedStatus == "HOLD")
+                                Color.White
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }
+
 
             items(orderList) { order ->
                 OrderCard(
@@ -148,6 +196,13 @@ fun PendingOrderList(
 
         }
     }
+}
+private fun fetchOrders(viewModel: AuthViewModel, status: String) {
+    val jsonObject = JsonObject().apply {
+        addProperty("AccountID", "DL3331")
+        addProperty("OrderStatus", status)
+    }
+    viewModel.fetchPendingOrder(jsonObject)
 }
 @Composable
 fun OrderCard(order: OrderData, onViewImage: (OrderData) -> Unit) {
@@ -193,19 +248,19 @@ fun OrderCard(order: OrderData, onViewImage: (OrderData) -> Unit) {
                         leadingIcon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) }
                     )
 
-                /*    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Date", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
-                        order.OrderDate?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
-                    }*/
+                    /*    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("Date", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                            order.OrderDate?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+                        }*/
 
-               /*     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Qty", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
-                        AssistChip(
-                            onClick = {},
-                            label = { Text("${order.Qty}") },
-                            leadingIcon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) }
-                        )
-                    }*/
+                    /*     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                             Text("Qty", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                             AssistChip(
+                                 onClick = {},
+                                 label = { Text("${order.Qty}") },
+                                 leadingIcon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) }
+                             )
+                         }*/
                 }
 
                 Spacer(Modifier.height(12.dp))
