@@ -66,7 +66,7 @@ public class NewErpUrls {
     // Below apis is not working with new base url need checking
 
 //    public static String GET_ALL_EVENT_IMAGE                                    = BASE_URL + "GetAllEventImages";
-    public static String GET_ALL_EVENT_IMAGE                                    = "http://App.ssspltd.com/apipltd/GetAllEventImages";
+    public static String GET_ALL_EVENT_IMAGE                                    = BASE_URL+"GetAllEventImages";
 
 //    public static String GET_BRAND_MASTER_DETAIL                                = BASE_URL + "GetBrandMasterDetails";
     public static String GET_BRAND_MASTER_DETAIL                                = BASE_URL+"GetBrandMasterDetails";
@@ -105,7 +105,7 @@ public class NewErpUrls {
     public static String GetDispatchTypeList               = BASE_URL + "GetDispatchTypeList";
     //Booking order module
     public static String BRANCH_LIST               = DOMAIN + "Api/StayBooking/GetBranchDetailList";
-    public static String SAVE_UPDATEBOOKING = DOMAIN + "Api/StayBooking/SaveAndUpdateStayBooking1";
+    public static String SAVE_UPDATEBOOKING = DOMAIN + "Api/StayBooking/SaveAndUpdateStayBooking";
     public static String StayBookingDataList = DOMAIN + "api/StayBooking/GetStayBookingDataList";
     public static String GetStayBookingDataListByBranchId = DOMAIN + "api/StayBooking/GetStayBookingDataListByBranchId";
     public static String CancelStayBooking = DOMAIN + "api/StayBooking/CancelStayBooking";

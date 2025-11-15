@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -55,6 +58,12 @@ public class CreditNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityCreditNoteBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         binding.supportChat.supportFab.setOnClickListener((View.OnClickListener) v ->
                 Lazy.openDialog(mContext));
         creditNoteDetails = new ArrayList<>();

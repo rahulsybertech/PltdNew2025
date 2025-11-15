@@ -31,14 +31,52 @@
 <!--                android:textStyle="bold" />-->
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
-    <androidx.recyclerview.widget.RecyclerView
+
+    <androidx.core.widget.NestedScrollView
         android:layout_below="@id/tool"
-        android:id="@+id/branchRecyclerview"
-        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <LinearLayout
 
-    </androidx.recyclerview.widget.RecyclerView>
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="Branch Office :"
+                android:textSize="16dp"
+                android:layout_marginStart="10dp"
+                android:textStyle="bold"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_below="@id/tool"
+                android:id="@+id/branchRecyclerview"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </androidx.recyclerview.widget.RecyclerView>
+            <TextView
+                android:layout_marginTop="15dp"
+                android:text="Virtual Branch :"
+                android:textSize="16dp"
+                android:layout_marginStart="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/vORecyclerview"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
 
     <include
         android:id="@+id/supportChat"

@@ -7,12 +7,9 @@ import static com.syber.ssspltd.Constants.NewErpUrls.GetGuestMasterListByCustome
 import static com.syber.ssspltd.Constants.NewErpUrls.GetMainPartyAndSubPartyList;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetNickNameList;
 import static com.syber.ssspltd.Constants.NewErpUrls.GetStayBookingDataById;
-import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_ORDER;
 import static com.syber.ssspltd.Constants.NewErpUrls.SAVE_UPDATEBOOKING;
 import static com.syber.ssspltd.Constants.NewErpUrls.STATION_LIST;
-import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingTime;
-import static com.syber.ssspltd.Utils.AppController.mContext;
 import static com.syber.ssspltd.Utils.MyConstant.EXTRA_IS_EDIT;
 
 
@@ -35,8 +32,6 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +39,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -65,7 +64,6 @@ import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.SnackbarUtils;
 import com.syber.ssspltd.Utils.Util;
 import com.syber.ssspltd.Utils.VolleySingleton;
-import com.syber.ssspltd.activitys.supplierorderform.OrderImageActivity;
 import com.syber.ssspltd.adapter.AccountListAdapter;
 import com.syber.ssspltd.adapter.GuestListBookingAdapter;
 import com.syber.ssspltd.adapter.MainPartySubPartyAdapter;
@@ -131,7 +129,14 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBookingRequestBinding.inflate(getLayoutInflater());
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         initUi();
         setupListeners();
@@ -202,10 +207,13 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         existingCheckInDate=checkin;
         existingCheckOutDate=checkOut;
 
-        binding.clearMainPrtyAndSubParty.setVisibility(View.VISIBLE);
+        binding.cleartvCustomerNameWithNickName.setVisibility(View.VISIBLE);
         binding.imgClearNickName.setVisibility(View.VISIBLE);
         //     binding.tvAccountName.setText(bookingData.getaccountName());
-        binding.tvMainPrtyAndSubParty.setText(bookingData.getaccountName());
+       // binding.tvMainPrtyAndSubParty.setText(bookingData.getaccountName());
+        binding.tvCustomerNameWithNickName.setText(bookingData.getaccountName());
+        binding.rlCustomerList.setVisibility(View.GONE);
+        binding.rlCustomerWithNickName.setVisibility(View.VISIBLE);
 
         binding.tvNickName.setText(bookingData.getNickName());
 
@@ -359,6 +367,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
         updateUI();
         getStayBookingTime();
+        getMainPartySubParty(GetMainPartyAndSubPartyList,sDialog);
 
 
 
@@ -459,11 +468,24 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         binding.tvMainPrtyAndSubParty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(binding.tvNickName.getText().toString().isEmpty()){
-                    Toast.makeText(getApplicationContext(),"Please Select Nick Name First!", Toast.LENGTH_SHORT).show();
+
+                mainParttAndSubPArtyDialog("");
+              /*  if(binding.tvNickName.getText().toString().isEmpty()){
+                    mainParttAndSubPArtyDialog("");
+                  //  getMainPartySubParty(GetMainPartyAndSubPartyList);
+                 //   Toast.makeText(getApplicationContext(),"Please Select Nick Name First!", Toast.LENGTH_SHORT).show();
                 }else {
                     mainParttAndSubPArtyDialog("");
-                }
+                //    getMainPartySubParty(GetMainPartyAndSubPartyList);
+                 //   mainParttAndSubPArtyDialog("");
+                }*/
+
+            }
+        });
+        binding.tvCustomerNameWithNickName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customerListWithNickNameDialog("");
 
             }
         });
@@ -904,14 +926,23 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             binding.recycler.setVisibility(View.GONE);
             binding.tvAccountName.setText("");
 
+        }if (view.getId() == R.id.cleartvCustomerNameWithNickName) {
+            binding.tvCustomerNameWithNickName.setText("");
+            binding.cleartvCustomerNameWithNickName.setVisibility(View.GONE);
+
         }
         if(view.getId() == R.id.imgClearNickName){
             binding.llGuest.setVisibility(View.GONE);
             binding.imgClearNickName.setVisibility(View.GONE);
             binding.ivGuestNew.setVisibility(View.GONE);
             binding.recycler.setVisibility(View.GONE);
+         //   mainPartyAndSubPartyList.clear();
+            binding.rlCustomerWithNickName.setVisibility(View.GONE);
+            binding.cleartvCustomerNameWithNickName.setVisibility(View.GONE);
             binding.clearMainPrtyAndSubParty.setVisibility(View.GONE);
+            binding.rlCustomerList.setVisibility(View.VISIBLE);
             binding.tvNickName.setText("");
+            binding.tvCustomerNameWithNickName.setText("");
             binding.tvMainPrtyAndSubParty.setText("");
             mainParttSubPartyId="";
             binding.llNewParty.setVisibility(View.GONE);
@@ -968,7 +999,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                         return false;
                     }
                 }else {
-                    if (binding.tvMainPrtyAndSubParty.getText().toString().isEmpty()) {
+                    if (binding.tvCustomerNameWithNickName.getText().toString().isEmpty()) {
                         Toast.makeText(this, "Please select Customer!", Toast.LENGTH_SHORT).show();
                         return false;
                     }
@@ -1156,18 +1187,22 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     }
 
     private void showCheckInDatePicker() {
-        Calendar calendar = Calendar.getInstance();
+        // If already selected, open on that date, else use today
+        Calendar calendar = (checkInCalendar != null) ? checkInCalendar : Calendar.getInstance();
+
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Declare datePickerDialog first
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, null, year, month, day);
 
         datePickerDialog.setOnDateSetListener((view, selectedYear, selectedMonth, selectedDay) -> {
+            if (checkInCalendar == null) {
+                checkInCalendar = Calendar.getInstance();
+            }
             checkInCalendar.set(selectedYear, selectedMonth, selectedDay);
 
-            String formattedMonth = String.format("%02d", selectedMonth + 1); // Convert 0-based month to 1-based
+            String formattedMonth = String.format("%02d", selectedMonth + 1);
             String formattedDay = String.format("%02d", selectedDay);
             selectedDateTextCheckIn = selectedYear + "-" + formattedMonth + "-" + formattedDay;
             String selectCheckInDate = formattedDay + "-" + formattedMonth + "-" + selectedYear;
@@ -1175,9 +1210,9 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
             binding.tvCheckInDate.setText(selectCheckInDate);
             enableSaveButtonIfNeeded();
             binding.tvCheckInDate.setError(null, null);
-            binding.tvCheckInTime.setText(""); // Reset Check-In Time
-            binding.tvCheckOutTime.setText(""); // Reset Check-Out Time
-            binding.tvCheckOutDate.setText(""); // Reset Check-Out Time
+            binding.tvCheckInTime.setText("");
+            binding.tvCheckOutTime.setText("");
+            binding.tvCheckOutDate.setText("");
 
             if (isToday(selectedYear, selectedMonth, selectedDay)) {
                 notAllowllTime = true;
@@ -1189,44 +1224,22 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 showCheckInTimePicker24Hours(false);
             }
 
-            // Dismiss dialog after selection
             datePickerDialog.dismiss();
         });
+
         String userType = getIntent().getStringExtra(MyConstant.USERTYPE);
-        if(!userType.equals("Other")){
-            // Allow past selection if needed
+        if ("Other".equals(userType)) {
             Calendar minDate = Calendar.getInstance();
             minDate.add(Calendar.DAY_OF_MONTH, -2);
             datePickerDialog.getDatePicker().setMinDate(minDate.getTimeInMillis());
-
-            // When shown, change selection to 2 days ago
-            datePickerDialog.setOnShowListener(dialog -> {
-                Calendar twoDaysAgo = Calendar.getInstance();
-                twoDaysAgo.add(Calendar.DAY_OF_MONTH, -2);
-
-                datePickerDialog.getDatePicker().updateDate(
-                        twoDaysAgo.get(Calendar.YEAR),
-                        twoDaysAgo.get(Calendar.MONTH),
-                        twoDaysAgo.get(Calendar.DAY_OF_MONTH)
-                );
-            });
-        }else {
-            // Disable past dates
-            datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
-            // Auto-close when a date is selected
-            datePickerDialog.setOnShowListener(dialog -> {
-                DatePicker datePicker = datePickerDialog.getDatePicker();
-                datePicker.init(year, month, day, (view, selectedYear, selectedMonth, selectedDay) -> {
-                    datePickerDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
-                });
-            });
+        } else {
+            Calendar today = Calendar.getInstance();
+            datePickerDialog.getDatePicker().setMinDate(today.getTimeInMillis());
         }
-
-
-
 
         datePickerDialog.show();
     }
+
 
     // Store the previously selected Check-In date
     private String previousSelectedCheckInDate = null;
@@ -1313,43 +1326,30 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         // ✅ Store the selected Check-In date for future comparisons
         previousSelectedCheckInDate = selectedDateTextCheckIn;
 
-        // ✅ Show TimePickerDialog with the 24-hour format
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 this,
                 (view, hourOfDay, minute) -> {
-                    // ✅ Validate the selected time based on restrictions
-                    if (isToday && (hourOfDay < minHour || (hourOfDay == minHour && minute < minMinute))) {
-                        binding.tvCheckInTime.setText("");
-                    /*    SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content),
-                                "Check-in time must be at least " + minHoursSelect + " hours from the current time."); */
-                        SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content),
-                                "Check-in time must be greater than current time.");
-                    } /*else if (isTomorrow && currentHour >= minHoursSelect &&
-                            (hourOfDay < minHour || (hourOfDay == minHour && minute < minMinute))) {
-                        SnackbarUtils.showSuccessSnackbar(findViewById(android.R.id.content),
-                                "Check-in time must be at least " + minHoursSelect + " hours from the current time.");
-                        binding.tvCheckInTime.setText("");
-                    }*/ else {
-                        // ✅ Save the selected Check-In time
-                        selectedCheckInHour = hourOfDay;
-                        selectedCheckInMinute = minute;
+                    // ✅ Save the selected Check-In time directly, no restrictions
+                    selectedCheckInHour = hourOfDay;
+                    selectedCheckInMinute = minute;
 
-                        checkInTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        checkInTimeCalendar.set(Calendar.MINUTE, minute);
+                    checkInTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    checkInTimeCalendar.set(Calendar.MINUTE, minute);
 
-                        binding.tvCheckInTime.setError(null);
-                        binding.tvCheckInTime.setText(formatTime(hourOfDay, minute));
-                        enableSaveButtonIfNeeded();
+                    binding.tvCheckInTime.setError(null);
+                    binding.tvCheckInTime.setText(formatTime(hourOfDay, minute));
+                    enableSaveButtonIfNeeded();
 
-                        // ✅ Reset Check-Out Date & Time when Check-In changes
-                        binding.tvCheckOutTime.setText("");
-                        //  binding.tvCheckOutDate.setText("");
-                    }
+                    // ✅ Reset Check-Out Date & Time when Check-In changes
+                    binding.tvCheckOutTime.setText("");
                 },
                 initialHour,
                 initialMinute,
-                true  // ✅ Use 24-hour format
+                true  // 24-hour format
         );
+
+        timePickerDialog.show();
+
 
         timePickerDialog.show();
     }
@@ -1658,7 +1658,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
         }) {
             @Override
-            public byte[] getBody() throws AuthFailureError {
+            public byte[] getBody() {
 
                 String jsonString = "";
                 try {
@@ -1697,10 +1697,10 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                                 jsonObject.put("isNewUser", true);
                                 jsonObject.put("mobileNo", binding.etMobileNumber.getText().toString());
                                 jsonObject.put("firmName", binding.etFirstName.getText().toString());
-                            }else {
+                            }
+                            else {
                                 jsonObject.put("accountID", mainParttSubPartyId);
                                 jsonObject.put("isNewUser", false);
-
 
                                 if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")){
                                     jsonObject.put("mobileNo", JSONObject.NULL);
@@ -1736,7 +1736,6 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
 
 
-
                     jsonObject.put("companyID", JSONObject.NULL);
 
                     jsonObject.put("partyCode",SharedPref.read(SharedPref.PARTY_CODE, ""));
@@ -1761,7 +1760,8 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                         jsonObject.put("noOfPerson", (String.valueOf(selectedGuests.size())));
                         jsonString = jsonObject.toString();
                         System.out.println(jsonString);
-                    }else {
+                    }
+                    else {
                         if(stayBooking){
                             JSONArray guestIdsArray = new JSONArray();
                             List<GuestMasterDetail> selectedGuests = guestListBookingAdapter.getSelectedGuests();
@@ -1781,14 +1781,6 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                             System.out.println(jsonString);
                         }
                     }
-
-
-
-
-
-
-
-
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1819,7 +1811,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
     private void getStation() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, BRANCH_LIST, response -> {
-            Log.i("TaG", "Response " + STATION_LIST + "---> " + response);
+            Log.i("TaG", "Response " + BRANCH_LIST + "---> " + response);
             try {
                 Gson gson = new Gson();
                 BookingResponse bookingResponse = gson.fromJson(response, BookingResponse.class);
@@ -1934,6 +1926,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     private ArrayList<NickNameList> filternicNameList= new ArrayList<>();
 
     private ArrayList<Account> mainPartyAndSubPartyList= new ArrayList<>();
+    private ArrayList<Account> customerListWithNickName= new ArrayList<>();
     private ArrayList<Account> filterPartyAndSubPartyList= new ArrayList<>();
 
 
@@ -2153,19 +2146,83 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
 
     }
 
-    private void getMainPartySubParty(final String url) {
+    private void getMainPartySubParty(final String url, Dialog sDialog) {
         final MyProgress myProgress = new MyProgress(this);
-        myProgress.show();
-        var  urlWithNickNameId = url + "?nickNameId=" + accountNameId;
+       // myProgress.show();
+
+        String urlWithNickNameId = binding.tvNickName.getText().toString().isEmpty()
+                ? url
+                : url + "?nickNameId=" + accountNameId;
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithNickNameId, response -> {
-            Util.getInstance().logLargeString("TaG", "Response " + url + " -=-=-=>" + response);
+            Util.getInstance().logLargeString("TaG", "Response " + urlWithNickNameId + " -=-=-=>" + response);
             myProgress.dismiss();
             try {
                 mainPartyAndSubPartyList.clear();
                 Gson gson = new Gson();
+
                 ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
                 mainPartyAndSubPartyList.addAll(newresponse.getAccountNameList());
+           //     sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
                 mainPartySubPartyAdapter.notifyDataSetChanged();
+
+            } catch (Exception e) {
+                Log.e("Exce", e.toString());
+            }
+        }, error -> {
+            myProgress.dismiss();
+            Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+//                String str = "{\"MOBILENO\":\"" + SharedPref.read(SharedPref.USERMOBILE, "") + "\",\"Filter\":\"" + "selected" + "\"}";
+                String str = "{}";
+                Log.i("TaG", "Request " + url + " -=-=-=>" + str);
+
+                return str.getBytes();
+
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", Constants.SettingHeader());
+                return headers;
+            }
+
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+        };
+        stringRequest.setShouldCache(true);
+        stringRequest.shouldCache();
+        RetryPolicy retryPolicy = new DefaultRetryPolicy(100000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(retryPolicy);
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+
+    }
+
+    private void getCutomerListWithNickName(final String url, Dialog sDialog) {
+        final MyProgress myProgress = new MyProgress(this);
+        // myProgress.show();
+
+        String urlWithNickNameId = binding.tvNickName.getText().toString().isEmpty()
+                ? url
+                : url + "?nickNameId=" + accountNameId;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithNickNameId, response -> {
+            Util.getInstance().logLargeString("TaG", "Response " + urlWithNickNameId + " -=-=-=>" + response);
+            myProgress.dismiss();
+            try {
+                customerListWithNickName.clear();
+                Gson gson = new Gson();
+
+                ApiResponse newresponse = gson.fromJson(response, ApiResponse.class);
+                customerListWithNickName.addAll(newresponse.getAccountNameList());
+                sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+                mainPartySubPartyAdapter.notifyDataSetChanged();
+
             } catch (Exception e) {
                 Log.e("Exce", e.toString());
             }
@@ -2263,9 +2320,12 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 addNewParty=false;
             }
             binding.tvNickName.setText(account.getName());
+            binding.rlCustomerWithNickName.setVisibility(View.VISIBLE);
+            binding.rlCustomerList.setVisibility(View.GONE);
             binding.imgClearNickName.setVisibility(View.VISIBLE);
             binding.clearMainPrtyAndSubParty.setVisibility(View.GONE);
             binding.tvMainPrtyAndSubParty.setText("");
+            binding.tvCustomerNameWithNickName.setText("");
             mainParttSubPartyId="";
             binding.tvNickName.setError(null, null);
             accountNameId=account.getId();
@@ -2291,18 +2351,27 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         titile.setText(title);
         recyclerView = sDialog.findViewById(R.id.dist_recycler);
         search = sDialog.findViewById(R.id.search);
+        sDialog.findViewById(R.id.my_progress).setVisibility(View.VISIBLE);
         if (mainPartyAndSubPartyList.size() > 0) {
             sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
         }
-        sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+
         sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
 
-        if (!mainPartyAndSubPartyList.isEmpty()) {
-            filterMainPartySubPartyList(mainPartyAndSubPartyList);
-        } else {
+        if(stayBooking){
 
-            getMainPartySubParty(GetMainPartyAndSubPartyList);
+        }else {
+
         }
+    //    getMainPartySubParty(GetMainPartyAndSubPartyList,sDialog);
+        /*if (mainPartyAndSubPartyList.isEmpty()) {
+          //  getMainPartySubParty(GetMainPartyAndSubPartyList);
+            getMainPartySubParty(GetMainPartyAndSubPartyList,sDialog);
+
+        } else {
+          //  filterMainPartySubPartyList(mainPartyAndSubPartyList);
+
+        }*/
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -2329,9 +2398,18 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         mainPartySubPartyAdapter = new MainPartySubPartyAdapter(this, mainPartyAndSubPartyList, account -> {
             sDialog.dismiss();
             binding.tvMainPrtyAndSubParty.setText(account.getName());
-
+            binding.tvNickName.setText(account.getNickName());
+            accountNameId=account.getNickNameID();
             binding.clearMainPrtyAndSubParty.setVisibility(View.VISIBLE);
+            binding.rlCustomerList.setVisibility(View.GONE);
+            binding.rlCustomerWithNickName.setVisibility(View.VISIBLE);
+
+            binding.tvCustomerNameWithNickName.setText(account.getName());
+            binding.rlCustomerWithNickName.setVisibility(View.VISIBLE);
+            binding.cleartvCustomerNameWithNickName.setVisibility(View.VISIBLE);
             binding.tvMainPrtyAndSubParty.setError(null, null);
+            binding.tvNickName.setError(null, null);
+            binding.imgClearNickName.setVisibility(View.VISIBLE);
             mainParttSubPartyId=account.getId();
             enableSaveButtonIfNeeded();
             if(stayBooking){
@@ -2346,32 +2424,114 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mainPartySubPartyAdapter);
-        getMainPartySubParty(GetMainPartyAndSubPartyList);
+       // getCutomerListWithNickName(GetMainPartyAndSubPartyList, sDialog);
         sDialog.show();
 
     }
 
+    private void customerListWithNickNameDialog(final String title) {
+        customerListWithNickName.clear();
+        sDialog = new Dialog(this);
+        sDialog.setContentView(R.layout.search_dialog);
+        sDialog.setCancelable(true);
+
+        titile = sDialog.findViewById(R.id.title);
+        titile.setText(title);
+        recyclerView = sDialog.findViewById(R.id.dist_recycler);
+        search = sDialog.findViewById(R.id.search);
+        sDialog.findViewById(R.id.my_progress).setVisibility(View.VISIBLE);
+        if (customerListWithNickName.size() > 0) {
+            sDialog.findViewById(R.id.my_progress).setVisibility(View.GONE);
+        }
+
+        sDialog.findViewById(R.id.cancle).setOnClickListener(v -> sDialog.dismiss());
+
+        if(stayBooking){
+            getCutomerListWithNickName(GetMainPartyAndSubPartyList,sDialog);
+        }else {
+            getCutomerListWithNickName(GetMainPartyAndSubPartyList,sDialog);
+        }
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                filterPartyAndSubPartyList.clear();
+                for (int p = 0; p < customerListWithNickName.size(); p++) {
+                    if (customerListWithNickName.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            || customerListWithNickName.get(p).getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        filterPartyAndSubPartyList.add(customerListWithNickName.get(p));
+                    }
+                }
+                filterMainPartySubPartyList(filterPartyAndSubPartyList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        mainPartySubPartyAdapter = new MainPartySubPartyAdapter(this, customerListWithNickName, account -> {
+            sDialog.dismiss();
+         //   binding.tvMainPrtyAndSubParty.setText(account.getName());
+            binding.tvCustomerNameWithNickName.setText(account.getName());
+            binding.tvNickName.setText(account.getNickName());
+            binding.clearMainPrtyAndSubParty.setVisibility(View.VISIBLE);
+            binding.cleartvCustomerNameWithNickName.setVisibility(View.VISIBLE);
+            binding.rlCustomerWithNickName.setVisibility(View.VISIBLE);
+            binding.rlCustomerList.setVisibility(View.GONE);
+            accountNameId=account.getNickNameID();
+            binding.tvMainPrtyAndSubParty.setError(null, null);
+      //      binding.tvCustomerNameWithNickName.setError(null, null);
+            binding.tvNickName.setError(null, null);
+            binding.imgClearNickName.setVisibility(View.VISIBLE);
+            mainParttSubPartyId=account.getId();
+            enableSaveButtonIfNeeded();
+            if(stayBooking){
+                binding.ivGuestNew.setVisibility(View.VISIBLE);
+                // getAccountIdByNickName(accountNameId);
+                getGuestList(mainParttSubPartyId);
+            }else {
+
+            }
+
+
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(mainPartySubPartyAdapter);
+      //  getMainPartySubParty(GetMainPartyAndSubPartyList, sDialog);
+        sDialog.show();
+
+    }
 
     void filternicNameList(ArrayList<NickNameList> bc) {
         nickNameListAdapter = new NickNameListAdapter(this, bc, account -> {
-
+            sDialog.dismiss();
             if(account.getName().equals("NEW PARTY")){
+                isNewParty=true;
                 binding.llNewParty.setVisibility(View.VISIBLE);
                 binding.ll1.setVisibility(View.GONE);
-                isNewParty=true;
             }else {
                 isNewParty=false;
                 binding.llNewParty.setVisibility(View.GONE);
                 binding.ll1.setVisibility(View.VISIBLE);
+
             }
-            sDialog.dismiss();
             if(account.getName().equals("NEW PARTY")){
                 addNewParty=true ;
             }else {
                 addNewParty=false;
             }
             binding.tvNickName.setText(account.getName());
+            binding.rlCustomerWithNickName.setVisibility(View.VISIBLE);
+            binding.rlCustomerList.setVisibility(View.GONE);
             binding.imgClearNickName.setVisibility(View.VISIBLE);
+            binding.clearMainPrtyAndSubParty.setVisibility(View.GONE);
+            binding.tvMainPrtyAndSubParty.setText("");
+            mainParttSubPartyId="";
             binding.tvNickName.setError(null, null);
             accountNameId=account.getId();
             // getAccountIdByNickName(accountNameId);
@@ -2383,45 +2543,35 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
     void filterMainPartySubPartyList(ArrayList<Account> bc) {
         mainPartySubPartyAdapter = new MainPartySubPartyAdapter(this, bc, account -> {
             sDialog.dismiss();
-            binding.tvMainPrtyAndSubParty.setText(account.getName());
+            //   binding.tvMainPrtyAndSubParty.setText(account.getName());
+            binding.tvCustomerNameWithNickName.setText(account.getName());
+            binding.tvNickName.setText(account.getNickName());
             binding.clearMainPrtyAndSubParty.setVisibility(View.VISIBLE);
+            binding.cleartvCustomerNameWithNickName.setVisibility(View.VISIBLE);
+            binding.rlCustomerWithNickName.setVisibility(View.VISIBLE);
+            binding.rlCustomerList.setVisibility(View.GONE);
+            accountNameId=account.getNickNameID();
             binding.tvMainPrtyAndSubParty.setError(null, null);
+                  binding.tvCustomerNameWithNickName.setError(null, null);
+            binding.tvNickName.setError(null, null);
+            binding.imgClearNickName.setVisibility(View.VISIBLE);
             mainParttSubPartyId=account.getId();
             enableSaveButtonIfNeeded();
-            binding.ivGuestNew.setVisibility(View.VISIBLE);
-            // getAccountIdByNickName(accountNameId);
-            getGuestList(mainParttSubPartyId);
+            if(stayBooking){
+                binding.ivGuestNew.setVisibility(View.VISIBLE);
+                // getAccountIdByNickName(accountNameId);
+                getGuestList(mainParttSubPartyId);
+            }else {
+
+            }
+
+
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mainPartySubPartyAdapter);
+        //  getMainPartySubParty(GetMainPartyAndSubPartyList, sDialog);
+        sDialog.show();
     }
-
-    private void parseTime(String time12HourFormat) {
-        try {
-            // Convert 12-hour format to 24-hour format
-            SimpleDateFormat inputFormat = new SimpleDateFormat("hh:mm a", Locale.US);
-            SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
-
-            Date date = inputFormat.parse(time12HourFormat); // Parse input time
-            String time24HourFormat = outputFormat.format(date); // Convert to 24-hour format
-
-            // Extract hour, minute, and second
-            String[] timeParts = time24HourFormat.split(":");
-            int checkOutHour = Integer.parseInt(timeParts[0]);  // 24-hour format hour
-            int checkOutMinute = Integer.parseInt(timeParts[1]); // Minute
-            int checkOutSecond = Integer.parseInt(timeParts[2]); // Second
-
-
-            // Print values
-            System.out.println("Hour: " + checkOutHour);
-            System.out.println("Minute: " + checkOutMinute);
-            System.out.println("Second: " + checkOutSecond);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     private void getGuestList(String accountId) {
         String getGuestMasterListByCustomerId="";
@@ -2491,7 +2641,7 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                     guestListBookingAdapter.notifyDataSetChanged();
                 }else {
                     if(stayBooking){
-                        if(binding.tvMainPrtyAndSubParty.getText().toString().isEmpty()){
+                        if(binding.tvCustomerNameWithNickName.getText().toString().isEmpty()){
                             binding.ivGuestNew.setVisibility(View.GONE);
                         }else {
                             binding.ivGuestNew.setVisibility(View.VISIBLE);

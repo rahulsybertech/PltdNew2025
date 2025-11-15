@@ -120,32 +120,10 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
         String title = lists.getName(); // This could be "Brand", "Stall", etc.
 
         if(title.equals("Brands")){
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-            sdf.setLenient(false); // Avoids auto-fixing bad dates
 
-// Format current date to remove time part
-            String todayStr = sdf.format(new Date());
-            Date currentDate = null; // currentDate now has only date part
-            try {
-                currentDate = sdf.parse(todayStr);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-
-            Date startDate = null;
-            try {
-                startDate = sdf.parse("01-Jul-2025");
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-            Date endDate = null;
-            try {
-                endDate = sdf.parse("31-Jul-2025");
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-
-            if (startDate != null && endDate != null && currentDate != null &&
+            holder.rlImage.setBackground(ContextCompat.getDrawable(context, R.drawable.button_twelve));
+            holder.titleText.setText(title);
+           /* if (startDate != null && endDate != null && currentDate != null &&
                     currentDate.compareTo(startDate) >= 0 && currentDate.compareTo(endDate) <= 0) {
                 // Date is within range
                 if ("Brands".equalsIgnoreCase(title)) {
@@ -163,7 +141,7 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
                // holder.rlImage.setBackgroundColor(Color.TRANSPARENT);
                 holder.rlImage.setBackground(ContextCompat.getDrawable(context, R.drawable.button_twelve));
                 holder.titleText.setText(title);
-            }
+            }*/
 
         }else {
             holder.imageViewIMG.setImageResource(lists.getImg());

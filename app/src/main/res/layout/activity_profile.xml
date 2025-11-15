@@ -58,6 +58,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_margin="2dp"
+                        android:layout_below="@id/header_cover_image"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/Img_show"
+                        android:layout_width="100dp"
+                        android:src="@drawable/profile"
+                        android:layout_height="100dp"
+                        android:layout_gravity="center"
+                        android:clickable="true"
+                        android:elevation="5dp"
+                        android:layout_marginStart="3dp"
+
+                        />
 
                     <LinearLayout
                         android:layout_margin="2dp"

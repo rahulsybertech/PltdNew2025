@@ -16,6 +16,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,10 +52,12 @@ public class O_BranchesActivity extends AppCompatActivity {
     Context mContext = this;
 
     RecyclerView branchRecyclerview;
-    BranchesAdapter branchesAdapter;
+    BranchesAdapter branchesAdapter,vOAdapter;
     List<BranchesResult> branchrsDetails;
+    List<BranchesResult> boList = new ArrayList<>();
+    List<BranchesResult> voList = new ArrayList<>();
     Type listType;
-    GridLayoutManager linearLayoutManager;
+    GridLayoutManager linearLayoutManager,linearLayoutManagerVO;
     ActivityOBranchesBinding binding;
 
 
@@ -61,6 +66,12 @@ public class O_BranchesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityOBranchesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         binding.supportChat.supportFab.setOnClickListener(v ->
                 Lazy.openDialog(mContext));
 
@@ -73,11 +84,17 @@ public class O_BranchesActivity extends AppCompatActivity {
         listType = new TypeToken<BranchesPojo>() {
         }.getType();
 
+
         linearLayoutManager = new GridLayoutManager(mContext, 3);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.branchRecyclerview.setLayoutManager(linearLayoutManager);
-        branchesAdapter = new BranchesAdapter(mContext, branchrsDetails);
+        branchesAdapter = new BranchesAdapter(mContext, boList);
         binding.branchRecyclerview.setAdapter(branchesAdapter);
+
+        linearLayoutManagerVO = new GridLayoutManager(mContext, 3);
+        binding.vORecyclerview.setLayoutManager(linearLayoutManagerVO);
+        vOAdapter = new BranchesAdapter(mContext, voList);
+        binding.vORecyclerview.setAdapter(vOAdapter);
         if (Lazy.haveNetworkConnection(mContext)) {
             GetBranches();
         } else {
@@ -96,7 +113,22 @@ public class O_BranchesActivity extends AppCompatActivity {
                 if (pojo.getResponseStatus()) {
                     branchrsDetails.clear();
                     branchrsDetails.addAll(pojo.getBranchesResult());
+                    boList.clear();
+                    voList.clear();
+
+                    for (BranchesResult item : branchrsDetails) {
+                        String name = item.getBranchName(); // example "Delhi Chandni Chowk (B.O.)"
+
+                        if (name != null) {
+                            if (name.contains("(B.O.)")) {
+                                boList.add(item);
+                            } else if (name.contains("(V.O.)")) {
+                                voList.add(item);
+                            }
+                        }
+                    }
                     branchesAdapter.notifyDataSetChanged();
+                    vOAdapter.notifyDataSetChanged();
                 } else {
                     AlertUtil.responseElse(mContext, "GetBranches ", pojo.getResponseMessage() + "");
                 }
@@ -113,13 +145,18 @@ public class O_BranchesActivity extends AppCompatActivity {
             }
         }
         ) {
-            /*@Override
+            @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE,"");
-                String str = "{\"MOBILENO\":\"" + mob3 + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME,"") + "\"}";
+                String str = "{"
+                        + "\"MOBILENO\":\"" + mob3 + "\","
+                        + "\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\","
+                        + "\"accountid\":\"" + SharedPref.read(SharedPref.ADMIN_ID, "") + "\""
+                        + "}";
                 Log.e("str", str);
                 return str.getBytes();
-            }*/
+            }
+
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {

@@ -32,6 +32,9 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -143,6 +146,12 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         super.onCreate(savedInstanceState);
         binding = ActivitySaleReportBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         binding.supportChat.supportFab.setOnClickListener(v ->
                 Lazy.openDialog(mContext));
         SharedPref.init(getApplicationContext());
@@ -162,8 +171,6 @@ public class SaleReportActivity extends AppCompatActivity implements DatePickerD
         filterBrnad_nAdap = new FilterBrnad_NAdap(mContext, brandList, this);
         filterSubPartyAdap = new FilterSub_PartyAdap(mContext, subPartyList, this);
         filterTesnportAdpter = new FilterTesnportAdpter(mContext, transporterList, this);
-
-
         branchType = new TypeToken<SaleReportPojo>() {
         }.getType();
         subPartyType = new TypeToken<SaleReportPojo>() {

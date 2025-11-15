@@ -94,7 +94,7 @@
                       android:layout_width="wrap_content"
                       android:textStyle="bold"
                       android:layout_height="wrap_content"
-                      android:text="@string/aadhar_card"
+                      android:text="ID Proof"
                       android:textColor="@color/black"
                       android:textSize="14dp"
                       />

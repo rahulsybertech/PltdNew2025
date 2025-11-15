@@ -14,6 +14,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -55,6 +58,12 @@ public class GuestListBookingActivity extends AppCompatActivity implements Guest
         super.onCreate(savedInstanceState);
         binding = ActivityGuestListBookingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
 
         binding.backBookingList.setOnClickListener(v -> {

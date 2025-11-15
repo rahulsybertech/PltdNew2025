@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iamge_list"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="15dp"
-        android:scaleType="fitXY" />
+        app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="true"
+        >
 
-<!--    <ImageView-->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iamge_list"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/banner_new_one" />
+
+    </androidx.cardview.widget.CardView>
+
+
+    <!--    <ImageView-->
 <!--        android:id="@+id/iamge_list"-->
 <!--        android:layout_width="260dp"-->
 <!--        android:layout_height="170dp"/>-->

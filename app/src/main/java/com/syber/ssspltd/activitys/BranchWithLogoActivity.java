@@ -18,6 +18,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -66,6 +69,12 @@ public class BranchWithLogoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityBranchWithLogoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         Toolbar toolbar = findViewById(R.id.toolbar);
         brandName = getIntent().getStringExtra(BRANDNAME);
 
@@ -167,7 +176,11 @@ public class BranchWithLogoActivity extends AppCompatActivity {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 String mob3 = SharedPref.read(SharedPref.USERMOBILE, "");
-                String str = "{\"MOBILENO\":\"" + mob3 + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\"}";
+                String str = "{"
+                        + "\"MOBILENO\":\"" + mob3 + "\","
+                        + "\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\","
+                        + "\"accountid\":\"" + SharedPref.read(SharedPref.ADMIN_ID, "") + "\""
+                        + "}";
                 Log.e("str", str);
                 Log.i("TaG", "req   =====" + GET_BRANCHES + " " + str);
                 return str.getBytes();

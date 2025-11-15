@@ -3,7 +3,6 @@ package com.syber.ssspltd.fragment;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_BANNER_LIST;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_SECURITY_CHECK_REPORT;
 import static com.syber.ssspltd.Constants.NewErpUrls.GET_USER_TYPE_LIST;
-import static com.syber.ssspltd.Constants.NewErpUrls.StayBookingDataList;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -29,7 +28,6 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
 import com.jama.carouselview.CarouselView;
 import com.jama.carouselview.enums.IndicatorAnimationType;
@@ -37,8 +35,6 @@ import com.jama.carouselview.enums.OffsetType;
 import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Picasso;
 import com.syber.ssspltd.R;
-import com.syber.ssspltd.Utils.AlertUtil;
-import com.syber.ssspltd.Utils.Constants;
 import com.syber.ssspltd.Utils.Lazy;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
@@ -46,25 +42,22 @@ import com.syber.ssspltd.activitys.LoginPage;
 import com.syber.ssspltd.adapter.DashBoardAdapter;
 import com.syber.ssspltd.adapter.SliderAdapter;
 import com.syber.ssspltd.helper.MovableFloatingActionButton;
-import com.syber.ssspltd.model.booking.BookingData;
-import com.syber.ssspltd.model.booking.StayBookingResponse;
 import com.syber.ssspltd.response.BannerResponse.Banner.BannerList;
 import com.syber.ssspltd.response.BannerResponse.Banner.BannerPojo;
 import com.syber.ssspltd.response.DeasbordListType;
 import com.syber.ssspltd.response.ModelClass.RowItem;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 public class HomeFragment extends Fragment {
@@ -198,7 +191,6 @@ public class HomeFragment extends Fragment {
             securityCheck_vi.setVisibility(View.GONE);
         }
         if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")) {
-
 
          //   recyclerView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
             Log.e("DASHBOARD_TYPE", SharedPref.read(SharedPref.DASHBOARD_TYPE, ""));
@@ -535,7 +527,8 @@ public class HomeFragment extends Fragment {
                             JSONArray securityCheck = jsonObject.getJSONArray("SecurityCheckReportResult");
                             Log.e("BankListData", securityCheck + "");
                             if (jsonObject.getBoolean("StatusLock")) {
-                                lockStatusDialog(jsonObject.getString("LockMsg"));
+                                JSONObject lockMsgDetail = jsonObject.getJSONObject("LockMsgDetail");
+                                lockStatusDialog(jsonObject.getString("LockMsg"),lockMsgDetail);
                             //    lockStatusDialog("Lock this is account. dbdbdbdbd bbebbbbwfbb bsbdbdbb sbdbdbb bsdbsbsbsbs sbsbsbsb sbsdbsdbsdb bsbsbsdbsdbsdb sbsdbdbd");
                             }
                             for (int i = 0; i < securityCheck.length(); i++) {
@@ -637,6 +630,7 @@ public class HomeFragment extends Fragment {
                 String mob = SharedPref.read(SharedPref.USERMOBILE, "");
                 // String mob=mobile_no_otp.getText().toString();
                 String str = "{\"MOBILENO\":\"" + "123" + "\",\"PARTYCODE\":\"" + SharedPref.read(SharedPref.PARTY_CODE, "") + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\"}";
+              //  String str = "{\"MOBILENO\":\"" + "123" + "\",\"PARTYCODE\":\"" + "AH2494" + "\",\"DBNAME\":\"" + SharedPref.read(SharedPref.DB_NAME, "") + "\"}";
                 Log.e("straff", str);
                 Log.i("TaG", "req----->" + GET_SECURITY_CHECK_REPORT + " " + str);
                 return str.getBytes();
@@ -645,7 +639,8 @@ public class HomeFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
+                //headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiREw1OTc2IERIQVJNRU5ERVIgRy9NIERFTEhJIiwiQ29tcGFueUlkIjoiNDMwMjk2MjQtZWE0YS00MzRjLTlhMTQtZDdkYTI0ODQwYmFkIiwiQWNjb3VudElkIjoiYzVmN2FiMGYtZGU3Yi00N2ZlLThlMTItMmZlZmFmMWY5NjQyIiwiTW9iaWxlTm8iOiI4ODAyODcyNDc0IiwiRmluWWVhcklkIjoiZDgyOWFjN2ItMTk4Zi00NDEzLWIwNDAtZjZiYmExN2ZmYWZhIiwiTWFya2V0ZXJDb2RlIjoiMTIzIiwiVXNlcklkIjoiNzViOTM5NDktZmYzZC00M2I5LThhYmYtM2ViZTA1OTU3MzI4IiwiQnJhbmNoQ29tcGFueUlkIjoiNDMwMjk2MjQtZWE0YS00MzRjLTlhMTQtZDdkYTI0ODQwYmFkIiwiQXBwTmFtZSI6IlNTU1BMVEQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL2V4cGlyYXRpb24iOiJBcHIgV2VkIDIyIDIwMjYgMDU6MDE6MjMgQU0iLCJuYmYiOjE3NjEyODIwODMsImV4cCI6MTc3NjgxNDI4MywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDIwMCIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDAifQ.IgP8xisypn3nkvChwWYD1Frq49MWmgo7JZOQQw8h0ns");
+               headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 Log.i("Token", "--------------->" + GET_SECURITY_CHECK_REPORT + " " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
                 return headers;
             }
@@ -679,26 +674,125 @@ public class HomeFragment extends Fragment {
         alertDialog.show();
     }
 
-    public boolean lockStatusDialog(String statusLockMsg) {
-        final View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.lock_status_dialog, null);
-        ImageView cross = dialogView.findViewById(R.id.cross);
-        TextView ok = dialogView.findViewById(R.id.ok);
-        TextView lockMsg = dialogView.findViewById(R.id.status_msg);
-        lockMsg.setText(statusLockMsg);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.BottomSheetDialogTheme2);
-        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext(), R.style.RoundedDialog);
+    public boolean lockStatusDialog(String statusLockMsg, JSONObject lockMsgDetail) {
+        try {
+            // ✅ Extract all values safely
+            String securityChequeMsg = lockMsgDetail.optString("SecurityChequeMsg");
+            String accountNotClearMsg = lockMsgDetail.optString("AccountNotClearMsg");
 
-        builder.setView(dialogView);
-        final androidx.appcompat.app.AlertDialog alertDialog = builder.create();
-        //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.setCancelable(false);
-        cross.setOnClickListener(v -> alertDialog.dismiss());
-        ok.setOnClickListener(v -> alertDialog.dismiss());
-        alertDialog.show();
+
+            boolean billDueLock = lockMsgDetail.optBoolean("BillDueLock");
+            int dueDays = lockMsgDetail.optInt("DueDays");
+            int slabDiffDays = lockMsgDetail.optInt("SlabDiffDays");
+            int iSlab = lockMsgDetail.optInt("ISlab");
+            int iiSlab = lockMsgDetail.optInt("IISlab");
+            int iiiSlab = lockMsgDetail.optInt("IIISlab");
+
+            Log.e("LockMsgDetail", "SecurityChequeMsg: " + securityChequeMsg);
+            Log.e("LockMsgDetail", "AccountNotClearMsg: " + accountNotClearMsg);
+            Log.e("LockMsgDetail", "BillDueLock: " + billDueLock);
+            Log.e("LockMsgDetail", "DueDays: " + dueDays);
+            Log.e("LockMsgDetail", "SlabDiffDays: " + slabDiffDays);
+            Log.e("LockMsgDetail", "ISlab: " + iSlab + ", IISlab: " + iiSlab + ", IIISlab: " + iiiSlab);
+
+            // ✅ Inflate dialog view
+            final View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.lock_status_dialog, null);
+            ImageView cross = dialogView.findViewById(R.id.cross);
+            TextView ok = dialogView.findViewById(R.id.ok);
+            TextView lockMsg = dialogView.findViewById(R.id.status_msg);
+            TextView firstSlabDayRange = dialogView.findViewById(R.id.firstSlabDayRange);
+            TextView secondSlabDayRange = dialogView.findViewById(R.id.secondSlabDayRange);
+            TextView thrdSlabDayRange = dialogView.findViewById(R.id.thrdSlabDayRange);
+            TextView firstSlabAmout = dialogView.findViewById(R.id.firstSlabAmout);
+            TextView secondSlabAmout = dialogView.findViewById(R.id.secondSlabAmout);
+            TextView thrdSlabAmout = dialogView.findViewById(R.id.thrdSlabAmout);
+            TextView tvCreditStatus = dialogView.findViewById(R.id.tvCreditStatus);
+            TextView status_msg2 = dialogView.findViewById(R.id.status_msg2);
+
+            // 1️⃣ Security Cheque Message
+            if (!securityChequeMsg.equals("null")) {
+                lockMsg.setVisibility(View.VISIBLE);
+                lockMsg.setText("1. " + securityChequeMsg);
+            }else {
+                lockMsg.setVisibility(View.GONE);
+            }
+
+// 2️⃣ Account Not Clear Message
+            if (!accountNotClearMsg.equals("null")) {
+                status_msg2.setVisibility(View.VISIBLE);
+                if(securityChequeMsg.equals("null")){
+                    status_msg2.setText("1. " + accountNotClearMsg);
+                }else {
+                    status_msg2.setText("2. " + accountNotClearMsg);
+                }
+
+
+            }else {
+                status_msg2.setVisibility(View.GONE);
+            }
+
+            // ✅ Calculate proper day ranges
+            int secondSlabEnd = dueDays + slabDiffDays;
+            int secondSlabStart = dueDays + 1;
+            int thirdSlabStart = secondSlabEnd + 1;
+
+            // ✅ Create readable labels
+            String firstSlab = "0 - " + dueDays + " days";
+            String secondSlab = secondSlabStart + " - " + secondSlabEnd + " days";
+            String thirdSlab = "More than " + secondSlabEnd + " days";
+
+            // ✅ Set text
+            firstSlabDayRange.setText(firstSlab);
+            secondSlabDayRange.setText(secondSlab);
+            thrdSlabDayRange.setText(thirdSlab);
+
+            // Create Indian NumberFormat
+            NumberFormat indianFormat = NumberFormat.getNumberInstance(new Locale("en", "IN"));
+
+// Format slab amounts
+            String formattedFirst = indianFormat.format(iSlab);
+            String formattedSecond = indianFormat.format(iiSlab);
+            String formattedThird = indianFormat.format(iiiSlab);
+
+// Set formatted text
+            firstSlabAmout.setText(formattedFirst);
+            secondSlabAmout.setText(formattedSecond);
+            thrdSlabAmout.setText(formattedThird);
+            tvCreditStatus.setText(
+                    "Your credit period is " + dueDays + " days.\n" +
+                            "Your billing is stopped\n" +
+                            "Please pay above " + secondSlabEnd + " days amount"
+            );
+            String msg = statusLockMsg;
+            msg = msg.replace("\\n", "\n");  // Convert literal \n to real newline
+        //    tvLockMessage.setText(lockMsg);
+
+
+
+
+            // ✅ Build AlertDialog
+            final androidx.appcompat.app.AlertDialog.Builder builder =
+                    new androidx.appcompat.app.AlertDialog.Builder(getContext(), R.style.RoundedDialog);
+
+            builder.setView(dialogView);
+            final androidx.appcompat.app.AlertDialog alertDialog = builder.create();
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.setCancelable(false);
+
+            cross.setOnClickListener(v -> alertDialog.dismiss());
+            ok.setOnClickListener(v -> alertDialog.dismiss());
+
+            alertDialog.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
         return true;
     }
+
 
 
 }

@@ -347,6 +347,7 @@
 
 
                               </LinearLayout>
+
                               <LinearLayout
                                   android:id="@+id/ll1"
                                   android:visibility="visible"
@@ -367,7 +368,10 @@
                                               android:textSize="12dp"
                                               android:text="Select Customer"
                                               android:textColor="@color/black"/>
+
                                           <RelativeLayout
+                                              android:visibility="visible"
+                                              android:id="@+id/rlCustomerList"
                                               android:layout_width="match_parent"
                                               android:layout_height="wrap_content"
                                               android:layout_marginStart="2dp"
@@ -391,9 +395,50 @@
                                                     android:visibility="visible" />
 
 
+
                                                 <ImageView
                                                     android:visibility="gone"
                                                     android:id="@+id/clearMainPrtyAndSubParty"
+                                                    android:layout_width="30dp"
+                                                    android:layout_height="match_parent"
+                                                    android:layout_alignParentEnd="true"
+                                                    android:layout_centerInParent="true"
+                                                    android:layout_marginEnd="5dp"
+                                                    android:onClick="handleClear"
+                                                    android:padding="7dp"
+                                                    android:src="@drawable/ic_cross2"
+                                                    app:tint="@color/red" />
+                                          </RelativeLayout>
+
+                                          <RelativeLayout
+                                              android:id="@+id/rlCustomerWithNickName"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="wrap_content"
+                                              android:visibility="gone"
+                                              android:layout_marginStart="2dp"
+                                              android:layout_marginTop="5dp"
+                                              android:background="@drawable/otp_line">
+
+                                                <TextView
+                                                    android:id="@+id/tvCustomerNameWithNickName"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_toStartOf="@id/cleartvCustomerNameWithNickName"
+                                                    android:layout_height="45dp"
+                                                    android:layout_alignParentStart="true"
+                                                    android:fontFamily="@font/roboto_light"
+                                                    android:freezesText="true"
+                                                    android:gravity="center|start"
+                                                    android:paddingStart="10dp"
+                                                    android:singleLine="true"
+                                                    android:textColor="@color/black"
+                                                    android:textSize="16sp"
+                                                    android:visibility="visible" />
+
+
+
+                                                <ImageView
+                                                    android:visibility="gone"
+                                                    android:id="@+id/cleartvCustomerNameWithNickName"
                                                     android:layout_width="30dp"
                                                     android:layout_height="match_parent"
                                                     android:layout_alignParentEnd="true"

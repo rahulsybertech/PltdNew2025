@@ -5,6 +5,9 @@ import static com.syber.ssspltd.Constants.NewErpUrls.GET_KYC_INFO;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -59,6 +62,12 @@ public class ApplyForKYCActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding= ActivityApplyForKycactivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         binding.supportChat.supportFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

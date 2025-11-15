@@ -58,6 +58,11 @@ public class MainPartySubPartyAdapter extends RecyclerView.Adapter<MainPartySubP
             holder.ll.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
         }
     }
+    public void updateList(List<Account> newList) {
+        this.data.clear();
+        this.data.addAll(newList);
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemCount() {

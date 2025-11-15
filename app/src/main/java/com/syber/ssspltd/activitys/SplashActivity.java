@@ -199,51 +199,6 @@ public class SplashActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void check() {
-        Log.e("ChackMobile", SharedPref.read(SharedPref.USERMOBILE, ""));//"http://app.ssspltd.com/apipltd/GetPltdVersion" old url
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_PLTD_VERSION,
-                response -> {
-                    Log.e("res", GET_PLTD_VERSION + " ========= " + response);
-                    try {
-                        JSONObject ob = new JSONObject(response);
-                        String SoftVersion = "10";
-                        String HardVersion = "10";
-                        //Log.e("ver", ob.getString("AppVersion"));
-                        if (HardVersion.equals("10")) {
-                            new Handler().postDelayed(() -> goToNext(), 2600);
-                        } else {
-                            showVersion(HardVersion, SoftVersion);
-                        }
-                    } catch (Exception e) {
-                        Log.e("Exce", e.toString());
-                    }
-                },
-                error -> {
-                    Toast.makeText(mContext, "Poor Network Connection", Toast.LENGTH_LONG).show();
-                    Log.e("Volly ", error.getMessage() + "");
-                }
-        ) {
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                String str = "{\"DATAKEY\":\"" + "SSSPLTD" + "\",\"DEVICE\":\"" + "ANDROID" + "\"}";
-                Log.e("str", SharedPref.read(SharedPref.USERMOBILE, "") + "djsghgcb");
-                return str.getBytes();
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
-                return headers;
-            }
-
-            public String getBodyContentType() {
-                return "application/json; charset=utf-8";
-            }
-        };
-        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
-    }
-
     private void checkold() {
         Log.d("ChackMobile", SharedPref.read(SharedPref.USERMOBILE, ""));
         StringRequest stringRequest = new StringRequest(Request.Method.POST, GET_APP_VERSION,
@@ -257,6 +212,7 @@ public class SplashActivity extends AppCompatActivity {
                         //Log.e("ver", ob.getString("AppVersion"));
 
                         if (ver <= 47) {
+
                             new Handler().postDelayed(this::goToNext, 2600);
                         } else {
                             showVersionold();
@@ -312,29 +268,6 @@ public class SplashActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void showVersion(String hardver, String softver) {
-        final Dialog dialog = new Dialog(mContext);
-        dialog.setContentView(R.layout.update_dailog);
-        dialog.setCancelable(false);
-        final TextView submit = dialog.findViewById(R.id.submit);
-        final TextView skip = dialog.findViewById(R.id.skip);
-        if (hardver.equals(softver)) {
-            skip.setVisibility(View.VISIBLE);
-        } else {
-            skip.setVisibility(View.GONE);
-        }
-        skip.setOnClickListener(v -> goToNext());
-        submit.setOnClickListener(v -> {
-            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-            } catch (android.content.ActivityNotFoundException anfe) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-            }
-            dialog.dismiss();
-        });
-        dialog.show();
-    }
 
     private void goToNext() {
         Log.i("TaG", "goToNext --> " + SharedPref.read(SharedPref.USERMOBILE, "") +

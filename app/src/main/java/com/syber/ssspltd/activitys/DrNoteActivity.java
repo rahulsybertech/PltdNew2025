@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -52,6 +55,11 @@ public class DrNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityDrNoteBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         binding.supportChat.supportFab.setOnClickListener((View.OnClickListener) v -> Lazy.openDialog(mContext));
         debitNoteDetails = new ArrayList<>();
         listType = new TypeToken<DebitNotePojo>() {

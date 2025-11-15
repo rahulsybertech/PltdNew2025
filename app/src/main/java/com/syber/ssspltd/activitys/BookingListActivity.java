@@ -21,6 +21,10 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -68,8 +72,14 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityBookingListBinding.inflate(getLayoutInflater());
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(binding.getRoot());
-
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
     }
 
@@ -82,6 +92,7 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
 
 
         plusButton.setOnClickListener(v -> {
+
             startActivity(new Intent(this, BookingRequestActivity.class)
                     .putExtra(MyConstant.EXTRA_IS_EDIT, false)
                     .putExtra(MyConstant.SCREEN, MyConstant.BOOKINGlIST)
@@ -208,10 +219,6 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
             public byte[] getBody() throws AuthFailureError {
                 JSONObject jsonBody = new JSONObject();
                 try {
-
-//                    jsonBody.put("SupplierAccountID", SharedPref.read(SharedPref.PARTY_CODE, ""));
-                    //     jsonBody.put("SupplierAccountID", selectedAccountId);
-
                     Log.i("TaG", "Request " + StayBookingTime + "---> " + jsonBody);
                     return jsonBody.toString().getBytes("utf-8");
                 } catch (Exception e) {

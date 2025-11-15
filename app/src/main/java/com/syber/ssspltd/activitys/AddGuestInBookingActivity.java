@@ -37,6 +37,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
@@ -110,6 +113,12 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAddGuestInBookingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         initUi();
     }
 
@@ -473,18 +482,7 @@ public class AddGuestInBookingActivity extends AppCompatActivity {
                         jsonObject.put("isNewUser", true);
                     }
 
-                  /*  if(getIntent().getStringExtra(MyConstant.ACCOUNT_ID).isEmpty()){
-                        jsonObject.put("accountID", JSONObject.NULL);
-                        jsonObject.put("mobileNo", JSONObject.NULL);
-                        jsonObject.put("isNewUser",false);
-                    }else {
 
-                   //     jsonObject.put("accountID", getIntent().getStringExtra(MyConstant.ACCOUNT_ID));
-                        jsonObject.put("accountID", JSONObject.NULL);
-                        jsonObject.put("mobileNo", getIntent().getStringExtra(MyConstant.MOBILE_NUMBER));
-                        jsonObject.put("isNewUser",true);
-
-                    }*/
 
                     jsonObject.put("partyCode", SharedPref.read(SharedPref.PARTY_CODE, ""));
                     jsonObject.put("guestName", binding.guestName.getText().toString());

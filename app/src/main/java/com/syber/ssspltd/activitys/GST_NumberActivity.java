@@ -7,6 +7,9 @@ import static com.syber.ssspltd.Constants.NewErpUrls.VERIFY_REFERRAL;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -88,6 +91,12 @@ public class GST_NumberActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding=ActivityGstNumberBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        // Handle system bars (status + nav bar) insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         listType = new TypeToken<LoginNoPojo>() {
         }.getType();
         station_add =binding.stationAdd.getText().toString();
