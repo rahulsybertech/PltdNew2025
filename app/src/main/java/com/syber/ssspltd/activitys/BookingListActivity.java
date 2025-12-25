@@ -401,10 +401,6 @@ public class BookingListActivity extends AppCompatActivity implements  BookingLi
         Log.d("DateTime", currentDateTime);
         if(value.equals("Stay")){
             Boolean isStay = data.getIsStay(); // Nullable Boolean
-
-
-
-
             if (isStay == null) {
                 url = UpdateStayBookingActualTime + "?bookingId=" + data.getId()+"&isStay=" + true;
                 isStaySucess=true;

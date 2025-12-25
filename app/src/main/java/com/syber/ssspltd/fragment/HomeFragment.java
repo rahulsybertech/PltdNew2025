@@ -73,9 +73,9 @@ public class HomeFragment extends Fragment {
     CarouselView carouselView;
     TextView pending_order, courier_report, ledger, sale_report, stock_in_office, sale_service, dash_board, Dr_Note, create_note, cr_noteSuppl, dr_NoteCust;
     Type listType, bannerType;
-    String[] list1_name = {"Ledger", "Debit Note", "Credit Note To Supplier", "Sale Service", "Brands", "Customer Review", "Pending Order", "Honhar Khiladi","Fair Order", "Add Order"};
-    String[] list1_onclickId = {"1", "2", "3", "4", "13", "16", "23", "25", "27","22"};
-    Integer list1_Img[] = {R.drawable.button_two, R.drawable.button_nine, R.drawable.button_eleven, R.drawable.button_eight, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_two,R.drawable.button_six, R.drawable.button_thirteen,R.drawable.button_six, R.drawable.button_four};
+    String[] list1_name = {"Ledger", "Debit Note", "Credit Note To Supplier", "Sale Service", "Brands", "Customer Review", "Pending Order", "Honhar Khiladi",/*"Fair Order"*/"Add Order", "Add Order","Stay Booking"};
+    String[] list1_onclickId = {"1", "2", "3", "4", "13", "16", "23", "25", "27","22","26"};
+    Integer list1_Img[] = {R.drawable.button_two, R.drawable.button_nine, R.drawable.button_eleven, R.drawable.button_eight, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_two,R.drawable.button_six, R.drawable.button_thirteen,R.drawable.button_six, R.drawable.button_four, R.drawable.button_four};
 
     String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service", "Why SSS", "Brands"
             , "Customer Review", "Club Features", "Stay Booking","Honhar Khiladi"};
@@ -441,23 +441,24 @@ public class HomeFragment extends Fragment {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.getBoolean("ResponseStatus")) {
-                            if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer") && !jsonObject.getBoolean("BlackListReportStatus")) {
+                            boolean stayBooking = jsonObject.getBoolean("StayBookingStatus");
+                       /*     if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer") && !jsonObject.getBoolean("BlackListReportStatus"))*/
+                            if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")) {
                                 deasbordListTypeList.clear();
+
                                 for (int i = 0; i < (list2_name.length) - 1; i++) {
 
                                     String name = list2_name[i];
                                     if(permissionType.equals("USER")){
-                                  /*      if (name.equals("Ledger") ||
-                                                name.equals("Debit Note To Customer") ||
-                                                name.equals("Debit Note") ||
-                                                name.equals("Credit Note to Supplier") ||
-                                                name.equals("Sale Service")) {
-                                            continue; // Skip these items
-                                        }*/
-
+                                        if (name.equals("Stay Booking") && !stayBooking) {
+                                            continue;   // Skip / Don't add
+                                        }
                                         deasbordListType = new DeasbordListType(list2_onclickId[i], list2_name[i], list2_Img[i]);
                                         deasbordListTypeList.add(deasbordListType);
                                     }else {
+                                        if (name.equals("Stay Booking") && !stayBooking) {
+                                            continue;   // Skip / Don't add
+                                        }
                                         deasbordListType = new DeasbordListType(list2_onclickId[i], list2_name[i], list2_Img[i]);
                                         deasbordListTypeList.add(deasbordListType);
                                     }
@@ -468,7 +469,47 @@ public class HomeFragment extends Fragment {
                                 dashBoardAdapter = new DashBoardAdapter(getContext(), deasbordListTypeList, false);
                                 recyclerView.setAdapter(dashBoardAdapter);
                             }
-                            else if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier") && !jsonObject.getBoolean("SupplierOrderStatus") && !jsonObject.getBoolean("BlackListReportStatus")) {
+
+                            else if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Other")) {
+                                deasbordListTypeList.clear();
+                                for (int i = 0; i < (list3_name.length); i++) {
+
+                                    String name = list3_name[i];
+
+
+                                    if(permissionType.equals("USER")){
+                                     /*   if (name.trim().equals("Ledger") ||
+                                                name.trim().equals("Debit Note") ||
+                                                name.trim().equals("Credit Note To Supplier") ||
+                                                name.trim().equals("Sale Service")) {
+                                            continue;
+                                        }*/
+                                        if (name.equals("Stay Booking") && !stayBooking) {
+                                            continue;   // Skip / Don't add
+                                        }
+
+                                        deasbordListType = new DeasbordListType(list3_onclickId[i], list3_name[i], list3_Img[i]);
+                                        deasbordListTypeList.add(deasbordListType);
+                                    }else {
+                                        if (name.equals("Stay Booking") && !stayBooking) {
+                                            continue;   // Skip / Don't add
+                                        }
+                                        deasbordListType = new DeasbordListType(list3_onclickId[i], list3_name[i], list3_Img[i]);
+                                        deasbordListTypeList.add(deasbordListType);
+                                    }
+
+                                   /* deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
+                                    deasbordListTypeList.add(deasbordListType);*/
+
+                                }
+                                dashBoardAdapter.notifyDataSetChanged();
+                                securityCheck_vi.setVisibility(View.GONE);
+                            }
+
+
+
+                       /*     if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier") && !jsonObject.getBoolean("SupplierOrderStatus") && !jsonObject.getBoolean("BlackListReportStatus"))
+                       */     else if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier")) {
                                 deasbordListTypeList.clear();
                                 for (int i = 0; i < (list1_name.length) - 2; i++) {
 
@@ -482,10 +523,16 @@ public class HomeFragment extends Fragment {
                                                 name.trim().equals("Sale Service")) {
                                             continue;
                                         }
+                                        if (name.equals("Stay Booking") && !stayBooking) {
+                                            continue;   // Skip / Don't add
+                                        }
 
                                         deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
                                         deasbordListTypeList.add(deasbordListType);
                                     }else {
+                                        if (name.equals("Stay Booking") && !stayBooking) {
+                                            continue;   // Skip / Don't add
+                                        }
                                         deasbordListType = new DeasbordListType(list1_onclickId[i], list1_name[i], list1_Img[i]);
                                         deasbordListTypeList.add(deasbordListType);
                                     }
@@ -496,7 +543,9 @@ public class HomeFragment extends Fragment {
                                 }
                                 dashBoardAdapter.notifyDataSetChanged();
                                 securityCheck_vi.setVisibility(View.GONE);
-                            } else if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier") && !jsonObject.getBoolean("SupplierOrderStatus") && jsonObject.getBoolean("BlackListReportStatus")) {
+                            }
+                        /*    if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier") && !jsonObject.getBoolean("SupplierOrderStatus") && jsonObject.getBoolean("BlackListReportStatus")
+                        */    else if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Supplier")) {
                                 deasbordListTypeList.clear();
                                 for (int i = 0; i < (list1_name.length) - 2; i++) {
                                     String name = list1_name[i];
@@ -510,9 +559,15 @@ public class HomeFragment extends Fragment {
 
                                         }
 
+                                        if (name.equals("Stay Booking") && !stayBooking) {
+                                            continue;   // Skip / Don't add
+                                        }
                                         deasbordListType = new DeasbordListType(list1_onclickId[i], name, list1_Img[i]);
                                         deasbordListTypeList.add(deasbordListType);
                                     }else {
+                                        if (name.equals("Stay Booking") && !stayBooking) {
+                                            continue;   // Skip / Don't add
+                                        }
                                         deasbordListType = new DeasbordListType(list1_onclickId[i], name, list1_Img[i]);
                                         deasbordListTypeList.add(deasbordListType);
                                     }

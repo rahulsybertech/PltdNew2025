@@ -3,6 +3,7 @@ package com.syber.ssspltd.adapter.NewGalleryAdap;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -195,10 +196,13 @@ public class NewGalleryItemAdapter extends RecyclerView.Adapter<NewGalleryItemAd
                     }
                     else if (imageListDetails.get(getAdapterPosition()).getLinktype().equals("videolink"))
                     {
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(imageListDetails.get(getAdapterPosition()).getSourceUrl()));
+                        mContext   .startActivity(intent);
                         // SharedPref.write(SharedPref.IMG_VIDEO,"Video");
-                        mContext.startActivity(new Intent(mContext, ViewImageActivity.class)
+               /*         mContext.startActivity(new Intent(mContext, ViewImageActivity.class)
                                 .putExtra("img", imageListDetails.get(getAdapterPosition()).getSourceUrl())
-                                .putExtra("type" ,imageListDetails.get(getAdapterPosition()).getLinktype()));
+                                .putExtra("type" ,imageListDetails.get(getAdapterPosition()).getLinktype()));*/
                     }
 
                 }

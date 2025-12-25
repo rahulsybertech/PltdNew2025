@@ -120,11 +120,11 @@ public class O_BranchesActivity extends AppCompatActivity {
                         String name = item.getBranchName(); // example "Delhi Chandni Chowk (B.O.)"
 
                         if (name != null) {
-                            if (name.contains("(B.O.)")) {
-                                boList.add(item);
-                            } else if (name.contains("(V.O.)")) {
+                           if (name.contains("(V.O.)")) {
                                 voList.add(item);
-                            }
+                            }else {
+                               boList.add(item);
+                           }
                         }
                     }
                     branchesAdapter.notifyDataSetChanged();
@@ -162,6 +162,7 @@ public class O_BranchesActivity extends AppCompatActivity {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Authorization", Constants.SettingHeader());
+
                 return headers;
             }
 

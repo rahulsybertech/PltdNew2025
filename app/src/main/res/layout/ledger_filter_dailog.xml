@@ -222,6 +222,7 @@
                             android:layout_weight="1"
                             android:background="@color/light_pink"
                             android:gravity="start|center"
+
                             android:hint="DD/MM/YYYY"
                             android:paddingLeft="10dp" />
                     </LinearLayout>

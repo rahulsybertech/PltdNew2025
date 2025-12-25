@@ -18,7 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/AppTheme.AppBarOverlay"
-                app:title="Fair Order" />
+                app:title="Add Order" />
 
       </com.google.android.material.appbar.AppBarLayout>
 
