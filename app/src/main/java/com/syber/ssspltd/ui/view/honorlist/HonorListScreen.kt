@@ -67,7 +67,7 @@ fun HonorListScreen(navController: NavController, viewModel1: AuthViewModel, the
 
 
         //    addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
-            addProperty("FROMDATE", "")
+         //   addProperty("FROMDATE", "")
             addProperty("FROMDATE", "")
             addProperty("TODATE", "")
             addProperty("Status", "")
