@@ -54,7 +54,7 @@ android {
         viewBinding =true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     sourceSets {
         getByName("main") {
@@ -95,6 +95,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.volley)
     implementation(libs.androidx.datastore.core.android)
+    implementation(libs.play.services.mlkit.text.recognition.common)
+    implementation(libs.play.services.mlkit.text.recognition)
 
     //Retrofit
     testImplementation(libs.junit)

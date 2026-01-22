@@ -714,6 +714,7 @@ fun BottomInputSheet(
 }
 
 data class ItemEntry(
+    var itemId: String = "",
     var item: String = "",
     var quantity: String = ""
 )

@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -20,7 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,12 +35,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,8 +53,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.piashcse.hilt_mvvm_compose_movie.navigation.Screen
+import com.google.gson.JsonParser
 import com.syber.ssspltd.out.AuthViewModel
+import com.syber.ssspltd.utils.AppSharedPreferences
+import com.syber.ssspltd.utils.ImageUtils
+import org.json.JSONObject
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,9 +71,13 @@ fun AddGuestScreen(
 
     // State to store selected images
     val frontImageUri = remember { mutableStateOf<Uri?>(null) }
+    var guestId by remember { mutableStateOf(null) }
     val backImageUri = remember { mutableStateOf<Uri?>(null) }
     // ✅ Track which card user clicked ("Front" or "Back")
     val currentPicker = remember { mutableStateOf("") }
+    var guestName by remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
+    val addGuestResult by viewModel.addGuestResult.collectAsState()
 
     // Launcher for picking image from gallery
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -165,11 +176,15 @@ fun AddGuestScreen(
                 }
             }
 
-            // Guest Name
+
             OutlinedTextField(
-                value = "",
-                onValueChange = { /* update state */ },
+                value = guestName,
+                onValueChange = {
+                    guestName = it
+                    isError = guestName.isBlank()
+                },
                 label = { Text("Guest Name") },
+                isError = isError,
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) }
             )
@@ -178,7 +193,69 @@ fun AddGuestScreen(
 
             // Save button
             Button(
-                onClick = { onSave() },
+                onClick = {
+                    when {
+                        frontImageUri.value == null -> {
+                            Toast.makeText(context, "Please select the front image", Toast.LENGTH_SHORT).show()
+                        }
+                        backImageUri.value == null -> {
+                            Toast.makeText(context, "Please select the back image", Toast.LENGTH_SHORT).show()
+                        }
+                        guestName.isBlank() -> {
+                        Toast.makeText(context, "Please enter guest name", Toast.LENGTH_SHORT).show()
+                    }
+                        else->{
+                            try {
+
+                        val prefs = AppSharedPreferences.getInstance(context)
+                        val mobileNumber = prefs.mobileNumber.orEmpty()
+                        val partyId = prefs.partyId.orEmpty()
+                        val partyCode = prefs.isPartyCode.orEmpty()
+
+                        val jsonObject = JSONObject().apply {
+
+                            // ---------- ID ----------
+                            put("id", guestId ?: JSONObject.NULL)
+
+                            // ---------- AccountID, MobileNo, isNewUser ----------
+                            if (mobileNumber.isBlank()) {
+                                put("accountID", if (partyId.isBlank()) JSONObject.NULL else partyId)
+                                put("mobileNo", JSONObject.NULL)
+                                put("isNewUser", false)
+                            } else {
+                                put("accountID", JSONObject.NULL)
+                                put("mobileNo", mobileNumber)
+                                put("isNewUser", true)
+                            }
+
+                            // ---------- Party Code ----------
+                            put("partyCode", partyCode)
+
+                            // ---------- Guest Name ----------
+                            put("guestName", guestName)
+
+                            // ---------- Front Document ----------
+                            put(
+                                "frontDocPath",
+                                frontImageUri.value?.let { ImageUtils.uriToBase64(context, it) } ?: JSONObject.NULL
+                            )
+                            // ---------- Back Document ----------
+                            put(
+                                "backDocPath",
+                                backImageUri.value?.let { ImageUtils.uriToBase64(context, it) } ?: JSONObject.NULL
+                            )
+
+                        }
+                        Log.d("AddGuestReq",jsonObject.toString())
+                                val gsonObject = JsonParser.parseString(jsonObject.toString()).asJsonObject
+                            viewModel.addAndUpdateGuest(gsonObject)
+
+                            }catch (e:Exception){
+                                e.printStackTrace()
+                            }
+                    }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -186,6 +263,17 @@ fun AddGuestScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008080))
             ) {
                 Text("Save", style = MaterialTheme.typography.titleMedium)
+            }
+
+            LaunchedEffect(addGuestResult) {
+                addGuestResult?.let { response ->
+                    if (response.ResponseStatus) {
+                        Toast.makeText(context, response.ResponseMessage, Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    } else {
+                        Toast.makeText(context, "Booking failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }

@@ -61,6 +61,7 @@ import com.syber.ssspltd.data.model.dasbord.ResponseModel
 import com.syber.ssspltd.data.model.dasbord.StockinOfficeDetail
 import com.syber.ssspltd.out.AuthViewModel
 import com.syber.ssspltd.utils.AppSharedPreferences
+import com.syber.ssspltd.utils.FontUtils.poppinsFontFamily1
 import net.simplifiedcoding.data.network.Resource
 
 
@@ -102,7 +103,7 @@ fun PaymentDashboardScreen(navController: NavController,
         val jsonObject = JsonObject().apply {
             addProperty("MOBILENO", AppSharedPreferences.getInstance(context).phoneNumber)
             addProperty("ACCOUNTID", AppSharedPreferences.getInstance(context).isPartyCode)
-            addProperty("DBNAME", "2025-2026")
+            addProperty("DBNAME", AppSharedPreferences.getInstance(context).userManuallySelectedYear)
        //     addProperty("DBNAME", "discount")
         }
         val jsonObjectBal = JsonObject().apply {
@@ -110,7 +111,7 @@ fun PaymentDashboardScreen(navController: NavController,
             addProperty("MOBILENO", AppSharedPreferences.getInstance(context).phoneNumber)
             addProperty("ACCOUNTID", AppSharedPreferences.getInstance(context).isPartyCode)
             addProperty("PartyID", AppSharedPreferences.getInstance(context).isPartyCode)
-            addProperty("DBNAME", "2025-2026")
+            addProperty("DBNAME", AppSharedPreferences.getInstance(context).userManuallySelectedYear)
         }
         viewModel1.fetchAllDashboardApis(jsonObject,jsonObjectBal)
     }
@@ -203,8 +204,9 @@ fun PaymentDashboardScreen(navController: NavController,
                     .padding(16.dp)
             ) {
                 // ✅ Stats
-                Text("Avg Days : ${data.avgDays}", style = MaterialTheme.typography.titleMedium)
-                Text("Total Limit : ${data.totalLimit}", style = MaterialTheme.typography.titleMedium)
+                Text("Avg Days : ${data.avgDays}", fontSize = 16.sp, fontFamily = poppinsFontFamily1,fontWeight = FontWeight.SemiBold)
+
+                Text("Total Limit : ${data.totalLimit}", fontSize = 16.sp, fontFamily = poppinsFontFamily1,fontWeight = FontWeight.SemiBold)
 
                 Spacer(Modifier.height(16.dp))
 
@@ -217,7 +219,8 @@ fun PaymentDashboardScreen(navController: NavController,
                 Spacer(Modifier.height(16.dp))
 
                 // ✅ List Details
-                Text("List Details", color = Color.Blue, style = MaterialTheme.typography.titleMedium)
+                Text("List Details", color = Color.Black, fontSize = 16.sp, fontFamily = poppinsFontFamily1,fontWeight = FontWeight.SemiBold)
+
 
                 Spacer(Modifier.height(8.dp))
                 val gson = Gson()
@@ -378,6 +381,7 @@ fun PaymentDetailsTable(
     pendingOrderNew: List<PendingOrderDetail> = emptyList(),
 ) {
     Column(Modifier.fillMaxWidth()) {
+
         PaymentDetailRow("Total Limit", totalLimit, Color(0xFF2E7D32))
         PaymentDetailRow("Balance Till Date (DR)", balanceTillDate, Color.Red)
         pendingOrdersList.forEach{
@@ -505,7 +509,7 @@ fun PaymentDetailRow(label: String, amount: Double, amountColor: Color) {
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+        Text(label, fontSize = 14.sp, fontFamily = poppinsFontFamily1,fontWeight = FontWeight.SemiBold)
         Text(
             text = "%,.2f".format(amount),
             style = MaterialTheme.typography.bodyMedium.copy(color = amountColor)

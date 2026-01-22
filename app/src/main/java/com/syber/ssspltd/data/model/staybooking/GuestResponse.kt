@@ -24,4 +24,10 @@ data class GuestMasterDetail(
     val nameCount: String?,
     val mobileNo: String?,
     val isNewUser: Boolean
-)
+){
+    val imageList: List<String>
+        get() = listOfNotNull(
+            frontDocPath.takeIf { it.isNotBlank() },
+            backDocPath.takeIf { it.isNotBlank() }
+        )
+}

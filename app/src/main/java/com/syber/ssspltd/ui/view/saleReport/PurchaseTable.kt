@@ -1,5 +1,6 @@
 package com.syber.ssspltd.ui.view.saleReport
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -39,59 +40,35 @@ import com.syber.ssspltd.R
 import com.syber.ssspltd.data.model.saleReport.SaleReportSecondaryData
 
 @Composable
-fun PurchaseTable(purchases: List<SaleReportSecondaryData>?) {
-    val context = LocalContext.current
-    val headerStyle = MaterialTheme.typography.labelMedium.copy(
-        fontWeight = FontWeight.Bold,
-        color = Color.Black
-    )
+ fun PurchaseRow(
+    purchase: SaleReportSecondaryData,
+    context: Context
+) {
+    Row {
+        TableCell(purchase.PurchaseNo, 80.dp, color = Color.Red)
+        TableCell(purchase.Supplier, 105.dp)
+        TableCell(purchase.Pcs, 40.dp)
+        TableCell(purchase.PAmount, 65.dp)
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-            .horizontalScroll(rememberScrollState()) // for overflow
-    ) {
-        // Header Row
-        Row(Modifier.background(Color(0xFFE0E0E0))) {
-            TableCell("Purchase No", width = 80.dp, style = headerStyle, background = Color(0xFFE0E0E0))
-            TableCell("Supplier", width = 105.dp, style = headerStyle, background = Color(0xFFE0E0E0))
-            TableCell("Pcs", width = 40.dp, style = headerStyle, background = Color(0xFFE0E0E0))
-            TableCell("Amount", width = 65.dp, style = headerStyle, background = Color(0xFFE0E0E0))
-            TableCell("P.slip", width = 53.dp, style = headerStyle, background = Color(0xFFE0E0E0))
-        }
-
-        // Data Rows
-        purchases?.forEach { purchase ->
-            Row {
-                TableCell(purchase.PurchaseNo, width = 80.dp, color = Color.Red)
-                TableCell(purchase.Supplier, width = 105.dp)
-                TableCell(purchase.Pcs.toString(), width = 40.dp)
-                TableCell(purchase.PurchaseNo.toString(), width = 65.dp) // Fixed column
-                // P.slip column
-                Box(
+        Box(
+            modifier = Modifier
+                .width(53.dp)
+                .height(40.dp)
+                .border(0.5.dp, Color.Gray),
+            contentAlignment = Alignment.Center
+        ) {
+            if (!purchase.PackingSlipPath.isNullOrEmpty()) {
+                Image(
+                    painter = painterResource(R.drawable.pdf),
+                    contentDescription = "Packing Slip",
                     modifier = Modifier
-                        .width(53.dp)
-                        .height(40.dp)
-                        .border(0.5.dp, Color.Gray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (!purchase.PackingSlipPath.isNullOrEmpty()) {
-                        Image(
-                            painter = painterResource(id = R.drawable.pdf), // your PNG/JPG drawable
-                            contentDescription = "Packing Slip",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable {
-                                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                                        data = Uri.parse(purchase.PackingSlipPath)
-                                    }
-                                    context.startActivity(intent)
-                                }
-                        )
-                    }
-                }
+                        .size(24.dp)
+                        .clickable {
+                            context.startActivity(
+                                Intent(Intent.ACTION_VIEW, Uri.parse(purchase.PackingSlipPath))
+                            )
+                        }
+                )
             }
         }
     }

@@ -16,3 +16,5 @@ data class DNToCustomerResponse(
     @SerializedName("ResponseStatus")
     val responseStatus: Boolean? = null
 )
+
+

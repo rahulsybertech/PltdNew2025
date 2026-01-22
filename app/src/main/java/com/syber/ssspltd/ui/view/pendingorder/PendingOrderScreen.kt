@@ -1,57 +1,38 @@
 package com.syber.ssspltd.ui.view.pendingorder
-
-import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
-import com.syber.ssspltd.data.model.Order
-import com.syber.ssspltd.out.AuthViewModel
-import com.syber.ssspltd.ui.theme.ThemeColors
-import com.syber.ssspltd.utils.ToolbarUtils
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.google.gson.JsonNull
+import androidx.navigation.NavController
 import com.google.gson.JsonObject
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.syber.ssspltd.data.model.OrderData
+import com.syber.ssspltd.out.AuthViewModel
+import com.syber.ssspltd.ui.theme.ThemeColors
+import com.syber.ssspltd.utils.AppSharedPreferences
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PendingOrderList(
     navController: NavController,
@@ -59,176 +40,135 @@ fun PendingOrderList(
     themeColors: ThemeColors
 ) {
     val context = LocalContext.current
-    val activity = (context as? Activity)
-
-    /*    val orders = listOf(
-            Order(
-                saleParty = "DL3331 WRONG TEST SYBER PARTY A/C",
-                item = "BABY POTTY SEAT",
-                type = "BORA",
-                subParty = "MUM23915 SUB PARTY 2",
-                orderNo = "24-25/DLO 28405",
-                orderDate = "31/03/2025 03:46:18 PM",
-                amount = 33.0,
-                qty = 1
-            ),
-            Order(
-                saleParty = "DL3331 WRONG TEST SYBER PARTY A/C",
-                item = "A4 75GSM PAPER",
-                type = "PETI",
-                subParty = "SELF",
-                orderNo = "24-25/DLO 27020",
-                orderDate = "12/03/2025 10:24:49 AM",
-                amount = 60000.0,
-                qty = 1
-            )
-        )*/
-
-    val listState = rememberLazyListState()
     val orderList by viewModel1.pendingOrder.collectAsState()
-    val isLoading by viewModel1.loading.collectAsState()
+    val selectedColor = Color(0xFF008080)
     var selectedStatus by remember { mutableStateOf("PENDING") }
+    var searchQueries by remember { mutableStateOf("") }
 
     // Call API when screen first opens
     LaunchedEffect(Unit) {
-        fetchOrders(viewModel1, "PENDING")
+        fetchOrders(viewModel1, "PENDING",context)
     }
+
     Scaffold(
         topBar = {
-            ToolbarUtils.CustomToolbar(
-                title = "Pending Orders",
-                onBackClick = { navController.popBackStack() },
-                themeColors = themeColors
-            )
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Confirm & Hold Buttons
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    // Pending Order Button
-                    Button(
-                        onClick = {
-                            selectedStatus = "PENDING"
-                            fetchOrders(viewModel1, selectedStatus)
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedStatus == "PENDING")
-                                MaterialTheme.colorScheme.primary   // highlighted
-                            else
-                                MaterialTheme.colorScheme.secondaryContainer // normal
-                        )
-                    ) {
-                        Icon(
-                            Icons.Default.ShoppingCart,
-                            contentDescription = "Pending Order",
-                            tint = if (selectedStatus == "PENDING")
-                                Color.White
-                            else
-                                MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(Modifier.width(6.dp))
+            Surface(
+                shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
+                shadowElevation = 8.dp,
+                color = Color(0xFF008080)
+            ) {
+                TopAppBar(
+                    title = {
                         Text(
-                            "Pending Order",
-                            color = if (selectedStatus == "PENDING")
-                                Color.White
-                            else
-                                MaterialTheme.colorScheme.onSurface
+                            text = "Pending Orders",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White
                         )
-                    }
-
-                    // Hold Order Button
-                    Button(
-                        onClick = {
-                            selectedStatus = "HOLD"
-                            fetchOrders(viewModel1, selectedStatus)
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selectedStatus == "HOLD")
-                                MaterialTheme.colorScheme.primary
-                            else
-                                MaterialTheme.colorScheme.secondaryContainer
-                        )
-                    ) {
-                        Icon(
-                            Icons.Default.ShoppingCart,
-                            contentDescription = "Hold Order",
-                            tint = if (selectedStatus == "HOLD")
-                                Color.White
-                            else
-                                MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            "Hold Order",
-                            color = if (selectedStatus == "HOLD")
-                                Color.White
-                            else
-                                MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-            }
-
-
-            items(orderList) { order ->
-                OrderCard(
-                    order = order, // ✅ pass the single item
-                    onViewImage = { selectedOrder ->
-                        Toast.makeText(
-                            context,
-                            "View image for ${selectedOrder.ItemName}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
             }
+        }
+    ) { padding ->
+        Column(modifier = Modifier.padding(padding)) {
 
+            // AI SEARCH BAR
+            OutlinedTextField(
+                value = searchQueries,
+                onValueChange = { searchQueries = it },
+                label = { Text("AI Search (e.g. 'High qty orders')") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(12.dp),
+                trailingIcon = {
+                    IconButton(onClick = {
+                        Toast.makeText(context, "AI Filtering: $searchQueries", Toast.LENGTH_SHORT).show()
+                    }) {
+                        Icon(Icons.Default.Search, contentDescription = "AI Search")
+                    }
+                }
+            )
+
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // STATUS FILTER BUTTONS
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        StatusButton("PENDING", selectedStatus, selectedColor) {
+                            selectedStatus = "PENDING"
+                            fetchOrders(viewModel1, "PENDING",context)
+                        }
+                        StatusButton("HOLD", selectedStatus, selectedColor) {
+                            selectedStatus = "HOLD"
+                            fetchOrders(viewModel1, "HOLD",context)
+                        }
+                    }
+                }
+
+                // ORDER LIST
+                items(orderList.filter {
+                    it.ItemName?.contains(searchQueries, ignoreCase = true) == true || searchQueries.isEmpty()
+                }) { order ->
+                    OrderCard(order = order)
+                }
+            }
         }
     }
 }
-private fun fetchOrders(viewModel: AuthViewModel, status: String) {
-    val jsonObject = JsonObject().apply {
-        addProperty("AccountID", "DL3331")
-        addProperty("OrderStatus", status)
-    }
-    viewModel.fetchPendingOrder(jsonObject)
-}
+
 @Composable
-fun OrderCard(order: OrderData, onViewImage: (OrderData) -> Unit) {
+fun StatusButton(status: String, currentStatus: String, color: Color, onClick: () -> Unit) {
+    val isSelected = status == currentStatus
+    Button(
+        onClick = onClick,
+      /*  modifier = Modifier.weight(1f),*/
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isSelected) color else MaterialTheme.colorScheme.secondaryContainer
+        )
+    ) {
+        Icon(
+            Icons.Default.ShoppingCart,
+            contentDescription = null,
+            tint = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(status, color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface)
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun OrderCard(order: OrderData) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(6.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column {
-            // Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFFE8F5E9))
                     .padding(12.dp)
             ) {
-                order.SaleParty?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color(0xFF2E7D32)
-                    )
-                }
+                Text(
+                    text = order.SaleParty ?: "Unknown Party",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFF2E7D32)
+                )
             }
 
-            // Details
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Item: ${order.ItemName}", style = MaterialTheme.typography.bodyLarge)
                 Text("Type: ${order.OrderType}", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
@@ -238,44 +178,96 @@ fun OrderCard(order: OrderData, onViewImage: (OrderData) -> Unit) {
 
                 Spacer(Modifier.height(12.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     AssistChip(
                         onClick = {},
-                        label = { order.OrderNo?.let { Text(it, color = Color.Red) } },
-                        leadingIcon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) }
+                        label = { Text(order.OrderNo ?: "", color = Color.Red) },
+                        leadingIcon = { Icon(Icons.Default.ShoppingCart, null) }
                     )
-
-                    /*    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Date", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
-                            order.OrderDate?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
-                        }*/
-
-                    /*     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                             Text("Qty", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
-                             AssistChip(
-                                 onClick = {},
-                                 label = { Text("${order.Qty}") },
-                                 leadingIcon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) }
-                             )
-                         }*/
                 }
 
                 Spacer(Modifier.height(12.dp))
 
-                TextButton(
-                    onClick = { onViewImage(order) },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Icon(Icons.Default.ShoppingCart, contentDescription = "View Image")
-                    Spacer(Modifier.width(6.dp))
-                    Text("View Image")
-                }
+                // ✅ UPDATED ACTIONS WITH IMAGE PATH
+                OrderActions(
+                    pdfUrl = order.PdfPath.toString(),
+                    imageUrl = order.PdfPath.toString() // Ensure your OrderData has ImgPath
+                )
             }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun OrderActions(pdfUrl: String, imageUrl: String) {
+    val context = LocalContext.current
 
+    FlowRow(
+        horizontalArrangement = Arrangement.Start,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // ✅ AI SCAN BUTTON
+        TextButton(onClick = {
+            if (imageUrl.isNotEmpty() && imageUrl != "null") {
+                performOcrOnOrder(Uri.parse(imageUrl), context)
+            } else {
+                Toast.makeText(context, "No image available for AI scan", Toast.LENGTH_SHORT).show()
+            }
+        }) {
+            Icon(Icons.Default.Search, null) // Search icon for AI Scan
+            Spacer(Modifier.width(6.dp))
+            Text("AI Scan Image")
+        }
+
+        TextButton(onClick = {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(pdfUrl)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
+            }
+        }) {
+            Icon(Icons.Default.Place, null)
+            Spacer(Modifier.width(6.dp))
+            Text("View PDF")
+        }
+    }
+}
+
+private fun fetchOrders(viewModel: AuthViewModel, status: String,context: Context) {
+    val jsonObject = JsonObject().apply {
+        addProperty("AccountID", AppSharedPreferences.getInstance(context).isPartyCode)
+        addProperty("OrderStatus", status)
+    }
+    viewModel.fetchPendingOrder(jsonObject)
+}
+
+// ✅ AI ML METHOD
+fun performOcrOnOrder(uri: Uri, context: android.content.Context) {
+    val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+    // In a real app, you might need to download the image first if it's a URL
+    // For local URIs or already cached images:
+    try {
+        val image = InputImage.fromFilePath(context, uri)
+        recognizer.process(image)
+            .addOnSuccessListener { visionText ->
+                val resultText = visionText.text
+                if (resultText.isNotBlank()) {
+                    // Show AI result in a Toast or Dialog
+                    Toast.makeText(context, "AI Scanned Details:\n$resultText", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, "AI could not find text in image", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "AI Scan Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    } catch (e: Exception) {
+        Toast.makeText(context, "Error loading image for AI", Toast.LENGTH_SHORT).show()
+    }
+}

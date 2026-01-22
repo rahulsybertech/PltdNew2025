@@ -1,6 +1,7 @@
 package com.syber.ssspltd.ui.view.usertype
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -96,8 +97,9 @@ fun UserTypeScreen(
         is Resource.Success<*> -> {
             val jsonResponse: UserTypeResponse =
                 Gson().fromJson(response.value.toString(), UserTypeResponse::class.java)
-            userTypes = jsonResponse.data.usersTypeListResult
 
+            userTypes = jsonResponse.data.usersTypeListResult
+            Log.d("userTypeList",userTypes.toString())
           /*  jsonResponse.apply {
                 AppSharedPreferences.getInstance(context).saveUserType(userTypes)
             }*/

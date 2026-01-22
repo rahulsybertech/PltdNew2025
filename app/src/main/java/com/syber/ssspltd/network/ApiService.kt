@@ -1,25 +1,41 @@
 package com.syber.ssspltd.network
 
 import com.google.gson.JsonObject
+import com.syber.ssspltd.data.model.bookingRequest.StayBookingRequest
 import com.syber.ssspltd.data.model.userType.ApiResponse
+import com.syber.ssspltd.utils.MyConstant.BRANCH_LIST
+import com.syber.ssspltd.utils.MyConstant.BlackListedName
 import com.syber.ssspltd.utils.MyConstant.CHECKOTP
 import com.syber.ssspltd.utils.MyConstant.CheckMobile_New
+import com.syber.ssspltd.utils.MyConstant.DeleteGuestMasterData
 import com.syber.ssspltd.utils.MyConstant.FYEARLIST
 import com.syber.ssspltd.utils.MyConstant.GETAPPMENUPERMISIONDATA
 import com.syber.ssspltd.utils.MyConstant.GET_APP_VERSION
 import com.syber.ssspltd.utils.MyConstant.GET_BANNER_LIST
+import com.syber.ssspltd.utils.MyConstant.GetAllEventImages
 import com.syber.ssspltd.utils.MyConstant.GetAppThemeDetailsData
+import com.syber.ssspltd.utils.MyConstant.GetBrandMasterDetails
+import com.syber.ssspltd.utils.MyConstant.GetBrands
+import com.syber.ssspltd.utils.MyConstant.GetCourierReport
 import com.syber.ssspltd.utils.MyConstant.GetDashboardDetail_Graph
 import com.syber.ssspltd.utils.MyConstant.GetDashboardDetails_BalanceTillDate
 import com.syber.ssspltd.utils.MyConstant.GetDashboardDetails_Interest_Discount
 import com.syber.ssspltd.utils.MyConstant.GetDashboardDetails_PendingOrder
 import com.syber.ssspltd.utils.MyConstant.GetDashboardDetails_StockInOffice
+import com.syber.ssspltd.utils.MyConstant.GetDebitNoteToCustomerReport
 import com.syber.ssspltd.utils.MyConstant.GetDispatchTypeList
+import com.syber.ssspltd.utils.MyConstant.GetFilterDetailList
+import com.syber.ssspltd.utils.MyConstant.GetFilterListNew
 import com.syber.ssspltd.utils.MyConstant.GetGuestMasterListByCustomerId
 import com.syber.ssspltd.utils.MyConstant.GetLedgerReportWithBalance
+import com.syber.ssspltd.utils.MyConstant.GetMainPartyAndSubPartyList
+import com.syber.ssspltd.utils.MyConstant.GetNickNameList
 import com.syber.ssspltd.utils.MyConstant.GetSaleReport
+import com.syber.ssspltd.utils.MyConstant.GetSaleServiceReport
 import com.syber.ssspltd.utils.MyConstant.GetSecurityCheckReport
+import com.syber.ssspltd.utils.MyConstant.GetStayBookingDataById
 import com.syber.ssspltd.utils.MyConstant.GetStayBookingDataList
+import com.syber.ssspltd.utils.MyConstant.GetStayBookingDataListByBranchId
 import com.syber.ssspltd.utils.MyConstant.GetStockInOfficeReport
 import com.syber.ssspltd.utils.MyConstant.ItemNameList
 import com.syber.ssspltd.utils.MyConstant.LOGIN
@@ -28,15 +44,20 @@ import com.syber.ssspltd.utils.MyConstant.MaxOrderNoByMarketer
 import com.syber.ssspltd.utils.MyConstant.OrderReportWithAccountID
 import com.syber.ssspltd.utils.MyConstant.PartyDetailsByPartyCode
 import com.syber.ssspltd.utils.MyConstant.PcsTypeList
+import com.syber.ssspltd.utils.MyConstant.SAVEANDUPDATESTAYBOOKING
 import com.syber.ssspltd.utils.MyConstant.SalesPartyCodeList
 import com.syber.ssspltd.utils.MyConstant.SaveNewUserDetails
+import com.syber.ssspltd.utils.MyConstant.SaveOrder
+import com.syber.ssspltd.utils.MyConstant.SaveUpdateGuestMasterDetails
 import com.syber.ssspltd.utils.MyConstant.SchemeListWithSupplierCode
 import com.syber.ssspltd.utils.MyConstant.SupplierNickName
 import com.syber.ssspltd.utils.MyConstant.USERTYPELIST
+import com.syber.ssspltd.utils.MyConstant.UpdateStayBookingActualTime
 import com.syber.ssspltd.utils.MyConstant.VERIFY_REFERRAL
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -121,6 +142,9 @@ interface ApiService {
     @POST(GetLedgerReportWithBalance)
     suspend fun fatchLedgerReportWithBalanceApii(@Body jsonObject: JsonObject): JsonObject
 
+    @POST(GetSaleServiceReport)
+    suspend fun fatchSaleServicesApi(@Body jsonObject: JsonObject): JsonObject
+
     @POST(OrderReportWithAccountID)
     suspend fun pendingOrderApii(@Body jsonObject: JsonObject): JsonObject
     @POST(GetStockInOfficeReport)
@@ -138,6 +162,67 @@ interface ApiService {
     @POST(OrderReportWithAccountID)
     suspend fun brandListApii(@Body jsonObject: JsonObject): JsonObject
 
+    @POST(SaveOrder)
+    suspend fun addOrderApii(@Body jsonObject: RequestBody
+    ): JsonObject
     @POST(GetGuestMasterListByCustomerId)
     suspend fun guestListApii( @Query("accountId") accountId: String, @Query("partyCode") supplierId: String): JsonObject
+
+    @POST(GetGuestMasterListByCustomerId)
+    suspend fun guestListByPhoneNumApii( @Query("mobileNo") accountId: String, @Query("partyCode") supplierId: String): JsonObject
+
+    @POST(BRANCH_LIST)
+    suspend fun branchListApii(): JsonObject
+
+    @POST(GetNickNameList)
+    suspend fun nickNameApii(): JsonObject
+
+    @POST(GetMainPartyAndSubPartyList)
+    suspend fun customerApii(   @Query("nickNameId") nickNameId:String): JsonObject
+
+    @POST(SAVEANDUPDATESTAYBOOKING)
+    suspend fun addStayBookingApi(@Body request: JsonObject): JsonObject
+    @POST(GetStayBookingDataListByBranchId)
+    suspend fun fatchStayBookingListByBranchIdApi(@Query("partyCode") partyCode: String): JsonObject
+
+    @POST(GetStayBookingDataById)
+    suspend fun fatchStayBookingListByRecordIDApi(@Query("recordId") recordId: String,@Query("partyCode") partyCode: String): JsonObject
+
+    @POST(UpdateStayBookingActualTime)
+    suspend fun updateStayBookingActualTimeReqApii(@Query("bookingId") bookingId: String,@Query("actualCheckInDate") actualCheckInDate: String): JsonObject
+
+    @POST(UpdateStayBookingActualTime)
+    suspend fun updateStayBookingActualCheckOutTimeReqApii(@Query("bookingId") bookingId: String,@Query("actualCheckoutDate") actualCheckInDate: String): JsonObject
+
+    @POST(DeleteGuestMasterData)
+    suspend fun deleteGuestdApi(@Query("recordId") partyCode: String): JsonObject
+
+    @POST(SaveUpdateGuestMasterDetails)
+    suspend fun addGuestgApi(@Body request: JsonObject): JsonObject
+
+    @POST(GetFilterListNew)
+    suspend fun saleReportFilterApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetCourierReport)
+    suspend fun courierReportApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(BlackListedName)
+    suspend fun honarListApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetAllEventImages)
+    suspend fun eventApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetFilterDetailList)
+    suspend fun courierReportFilterApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetBrands)
+    suspend fun brandListByBranchApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetBrandMasterDetails)
+    suspend fun brandMasterDetailsApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetDebitNoteToCustomerReport)
+    suspend fun debitNoteToCustomerReportApii(@Body jsonObject: JsonObject): JsonObject
+
+
 }

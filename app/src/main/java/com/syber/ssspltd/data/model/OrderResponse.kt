@@ -21,7 +21,10 @@ data class OrderData(
     val Amount: Int?,
     val Qty: Int?,
     val PdfPath: String?,
-    val ImageList: List<String>?,
+    val ImageList: List<OrderImage>?,
     val OrderType: String?,
     val OrderStatus: String?
+)
+data class OrderImage(
+    val Imagepath: String?
 )

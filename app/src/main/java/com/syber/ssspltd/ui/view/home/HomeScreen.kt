@@ -3,7 +3,6 @@ package com.syber.ssspltd.ui.view.home
 import android.app.Activity
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,8 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-
-
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,8 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.rememberBottomSheetScaffoldState
-import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,9 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -176,12 +169,14 @@ fun HomeScreen(navController: NavController, viewModel1: AuthViewModel, themeCol
         is Resource.Success<*> -> {
             val jsonResponse = try {
                 Gson().fromJson(response.value.toString(), UserTypeResponse::class.java)
+
             } catch (e: Exception) {
              context.showToast("Error parsing user types")
                 return
             }
 
             val userTypeList = jsonResponse.data?.usersTypeListResult
+            Log.d("userTypeList",userTypes.toString())
 
             if (userTypeList.isNullOrEmpty()) {
                 context. showToast("No user types found")
@@ -215,7 +210,7 @@ fun HomeScreen(navController: NavController, viewModel1: AuthViewModel, themeCol
             Log.d("BannerList",response.value.toString())
             val jsonResponse: BannerResponse = Gson().fromJson(response.value.toString(), BannerResponse::class.java)
 
-             bannerList = jsonResponse.data?.bannerList
+             bannerList = jsonResponse.BannerList
                 ?.map { it.LinkPath }
                 ?: emptyList()
 
@@ -462,9 +457,17 @@ fun SalePartyDropdown(
         selectedText = savedPartyName ?: ""
 
         val matchedItem = userTypes.find { it.Name == savedPartyName }
+
         matchedItem?.let {
             onItemSelected(it)
-
+            AppSharedPreferences.getInstance(context).apply {
+                savePartyCode(it.PartyCode)
+                savePartyId(it.ID)
+                saveUserType("true")
+                saveGroupCode(it.GroupCode)
+                saveUserId(it.ID)
+                saveAnyChosen(true, context)
+            }
             val jsonObject = JsonObject().apply {
                 addProperty("id", AppSharedPreferences.getInstance(context).userId)
                 addProperty("mobileno", AppSharedPreferences.getInstance(context).phoneNumber)

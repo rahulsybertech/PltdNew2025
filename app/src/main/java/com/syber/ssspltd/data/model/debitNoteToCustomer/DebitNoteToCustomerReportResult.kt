@@ -31,3 +31,5 @@ data class DebitNoteToCustomerReportResult(
     @SerializedName("NetAmt")
     val netAmt: String? = null
 )
+
+

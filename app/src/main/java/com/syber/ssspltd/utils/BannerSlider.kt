@@ -2,8 +2,8 @@ package com.syber.ssspltd.ui.view.home
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -42,23 +42,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.piashcse.hilt_mvvm_compose_movie.navigation.Screen
-import kotlinx.coroutines.delay
 import com.syber.ssspltd.R
 import com.syber.ssspltd.data.model.home.AppMenuPermission
-import com.syber.ssspltd.data.model.home.MenuPermissionResponse
 import com.syber.ssspltd.data.model.home.SecurityCheckResponse
+import com.syber.ssspltd.data.model.staybooking.StayBookingResult
 import com.syber.ssspltd.out.AuthViewModel
+import com.syber.ssspltd.ui.view.CreditNoteToSupplierScreen
 import com.syber.ssspltd.ui.view.addorder.AddOrderActivityNew
 import com.syber.ssspltd.utils.AppSharedPreferences
 import com.syber.ssspltd.utils.FontUtils.poppinsFontFamily1
 import com.syber.ssspltd.utils.MyConstant
-
+import com.syber.ssspltd.utils.MyConstant.GetStayBookingDataListByBranchId
+import kotlinx.coroutines.delay
 import net.simplifiedcoding.data.network.Resource
 
 
@@ -76,6 +76,7 @@ fun BannerScreen(
         Resource.Loading
     )
     var showDialog by remember { mutableStateOf(true) }
+    val bookings by viewModel1.stayBooking.collectAsState()
 
     var pen_be by remember { mutableStateOf("0") }
     var isSecurity by remember { mutableStateOf(true) }
@@ -103,6 +104,12 @@ fun BannerScreen(
 
     }
 
+    var  userType=     AppSharedPreferences.getInstance(context).groupCode
+    if (userType == "Others") {
+        AppSharedPreferences.getInstance(context).isPartyCode?.let { viewModel1.fatchStayBookingListByBranchReq(it) }
+    } else {
+        AppSharedPreferences.getInstance(context).isPartyCode?.let { viewModel1.fetchStayBooking(it) }
+    }
 
     LaunchedEffect(securityCheckReportResponse) {
         if (securityCheckReportResponse is Resource.Loading) {
@@ -158,6 +165,7 @@ fun BannerScreen(
             CurrentBalanceCard(context,isSecurity, balance = "10,42,800", securityCheck = "Cleared")
         }
         item {     DynamicGridMenu(
+            bookings,
             appMenuPermissionList = appMenuPermissionList,
             navController = navController,context
         )  }
@@ -166,7 +174,7 @@ fun BannerScreen(
 
 
 @Composable
-fun DynamicGridMenu(
+fun DynamicGridMenu(bookings:List<StayBookingResult>,
     appMenuPermissionList: List<AppMenuPermission>,
     navController: NavController,context: Context
 ) {
@@ -202,34 +210,73 @@ fun DynamicGridMenu(
                                 "Sale Report" -> {
                                     navController.navigate(Screen.SaleReport.route)
                                 }
+
                                 "DashBoard" -> {
                                     navController.navigate(Screen.DasbordScreen.route)
                                 }
+                                "Debit Note" -> {
+                                    navController.navigate(Screen.DebitNoteScreen.route)
+                                }
+                                "Credit Note To Supplier" -> {
+                                    navController.navigate(Screen.CreditNoteToSupplier.route)
+                                }
+
+                                "Debit Note To Supplier" -> {
+                                    navController.navigate(Screen.DebitNoteToSupplier.route)
+                                }
+                                "Debit Note To Customer" -> {
+                                    navController.navigate(Screen.DebitNoteToCustomer.route)
+                                }
+                                "Sale Service" -> {
+                                    navController.navigate(Screen.SaleServicesScreen.route)
+                                }
+                                "Courier Report" -> {
+                                    navController.navigate(Screen.CourierReportScreen.route)
+                                }
+
+
                                 "Ledger" -> {
                                     navController.navigate(Screen.LegerScreen.route)
                                 }
-                                "Add Order" -> {
-                                    context.startActivity(Intent(context, AddOrderActivityNew::class.java))
 
-                                    //  navController.navigate(Screen.AddOrder.route)
+                                "Add Order" -> {
+                                    context.startActivity(
+                                        Intent(
+                                            context,
+                                            AddOrderActivityNew::class.java
+                                        )
+                                    )
+
+
                                 }
+
                                 "Pending Order" -> {
                                     navController.navigate(Screen.PendingOrderList.route)
                                 }
+
                                 "Stock in office" -> {
                                     navController.navigate(Screen.StockInOrderScreen.route)
                                 }
+
                                 "Debit Note to" -> {
                                 }
+
                                 "Brands" -> {
                                     navController.navigate(Screen.BrandsScreen.route)
                                 }
+
                                 "Honhar Khiladi" -> {
                                     navController.navigate(Screen.HonorListScreen.route)
                                 }
+
                                 "Stay Booking" -> {
-                                    navController.navigate(Screen.StayBookingListScreen.route)
-                                 //   navController.navigate(Screen.BookingRequestScreen.route)
+                                    if(bookings.isEmpty()){
+                                        navController.navigate(Screen.BookingRequestScreen.route)
+                                    }else{
+                                        navController.navigate(Screen.StayBookingListScreen.route)
+                                    }
+
+                                    //   navController.navigate(Screen.BookingRequestScreen.route)
                                 }
                             }
 

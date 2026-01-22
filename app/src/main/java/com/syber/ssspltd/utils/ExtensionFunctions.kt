@@ -45,6 +45,11 @@ fun Context.findActivity(): Activity? = when (this) {
 }
 
 
+fun String.toSentenceCase(): String {
+    if (this.isEmpty()) return this
+    return this.lowercase()
+        .replaceFirstChar { it.uppercase() }
+}
 fun View.makeVisible() {
     visibility = View.VISIBLE
 }

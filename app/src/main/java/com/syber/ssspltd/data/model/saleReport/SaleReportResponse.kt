@@ -1,5 +1,8 @@
 package com.syber.ssspltd.data.model.saleReport
 
+import com.syber.ssspltd.data.model.honar.BlackListedName
+
+
 data class SaleReportResponse(
     val ResponseCode: Int,
     val ResponseStatus: Boolean,
@@ -13,6 +16,7 @@ data class SaleReportResponse(
     val DefaultStartDate: String,
     val DefaultEndDate: String,
     val SaleReportResult: List<SaleReportResult>?,
+    val BlackListedItem: List<BlackListedName>?,
     val BrandInsertingRequestData: Any?,
     val Events: Any?,
     val EventName: Any?,

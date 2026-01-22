@@ -12,14 +12,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.ui.graphics.Path
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextField
@@ -294,14 +292,11 @@ fun LoginScreen(navController: NavController, viewModel1: AuthViewModel, themeCo
             showSheet = showOtpSheet,
             onDismiss = { showOtpSheet = false },
             onOtpSubmit = { otp ->
-
-
                 val jsonObject = JsonObject().apply {
                     addProperty("mobileno", mobileNumber)
                     addProperty("otptype", "dd")
                     addProperty("otp", otp)
                 }
-
                 val isConnected = NetworkUtils.isNetworkAvailable(context)
                 if (!isConnected) {
                     Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
@@ -318,13 +313,6 @@ fun LoginScreen(navController: NavController, viewModel1: AuthViewModel, themeCo
             },
             onResendOtp = { otp ->
                 showResendDialog = true
-               /* if(showResendDialog){
-                    showResendDialog = true
-                }*/
-
-
-              //  showOtpSheet = false
-             //   keyboardController?.show()
             },
             themeColors
         )
@@ -500,9 +488,6 @@ fun LoginScreen(navController: NavController, viewModel1: AuthViewModel, themeCo
         }
     }
 }
-
-
-
 
 fun resetLoginResponse(viewModel1: AuthViewModel) {
     viewModel1._loginResponse.value = Resource.Loading

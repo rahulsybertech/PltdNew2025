@@ -9,13 +9,13 @@ data class SaleReportFilterResponse(
     val BlackListReportStatus: Boolean?,
     val StayBookingStatus: Boolean?,
 
-    val AdjustmentType: List<String>?,
+    val AdjustmentType: List<AdjustmentType>?,
     val AdjustmentTypeCount: String?,
 
-    val EntryType: List<String>?,
+    val EntryType: List<EntryType>?,
     val EntryTypeCount: String?,
 
-    val AccountType: List<String>?,
+    val AccountType: List<AccountType1>?,
     val AccountTypeCount: String?,
 
     val Courier: List<String>?,
@@ -39,6 +39,16 @@ data class SaleReportFilterResponse(
 data class BranchItem(
     val BranchName: String?
 )
+data class AdjustmentType(
+    val AdjustmentName: String?
+)
+data class EntryType(
+    val EntryTypeName: String?
+)
+data class AccountType1(
+    val AccountTypeName: String?
+)
+
 
 data class SubPartyItem(
     val SubPartyName: String?

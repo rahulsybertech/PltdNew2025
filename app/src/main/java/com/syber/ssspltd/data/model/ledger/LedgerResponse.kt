@@ -1,5 +1,9 @@
 package com.syber.ssspltd.data.model.ledger
 
+import com.syber.ssspltd.data.model.gallery.EventItem
+
+import com.syber.ssspltd.data.model.honar.BlackListedName
+
 data class LedgerResponse(
     val ResponseCode: Int? = null,
     val ResponseStatus: Boolean? = null,
@@ -15,8 +19,11 @@ data class LedgerResponse(
     val DefaultStartDate: String? = null,
     val DefaultEndDate: String? = null,
     val LedgerReportResult: List<LedgerReportItem>? = null,
+    val BlackListedName: List<BlackListedName>?,
+    val Events: List<EventItem>,
+    val CourierReportResult: List<CourierReportItem>,
     val BrandInsertingRequestData: Any? = null,
-    val Events: Any? = null,
+
     val EventName: String? = null,
     val EventLogo: String? = null,
     val Year: String? = null,
@@ -40,4 +47,14 @@ data class LedgerResponse(
         val PDFPath: String? = null,
         val TotalBalanceAmt: String? = null
     )
+
+    data class CourierReportItem(
+        val SRNO: String,
+        val CourierName: String,
+        val Date: String,
+        val SaleBillNumber: String,
+        val Station: String,
+        val CourierNo: String
+    )
+
 }

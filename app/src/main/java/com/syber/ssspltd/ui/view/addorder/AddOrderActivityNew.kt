@@ -1,8 +1,10 @@
 package com.syber.ssspltd.ui.view.addorder
+
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,22 +13,24 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
-import android.widget.Button
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.activity.viewModels
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
@@ -34,8 +38,8 @@ import com.google.gson.JsonObject
 import com.ssspvtltd.quick.widgets.spinner.MaterialSpinner
 import com.syber.ssspltd.R
 import com.syber.ssspltd.adapter.ItemEntryAdapter
-
 import com.syber.ssspltd.data.model.ApiErrorResponse
+import com.syber.ssspltd.data.model.ImageModel
 import com.syber.ssspltd.data.model.Party
 import com.syber.ssspltd.data.model.PcsType
 import com.syber.ssspltd.data.model.addorder.DispatchTypeItem
@@ -50,7 +54,6 @@ import com.syber.ssspltd.data.model.addorder.Transport
 import com.syber.ssspltd.databinding.AddOrderActivityBinding
 import com.syber.ssspltd.out.AuthViewModel
 import com.syber.ssspltd.utils.AppSharedPreferences
-
 import com.syber.ssspltd.utils.NetworkUtils
 import com.syber.ssspltd.utils.ProgressUtil
 import com.syber.ssspltd.utils.ProgressUtil.dismissProgress
@@ -60,12 +63,12 @@ import com.syber.ssspltd.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.simplifiedcoding.data.network.Resource
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -77,11 +80,13 @@ class AddOrderActivityNew : AppCompatActivity() {
     private val mutableMarketerList = mutableListOf<Marketer>()
     private val saleList = mutableListOf<SalesParty>()
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    private lateinit var subPartyId: String
-    private lateinit var salePartyId: String
-    private lateinit var transportId: String
-    private lateinit var stationId: String
-    private lateinit var dispatchTypeID: String
+    private  var subPartyId: String=""
+    private  var salePartyId: String=""
+    private  var transportId: String=""
+    private  var stationId: String=""
+    private  var marketerID: String=""
+    private  var dispatchTypeID: String=""
+    private var traceIdentifier = ""
     private var isSubPartyRemark = false
 
     private val selectedImages = mutableListOf<Uri>()
@@ -90,7 +95,7 @@ class AddOrderActivityNew : AppCompatActivity() {
     private lateinit var imageContainer: LinearLayout
     private val imageBase64List = mutableListOf<String>()
 
-
+    @OptIn(ExperimentalBadgeUtils::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // ViewBinding setup
@@ -99,13 +104,15 @@ class AddOrderActivityNew : AppCompatActivity() {
         binding.ivBack.apply { setOnClickListener { finish() } }
     //    binding.tvDispatchFromDate.apply { setOnClickListener { finish() } }
         fetchMarketerList()
-        fetchSalePartyList()
-        fetchNickName()
-        fatchDispatchType()
+
+
 
         val result = filterItems(items) { it.startsWith("A") }
         println(result)
         binding.tvAddItem.setOnClickListener { showCustomBottomSheet() }
+        authViewModel.itemCount.observe(this) { count ->
+            updateBadge(count)
+        }
 
         cameraLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -152,6 +159,12 @@ class AddOrderActivityNew : AppCompatActivity() {
             binding.etSalePartyName.text?.clear()
             binding.etSubParty.text?.clear()
             binding.etStation.text?.clear()
+            binding.etAvailableLimit.apply {
+                setText("")
+            }
+            binding.etAverageDays.apply {
+                setText("")
+            }
         }
 
         binding.tilSubParty.setEndIconOnClickListener{
@@ -162,7 +175,6 @@ class AddOrderActivityNew : AppCompatActivity() {
 
         binding.tilTransport.setEndIconOnClickListener{
             binding.etTransport.text?.clear()
-            binding.etSubParty.text?.clear()
             binding.etStation.text?.clear()
         }
         binding.tilStation.setEndIconOnClickListener{
@@ -178,83 +190,109 @@ class AddOrderActivityNew : AppCompatActivity() {
         binding.placeOrder.setOnClickListener {
             if (validate())
                 binding.apply {
-                    //   binding.placeOrder.isEnabled = false
+                    try {
+                        val mainObject = JSONObject()
 
-                    var totalQty = 0
-                    var totalAmount = 0.0
+                        mainObject.put("subPartyID", null)
+                        mainObject.put("orderType", "PENDING")
+                        mainObject.put("marketerId", marketerID)
+                        mainObject.put("marketer", "")
 
-
-
-                    val hashMap: HashMap<String, RequestBody?> = HashMap()
-                    println("PLACING_ORDER 3 ${Gson().toJson(hashMap)}")
-                    hashMap["SalePartyId"] = salePartyId.toRequestBody()
-                    println("PLACING_ORDER 2 ${Gson().toJson(salePartyId.toRequestBody())}")
-                    if (subPartyId == "00000000-0000-0000-0000-000000000000") {
-                        hashMap["SubPartyId"] = "".toRequestBody()
-                    } else {
-
-                        if(subPartyId.equals("null")){
-                            hashMap["SubPartyId"] = "".toRequestBody()
+                        if (binding.radioSubparty.isChecked) {
+                            mainObject.put("subPartyID", subPartyId)
+                            mainObject.put("bStationId", stationId)
+                            mainObject.put("bStation", "string")
+                            mainObject.put("transportId", transportId)
+                            mainObject.put("transport", "string")
+                        } else {
+                            mainObject.put("subPartyID", null)
+                            mainObject.put("bStationId", stationId)
+                            mainObject.put("bStation", "string")
+                            mainObject.put("transportId", transportId)
+                            mainObject.put("transport", "string")
                         }
-                        else{
-                            hashMap["SubPartyId"] = subPartyId.toRequestBody()
+
+                        mainObject.put("salePartyId", salePartyId)
+                        mainObject.put(
+                            "purchasePartyId",
+                            AppSharedPreferences.getInstance(this@AddOrderActivityNew).partyId
+                        )
+
+                        mainObject.put("schemeId", null)
+                        mainObject.put("schemeName", "string")
+                        mainObject.put("deliveryDateFrom", tvDispatchFromDate.text.toString())
+                        mainObject.put("deliveryDateTo", tvDispatchToDate.text.toString())
+
+                        val imagesArray = JSONArray()
+                        for (base64 in imageBase64List) {
+                            imagesArray.put(base64)
+                        }
+                        mainObject.put("images", imagesArray)
+
+                        mainObject.put("lattitude", "string")
+                        mainObject.put("longitude", "string")
+                        mainObject.put("orderStatus", "PENDING")
+                        mainObject.put("traceIdentifier", traceIdentifier)
+                        mainObject.put("dispatchTypeID", dispatchTypeID)
+                        mainObject.put("subPartyAsRemark", "")
+                        mainObject.put("orderNo", binding.etSerialNo.text.toString())
+
+                        val secondariesArray = JSONArray()
+                        val secondary = JSONObject()
+                        secondary.put("pcsId", selectedPcsTypeGlobal!!.ID)
+                        secondary.put("pcsTypeName", selectedPcsTypeGlobal!!.PcsType)
+                        secondary.put("qty", 1)
+                        secondary.put("amount", 100)
+
+                        val itemDetailArray = JSONArray()
+                        for (item in itemList) {
+                            val itemDetail = JSONObject().apply {
+                                put("itemId", item.itemId ?: "")
+                                put("itemName", item.item ?: "")
+                                put("itemQty", item.quantity)
+                                put("amount", "1")
+                            }
+                            itemDetailArray.put(itemDetail)
                         }
 
+                        secondary.put("itemDetail", itemDetailArray)
+                        secondariesArray.put(secondary)
+                        mainObject.put("orderBookSecondaries", secondariesArray)
+
+                        println(mainObject.toString())
+                        // Convert JSONObject to RequestBody
+                        val requestBody = mainObject.toString()
+                            .toRequestBody("application/json; charset=utf-8".toMediaType())
+
+                        // Call your Retrofit API
+
+                      saveOrder(requestBody)
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
 
-                    if(isSubPartyRemark){
-                        hashMap["SubPartyId"] = "".toRequestBody()
-                        hashMap["TransportId"] = transportId.toRequestBody()
-                        hashMap["BstationId"] = stationId.toRequestBody()
-                    }else{
-                        hashMap["TransportId"] = transportId.toRequestBody()
-                        hashMap["BstationId"] = stationId.toRequestBody()
-                    }
-                    hashMap["SubPartyasRemark"] = etSubPartyRemark.text.toString().toRequestBody()
 
-                    hashMap["DispatchTypeID"] = dispatchTypeID.toRequestBody()
-                    //    hashMap["BstationId"] = bookingStationId.toRequestBody()
-                  //  hashMap["SchemeId"] = schemeId.toRequestBody()
-                //    hashMap["OrderCategary"] = pvtMarka.toRequestBody()
-                    hashMap["DeliveryDateFrom"] = tvDispatchFromDate.text.toString().toRequestBody()
-                    hashMap["DeliveryDateTo"] = tvDispatchToDate.text.toString().toRequestBody()
-                    hashMap["Remark"] = etDiscription.text.toString().toRequestBody()
-              /*      if (isPvtMarka){
-                        hashMap["PvtMarka"] = etpvtMarka.text.toString().toRequestBody()
-                    }*/
-
-                    hashMap["TotalQty"] = "0".toRequestBody()
-                    hashMap["TotalAmt"] = "0".toRequestBody()
-                    hashMap["OrderTypeName"] = "TRADING".toRequestBody()
-                    hashMap["OrderStatus"] = "PENDING".toRequestBody()
-                    val jsonArray = JSONArray()
-                    imageBase64List.forEach { jsonArray.put(it) }
-
-                   /* if (viewModel.pendingOrderID.isNotNullOrBlank()) hashMap["id"] =
-                        (editData?.id ?: "").toRequestBody()
-*/
-
-                    Log.e("hashmap",hashMap.toString())
-                    authViewModel.placeOrder(hashMap)
-                    binding.placeOrder.isEnabled=false
+                    //   authViewModel.placeOrder(hashMap,itemList,addImageDataList,selectedPcsTypeGlobal!!.ID,selectedPcsTypeGlobal!!.PcsType,totalQty,totalAmount)
+                  //  binding.placeOrder.isEnabled=false
                 }
+
         }
 
     }
 
-/*    private fun addImageToLayout(uri: Uri) {
-        val imageView = ImageView(this)
-        imageView.setImageURI(uri)
-        imageView.layoutParams = LinearLayout.LayoutParams(
-            300,
-            300
-        ).apply { setMargins(8, 8, 8, 8) }
 
-      binding.imageContainer.addView(imageView)
-    }*/
 
-    // List to store Base64 strings
- //   private val imageBase64List = mutableListOf<String>()
+
+
+    private fun updateBadge(count: Int) {
+        if (count > 0) {
+            binding.tvBadge.text = count.toString()
+            binding.tvBadge.visibility = View.VISIBLE
+        } else {
+            binding.tvBadge.visibility = View.GONE
+        }
+    }
 
     private fun addImageToLayout(uri: Uri) {
         // Convert Uri to Bitmap
@@ -314,26 +352,63 @@ class AddOrderActivityNew : AppCompatActivity() {
         val byteArray = outputStream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.NO_WRAP)
     }
-
-
-  /*  private fun handleImageUri(uri: Uri) {
-        try {
-            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            val base64String = convertBitmapToBase64(bitmap)
-            imageBase64List.add(base64String)
-            addImageToLayout(bitmap, base64String)
-        } catch (e: IOException) {
-            e.printStackTrace()
+    private fun saveOrder(jsonObject: RequestBody) {
+        if (!NetworkUtils.isNetworkAvailable(this)) {
+            showToast(getString(R.string.please_check_internet))
+            return
         }
-    }*/
+        lifecycleScope.launch {
+            authViewModel.saveOrder(jsonObject).collect { resource ->
+                when (resource) {
+                    is Resource.Loading -> {
+                        // Progress already shown above
+                    }
 
- /*   // 🔄 Convert Bitmap → Base64
-    private fun convertBitmapToBase64(bitmap: Bitmap): String {
-        val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
-        val byteArray = outputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.NO_WRAP)
-    }*/
+                    is Resource.Success -> {
+                        ProgressUtil.dismissProgress()
+                        try {
+                            val response = resource.value
+                            showToast(response.message)
+                            finish()
+                           /* binding.etSerialNo.setText(response.data!!.orderNo.toString())
+                            traceIdentifier = response.data.traceIdentifier.toString()
+                            binding.etSerialNo.error = null*/
+
+                        } catch (e: java.lang.Exception) {
+                            /*    AlertUtil.responseExecption(
+                                    mContext,
+                                    "MaxOrderNoByMarketer ",
+                                    e.toString()
+                                )*/
+                        }
+                        //  Log.i("fetchOrderNoByMarketer", "fetchOrderNoByMarketer:$response ")
+                        /*          val nickName = response.data?.orderNo
+                                  if (response.success == true && !nickName.isNullOrBlank()) {
+                                      binding.etSerialNo.setText(nickName)
+                                  } else {
+                                      showToast(response.message.orEmpty())
+                                  }*/
+                    }
+
+                    is Resource.Failure -> {
+                        ProgressUtil.dismissProgress()
+
+                        val errorMessage = resource.errorBody?.let { errorJson ->
+                            try {
+                                val errorResponse = Gson().fromJson(errorJson, ApiErrorResponse::class.java)
+                                val errorList = errorResponse.title ?: listOf("Unknown validation error")
+                                errorList.toString()
+                            } catch (e: Exception) {
+                                "Error parsing failure message"
+                            }
+                        } ?: "Something went wrong"
+
+                        showToast(errorMessage)
+                    }
+                }
+            }
+        }
+    }
 
 
     private fun validate(): Boolean = with(binding) {
@@ -344,17 +419,18 @@ class AddOrderActivityNew : AppCompatActivity() {
             tilSaletParty.isErrorEnabled = true
             tilSaletParty.setError("You need to select sale party")
             return false
-        } else if (etAvailableLimit.text.isNullOrBlank()) {
+        } /*else if (etAvailableLimit.text.isNullOrBlank()) {
             etAvailableLimit.requestFocus()
             tilAvailableLimit.isErrorEnabled = true
-            tilAvailableLimit.setError("Out of limit, please contact to sss")
+            tilAvailableLimit.setError("You need to select sale party")
             return false
         } else if (etAverageDays.text.isNullOrBlank()) {
             etAverageDays.requestFocus()
             tilAverageDays.isErrorEnabled = true
+            tilSaletParty.isErrorEnabled = false
             tilAverageDays.setError("You need to select sale party")
             return false
-        } else if (radioSubparty.isChecked && etSubParty.text.isBlank() && (!etSubParty.text.toString()
+        }*/ else if (radioSubparty.isChecked && etSubParty.text.isBlank() && (!etSubParty.text.toString()
                 .equals("self", true))
         ) {
             etSubParty.requestFocus()
@@ -376,12 +452,12 @@ class AddOrderActivityNew : AppCompatActivity() {
             tilStation.isErrorEnabled = true
             tilStation.setError("You need to select station")
             return false
-        }/* else if (etDispatchType.text.isBlank()) {
+        } else if (etDispatchType.text.isBlank()) {
             etDispatchType.requestFocus()
             tilStation.isErrorEnabled = true
             tilStation.setError("You need to select station")
             return false
-        } */
+        }
 
 
 
@@ -403,12 +479,12 @@ class AddOrderActivityNew : AppCompatActivity() {
             tvDispatchToDate.setBackgroundResource(R.drawable.red_outline)
             tvDispatchToDate.error = "Please enter To date"
             return false
-        } /*else if (authViewModel.addItemDataList.size == 0) {
+        } else if (authViewModel.addItemDataList.size == 0) {
             tvAddItem.requestFocus()
             tvAddItem.setBackgroundResource(R.drawable.red_outline)
             tvAddItem.error = "You need to add some item"
             return false
-        }*/
+        }
         return true
     }
 
@@ -504,8 +580,6 @@ class AddOrderActivityNew : AppCompatActivity() {
         datePickerDialog.show()
     }
 
-
-
     ////Marketer
     private fun fetchMarketerList() = if (NetworkUtils.isNetworkAvailable(this)) {
         ProgressUtil.showProgress(this)
@@ -522,11 +596,16 @@ class AddOrderActivityNew : AppCompatActivity() {
 
                     val response = try {
                         Gson().fromJson(it.value, MarketerResponse::class.java)
+
                     } catch (e: Exception) {
                         e.printStackTrace()
                         showToast("Failed to parse marketer response")
                         return@observe
                     }
+                    fetchSalePartyList()
+                    fetchSchemeList()
+                    fetchNickName()
+                    fatchDispatchType()
 
                     if (response.success && response.data?.marketerlist != null) {
                         mutableMarketerList.clear()
@@ -551,7 +630,7 @@ class AddOrderActivityNew : AppCompatActivity() {
                             val errorJsonObject = JSONObject(it.errorBody ?: "")
                             errorJsonObject.optString("message", "Unknown error")
                         } catch (e: Exception) {
-                            "Failed to parse error"
+                            ""
                         }
                          showToast(errorMessage)
 
@@ -566,10 +645,12 @@ class AddOrderActivityNew : AppCompatActivity() {
     } else {
         showToast(resources.getString(R.string.please_check_internet))
     }
+
+
     private fun setupMarketerListAutoComplete(marketerList: List<Marketer>) {
         // Convert Marketer list to Party list (assuming Party is your local model)
         val partyList = marketerList.mapIndexed { index, marketer ->
-            Party(index + 1, marketer.MarketerName)
+            Party(index + 1, marketer.MarketerName!!)
         }
 
         // Get just the names for the AutoCompleteTextView
@@ -591,8 +672,9 @@ class AddOrderActivityNew : AppCompatActivity() {
         // Handle item selection
         binding.etMarketerName.setOnItemClickListener { _, _, position, _ ->
             val selectedName = adapter.getItem(position)
+            marketerID=marketerList.get(position).ID!!
             val selectedParty = partyList.find { it.name == selectedName }
-            fetchOrderNoByMarketer(marketerList.get(position).ID)
+            fetchOrderNoByMarketer(marketerList.get(position).ID!!)
             selectedParty?.let {
             }
         }
@@ -660,7 +742,7 @@ class AddOrderActivityNew : AppCompatActivity() {
                             val errorJsonObject = JSONObject(it.errorBody ?: "")
                             errorJsonObject.optString("message", "Unknown error")
                         } catch (e: Exception) {
-                            "Failed to parse error"
+                            ""
                         }
                         showToast(errorMessage)
 
@@ -679,22 +761,39 @@ class AddOrderActivityNew : AppCompatActivity() {
         val subParties = list.map { it.AccountCode }
         val subPartyAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, subParties)
         binding.etSalePartyName.setAdapter(subPartyAdapter)
-        binding.etSalePartyName.setText("", false)
+
+        // Clear initial text
+        binding.etSalePartyName.setText("")
+
+        // Show dropdown when the field is clicked
         binding.etSalePartyName.setOnClickListener {
             binding.etSalePartyName.showDropDown()
         }
 
-        binding.etSalePartyName.setOnItemClickListener { _, _, position, _ ->
-            val selectedName = subParties[position]
-            val name = list.getOrNull(position)?.Name.orEmpty()
-            salePartyId = list.getOrNull(position)?.ID.orEmpty()
-            val fullName = this.getString(R.string.sale_party_name, selectedName, name)
-            hideKeyboard()
-            fatchpartyDetails(AppSharedPreferences.getInstance(this).partyId.toString(),salePartyId)
-            binding.etSalePartyName.setText(fullName)
-
+        // Show dropdown when the field gains focus (important for edit)
+        binding.etSalePartyName.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.etSalePartyName.showDropDown()
+            }
         }
+
+        // Handle selection
+        binding.etSalePartyName.setOnItemClickListener { _, _, _, _ ->
+            val selectedCode = binding.etSalePartyName.text.toString() // the selected text
+            val selectedParty = list.find { it.AccountCode == selectedCode }
+
+            selectedParty?.let {
+                salePartyId = it.ID.orEmpty()
+                val fullName = this.getString(R.string.sale_party_name, it.AccountCode, it.Name)
+                binding.etSalePartyName.setText(fullName, false) // false = don’t trigger filtering again
+                binding.tilSaletParty.isErrorEnabled = false
+                hideKeyboard()
+                fatchpartyDetails(AppSharedPreferences.getInstance(this).partyId.toString(), salePartyId)
+            }
+        }
+
     }
+
 
     private fun fetchNickName() {
         if (!NetworkUtils.isNetworkAvailable(this)) {
@@ -728,7 +827,7 @@ class AddOrderActivityNew : AppCompatActivity() {
 
                         val nickName = response.data?.nickNameData?.nickName
                         if (response.success == true && !nickName.isNullOrBlank()) {
-                            binding.etNicName.setText(nickName)
+                            binding.etSupplierNickName.setText(nickName)
                         } else {
                             showToast(response.message.orEmpty())
                         }
@@ -800,7 +899,7 @@ class AddOrderActivityNew : AppCompatActivity() {
                             val errorJsonObject = JSONObject(it.errorBody ?: "")
                             errorJsonObject.optString("message", "Unknown error")
                         } catch (e: Exception) {
-                            "Failed to parse error"
+                            ""
                         }
                         showToast(errorMessage)
 
@@ -844,8 +943,24 @@ class AddOrderActivityNew : AppCompatActivity() {
 
                     is Resource.Success -> {
                         ProgressUtil.dismissProgress()
-                        val response = resource.value
-                        Log.i("fetchOrderNoByMarketer", "fetchOrderNoByMarketer:$response ")
+
+                     //   Log.i("TaG", "Response " + ORDER_NO + "---> " + response)
+                        try {
+                         //   val jsonObject: JSONObject = JSONObject(response)
+                            //                JSONObject js = jsonObject.getJSONObject("data");
+                            val response = resource.value
+                                binding.etSerialNo.setText(response.data!!.orderNo.toString())
+                                    traceIdentifier = response.data.traceIdentifier.toString()
+                                    binding.etSerialNo.error = null
+
+                        } catch (e: java.lang.Exception) {
+                        /*    AlertUtil.responseExecption(
+                                mContext,
+                                "MaxOrderNoByMarketer ",
+                                e.toString()
+                            )*/
+                        }
+                      //  Log.i("fetchOrderNoByMarketer", "fetchOrderNoByMarketer:$response ")
               /*          val nickName = response.data?.orderNo
                         if (response.success == true && !nickName.isNullOrBlank()) {
                             binding.etSerialNo.setText(nickName)
@@ -879,35 +994,40 @@ class AddOrderActivityNew : AppCompatActivity() {
         lifecycleScope.launch {
             showProgress(this@AddOrderActivityNew)
 
-            authViewModel.partyDetailsByPartyCodeReq("CF73064B-7A6A-4A73-A576-4159262D7742", "9180A043-BD2B-4A8A-B8EF-714A498B16D3").collect { resource ->
-                dismissProgress()
-
+            authViewModel.partyDetailsByPartyCodeReq(supplierId, accountId).collect { resource ->
                 when (resource) {
                     is Resource.Success -> {
+                        dismissProgress()
                         val subPartyList = resource.value.data?.subPartyList.orEmpty()
                         if (subPartyList.isEmpty()) {
                             clearAndDisableFields("No Sub Parties Available")
                             return@collect
                         }
 
-                        binding.etAvailableLimit.apply {
-                            setText("xxxxxxxxx")
-                        }
-                        binding.etAverageDays.apply {
-                            setText("xxxxxxxxx")
-                        }
+                        binding.etAvailableLimit.setText("xxxxxxxxx")
+                        binding.etAverageDays.setText("xxxxxxxxx")
                         binding.etSubParty.apply {
                             isEnabled = true
                             val subPartyNames = subPartyList.mapNotNull { it.SubPartyName }
                             setAdapter(ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, subPartyNames))
                             setText(subPartyList[0].SubPartyName ?: "")
-
+                            binding.tilSubParty.isErrorEnabled = false
                         }
                         setupSubPartyDropdown(subPartyList)
                     }
 
                     is Resource.Failure -> {
-                        Toast.makeText(this@AddOrderActivityNew, "Error: ${resource.errorBody}", Toast.LENGTH_SHORT).show()
+                        dismissProgress()
+                        Toast.makeText(
+                            this@AddOrderActivityNew,
+                            "Error: ${resource.errorBody}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is Resource.Loading -> {
+                        // Optional: show progress here if your flow emits a loading state
+                        showProgress(this@AddOrderActivityNew)
                     }
 
                     else -> Unit
@@ -942,7 +1062,7 @@ class AddOrderActivityNew : AppCompatActivity() {
             val transportNames = transportList.mapNotNull { it.TransportName }
             setAdapter(ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, transportNames))
             setText(transportList[0].TransportName ?: "")
-
+            handleStationDropdown(transportList.get(0).StationList.orEmpty())
             setOnItemClickListener { _, _, transportPosition, _ ->
                 handleStationDropdown(transportList[transportPosition].StationList.orEmpty())
             }
@@ -985,29 +1105,42 @@ class AddOrderActivityNew : AppCompatActivity() {
             val fullName = this.getString(R.string.sale_party_name, selectedName, name)
             hideKeyboard()
             handleTransportDropdown(list[position].TransportList.orEmpty())
+
             binding.etSubParty.setText(name)
 
         }
     }
     private fun setupDispatchTypeDropdown(list: List<DispatchTypeItem>) {
-        val subParties = list.map { it.value }
-        val subPartyAdapter = ArrayAdapter(this, R.layout.item_dropdown,R.id.tvDropdownItem, subParties)
-        binding.etDispatchType.setAdapter(subPartyAdapter)
+        // Extract list of display names (value strings)
+        val dispatchTypeNames = list.map { it.value.orEmpty() }
+
+        // Create the adapter with your custom layout item
+        val dispatchTypeAdapter = ArrayAdapter(
+            this,
+            R.layout.item_dropdown,        // your custom dropdown layout
+            R.id.tvDropdownItem,           // TextView id inside that layout
+            dispatchTypeNames              // list of names to show
+        )
+
+        dispatchTypeID = list?.get(0)?.id.toString()
+        binding.etDispatchType.setAdapter(dispatchTypeAdapter)
+
+        // Show dropdown on click
         binding.etDispatchType.setOnClickListener {
             binding.etDispatchType.showDropDown()
         }
 
+        // Handle item click
         binding.etDispatchType.setOnItemClickListener { _, _, position, _ ->
-            val selectedName = subParties[position]
-            val name = list.getOrNull(position)?.value.orEmpty()
-            dispatchTypeID = list.getOrNull(position)?.id.orEmpty()
-            val fullName = this.getString(R.string.sale_party_name, selectedName, name)
-            hideKeyboard()
-            //handleTransportDropdown(list[position].TransportList.orEmpty())
-            binding.etDispatchType.setText(name)
+            val selectedItem = list.getOrNull(position)
+            val selectedName = selectedItem?.value.orEmpty()
+            dispatchTypeID = selectedItem?.id.orEmpty()
 
+            hideKeyboard()
+            binding.etDispatchType.setText(selectedName)
         }
     }
+
 
     private fun setupTransPortDropdown(list: List<Transport>) {
         val subParties = list.map { it.TransportName }
@@ -1015,6 +1148,7 @@ class AddOrderActivityNew : AppCompatActivity() {
         val subPartyAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, subParties)
         binding.etTransport.setAdapter(subPartyAdapter)
         binding.etTransport.setText(list.get(0).TransportName, false)
+        transportId = list.get(0).TransportId.orEmpty()
         binding.etTransport.setOnClickListener {
             binding.etTransport.showDropDown()
         }
@@ -1036,6 +1170,7 @@ class AddOrderActivityNew : AppCompatActivity() {
         binding.etStation.setAdapter(subPartyAdapter)
 
         binding.etStation.setText(list.get(0).StationName, false)
+        stationId = list.get(0).StationId.orEmpty()
         binding.etStation.setOnClickListener {
             binding.etStation.showDropDown()
         }
@@ -1071,7 +1206,7 @@ class AddOrderActivityNew : AppCompatActivity() {
         }
     }
 
-    private fun fetch(marketerID: String) {
+  /*  private fun fetch(marketerID: String) {
         if (!NetworkUtils.isNetworkAvailable(this)) {
             showToast(getString(R.string.please_check_internet))
             return
@@ -1101,12 +1236,12 @@ class AddOrderActivityNew : AppCompatActivity() {
                         ProgressUtil.dismissProgress()
                         val response = resource.value
                         Log.i("fetchOrderNoByMarketer", "fetchOrderNoByMarketer:$response ")
-             /*           val nickName = response.orderDetails?.orderNo
+             *//*           val nickName = response.orderDetails?.orderNo
                         if (response.success == true && !nickName.isNullOrBlank()) {
                             binding.etSerialNo.setText(nickName)
                         } else {
                             showToast(response.message.orEmpty())
-                        }*/
+                        }*//*
                     }
 
                     is Resource.Failure -> {
@@ -1127,7 +1262,7 @@ class AddOrderActivityNew : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
 
 
     //API
@@ -1169,6 +1304,7 @@ class AddOrderActivityNew : AppCompatActivity() {
 
     private fun pcsTypeList(binding: View) {
         val spinnerType = binding.findViewById<MaterialSpinner>(R.id.spinnerType)
+
         lifecycleScope.launch {
             showProgress(this@AddOrderActivityNew)
             val jsonObject = JsonObject().apply {
@@ -1181,21 +1317,30 @@ class AddOrderActivityNew : AppCompatActivity() {
 
                 when (resource) {
                     is Resource.Success -> {
-                        val list = resource.value.data?.pcsType.orEmpty()
-                        if (list.isEmpty()) {
+                        val pcsTypeList = resource.value.data?.pcsType.orEmpty()
+                        if (pcsTypeList.isEmpty()) {
                             clearAndDisableFields("No PcsType Available")
                             return@collect
                         }
 
-                        // 🔥 Extract just the "PcsType" strings
-                        val pcsTypeNames = list.map { it.PcsType }
-
+                        // Adapter with only names
                         val adapter = ArrayAdapter(
                             this@AddOrderActivityNew,
                             android.R.layout.simple_spinner_dropdown_item,
-                            pcsTypeNames
+                            pcsTypeList.map { it.PcsType }
                         )
+                        selectedPcsTypeGlobal = pcsTypeList.get(0)
                         spinnerType.setAdapter(adapter)
+
+                        // 🔹 Save selected item
+                        spinnerType.setOnItemClickListener { parent, view, position, id ->
+                            val selectedPcsType: PcsType = pcsTypeList[position]
+                            // Now you have both ID and PcsType
+                            Log.d("SELECTED_PCS_TYPE", "ID: ${selectedPcsType.ID}, Name: ${selectedPcsType.PcsType}")
+
+                            // Save to variable or SharedPreferences if needed
+                            selectedPcsTypeGlobal = selectedPcsType // Example
+                        }
                     }
 
                     is Resource.Failure -> {
@@ -1207,6 +1352,10 @@ class AddOrderActivityNew : AppCompatActivity() {
             }
         }
     }
+
+    // Example global variable to hold selection
+    private var selectedPcsTypeGlobal: PcsType? = null
+
 
 
 
@@ -1220,18 +1369,22 @@ class AddOrderActivityNew : AppCompatActivity() {
                 when (resource) {
                     is Resource.Success -> {
                         val list = resource.value.data?.itemName.orEmpty()
+                        Log.e("itemList",resource.value.data.toString())
                         if (list.isEmpty()) {
                             clearAndDisableFields("No Sub Parties Available")
                             return@collect
                         }
-
-                        binding.etDispatchType.apply {
+                        val subPartyNames = list.mapNotNull { it.ItemName }
+                        val itemID = list.mapNotNull { it.ID }
+                        availableItemNames.addAll(subPartyNames)
+                        availableItemid.addAll(itemID)
+                     /*   binding.etDispatchType.apply {
                             isEnabled = true
                             val subPartyNames = list.mapNotNull { it.ItemName }
                             availableItemNames.addAll(subPartyNames)
                             setAdapter(ArrayAdapter(context, R.layout.item_dropdown,R.id.tvDropdownItem, subPartyNames))
                             setText(list[0].ItemName ?: "")
-                        }
+                        }*/
                     //    showCustomBottomSheet()
                      //   setupItemDropdown(list)
                     }
@@ -1248,8 +1401,19 @@ class AddOrderActivityNew : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ItemEntryAdapter
     private val itemList = mutableListOf(ItemEntry())
-    private val availableItemNames = mutableListOf<String>()
+    val addImageDataList = mutableStateListOf<ImageModel>()
 
+ //private  val addImageDataList: List<ImageModel>
+    private val availableItemNames = mutableListOf<String>()
+    private val availableItemid = mutableListOf<String>()
+
+    private var totalQty="";
+    private var totalAmount="";
+
+    private var  pcsId = ""
+    private var  packName = ""
+    private var  qty = ""
+    private var  amount = ""
     private fun showCustomBottomSheet() {
        /* list?.let {
             availableItemNames.addAll(it.mapNotNull { item -> item?.ID })
@@ -1265,6 +1429,8 @@ class AddOrderActivityNew : AppCompatActivity() {
             }
         }
 
+
+
         fatchItem()
 
 // Ensure it resizes above keyboard
@@ -1273,15 +1439,19 @@ class AddOrderActivityNew : AppCompatActivity() {
         recyclerView =view.findViewById(R.id.recyclerView)
         pcsTypeList(view)
         val saveBtn = view.findViewById<AppCompatTextView>(R.id.addItem)
+        val etQuantity = view.findViewById<EditText>(R.id.etQuantity)
+        val etAmount = view.findViewById<EditText>(R.id.etAmount)
         val closeBtn = view.findViewById<AppCompatTextView>(R.id.closeDialog)
-
-             adapter = ItemEntryAdapter(itemList,availableItemNames,
+        etQuantity.setText(totalQty)
+        etAmount.setText(totalAmount)
+             adapter = ItemEntryAdapter(itemList,availableItemNames,availableItemid,
                  onAddClick = { position ->
                  itemList.add(ItemEntry())
                  adapter.notifyItemInserted(itemList.size - 1)
-
+                     authViewModel.addItem()
                  // Also notify that previous last item should now show delete icon
                  if (itemList.size > 1) {
+
                      val index = itemList.size - 2
                      if (index >= 0 && index < adapter.itemCount) {
                          recyclerView.post {
@@ -1293,6 +1463,7 @@ class AddOrderActivityNew : AppCompatActivity() {
             onDeleteClick = { position ->
                 if (position in itemList.indices) {
                     itemList.removeAt(position)
+                    authViewModel.removeItem()
                     adapter.notifyItemRemoved(position)
                 }
 
@@ -1304,12 +1475,15 @@ class AddOrderActivityNew : AppCompatActivity() {
 
        saveBtn.setOnClickListener {
             if (validateAllEntries()) {
-                Toast.makeText(this, "Valid data submitted!", Toast.LENGTH_SHORT).show()
+             //   authViewModel.addItem()
+                totalQty=etQuantity.text.toString().trim()
+                totalAmount=etAmount.text.toString().trim()
+                dialog.dismiss()
             }
         }
 
         closeBtn.setOnClickListener {
-            finish()
+            dialog.dismiss()
         }
 
         dialog.show()

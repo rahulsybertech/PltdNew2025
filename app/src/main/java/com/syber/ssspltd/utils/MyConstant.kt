@@ -20,7 +20,7 @@ object MyConstant {
     const val USERTYPELIST: String = BASE_URL + "GetUsersTypeList"
     const val VERIFY_REFERRAL: String = BASE_URL + "VerifyReferral"
 
-    const val GET_BANNER_LIST: String = BASE_URL + "GetBannerListNew"
+    const val GET_BANNER_LIST: String = DOMAIN + "api/PltdApp/GetBannerListNew"
     const val CHECKOTP: String = BASE_URL + "CheckOTP"
     const val CheckMobile_New: String = BASE_URL + "CheckMobile_New"
     const val GET_APP_VERSION: String = "http://app.ssspltd.com/apipltd/GetAppVersion"
@@ -43,16 +43,54 @@ object MyConstant {
     const val ItemNameList: String = BASE_URL + "ItemNameList"
     const val GetSaleReport: String = DOMAIN + "api/PltdApp/GetSaleReport"
     const val GetLedgerReportWithBalance: String = DOMAIN + "api/PltdApp/GetLedgerReportWithBalance"
+    const val GetSaleServiceReport: String = DOMAIN + "api/PltdApp/GetSaleServiceReport"
     const val OrderReportWithAccountID: String = DOMAIN + "api/PltdApp/OrderReportWithAccountID"
-    const val GetFilterDetailList: String = DOMAIN + "api/PltdApp/GetFilterDetailList"
+
     const val GetStockInOfficeReport: String = DOMAIN + "api/PltdApp/GetStockInOfficeReport"
     const val GetStayBookingDataList: String = DOMAIN + "api/StayBooking/GetStayBookingDataList"
     const val PcsTypeList: String = BASE_URL + "PcsTypeList"
 
    const val GetGuestMasterListByCustomerId: String = DOMAIN + "Api/StayBooking/GetGuestMasterListByCustomerId"
+   const val BRANCH_LIST: String = DOMAIN + "Api/StayBooking/GetBranchDetailList"
+   const val SAVEANDUPDATESTAYBOOKING: String = DOMAIN + "Api/StayBooking/SaveAndUpdateStayBooking1"
+
+    const val GetStayBookingDataListByBranchId: String =
+        DOMAIN + "api/StayBooking/GetStayBookingDataListByBranchId"
+    const val GetStayBookingDataById: String =
+        DOMAIN + "api/StayBooking/GetStayBookingDataById"
+
+    const val GetFilterListNew: String = DOMAIN + "api/PltdApp/GetFilterListNew"
+    const val GetBrands: String = DOMAIN + "api/PltdApp/GetBrands"
+    const val GetBrandMasterDetails: String = DOMAIN + "api/PltdApp/GetBrandMasterDetails"
+
+
+    const val GetAllEventImages: String = DOMAIN + "api/PltdApp/GetAllEventImages"
+    const val BlackListedName: String = DOMAIN + "api/PltdApp/BlackListedName"
+
+
+    //CourierReport
+    const val GetCourierReport: String = DOMAIN + "api/PltdApp/GetCourierReport"
+    const val GetFilterDetailList: String = DOMAIN + "api/PltdApp/GetFilterDetailList"
+    const val GetFYearList: String = DOMAIN + "api/PltdApp/GetFYearList"
+    const val GetUserList: String = DOMAIN + "api/PltdApp/GetUserList"
+
+    //GetDebitNoteToCustomerReport
+    const val GetDebitNoteToCustomerReport: String = DOMAIN + "api/PltdApp/GetDebitNoteToCustomerReport"
 
 
 
+    /*    GUEST*/
+  const val SaveUpdateGuestMasterDetails: String = DOMAIN + "Api/StayBooking/SaveUpdateGuestMasterDetails"
+  const val DeleteGuestMasterData: String = DOMAIN + "Api/StayBooking/DeleteGuestMasterData"
+  const val GetNickNameList: String = DOMAIN + "Api/StayBooking/GetNickNameList"
+  const val GetMainPartyAndSubPartyList: String = DOMAIN + "Api/StayBooking/GetMainPartyAndSubPartyList"
+  const val UpdateStayBookingActualTime: String = DOMAIN + "api/StayBooking/UpdateStayBookingActualTime"
+
+
+
+
+
+ const val SaveOrder: String = DOMAIN + "api/SssPltdApp/SaveOrder"
     //
     var THEMECOLUR: String = "ffff"
     var primaryCOLUR: Long = 0xFFFFC1CC

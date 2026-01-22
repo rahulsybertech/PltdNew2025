@@ -36,7 +36,7 @@ class AddItemBottomSheetFragment : BottomSheetDialogFragment() {
         itemList.clear()
         itemList.add(ItemEntry())
 
-        adapter = ItemEntryAdapter(
+   /*     adapter = ItemEntryAdapter(
             itemList,
             availableItemNames,
             onAddClick = { position ->
@@ -55,7 +55,7 @@ class AddItemBottomSheetFragment : BottomSheetDialogFragment() {
                     }
                 }
             }
-        )
+        )*/
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter

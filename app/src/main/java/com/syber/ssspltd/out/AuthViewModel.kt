@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.app.naturalhigh.out.AuthRepository
 import com.app.naturalhigh.out.BaseViewModell
+import com.google.android.gms.common.internal.AccountType
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,32 +21,57 @@ import com.syber.ssspltd.data.model.ImageModel
 import com.syber.ssspltd.data.model.OrderData
 import com.syber.ssspltd.data.model.OrderResponse
 import com.syber.ssspltd.data.model.PcsTypeResponse
+import com.syber.ssspltd.data.model.additem.OrderNoResponse
 import com.syber.ssspltd.data.model.addorder.DispatchTypeResponse
 import com.syber.ssspltd.data.model.addorder.ItemResponse
 import com.syber.ssspltd.data.model.addorder.PartyDetailsResponse
+import com.syber.ssspltd.data.model.addorder.SaveOrderResponse
 import com.syber.ssspltd.data.model.addorder.SupplierNickNameResponse
+import com.syber.ssspltd.data.model.bookingRequest.BranchList
+import com.syber.ssspltd.data.model.bookingRequest.BranchListResponse
+import com.syber.ssspltd.data.model.brand.Branch
+import com.syber.ssspltd.data.model.brand.BranchResponse
+import com.syber.ssspltd.data.model.brand.BrandResponse
+import com.syber.ssspltd.data.model.brand.ProductImage
+import com.syber.ssspltd.data.model.debitNoteToCustomer.DNToCustomerResponse
+import com.syber.ssspltd.data.model.debitNoteToCustomer.DebitNoteToCustomerReportResult
+import com.syber.ssspltd.data.model.gallery.EventItem
+
+import com.syber.ssspltd.data.model.honar.BlackListedName
 import com.syber.ssspltd.data.model.ledger.LedgerResponse
+import com.syber.ssspltd.data.model.ledger.LedgerResponse.LedgerReportItem
+import com.syber.ssspltd.data.model.saleReport.AccountType1
+import com.syber.ssspltd.data.model.saleReport.AdjustmentType
+import com.syber.ssspltd.data.model.saleReport.BranchItem
+import com.syber.ssspltd.data.model.saleReport.BrandItem
+import com.syber.ssspltd.data.model.saleReport.EntryType
+import com.syber.ssspltd.data.model.saleReport.SaleReportFilterResponse
 import com.syber.ssspltd.data.model.saleReport.SaleReportResponse
+import com.syber.ssspltd.data.model.saleReport.SubPartyItem
+import com.syber.ssspltd.data.model.saleReport.TransporterItem
+import com.syber.ssspltd.data.model.saleservice.SaleServiceReportItem
+import com.syber.ssspltd.data.model.saleservice.SaleServiceReportResponse
+import com.syber.ssspltd.data.model.staybooking.AccountNameItem
+import com.syber.ssspltd.data.model.staybooking.AccountNameResponse
 import com.syber.ssspltd.data.model.staybooking.GuestMasterDetail
 import com.syber.ssspltd.data.model.staybooking.GuestResponse
+import com.syber.ssspltd.data.model.staybooking.NickNameItem
+import com.syber.ssspltd.data.model.staybooking.NickNameResponse
 import com.syber.ssspltd.data.model.staybooking.StayBookingResponse
 import com.syber.ssspltd.data.model.staybooking.StayBookingResult
+import com.syber.ssspltd.data.model.stockinoffice.StockInOfficeReportResult
 import com.syber.ssspltd.data.model.stockinoffice.StockInOfficeResponse
+import com.syber.ssspltd.data.model.userType.ApiResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.HttpException
-import java.io.File
-import java.io.IOException
+import org.json.JSONObject
 
 
 @HiltViewModel
@@ -53,8 +79,31 @@ import java.io.IOException
 
     var addItemDataList = ArrayList<PackType>()
     var addImageDataList = ArrayList<ImageModel>()
+    var selectedBooking: StayBookingResult? = null
 
+    private val _branchID = MutableStateFlow("")
+    val branchID = _branchID.asStateFlow()
+    fun setBranchId(id: String) {
+        _branchID.value = id
 
+    }
+
+    private val _itemCount = MutableLiveData(0)
+    val itemCount: LiveData<Int> = _itemCount
+
+    fun addItem() {
+        _itemCount.value = (_itemCount.value ?: 0) + 1
+    }
+
+    fun removeItem() {
+        _itemCount.value = (_itemCount.value ?: 0) - 1
+    }
+
+    var images by mutableStateOf<List<ProductImage>>(emptyList())
+
+    fun updateImages(list: List<ProductImage>) {
+        images = list
+    }
     // Login Api
         val _loginResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
         val loginResponse: LiveData<Resource<JsonObject>> get() = _loginResponse
@@ -231,12 +280,12 @@ import java.io.IOException
     }.flowOn(Dispatchers.IO)
 
 
-    fun orderNoByMarketerReq(jsonObject: JsonObject): Flow<Resource<OrderResponse>> = flow {
+    fun orderNoByMarketerReq(jsonObject: JsonObject): Flow<Resource<OrderNoResponse>> = flow {
         emit(Resource.Loading)
         when (val result = repository.orderNoByMarketerApi(jsonObject)) {
             is Resource.Success -> {
                 try {
-                    val parsed = Gson().fromJson(result.value, OrderResponse::class.java)
+                    val parsed = Gson().fromJson(result.value, OrderNoResponse::class.java)
                     emit(Resource.Success(parsed))
                 } catch (e: Exception) {
                     emit(Resource.Failure(
@@ -264,6 +313,7 @@ import java.io.IOException
             }
         }
     }.flowOn(Dispatchers.IO)
+
 
     fun partyDetailsByPartyCodeReq(accountId: String,supplierId: String): Flow<Resource<PartyDetailsResponse>> = flow {
         emit(Resource.Loading)
@@ -417,6 +467,7 @@ import java.io.IOException
     val loading: StateFlow<Boolean> = _loading
 
     fun fetchSaleReport(jsonObject: JsonObject) {
+        _saleItems.value = emptyList()
         viewModelScope.launch {
             saleReport(jsonObject).collect { resource ->
                 when (resource) {
@@ -425,13 +476,182 @@ import java.io.IOException
                     }
                     is Resource.Success -> {
                         _loading.value = false
-                        _saleItems.value = _saleItems.value + resource.value
+                        _saleItems.value = listOf(resource.value)
                     }
                     is Resource.Failure -> {
                         _loading.value = false
                         // handle error state
                     }
                 }
+            }
+        }
+    }
+
+
+    //filter sale report screen
+    private val _adjustmentType = MutableStateFlow<List<AdjustmentType>>(emptyList())
+    private val _entryType = MutableStateFlow<List<EntryType>>(emptyList())
+    private val _accountType = MutableStateFlow<List<AccountType1>>(emptyList())
+    private val _branchItemList = MutableStateFlow<List<BranchItem>>(emptyList())
+    private val _subPartyItem = MutableStateFlow<List<SubPartyItem>>(emptyList())
+    private val _transporterItem = MutableStateFlow<List<TransporterItem>>(emptyList())
+    private val _supplier = MutableStateFlow<List<BrandItem>>(emptyList())
+    /*  private val _saleResportfilterList = MutableStateFlow<List<StayBookingResult>>(emptyList())
+      private val _saleResportfilterList = MutableStateFlow<List<StayBookingResult>>(emptyList())
+    */
+    val adjustmentType: StateFlow<List<AdjustmentType>> = _adjustmentType
+    val entryType: StateFlow<List<EntryType>> = _entryType
+    val accountType: StateFlow<List<AccountType1>> = _accountType
+    val branch: StateFlow<List<BranchItem>> = _branchItemList
+    val subParty: StateFlow<List<SubPartyItem>> = _subPartyItem
+    val transporter: StateFlow<List<TransporterItem>> = _transporterItem
+    val supplier: StateFlow<List<BrandItem>> = _supplier
+
+    fun fatchSaleReportFilter(jsonObject: JsonObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.saleReportFilterApi(jsonObject)
+                if (result is Resource.Success) {
+                    val parsedResponse =
+                        Gson().fromJson(result.value, SaleReportFilterResponse::class.java)
+                    _adjustmentType.value = parsedResponse.AdjustmentType ?: emptyList()
+                    _accountType.value = parsedResponse.AccountType ?: emptyList()
+                    _entryType.value = parsedResponse.EntryType ?: emptyList()
+                    _branchItemList.value = parsedResponse.Branch ?: emptyList()
+                    _subPartyItem.value = parsedResponse.SubParty ?: emptyList()
+                    _transporterItem.value = parsedResponse.Transporter ?: emptyList()
+                    _supplier.value = parsedResponse.Brand ?: emptyList()
+                } else {
+                    _adjustmentType.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _adjustmentType.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+
+
+    }
+
+    private val _ledgerReportWithBalance = MutableStateFlow<List<LedgerResponse>>(emptyList())
+    private val _ledgerReportItem = MutableStateFlow<List<LedgerReportItem>>(emptyList())
+
+    val ledgerReportWithBalance: StateFlow<List<LedgerResponse>> = _ledgerReportWithBalance
+     var ledgerReportResult: StateFlow<List<LedgerReportItem>> = _ledgerReportItem
+    private val _hasFetched = MutableStateFlow(false)
+    val hasFetched = _hasFetched
+
+    fun fetchLedgerReport(jsonObject: JsonObject) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.fatchLedgerReportWithBalanceApi(jsonObject)
+                if (result is Resource.Success) {
+                    // Parse the full response
+                 //   _hasFetched.value = true
+                    _loading.value = false
+                    val parsedResponse = Gson().fromJson(result.value, LedgerResponse::class.java)
+
+                    _ledgerReportWithBalance.value = listOf(parsedResponse)
+                    _ledgerReportItem.value = parsedResponse.LedgerReportResult!!
+                } else {
+                    _ledgerReportWithBalance.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _ledgerReportWithBalance.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+
+
+    private val _courierReportList= MutableStateFlow<List<LedgerResponse.CourierReportItem>>(emptyList())
+    val courierReportList: StateFlow<List<LedgerResponse.CourierReportItem>> = _courierReportList
+
+    fun fetchCourierReport(jsonObject: JsonObject) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.courierReportApi(jsonObject)
+                if (result is Resource.Success) {
+                    // Parse the full response
+                    //   _hasFetched.value = true
+                    _loading.value = false
+                    val parsedResponse = Gson().fromJson(result.value, LedgerResponse::class.java)
+
+                    _ledgerReportWithBalance.value = listOf(parsedResponse)
+                    _courierReportList.value =
+                        parsedResponse.CourierReportResult ?: emptyList()
+                } else {
+                    _ledgerReportWithBalance.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _ledgerReportWithBalance.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    private val _honarList= MutableStateFlow<List<BlackListedName>>(emptyList())
+    val honarList: StateFlow<List<BlackListedName>> = _honarList
+
+    fun fetchHonarList(jsonObject: JsonObject) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+
+                val result = repository.honarListApi(jsonObject)
+                Log.e("honhar list",result.toString())
+                if (result is Resource.Success) {
+                    // Parse the full response
+                    //   _hasFetched.value = true
+                    _loading.value = false
+                    val parsedResponse = Gson().fromJson(result.value, LedgerResponse::class.java)
+
+                    _ledgerReportWithBalance.value = listOf(parsedResponse)
+                    _honarList.value =
+                        parsedResponse.BlackListedName ?: emptyList()
+                } else {
+                    _ledgerReportWithBalance.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _ledgerReportWithBalance.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+
+    private val _saleServices = MutableStateFlow<List<SaleServiceReportItem>>(emptyList())
+    val saleServices: StateFlow<List<SaleServiceReportItem>> = _saleServices
+    fun fatchSaleServices(jsonObject: JsonObject) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.fatchSaleServicesApi(jsonObject)
+                if (result is Resource.Success) {
+                    // Parse the full response
+                    _hasFetched.value = true
+                    _loading.value = false
+                    val parsedResponse = Gson().fromJson(result.value, SaleServiceReportResponse::class.java)
+                    _saleServices.value = parsedResponse.SaleServiceReportResult
+                } else {
+                    _saleServices.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _saleServices.value = emptyList()
+            } finally {
+                _loading.value = false
             }
         }
     }
@@ -457,6 +677,35 @@ import java.io.IOException
             Resource.Loading -> TODO()
         }
     }.flowOn(Dispatchers.IO)
+
+
+    private val _eventList= MutableStateFlow<List<EventItem>>(emptyList())
+    val eventList: StateFlow<List<EventItem>> = _eventList
+
+    fun fetchEventList(jsonObject: JsonObject) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.eventApi(jsonObject)
+                if (result is Resource.Success) {
+                    // Parse the full response
+                    //   _hasFetched.value = true
+                    _loading.value = false
+                    val parsedResponse = Gson().fromJson(result.value, LedgerResponse::class.java)
+
+                 //   _ledgerReportWithBalance.value = listOf(parsedResponse)
+                    _eventList.value = parsedResponse.Events
+                } else {
+                    _ledgerReportWithBalance.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _ledgerReportWithBalance.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
 
     val _dashboardDetailGraphResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val dashboardDetailGraphResponse: LiveData<Resource<JsonObject>> get() = _dashboardDetailGraphResponse
@@ -526,31 +775,7 @@ import java.io.IOException
         }
     }
 
-    private val _ledgerReportWithBalance = MutableStateFlow<List<LedgerResponse>>(emptyList())
 
-    val ledgerReportWithBalance: StateFlow<List<LedgerResponse>> = _ledgerReportWithBalance
-
-
-    fun fetchLedgerReport(jsonObject: JsonObject) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _loading.value = true
-            try {
-                val result = repository.fatchLedgerReportWithBalanceApi(jsonObject)
-                if (result is Resource.Success) {
-                    // Parse the full response
-                    val parsedResponse = Gson().fromJson(result.value, LedgerResponse::class.java)
-
-                    _ledgerReportWithBalance.value = listOf(parsedResponse)
-                } else {
-                    _ledgerReportWithBalance.value = emptyList()
-                }
-            } catch (e: Exception) {
-                _ledgerReportWithBalance.value = emptyList()
-            } finally {
-                _loading.value = false
-            }
-        }
-    }
 
     private val _pendingOrder = MutableStateFlow<List<OrderData>>(emptyList())
     val pendingOrder: StateFlow<List<OrderData>> = _pendingOrder
@@ -584,8 +809,10 @@ import java.io.IOException
         }
     }
 
-    private val _stockInoffice = MutableStateFlow<List<StockInOfficeResponse>>(emptyList())
-    val stockInoffice: StateFlow<List<StockInOfficeResponse>> = _stockInoffice
+    private val _stockInoffice =
+        MutableStateFlow<List<StockInOfficeReportResult>>(emptyList())
+
+    val stockInoffice: StateFlow<List<StockInOfficeReportResult>> = _stockInoffice
 
     fun fetchStockInOffice(jsonObject: JsonObject) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -593,9 +820,14 @@ import java.io.IOException
             try {
                 val result = repository.stockInOfficeApi(jsonObject)
                 if (result is Resource.Success) {
-                    val parsedResponse =
-                        Gson().fromJson(result.value, StockInOfficeResponse::class.java)
-                    _stockInoffice.value = (listOf(parsedResponse))
+                    val parsedResponse = Gson().fromJson(
+                        result.value,
+                        StockInOfficeResponse::class.java
+                    )
+
+                    _stockInoffice.value =
+                        parsedResponse.StockInOfficeReportResult ?: emptyList()
+
                 } else {
                     _stockInoffice.value = emptyList()
                 }
@@ -606,6 +838,7 @@ import java.io.IOException
             }
         }
     }
+
 
     private val _stayBooking = MutableStateFlow<List<StayBookingResult>>(emptyList())
     val stayBooking: StateFlow<List<StayBookingResult>> = _stayBooking
@@ -628,49 +861,122 @@ import java.io.IOException
                 _loading.value = false
             }
         }
-
-
     }
 
-    fun placeOrder(params: HashMap<String, RequestBody?>): Flow<Resource<Resource<Unit>>> = flow {
-        emit(Resource.Loading)
+    fun fatchStayBookingListByBranchReq(partyCode: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.fatchStayBookingListByBranchId(partyCode)
+                if (result is Resource.Success) {
+                    val parsedResponse =
+                        Gson().fromJson(result.value, StayBookingResponse::class.java)
+                    _stayBooking.value = parsedResponse.StayBookingList
+                        ?.sortedByDescending  { it.bookingID ?: 0 }           // ASCENDING
+                        ?: emptyList()
+             //       _stayBooking.value = parsedResponse.StayBookingList ?: emptyList()
+                } else {
+                    _stayBooking.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _stayBooking.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
 
-        try {
-            // Add OrderBook list
-            params["OrderBookSecondaryList"] =
-                gson.toJson(addItemDataList).toRequestBody()
+/*    private val _stayBookingByRecordID = MutableStateFlow<List<String>>(emptyList())
+    val stayBookingByRecordID: StateFlow<List<String>> = _stayBookingByRecordID*/
 
-            // Prepare documents
-            val documents = addImageDataList.mapNotNull { imageModel ->
-                imageModel.filePath?.let { path ->
-                    val file = File(path)
-                    if (file.exists()) {
-                        MultipartBody.Part.createFormData(
-                            "documents",
-                            file.name,
-                            file.asRequestBody("image/*".toMediaTypeOrNull())
-                        )
-                    } else null
+    private val _stayBookingByRecordID = MutableStateFlow<List<String>>(emptyList())
+    val stayBookingByRecordID = _stayBookingByRecordID.asStateFlow()
+    fun fatchStayBookingListByRecordIdReq(recordID: String,partyCode: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.fatchStayBookingListByRecordID(recordID,partyCode)
+                if (result is Resource.Success) {
+
+                    val parsedResponse =
+                        Gson().fromJson(result.value, StayBookingResponse::class.java)
+                    _stayBookingByRecordID.value = (parsedResponse.StayBookingData?.guestIds // ASCENDING
+                        ?: emptyList()) as List<String>
+                    Log.d("BookingListByRecordIdResponse",_stayBookingByRecordID.toString())
+                    //       _stayBooking.value = parsedResponse.StayBookingList ?: emptyList()
+                } else {
+                    _stayBookingByRecordID.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _stayBookingByRecordID.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+    fun addGuest(id: String) {
+        _stayBookingByRecordID.value =
+            _stayBookingByRecordID.value + id
+    }
+
+    fun removeGuest(id: String) {
+        _stayBookingByRecordID.value =
+            _stayBookingByRecordID.value.filter { it != id }
+    }
+
+
+
+    private val _updateTime = MutableStateFlow<ApiResponse?>(null)
+    val updateTime: StateFlow<ApiResponse?> = _updateTime
+
+    fun updateStayBookingActualTimeReq(bookingId: String,actualCheckInDate: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.updateStayBookingActualTimeReqApi(bookingId,actualCheckInDate)
+                if (result is Resource.Success) {
+                    // ✅ Parse the JSON into ApiResponse
+                    val parsedResponse = Gson().fromJson(result.value, ApiResponse::class.java)
+
+                    // ✅ Update flow
+                    _updateTime.value = parsedResponse
+                } else if (result is Resource.Failure) {
+                    _updateTime.value = null
                 }
             }
-
-            // Call repository (assume it throws exceptions on failure)
-            val response = repository.placeOrder(params, documents)
-
-            // Emit success
-            emit(Resource.Success(response))
-
-        } catch (e: IOException) {
-            // Network error
-            emit(Resource.Failure(isNetworkError = "true", errorCode = null, errorBody = "Network error: ${e.message}"))
-        } catch (e: HttpException) {
-            // API error
-            emit(Resource.Failure(isNetworkError = "false", errorCode = e.code(), errorBody = e.message()))
-        } catch (e: Exception) {
-            // Other exceptions
-            emit(Resource.Failure(isNetworkError = "false", errorCode = null, errorBody = "Unexpected error: ${e.localizedMessage}"))
+            catch (e: Exception) {
+                e.printStackTrace()
+                _updateTime.value = null
+            } finally {
+                _loading.value = false
+            }
         }
-    }.flowOn(Dispatchers.IO)
+    }
+
+    fun updateStayBookingActualCheckOutTimeReq(bookingId: String,actualCheckInDate: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.updateStayBookingActualCheckOutTimeTimeReqApi(bookingId,actualCheckInDate)
+                if (result is Resource.Success) {
+                    // ✅ Parse the JSON into ApiResponse
+                    val parsedResponse = Gson().fromJson(result.value, ApiResponse::class.java)
+
+                    // ✅ Update flow
+                    _updateTime.value = parsedResponse
+                } else if (result is Resource.Failure) {
+                    _updateTime.value = null
+                }
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+                _updateTime.value = null
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
 
     private val _brandlist = MutableStateFlow<List<OrderData>>(emptyList())
     val brandlist: StateFlow<List<OrderData>> = _brandlist
@@ -704,6 +1010,18 @@ import java.io.IOException
         }
     }
 
+
+
+    var selectedBranchName = mutableStateOf("Select Branch")
+    var selectedNickName = mutableStateOf("Select Nick Name")
+    var selectedNickNameId = mutableStateOf("")
+    var selectedCustomerName = mutableStateOf("Select Customer")
+    var selectedCustomerId = mutableStateOf("")
+    var selectedBrancId = mutableStateOf("")
+
+    var selectedCheckInDate = mutableStateOf("")
+    var selectedCheckOutDate = mutableStateOf("")
+
     private val _guestList = MutableStateFlow<List<GuestMasterDetail>>(emptyList())
     val guestList: StateFlow<List<GuestMasterDetail>> = _guestList
 
@@ -735,5 +1053,364 @@ import java.io.IOException
             }
         }
     }
+
+    fun fetchGuestByPhoneNumList(mobileNum: String,partyCode: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.guestListByPhoneNumApi(mobileNum,partyCode)
+                if (result is Resource.Success) {
+                    // Parse the full response
+                    val parsedResponse = Gson().fromJson(result.value, GuestResponse::class.java)
+
+                    // Log full JSON response
+                    Log.d("Guest ", "Full Response: ${result.value}")
+
+                    // Log parsed data
+                    Log.d("PendingOrder", "Parsed Orders: ${parsedResponse.GuestMasterDetailList}")
+
+                    _guestList.value = parsedResponse.GuestMasterDetailList ?: emptyList()
+                } else {
+                    Log.d("PendingOrder", "API returned error or empty response")
+                    _guestList.value = emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("PendingOrder", "Exception: ${e.message}", e)
+                _guestList.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+    fun clearGuestList() {
+        _guestList.value = emptyList()
+    }
+
+    private val _branchList = MutableStateFlow<List<BranchList>>(emptyList())
+    val branchList: StateFlow<List<BranchList>> = _branchList
+
+    fun fetchBranchList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.guestBranchApi()
+                if (result is Resource.Success) {
+                    // Parse the full response
+                    val parsedResponse = Gson().fromJson(result.value, BranchListResponse::class.java)
+
+                    // Log full JSON response
+                    Log.d("Branch List ", "Full Response: ${result.value}")
+
+                    // Log parsed data
+                    Log.d("PendingOrder", "Parsed Orders: ${parsedResponse.data}")
+
+                    _branchList.value = parsedResponse.data ?: emptyList()
+                } else {
+                    Log.d("PendingOrder", "API returned error or empty response")
+                    _branchList.value = emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("PendingOrder", "Exception: ${e.message}", e)
+                _branchList.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    private val _nickNameList = MutableStateFlow<List<NickNameItem>>(emptyList())
+    val nickNameList: StateFlow<List<NickNameItem>> = _nickNameList
+
+    fun fetchNickNameList() {
+        // If already loaded, don't call again
+        if (_nickNameList.value.isNotEmpty()) return
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.nickNameApi()
+                if (result is Resource.Success) {
+                    val parsedResponse = Gson().fromJson(result.value, NickNameResponse::class.java)
+                    _nickNameList.value = parsedResponse.NickNameList
+                } else {
+                    _nickNameList.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _nickNameList.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+
+
+    private val _customerList = MutableStateFlow<List<AccountNameItem>>(emptyList())
+    val customerList: StateFlow<List<AccountNameItem>> = _customerList
+
+    fun fetchCustomerList(nickNameID:String) {
+
+      /*  // If already loaded, don't call again
+        if (_customerList.value.isNotEmpty()) return
+*/
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.customerApi(nickNameID)
+                if (result is Resource.Success) {
+                    // Parse the full response
+                    val parsedResponse = Gson().fromJson(result.value, AccountNameResponse::class.java)
+
+                    // Log full JSON response
+                    Log.d("Cutomer List ", "Full Response: ${result.value}")
+
+                    // Log parsed data
+                    Log.d("Cutomer", "Parsed Orders: ${parsedResponse.AccountNameList}")
+
+                    _customerList.value = parsedResponse.AccountNameList ?: emptyList()
+                } else {
+                    Log.d("Cutomer", "API returned error or empty response")
+                    _customerList.value = emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("Cutomer", "Exception: ${e.message}", e)
+                _customerList.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    fun saveOrder(jsonObject: RequestBody): Flow<Resource<SaveOrderResponse>> = flow {
+
+        emit(Resource.Loading)
+
+        when (val result = repository.addOrderApi(jsonObject)) {
+
+            is Resource.Success -> {
+
+                try {
+
+                    val parsed = Gson().fromJson(result.value.toString(), SaveOrderResponse::class.java)
+
+                    emit(Resource.Success(parsed))
+
+                } catch (e: Exception) {
+
+                    emit(Resource.Failure(
+
+                        isNetworkError = e.message!!,
+
+                        errorCode = null,
+
+                        errorBody = "Parsing error: ${e.localizedMessage}"
+
+                    ))
+
+                }
+
+            }
+
+            is Resource.Failure -> {
+
+                emit(Resource.Failure(
+
+                    isNetworkError = "",
+
+                    errorCode = result.errorCode,
+
+                    errorBody = result.errorBody ?: "Unknown error"
+
+                ))
+
+            }
+
+            else -> {
+
+                emit(Resource.Failure(
+
+                    isNetworkError = "false",
+
+                    errorCode = null,
+
+                    errorBody = "Unexpected error occurred"
+
+                ))
+
+            }
+
+        }
+
+    }.flowOn(Dispatchers.IO)
+
+
+
+
+    private val _bookingResult = MutableStateFlow<ApiResponse?>(null)
+    val bookingResult: StateFlow<ApiResponse?> = _bookingResult
+
+    fun submitStayBooking(request: JsonObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.addStayBooking(request)
+                if (result is Resource.Success) {
+                    // ✅ Parse the JSON into ApiResponse
+                    val parsedResponse = Gson().fromJson(result.value, ApiResponse::class.java)
+
+                    // ✅ Update flow
+                    _bookingResult.value = parsedResponse
+                } else if (result is Resource.Failure) {
+                    _bookingResult.value = null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _bookingResult.value = null
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+
+
+    private val _addGuestResult = MutableStateFlow<ApiResponse?>(null)
+    val addGuestResult: StateFlow<ApiResponse?> = _addGuestResult
+
+    fun addAndUpdateGuest(request: JsonObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.addGuest(request)
+                if (result is Resource.Success) {
+                    // ✅ Parse the JSON into ApiResponse
+                    val parsedResponse = Gson().fromJson(result.value, ApiResponse::class.java)
+
+                    // ✅ Update flow
+                    _addGuestResult.value = parsedResponse
+                } else if (result is Resource.Failure) {
+                    _addGuestResult.value = null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _addGuestResult.value = null
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    private val _deleteGuestResult = MutableStateFlow<ApiResponse?>(null)
+    val deleteGuestResult: StateFlow<ApiResponse?> = _deleteGuestResult
+
+    fun deleteGuestParam(request: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.deleteGuest(request)
+                if (result is Resource.Success) {
+                    // ✅ Parse the JSON into ApiResponse
+                    val parsedResponse = Gson().fromJson(result.value, ApiResponse::class.java)
+
+                    // ✅ Update flow
+                    _deleteGuestResult.value = parsedResponse
+                } else if (result is Resource.Failure) {
+                    _deleteGuestResult.value = null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _deleteGuestResult.value = null
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+    private val _branch = MutableStateFlow<List<Branch>>(emptyList())
+    val brandlistByBranch: StateFlow<List<Branch>> = _branch
+
+
+    fun fatchBrandListByBranch(jsonObject: JsonObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.brandListByBranchApi(jsonObject)
+                if (result is Resource.Success) {
+                    val parsedResponse =
+                        Gson().fromJson(result.value, BranchResponse::class.java)
+                    _branch.value = parsedResponse.BranchesResult ?: emptyList()
+
+                } else {
+                    _adjustmentType.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _adjustmentType.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+
+
+    }
+
+    private val _BrandMasterList = MutableStateFlow<List<com.syber.ssspltd.data.model.brand.BrandItem>>(emptyList())
+    val brandMasterList: StateFlow<List<com.syber.ssspltd.data.model.brand.BrandItem>> = _BrandMasterList
+
+
+    fun fatchBrandMasterList(jsonObject: JsonObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.brandMasterDetailsApi(jsonObject)
+                if (result is Resource.Success) {
+                    val parsedResponse =
+                        Gson().fromJson(result.value, BrandResponse::class.java)
+                    _BrandMasterList.value = parsedResponse.BrandInsertingRequestData ?: emptyList()
+
+                } else {
+                    _adjustmentType.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _adjustmentType.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    private val _debitNoteToCustomerReportList =
+        MutableStateFlow<List<DebitNoteToCustomerReportResult>>(emptyList())
+
+    val debitNoteToCustomerReportList: StateFlow<List<DebitNoteToCustomerReportResult>> =
+        _debitNoteToCustomerReportList
+
+    fun fatchdebitNoteToCustomerReportList(jsonObject: JsonObject) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _loading.value = true
+            try {
+                val result = repository.debitNoteToCustomerReportApi(jsonObject)
+
+                if (result is Resource.Success) {
+
+                    val parsedResponse = Gson().fromJson(
+                        result.value,
+                        DNToCustomerResponse::class.java
+                    )
+
+                    _debitNoteToCustomerReportList.value =
+                        parsedResponse.debitNoteToCustomerReportResult ?: emptyList()
+
+                } else {
+                    _debitNoteToCustomerReportList.value = emptyList()
+                }
+
+            } catch (e: Exception) {
+                _debitNoteToCustomerReportList.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
 
 }

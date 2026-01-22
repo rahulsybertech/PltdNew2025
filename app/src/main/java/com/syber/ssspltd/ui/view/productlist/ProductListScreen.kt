@@ -1,6 +1,4 @@
 package com.syber.ssspltd.ui.view.productlist
-
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,74 +37,81 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.piashcse.hilt_mvvm_compose_movie.navigation.Screen
 import com.syber.ssspltd.R
 import com.syber.ssspltd.out.AuthViewModel
 import com.syber.ssspltd.ui.theme.ThemeColors
-// Imports you should use (make sure none of these are accompanist imports)
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.request.ImageRequest
+import com.google.gson.JsonObject
+import com.syber.ssspltd.data.model.brand.BrandItem
+import com.syber.ssspltd.data.model.brand.ProductImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListScreen(navController: NavController,
-                      viewModel1: AuthViewModel,
+                      viewModel1: AuthViewModel,branchId:String,
                       themeColors: ThemeColors
 ) {
-    val products = listOf(
-        Product(
-            "HOSHIYAR SINGH",
-            "If you are searching for one of the largest saree suppliers in Chandni Chowk...",
-            listOf("SAREE"),
-            R.drawable.sss_icon
-        ),
-        Product(
-            "JINDAL SAREE",
-            "Jindal Saree Centre Private Limited are the manufacturers of Fancy Sarees and blouse.",
-            listOf("SAREE", "BLOUSE"),
-            R.drawable.ssslogopng
-        ),
-        Product(
-            "LADLEE",
-            "Ladlee seems like a prominent name in the saree and suit lehenga manufacturing space...",
-            listOf("LEHENGA", "SAREE", "SUIT"),
-            R.drawable.ssslogopng
-        )
-    )
+
+
+    val brandMasterList by viewModel1.brandMasterList.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    /*   {"MOBILENO":"7290087642","DBNAME":"","accountid":""}*/
+
+    LaunchedEffect(branchId) {
+        if (branchId.isNotEmpty()) {
+            val jsonObject = JsonObject().apply {
+                addProperty("BranchID", branchId)
+            }
+            viewModel1.fatchBrandMasterList(jsonObject)
+        }
+    }
+
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Delhi Chandni Chowk (B.O.)") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF008080),
-                    titleContentColor = Color.White
+            Surface(
+                shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
+                shadowElevation = 8.dp,
+                color = Color(0xFF008080)
+            ) {
+                TopAppBar(
+                    title = {
+                        Column {
+                            Text("Brands", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
+
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = Color.White
+                    )
                 )
-            )
+            }
         }
     ) { padding ->
         LazyColumn(
@@ -118,8 +122,8 @@ fun ProductListScreen(navController: NavController,
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(products) { product ->
-                ProductCard(navController,product)
+            items(brandMasterList) { product ->
+                ProductCard(viewModel1,navController,product)
             }
         }
     }
@@ -127,9 +131,17 @@ fun ProductListScreen(navController: NavController,
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ProductCard(navController:NavController,product: Product) {
+fun ProductCard(
+    viewModel1: AuthViewModel,
+    navController: NavController,
+    product: BrandItem
+) {
+    var showSheet by remember { mutableStateOf(false) }
+    var selectedGuestImages by remember { mutableStateOf<List<ProductImage>>(emptyList()) }
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
@@ -139,32 +151,42 @@ fun ProductCard(navController:NavController,product: Product) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Logo
-            Image(
-                painter = painterResource(id = product.logo),
-                contentDescription = product.name,
+
+            // ✅ Logo (fixed size)
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(product.BrandLogo)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = product.BrandName,
+                placeholder = painterResource(R.drawable.image_one),
+                error = painterResource(R.drawable.ic_criss_cross),
                 modifier = Modifier
                     .size(64.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFFF1F1F1)),
-                contentScale = ContentScale.Fit
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFECEFF1)),
+                contentScale = ContentScale.FillBounds
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Details
+            // ✅ Text area (remaining space)
             Column(
                 modifier = Modifier.weight(1f)
             ) {
+
+                // 🔥 BRAND NAME (NOW VISIBLE)
                 Text(
-                    text = product.name,
+                    text = product.BrandName,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF008080)
                 )
+
                 Spacer(Modifier.height(4.dp))
+
                 Text(
-                    text = product.description,
+                    text = product.BrandDescription,
                     fontSize = 13.sp,
                     color = Color.Gray,
                     maxLines = 2,
@@ -173,27 +195,28 @@ fun ProductCard(navController:NavController,product: Product) {
 
                 Spacer(Modifier.height(8.dp))
 
-                // Category chips
-                FlowRow(
-                 /*   mainAxisSpacing = 8.dp,
-                    crossAxisSpacing = 8.dp*/
-                ) {
-                    product.categories.forEach { category ->
+                FlowRow {
+                    product.BrandCategoryA.forEach { category ->
                         AssistChip(
-                            onClick = { },
-                            label = { Text(category) },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = Color(0xFFE8EAF6),
-                                labelColor = Color(0xFF3F51B5)
-                            )
+                            onClick = {},
+                            label = { Text(category.Brand_Category.trim()) }
                         )
                     }
                 }
 
                 Spacer(Modifier.height(8.dp))
 
-                // CTA
-                TextButton(onClick = {         navController.navigate(Screen.ViewProductScreen.route) }) {
+                TextButton(
+                    onClick = {
+                        showSheet=true
+                        selectedGuestImages = product.ArrayProductImageA
+
+                        viewModel1.updateImages(product.ArrayProductImageA)
+
+                        navController.navigate("full_image_screen")
+                      //  navController.navigate(Screen.ViewProductScreen.route)
+                    }
+                ) {
                     Text("View Products", color = Color(0xFF008080))
                 }
             }
@@ -201,9 +224,114 @@ fun ProductCard(navController:NavController,product: Product) {
     }
 }
 
-data class Product(
-    val name: String,
-    val description: String,
-    val categories: List<String>,
-    val logo: Int
-)
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FullScreenZoomImage(
+    images: List<ProductImage>,
+    startIndex: Int = 0,
+    onBack: () -> Unit
+) {
+    var selectedIndex by remember { mutableStateOf(startIndex) }
+
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+
+    val transformState = rememberTransformableState { zoomChange, panChange, _ ->
+        scale = (scale * zoomChange).coerceIn(1f, 5f)
+        offset += panChange
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
+
+        // 🔝 FULL IMAGE
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            AsyncImage(
+                model = images[selectedIndex].ProductImageA,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .transformable(transformState)
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offset.x,
+                        translationY = offset.y
+                    )
+            )
+
+            // 🔙 Back Button
+            IconButton(
+                onClick = {
+                },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.TopStart)
+                    .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White
+                )
+            }
+        }
+
+        // 🔽 THUMBNAILS
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            itemsIndexed(images) { index, item ->
+                AsyncImage(
+                    model = item.ProductImageA,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .border(
+                            width = if (index == selectedIndex) 2.dp else 0.dp,
+                            color = Color.White,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            selectedIndex = index
+                            scale = 1f
+                            offset = Offset.Zero
+                        }
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun FullImageScreen(
+    navController: NavController,
+    viewModel: AuthViewModel
+) {
+    val images = viewModel.images
+
+    FullScreenZoomImage(
+        images = viewModel.images,
+        onBack = { navController.popBackStack() }
+    )
+}
+
+
+
+
+

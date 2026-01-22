@@ -52,7 +52,7 @@ fun MainScreen(navController: NavController, viewModel1: AuthViewModel,themeColo
              //   HomeScreen(themeColors = themeColors) // ✅ Pass themeColors here
             }
             composable(BottomNavItem.Gallery.route) {
-                ModernGalleryScreen(navController/*, viewModel1 = viewModel,themeColors*/)
+                ModernGalleryScreen(navController, viewModel1 = viewModel1,themeColors)
             //    GalleryScreen()
             }
             composable(BottomNavItem.More.route) {

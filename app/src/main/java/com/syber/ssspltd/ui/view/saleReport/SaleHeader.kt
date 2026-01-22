@@ -16,13 +16,10 @@ import androidx.compose.ui.text.withStyle
 import com.syber.ssspltd.data.model.saleReport.SaleReportResult
 
 @Composable
+fun SaleHeader(sale: SaleReportResult) {
 
-fun SaleHeader(sale: List<SaleReportResult>?) {
-    val labelStyle = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
     val valueStyle = MaterialTheme.typography.bodySmall
     val highlight = Color.Red
-
-    val firstSale = sale?.firstOrNull() ?: return
 
     Column {
         Row(
@@ -34,15 +31,18 @@ fun SaleHeader(sale: List<SaleReportResult>?) {
                     append("Bill No : ")
                 }
                 withStyle(SpanStyle(color = highlight)) {
-                    append(firstSale.ID ?: "-")
+                    append(sale.BillNo ?: "-")
                 }
             })
-            Text(text = firstSale.SRNO ?: "-")
+
+            Text(text = sale.SRNO ?: "-")
         }
-        Text("Bilty No : ${firstSale.BiltyNo ?: "-"}", style = valueStyle)
-        Text("Sub Party : ${firstSale.SubParty ?: "-"}", style = valueStyle)
-        Text("Transport : ${firstSale.Transport ?: "-"}", style = valueStyle)
-        Text("Net Amount : ${firstSale.SAmount ?: "-"}", style = valueStyle)
+
+        Text("Bilty No : ${sale.BiltyNo ?: "-"}", style = valueStyle)
+        Text("Sub Party : ${sale.SubParty ?: "-"}", style = valueStyle)
+        Text("Transport : ${sale.Transport ?: "-"}", style = valueStyle)
+        Text("Net Amount : ${sale.SAmount ?: "-"}", style = valueStyle)
     }
 }
+
 

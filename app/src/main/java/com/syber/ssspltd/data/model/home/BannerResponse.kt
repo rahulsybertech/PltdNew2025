@@ -1,12 +1,23 @@
 package com.syber.ssspltd.data.model.home
 
 data class BannerResponse(
-    val data: BannerData,
-    val message: String,
-    val success: Boolean,
-    val error: Boolean,
-    val responsecode: String
+    val ResponseCode: Int,
+    val ResponseStatus: Boolean,
+    val ResponseMessage: String,
+    val StatusLock: Boolean,
+    val SupplierOrderStatus: Boolean,
+    val BlackListReportStatus: Boolean,
+    val StayBookingStatus: Boolean,
+    val BannerList: List<BannerItem>,
+    val BrandInsertingRequestData: Any?,
+    val Events: Any?,
+    val EventName: String?,
+    val EventLogo: String?,
+    val Year: String?,
+    val Allimage_list: Any?,
+    val image_list: Any?
 )
+
 
 data class BannerData(
     val statusLock: Boolean,
@@ -33,3 +44,4 @@ data class BannerItem(
     val CurrentStatus: String,
     val AppName: String
 )
+

@@ -16,6 +16,7 @@ import com.syber.ssspltd.ui.view.addorder.ItemEntry
 class ItemEntryAdapter(
     private val items: MutableList<ItemEntry>,
     private val availableItems: List<String>,
+    private val  availableItemid: MutableList<String>,
     private val onAddClick: (Int) -> Unit,
     private val onDeleteClick: (Int) -> Unit
 ) : RecyclerView.Adapter<ItemEntryAdapter.ItemViewHolder>()
@@ -61,6 +62,14 @@ class ItemEntryAdapter(
                 val pos = adapterPosition
                 if (pos != RecyclerView.NO_POSITION && pos < items.size) {
                     items[pos].item = text.toString()
+                    items[pos].itemId = item.itemId
+                    // Find the index of the selected item in availableItems
+                    val index = availableItems.indexOf(text.toString())
+                    if (index != -1 && index < availableItemid.size) {
+                        items[pos].itemId = availableItemid[index]
+                    } else {
+                        items[pos].itemId = ""
+                    }
                 }
             }
 

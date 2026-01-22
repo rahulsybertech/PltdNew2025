@@ -1,7 +1,7 @@
 package com.syber.ssspltd.data.model.honar
 
 
-data class BlackListedItem(
+data class BlackListedName(
     val SNo: Int?,
     val Name: String?,
     val OwnerName: String?,
