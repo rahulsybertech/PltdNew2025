@@ -2,7 +2,11 @@ package com.syber.ssspltd
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -29,6 +33,15 @@ class LoginScreenTest {
 
     private lateinit var viewModel: AuthViewModel
     private lateinit var navController: NavController
+    // Mocking dependencies
+    private val mockNavController = mockk<NavController>(relaxed = true)
+    private val mockViewModel = mockk<AuthViewModel>(relaxed = true)
+    private val mockThemeColors = ThemeColors(
+        primary = Color(0xFF008080), // Use your project's primary color hex
+        background = Color(0xFFFFFFFF), // White or your default background
+        festiveImageRes = com.syber.ssspltd.R.drawable.ssslogopng // Ensure this path matches your actual drawable name
+    )
+
 
     @Before
     fun setup() {
@@ -67,20 +80,46 @@ class LoginScreenTest {
         val themeColors = ThemeColors(
             primary = Color(0xFF6200EE),
             background = Color(0xFF3700B3),
-            festiveImageRes = R.drawable.ssslogopng // replace with your actual drawable
+            festiveImageRes = com.syber.ssspltd.R.drawable.ssslogopng
         )
         val mockLiveData = MutableLiveData<Resource<JsonObject>>()
         every { viewModel.loginResponse } returns mockLiveData
+
         composeTestRule.setContent {
             LoginScreen(navController, viewModel, themeColors = themeColors)
         }
 
-        // Input valid mobile
-        composeTestRule.onNodeWithText("Mobile Number").performTextInput("9876543210")
+        // ✅ Use the testTag instead of onNodeWithText to avoid the AssertionError
+        composeTestRule.onNodeWithTag("mobile_input_field").performTextInput("9876543210")
 
-        // Click login
-        composeTestRule.onNodeWithText("Login").performClick()
+        composeTestRule.onAllNodes(hasText("Login") and hasClickAction())
+            .onFirst()
+            .performClick()
 
         verify { viewModel.login(any()) }
+    }
+
+
+    @Test
+    fun loginScreen_InputMobileNumber_UpdatesValue() {
+        startLoginScreen()
+
+        val mobileInput = "9876543210"
+
+        // ✅ Use onNodeWithTag to find the field
+        composeTestRule.onNodeWithTag("mobile_input_field")
+            .performTextInput(mobileInput)
+
+        // Verify the text was entered
+        composeTestRule.onNodeWithText(mobileInput).assertIsDisplayed()
+    }
+    private fun startLoginScreen() {
+        composeTestRule.setContent {
+            LoginScreen(
+                navController = mockNavController,
+                viewModel1 = mockViewModel,
+                themeColors = mockThemeColors
+            )
+        }
     }
 }
