@@ -1,7 +1,9 @@
-package com.syber.ssspltd.ui.view.saleservice
+package com.syber.ssspltd.ui.view.creditNoteTo
+import com.syber.ssspltd.ui.view.debit_note.FilterBottomSheet1
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +19,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,25 +58,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.gson.JsonObject
 import com.syber.ssspltd.R
+import com.syber.ssspltd.data.model.CreditNotTo.CreditNoteReportResult
 import com.syber.ssspltd.data.model.debitNoteToCustomer.ItemsDetailsDatum
-import com.syber.ssspltd.data.model.saleservice.SaleServiceReportItem
 import com.syber.ssspltd.out.AuthViewModel
 import com.syber.ssspltd.ui.theme.ThemeColors
-import com.syber.ssspltd.ui.view.ledger.FilterBottomSheet1
 import com.syber.ssspltd.utils.AppSharedPreferences
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SaleServicesScreen(
+fun CreditNoteToScreen(
     navController: NavController,
     viewModel1: AuthViewModel,
     themeColors: ThemeColors
 ) {
 
-    val hasFetched by viewModel1.hasFetched.collectAsState()
-
-    val listState = rememberLazyListState()
-    val ledgerEntries by viewModel1.saleServices.collectAsState()
+    val debitNoteToCustomerReportList by viewModel1.creditNoteToList.collectAsState()
     val isLoading by viewModel1.loading.collectAsState()
     val sheetState = rememberModalBottomSheetState()
     var showFilterSheet by remember { mutableStateOf(false) }
@@ -81,11 +82,13 @@ fun SaleServicesScreen(
     // Call API when screen first opens
     LaunchedEffect(Unit) {
         val jsonObject = JsonObject().apply {
-            addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
+/*            {"MOBILENO":"8709536827","PARTYCODE":"DL17747","DBNAME":""}*/
             addProperty("MOBILENO", AppSharedPreferences.getInstance(context).mobileNumber)
+            addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
             addProperty("DBNAME", "")
+
         }
-        viewModel1.fatchSaleServices(jsonObject)
+        viewModel1.fatchCreditNoteToList(jsonObject)
     }
 
     Scaffold(
@@ -98,14 +101,14 @@ fun SaleServicesScreen(
                 TopAppBar(
                     title = {
                         Column {
-                            Text("Sale Services", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                          /*  if (ledgerEntries.isNotEmpty()) {
-                                Text(
-                                    text = "${ledgerEntries.get(0).DefaultStartDate ?: "--"} to ${ledgerEntries.get(0).DefaultEndDate ?: "--"}",
-                                    fontSize = 12.sp,
-                                    color = Color.White.copy(alpha = 0.8f)
-                                )
-                            }*/
+                            Text("Debit Note to", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                            if (debitNoteToCustomerReportList.isNotEmpty()) {
+                                /*   Text(
+                                       text = "${ledgerEntries.get(0).DefaultStartDate ?: "--"} to ${ledgerEntries.get(0).DefaultEndDate ?: "--"}",
+                                       fontSize = 12.sp,
+                                       color = Color.White.copy(alpha = 0.8f)
+                                   )*/
+                            }
 
                         }
                     },
@@ -114,9 +117,10 @@ fun SaleServicesScreen(
                             Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                         }
                     },
+
                     actions = {
-                        if (ledgerEntries.isNotEmpty()) {
-                            IconButton(onClick = {         showFilterSheet = true }) {
+                        if (debitNoteToCustomerReportList.isNotEmpty()) {
+                            IconButton(onClick = { showFilterSheet = true }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.filter),
                                     contentDescription = "Filter",
@@ -125,7 +129,6 @@ fun SaleServicesScreen(
                                 )
                             }
                         }
-
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent,
@@ -149,21 +152,56 @@ fun SaleServicesScreen(
                     }
                 }
 
-                hasFetched && ledgerEntries.isEmpty() -> {
+                debitNoteToCustomerReportList.isEmpty() -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text("No Data Found")
                     }
                 }
 
-                ledgerEntries.isNotEmpty() -> {
+                debitNoteToCustomerReportList.isNotEmpty() -> {
                     // ✅ Opening Balance
+                    Card(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        /*   Row(
+                               modifier = Modifier.padding(16.dp),
+                               horizontalArrangement = Arrangement.SpaceBetween
+                           ) {
+                               Text("Opening Balance", fontWeight = FontWeight.Bold)
+                               debitNoteToCustomerReportList[0].netAmt?.let {
+                                   Text(it, color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
+                               }
+                           }*/
+                    }
+
                     LazyColumn(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ){
-                        items(ledgerEntries) { item ->
-                            SaleServiceCard(item)
+                    ) {
+                        items(
+                            items = debitNoteToCustomerReportList,
+                            /*     key = { it.id }*/ // use unique id if available
+                        ) { item ->
+                            CreditNoteTo(item)
+                        }
+                    }
+
+                    // ✅ Closing Balance
+                    Card(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF008080))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            /*       Text("Closing Balance", color = Color.White, fontWeight = FontWeight.Bold)
+                                   ledgerEntries[0].ClosingBal?.let {
+                                       Text(it, color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
+                                   }*/
                         }
                     }
                 }
@@ -182,9 +220,8 @@ fun SaleServicesScreen(
     }
 }
 
-
 @Composable
-fun SaleServiceCard(entry: SaleServiceReportItem) {
+fun CreditNoteTo(entry: CreditNoteReportResult) {
     val context = LocalContext.current
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -199,16 +236,14 @@ fun SaleServiceCard(entry: SaleServiceReportItem) {
             entry?.let { it1 -> pdfView1(it1, context) }
 
 
-          //  Text("Sale Bill No : ${entry.BillNo ?: "-"}")
-            Text("Date : ${entry.Date ?: "-"}")
-            Text("Sub-party : ${entry.SubParty ?: "-"}")
-            Text("Customer name : ${entry.SubParty ?: "-"}")
-            Text("Sub-party : ${entry.SubParty ?: "-"}")
+            Text("Bill Ref No : ${entry.saleBillNo ?: "-"}")
+            Text("Date : ${entry.date ?: "-"}")
+            Text("Supplier : ${entry.supplierName ?: "-"}")
 
             Spacer(Modifier.height(6.dp))
 
             Text(
-                text = "Net Amount : ₹ ${entry.NetAmt ?: "0.00"}",
+                text = "Net Amount : ₹ ${entry.netAmt ?: "0.00"}",
                 color = Color(0xFF2E7D32),
                 fontWeight = FontWeight.Medium
             )
@@ -218,7 +253,7 @@ fun SaleServiceCard(entry: SaleServiceReportItem) {
             Spacer(Modifier.height(8.dp))
 
             // ---------- Expand / Collapse Header ----------
-        /*    Row(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expanded = !expanded },
@@ -237,9 +272,9 @@ fun SaleServiceCard(entry: SaleServiceReportItem) {
                         Icons.Default.KeyboardArrowDown,
                     contentDescription = null
                 )
-            }*/
+            }
 
-       /*     // ---------- Nested List ----------
+            // ---------- Nested List ----------
             AnimatedVisibility(visible = expanded) {
                 Column {
                     Spacer(Modifier.height(8.dp))
@@ -248,7 +283,7 @@ fun SaleServiceCard(entry: SaleServiceReportItem) {
                         ItemRow(item)
                     }
                 }
-            }*/
+            }
         }
     }
 }
@@ -278,7 +313,7 @@ fun ItemRow(item: ItemsDetailsDatum) {
 
 @Composable
 fun pdfView1(
-    it1: SaleServiceReportItem,
+    it1: CreditNoteReportResult,
     context: Context
 ) {
     val valueStyle = TextStyle(
@@ -287,10 +322,10 @@ fun pdfView1(
         color = Color.Black
     )
 
-    val isPdfAvailable = !it1.PDFPath.isNullOrEmpty()
+    val isPdfAvailable = !it1.pdfPath.isNullOrEmpty()
     //  Text("Invoice No : ${entry.billNo ?: "-"}")
     Text(
-        text = "Sale Bill No : ${it1.BillNo ?: "-"}",
+        text = "Invoice No : ${it1.billNo ?: "-"}",
         style = valueStyle.copy(
             textDecoration = if (isPdfAvailable)
                 TextDecoration.Underline
@@ -304,7 +339,7 @@ fun pdfView1(
         modifier = if (isPdfAvailable) {
             Modifier.clickable {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                    setDataAndType(Uri.parse(it1.PDFPath), "application/pdf")
+                    setDataAndType(Uri.parse(it1.pdfPath), "application/pdf")
                     flags = Intent.FLAG_ACTIVITY_NO_HISTORY
                 }
                 context.startActivity(intent)
@@ -314,3 +349,4 @@ fun pdfView1(
         }
     )
 }
+

@@ -17,6 +17,8 @@ import net.simplifiedcoding.data.network.Resource
 import javax.inject.Inject
 import com.google.gson.Gson
 import com.ssspvtltd.quick.model.order.add.additem.PackType
+import com.syber.ssspltd.data.model.CreditNotTo.CreditNoteRepPojo
+import com.syber.ssspltd.data.model.CreditNotTo.CreditNoteReportResult
 import com.syber.ssspltd.data.model.ImageModel
 import com.syber.ssspltd.data.model.OrderData
 import com.syber.ssspltd.data.model.OrderResponse
@@ -70,6 +72,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import okhttp3.RequestBody
 import org.json.JSONObject
 
@@ -1396,6 +1399,7 @@ import org.json.JSONObject
                         result.value,
                         DNToCustomerResponse::class.java
                     )
+                    Log.d("Debit note to customer report list", "Full Response: ${result.value}")
 
                     _debitNoteToCustomerReportList.value =
                         parsedResponse.debitNoteToCustomerReportResult ?: emptyList()
@@ -1411,6 +1415,52 @@ import org.json.JSONObject
             }
         }
     }
+
+
+
+
+
+    private val _creditNoteToList =
+        MutableStateFlow<List<CreditNoteReportResult>>(emptyList())
+
+    val creditNoteToList: StateFlow<List<CreditNoteReportResult>> =
+        _creditNoteToList
+
+    fun fatchCreditNoteToList(jsonObject: JsonObject) {
+
+        viewModelScope.launch {
+            _loading.value = true
+
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    repository.creditNoteReportApi(jsonObject)
+                }
+
+                if (result is Resource.Success) {
+
+                    val parsedResponse = Gson().fromJson(
+                        result.value,
+                        CreditNoteRepPojo::class.java
+                    )
+
+                    Log.d("Credit Note Report", "Full Response: ${result.value}")
+
+                    _creditNoteToList.value =
+                        parsedResponse.creditNoteReportResult ?: emptyList()
+
+                } else {
+                    _creditNoteToList.value = emptyList()
+                }
+
+            } catch (e: Exception) {
+                _creditNoteToList.value = emptyList()
+                Log.e("Credit Note Error", e.message ?: "Parsing error")
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
 
 
 }

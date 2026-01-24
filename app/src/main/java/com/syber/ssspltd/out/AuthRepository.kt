@@ -198,4 +198,7 @@ class AuthRepository @Inject constructor(private val api: ApiService, ) : BaseRe
     suspend fun debitNoteToCustomerReportApi(jsonObject: JsonObject) = safeApiCall {
         api.debitNoteToCustomerReportApii(jsonObject)
     }
+    suspend fun creditNoteReportApi(jsonObject: JsonObject) = safeApiCall {
+        api.creditNoteReportApii(jsonObject)
+    }
 }

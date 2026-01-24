@@ -32,6 +32,7 @@ import com.syber.ssspltd.ui.view.branches.BranchDetailScreen
 import com.syber.ssspltd.ui.view.branches.BranchesScreen
 import com.syber.ssspltd.ui.view.brand.BrandsScreen
 import com.syber.ssspltd.ui.view.courier_report.CourierReportScreen
+import com.syber.ssspltd.ui.view.creditNoteTo.CreditNoteToScreen
 import com.syber.ssspltd.ui.view.dasbord.PaymentDashboardScreen
 import com.syber.ssspltd.ui.view.debit_note.DebitNoteScreen
 import com.syber.ssspltd.ui.view.debit_note.DebitNoteToCustomerScreen
@@ -163,6 +164,12 @@ fun AppNavGraph(navController: NavHostController) {
             val viewModel: AuthViewModel = hiltViewModel()
             val themeColors = ThemeManager.getThemeColors(AppThemeType.DEFAULT)
             DebitNoteToCustomerScreen(navController = navController, viewModel1 = viewModel, themeColors)
+        }
+
+        composable(Screen.CreditNoteTo.route) {
+            val viewModel: AuthViewModel = hiltViewModel()
+            val themeColors = ThemeManager.getThemeColors(AppThemeType.DEFAULT)
+            CreditNoteToScreen(navController = navController, viewModel1 = viewModel, themeColors)
         }
         composable(Screen.SaleServicesScreen.route) {
             val viewModel: AuthViewModel = hiltViewModel()

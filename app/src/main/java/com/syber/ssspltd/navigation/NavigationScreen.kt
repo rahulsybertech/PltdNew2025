@@ -22,6 +22,7 @@ sealed class Screen(val route: String) {
     object CreditNoteToSupplier : Screen("creditNoteToSupplierScreen")
     object CourierReportScreen : Screen("courierReportScreen")
     object DebitNoteToCustomer : Screen("DebitNoteToCustomer")
+    object CreditNoteTo : Screen("CreditNoteTo")
     object DebitNoteToSupplier : Screen("DebitNoteToSupplier")
     object SaleServicesScreen : Screen("saleservices")
     object DasbordScreen : Screen("dasbordScreen")

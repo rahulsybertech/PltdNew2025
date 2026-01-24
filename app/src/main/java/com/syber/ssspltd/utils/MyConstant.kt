@@ -78,6 +78,10 @@ object MyConstant {
     const val GetDebitNoteToCustomerReport: String = DOMAIN + "api/PltdApp/GetDebitNoteToCustomerReport"
 
 
+    //Credit Note to
+    const val GetCreditNoteReport: String = DOMAIN + "api/PltdApp/GetCreditNoteReport"
+
+
 
     /*    GUEST*/
   const val SaveUpdateGuestMasterDetails: String = DOMAIN + "Api/StayBooking/SaveUpdateGuestMasterDetails"

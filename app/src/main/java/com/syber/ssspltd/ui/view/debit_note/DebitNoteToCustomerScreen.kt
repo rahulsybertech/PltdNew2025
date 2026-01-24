@@ -6,6 +6,7 @@ import android.content.Intent
 import android.icu.util.Calendar
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,8 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,6 +57,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,11 +71,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.gson.JsonArray
-import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.syber.ssspltd.R
-import com.syber.ssspltd.data.model.ledger.LedgerResponse
+import com.syber.ssspltd.data.model.debitNoteToCustomer.DebitNoteToCustomerReportResult
+import com.syber.ssspltd.data.model.debitNoteToCustomer.ItemsDetailsDatum
 import com.syber.ssspltd.out.AuthViewModel
 import com.syber.ssspltd.ui.theme.ThemeColors
 import com.syber.ssspltd.utils.AppSharedPreferences
@@ -87,10 +90,6 @@ fun DebitNoteToCustomerScreen(
     themeColors: ThemeColors
 ) {
 
-    val hasFetched by viewModel1.hasFetched.collectAsState()
-
-    val listState = rememberLazyListState()
-    val ledgerEntries by viewModel1.ledgerReportWithBalance.collectAsState()
     val debitNoteToCustomerReportList by viewModel1.debitNoteToCustomerReportList.collectAsState()
     val isLoading by viewModel1.loading.collectAsState()
     val sheetState = rememberModalBottomSheetState()
@@ -99,31 +98,12 @@ fun DebitNoteToCustomerScreen(
     // Call API when screen first opens
     LaunchedEffect(Unit) {
         val jsonObject = JsonObject().apply {
-
+/*            {"MOBILENO":"8709536827","PARTYCODE":"DL17747","DBNAME":""}*/
+            addProperty("MOBILENO", AppSharedPreferences.getInstance(context).mobileNumber)
             addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
-            addProperty("FROMDATE", "")
-            addProperty("TODATE", "")
-            addProperty("Status", "")
-            add("AVGDATE", JsonNull.INSTANCE)
-            add("TICK", JsonNull.INSTANCE)
-            addProperty("DBNAME", "2025-2026")
-            add("LEDGERTYPE", JsonNull.INSTANCE)
-        }
-        val jsonObject1 = JsonObject().apply {
-
-            add("Branch", JsonArray())       // []
-            add("Brand", JsonArray())        // []
-
             addProperty("DBNAME", "")
-            addProperty("EndDate", "31/03/2026")
-            addProperty("FILTERTYPE", "LEDGERREPORT")
-            addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
-            addProperty("StartDate", "01/04/2025")
 
-            add("SubParty", JsonArray())     // []
-            add("Transporter", JsonArray())  // []
         }
-        //viewModel1.fatchSaleReportFilter(jsonObject1)
         viewModel1.fatchdebitNoteToCustomerReportList(jsonObject)
     }
 
@@ -139,11 +119,11 @@ fun DebitNoteToCustomerScreen(
                         Column {
                             Text("Debit Note to Customer", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             if (debitNoteToCustomerReportList.isNotEmpty()) {
-                                Text(
+                             /*   Text(
                                     text = "${ledgerEntries.get(0).DefaultStartDate ?: "--"} to ${ledgerEntries.get(0).DefaultEndDate ?: "--"}",
                                     fontSize = 12.sp,
                                     color = Color.White.copy(alpha = 0.8f)
-                                )
+                                )*/
                             }
 
                         }
@@ -194,33 +174,34 @@ fun DebitNoteToCustomerScreen(
                     }
                 }
 
-                ledgerEntries.isNotEmpty() -> {
+                debitNoteToCustomerReportList.isNotEmpty() -> {
                     // ✅ Opening Balance
                     Card(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
-                        Row(
+                     /*   Row(
                             modifier = Modifier.padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text("Opening Balance", fontWeight = FontWeight.Bold)
-                            ledgerEntries[0].OpeningBal?.let {
+                            debitNoteToCustomerReportList[0].netAmt?.let {
                                 Text(it, color = Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
                             }
-                        }
+                        }*/
                     }
 
                     LazyColumn(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(ledgerEntries.flatMap {
-                            it.LedgerReportResult ?: emptyList()
-                        }) { item ->
-                            LedgerCard(item)
+                        items(
+                            items = debitNoteToCustomerReportList,
+                       /*     key = { it.id }*/ // use unique id if available
+                        ) { item ->
+                            LedgerCard11(item)
                         }
                     }
 
@@ -233,10 +214,10 @@ fun DebitNoteToCustomerScreen(
                             modifier = Modifier.padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Closing Balance", color = Color.White, fontWeight = FontWeight.Bold)
+                     /*       Text("Closing Balance", color = Color.White, fontWeight = FontWeight.Bold)
                             ledgerEntries[0].ClosingBal?.let {
                                 Text(it, color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
-                            }
+                            }*/
                         }
                     }
                 }
@@ -256,48 +237,99 @@ fun DebitNoteToCustomerScreen(
 }
 
 @Composable
-fun LedgerCard1(entry: LedgerResponse.LedgerReportItem) {
+fun LedgerCard11(entry: DebitNoteToCustomerReportResult) {
     val context = LocalContext.current
-    val valueStyle = MaterialTheme.typography.bodySmall
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("BillDate  : ${entry.BillDate ?: "-"}", style = valueStyle)
-            Text("AccountID : ${entry.AccountID ?: "-"}", style = valueStyle)
-            //  Text("BLDes     : ${entry.BLDescription ?: "-"}", style = valueStyle)
-            entry.BLDescription?.let { entry.PDFPath?.let { it1 -> BLDesText(it , it1,context) } }
-            Column( modifier = Modifier.fillMaxWidth()) {
-                if(entry.CreditAmt?.isNotEmpty() == true){
-                    Text(
-                        "Credit: ${entry.CreditAmt}",
-                        color = Color(0xFF2E7D32), // green for credit
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                if(entry.DebitAmt?.isNotEmpty() == true){
-                    Text(
-                        "Debit: ${entry.DebitAmt}",
-                        color = Color(0xFFD32F2F), // red for debit
-                        fontWeight = FontWeight.Medium
-                    )
-                }
 
-            }
+            // ---------- Header Info ----------
+             entry?.let { it1 -> pdfView(it1, context) }
+
+
+            Text("Bill Ref No : ${entry.saleBillNo ?: "-"}")
+            Text("Date : ${entry.date ?: "-"}")
+            Text("Supplier : ${entry.supplierName ?: "-"}")
+
+            Spacer(Modifier.height(6.dp))
+
+            Text(
+                text = "Net Amount : ₹ ${entry.netAmt ?: "0.00"}",
+                color = Color(0xFF2E7D32),
+                fontWeight = FontWeight.Medium
+            )
+
+            Spacer(Modifier.height(8.dp))
+            Divider()
             Spacer(Modifier.height(8.dp))
 
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                Text("Balance: ${entry.Balance}", color = Color(0xFF1A237E), fontWeight = FontWeight.Medium)
+            // ---------- Expand / Collapse Header ----------
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Item Details",
+                    modifier = Modifier.weight(1f),
+                    fontWeight = FontWeight.Medium
+                )
+
+                Icon(
+                    imageVector = if (expanded)
+                        Icons.Default.KeyboardArrowUp
+                    else
+                        Icons.Default.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+
+            // ---------- Nested List ----------
+            AnimatedVisibility(visible = expanded) {
+                Column {
+                    Spacer(Modifier.height(8.dp))
+
+                    entry.itemsDetailsData?.forEach { item ->
+                        ItemRow(item)
+                    }
+                }
             }
         }
     }
 }
+
+
 @Composable
-fun BLDesText1(
-    blDescription: String?,
-    pdfUrl: String?,
+fun ItemRow(item: ItemsDetailsDatum) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = item.item ?: "-",
+            modifier = Modifier.weight(1f)
+        )
+
+        Text(
+            text = "₹ ${item.netAmt ?: "0.00"}",
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+
+
+@Composable
+fun pdfView(
+    it1: DebitNoteToCustomerReportResult,
     context: Context
 ) {
     val valueStyle = TextStyle(
@@ -306,10 +338,10 @@ fun BLDesText1(
         color = Color.Black
     )
 
-    val isPdfAvailable = !pdfUrl.isNullOrEmpty()
-
+    val isPdfAvailable = !it1.pdfPath.isNullOrEmpty()
+  //  Text("Invoice No : ${entry.billNo ?: "-"}")
     Text(
-        text = "BLDes     : ${blDescription ?: "-"}",
+        text = "Invoice No : ${it1.billNo ?: "-"}",
         style = valueStyle.copy(
             textDecoration = if (isPdfAvailable)
                 TextDecoration.Underline
@@ -323,7 +355,7 @@ fun BLDesText1(
         modifier = if (isPdfAvailable) {
             Modifier.clickable {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                    setDataAndType(Uri.parse(pdfUrl), "application/pdf")
+                    setDataAndType(Uri.parse(it1.pdfPath), "application/pdf")
                     flags = Intent.FLAG_ACTIVITY_NO_HISTORY
                 }
                 context.startActivity(intent)
@@ -336,381 +368,6 @@ fun BLDesText1(
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FilterBottomSheet12(
-    viewModel: AuthViewModel,
-    sheetState: SheetState,
-    onDismiss: () -> Unit,
-    onApply: () -> Unit
-) {
-
-    var selectedFilter by remember { mutableStateOf("Date") }
-
-    val adjustmentType by viewModel.adjustmentType.collectAsState()
-    val accountType by viewModel.accountType.collectAsState()
-    val entryType by viewModel.entryType.collectAsState()
-    val branchList by viewModel.branch.collectAsState()
-    val subPartyList by viewModel.subParty.collectAsState()
-    val supplierList by viewModel.supplier.collectAsState()
-    val transporterList by viewModel.transporter.collectAsState()
-
-    val selectedBranches = remember { mutableStateListOf<String>() }
-    val adjustment = remember { mutableStateListOf<String>() }
-    val account = remember { mutableStateListOf<String>() }
-    val entry = remember { mutableStateListOf<String>() }
-    val selectedSubParty = remember { mutableStateListOf<String>() }
-    val selectedSupplier = remember { mutableStateListOf<String>() }
-    val selectedTransporter = remember { mutableStateListOf<String>() }
-
-    // -------------------- DATE STATES --------------------
-    val context = LocalContext.current
-    var fromDate by remember { mutableStateOf("DD/MM/YYYY") }
-    var toDate by remember { mutableStateOf("DD/MM/YYYY") }
-
-    val financialYearStart = remember {
-        Calendar.getInstance().apply {
-            set(2025, Calendar.APRIL, 1)
-        }
-    }
-
-    val financialYearEnd = remember {
-        Calendar.getInstance().apply {
-            set(2026, Calendar.MARCH, 31)
-        }
-    }
-
-    fun formatDate(cal: Calendar): String {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return sdf.format(cal.time)
-    }
-
-    fun parseDate(date: String): Calendar {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return Calendar.getInstance().apply {
-            time = sdf.parse(date)!!
-        }
-    }
 
 
 
-    val calendar = Calendar.getInstance()
-
-    fun openFromDatePicker() {
-        val datePicker = DatePickerDialog(
-            context,
-            { _, year, month, day ->
-                val selectedCal = Calendar.getInstance().apply {
-                    set(year, month, day)
-                }
-
-                fromDate = formatDate(selectedCal)
-
-                // Reset ToDate if invalid
-                if (toDate != "DD/MM/YYYY") {
-                    val toCal = parseDate(toDate)
-                    if (toCal.before(selectedCal)) {
-                        toDate = "DD/MM/YYYY"
-                    }
-                }
-            },
-            financialYearStart.get(Calendar.YEAR),
-            financialYearStart.get(Calendar.MONTH),
-            financialYearStart.get(Calendar.DAY_OF_MONTH)
-        )
-
-        datePicker.datePicker.minDate = financialYearStart.timeInMillis
-        datePicker.datePicker.maxDate = financialYearEnd.timeInMillis
-
-        datePicker.show()
-    }
-
-
-    fun openToDatePicker() {
-        if (fromDate == "DD/MM/YYYY") {
-            Toast.makeText(context, "Please select From Date first", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val fromCal = parseDate(fromDate)
-
-        val datePicker = DatePickerDialog(
-            context,
-            { _, year, month, day ->
-                val selectedCal = Calendar.getInstance().apply {
-                    set(year, month, day)
-                }
-                toDate = formatDate(selectedCal)
-            },
-            fromCal.get(Calendar.YEAR),
-            fromCal.get(Calendar.MONTH),
-            fromCal.get(Calendar.DAY_OF_MONTH)
-        )
-
-        // 🔒 IMPORTANT RULES
-        datePicker.datePicker.minDate = fromCal.timeInMillis
-        datePicker.datePicker.maxDate = financialYearEnd.timeInMillis
-
-        datePicker.show()
-    }
-
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        dragHandle = { BottomSheetDefaults.DragHandle() },
-        containerColor = Color.White,
-        tonalElevation = 8.dp,
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-    ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-
-            // ---------- Header ----------
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Filter",
-                    fontSize = 14.sp,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
-                )
-
-                Icon(
-                    painter = painterResource(R.drawable.ic_criss_cross),
-                    contentDescription = "Close",
-                    tint = Color.Unspecified,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clickable { onDismiss() }
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            // ---------- MAIN CONTENT ----------
-            Row(modifier = Modifier.fillMaxWidth()) {
-
-                // LEFT SIDE (Options)
-                Column(
-                    Modifier
-                        .weight(1f)
-                        .padding(end = 12.dp)
-                ) {
-                    listOf("Date", "Adjustment", "Entry", "Account",).forEachIndexed { index, title ->
-                        FilterOption(
-                            title = title,
-                            selected = selectedFilter == title,
-                            onClick = { selectedFilter = title }
-                        )
-                        if (index != 4) Divider()
-                    }
-                }
-
-                // Vertical Divider
-                Box(
-                    modifier = Modifier
-                        .width(2.dp)
-                        .height(IntrinsicSize.Max)
-                        .background(Color(0xFF1565C0))
-                )
-
-                // RIGHT SIDE
-                Column(
-                    modifier = Modifier
-                        .weight(1.5f)
-                        .padding(start = 12.dp)
-                ) {
-
-                    //------------------------------------------------------------
-                    //                      DATE FILTER
-                    //------------------------------------------------------------
-                    if (selectedFilter == "Date") {
-
-                        Text("From date", fontSize = 12.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                        Text("To date", fontSize = 12.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-
-                        Spacer(Modifier.height(12.dp))
-
-                        Row {
-
-                            // FROM DATE BOX
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(48.dp)
-                                    .background(Color(0xFFFFEBEE), RoundedCornerShape(6.dp))
-                                    .clickable { openFromDatePicker() }
-                                    .padding(start = 10.dp),
-                                contentAlignment = Alignment.CenterStart
-                            ) {
-                                Text(fromDate, fontSize = 12.sp, color = Color.Green)
-                            }
-
-                            Spacer(Modifier.width(12.dp))
-
-                            // TO DATE BOX
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(48.dp)
-                                    .background(Color(0xFFFFEBEE), RoundedCornerShape(6.dp))
-                                    .clickable { openToDatePicker() }
-                                    .padding(start = 10.dp),
-                                contentAlignment = Alignment.CenterStart
-                            ) {
-                                Text(toDate, fontSize = 12.sp, color = Color.Green)
-                            }
-                        }
-                    }
-
-                    //------------------------------------------------------------
-                    //                  BRANCH / SUBPARTY / SUPPLIER / TRANSPORT
-                    //------------------------------------------------------------
-                    if (selectedFilter == "Adjustment") {
-                        LazyColumn {
-                            items(adjustmentType) { item ->
-                                val name = item.AdjustmentName ?: ""
-                                val isChecked = name in selectedBranches
-                                CheckBoxItem(name, isChecked) { checked ->
-                                    if (checked) selectedBranches.add(name) else selectedBranches.remove(name)
-                                }
-                            }
-                        }
-                    }
-
-                    if (selectedFilter == "Entry") {
-                        LazyColumn {
-                            items(entryType) { item ->
-                                val name = item.EntryTypeName ?: ""
-                                val isChecked = name in selectedSubParty
-                                CheckBoxItem(name, isChecked) { checked ->
-                                    if (checked) selectedSubParty.add(name) else selectedSubParty.remove(name)
-                                }
-                            }
-                        }
-                    }
-
-                    if (selectedFilter == "Account") {
-                        LazyColumn {
-                            items(accountType) { item ->
-                                val name = item.AccountTypeName ?: ""
-                                val isChecked = name in selectedSupplier
-                                CheckBoxItem(name, isChecked) { checked ->
-                                    if (checked) selectedSupplier.add(name) else selectedSupplier.remove(name)
-                                }
-                            }
-                        }
-                    }
-                } // Column end
-            }
-
-            Spacer(Modifier.height(24.dp))
-
-            // ---------- FOOTER BUTTONS ----------
-            Row(modifier = Modifier.fillMaxWidth()) {
-
-                // RESET
-                Button(
-                    onClick = {
-                        fromDate = "DD/MM/YYYY"
-                        toDate = "DD/MM/YYYY"
-                        selectedBranches.clear()
-                        selectedSubParty.clear()
-                        selectedSupplier.clear()
-                        selectedTransporter.clear()
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text("Reset", color = Color.Black)
-                }
-
-                Spacer(Modifier.width(16.dp))
-
-                // APPLY
-                Button(
-                    onClick = {
-                        /*          {"PARTYCODE":"DL3827","FROMDATE":"01/09/2025","TODATE":"05/09/2025","Status":"DEBIT","AVGDATE":"null","TICK":"1","DBNAME":"","LEDGERTYPE":"JOURNAL,"}*/
-
-                        val jsonObject = JsonObject().apply {
-                            addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
-                            addProperty("FROMDATE", fromDate)
-                            addProperty("TODATE", toDate)
-                            addProperty("Status", entry.getOrNull(0) ?: "")
-                            addProperty("LEDGERTYPE", account.getOrNull(0) ?: "")
-                            addProperty("DBNAME", "")
-                            addProperty("TICK", account.getOrNull(0) ?: "null")
-                        }
-
-                        viewModel.fetchLedgerReport(jsonObject)
-                        onDismiss()
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text("Apply", color = Color.Black)
-                }
-            }
-
-            Spacer(Modifier.height(20.dp))
-        }
-    }
-}
-
-
-@Composable
-fun CheckBoxItem1(
-    label: String,
-    isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCheckedChange(!isChecked) }
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = isChecked,
-            onCheckedChange = onCheckedChange
-        )
-        Text(
-            text = label,
-            modifier = Modifier.padding(start = 8.dp),
-            fontSize = 14.sp
-        )
-    }
-}
-
-
-@Composable
-fun FilterOption1(
-    title: String,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            color = if (selected) Color(0xFF2E7D32) else Color.Black,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
-        )
-    }
-}

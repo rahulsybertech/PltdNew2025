@@ -233,6 +233,9 @@ fun DynamicGridMenu(bookings:List<StayBookingResult>,
                                 "Courier Report" -> {
                                     navController.navigate(Screen.CourierReportScreen.route)
                                 }
+                                "Credit Note" -> {
+                                    navController.navigate(Screen.CreditNoteTo.route)
+                                }
 
 
                                 "Ledger" -> {

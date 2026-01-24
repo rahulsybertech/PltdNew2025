@@ -17,6 +17,7 @@ import com.syber.ssspltd.utils.MyConstant.GetAppThemeDetailsData
 import com.syber.ssspltd.utils.MyConstant.GetBrandMasterDetails
 import com.syber.ssspltd.utils.MyConstant.GetBrands
 import com.syber.ssspltd.utils.MyConstant.GetCourierReport
+import com.syber.ssspltd.utils.MyConstant.GetCreditNoteReport
 import com.syber.ssspltd.utils.MyConstant.GetDashboardDetail_Graph
 import com.syber.ssspltd.utils.MyConstant.GetDashboardDetails_BalanceTillDate
 import com.syber.ssspltd.utils.MyConstant.GetDashboardDetails_Interest_Discount
@@ -223,6 +224,9 @@ interface ApiService {
 
     @POST(GetDebitNoteToCustomerReport)
     suspend fun debitNoteToCustomerReportApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetCreditNoteReport)
+    suspend fun creditNoteReportApii(@Body jsonObject: JsonObject): JsonObject
 
 
 }
