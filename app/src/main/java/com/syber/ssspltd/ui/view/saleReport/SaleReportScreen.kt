@@ -91,8 +91,6 @@ fun SaleReportScreen(navController: NavController, viewModel1: AuthViewModel) {
             .distinctUntilChanged()
             .collect { lastVisibleIndex ->
                 if (lastVisibleIndex >= saleItems.lastIndex - 2 && !isLoading) {
-
-
                     val jsonObject = JsonObject().apply {
                         addProperty("MOBILENO", AppSharedPreferences.getInstance(context).phoneNumber)
                         addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
@@ -121,7 +119,6 @@ fun SaleReportScreen(navController: NavController, viewModel1: AuthViewModel) {
                     }
                     viewModel1.fetchSaleReport(jsonObject)
                     viewModel1.fatchSaleReportFilter(jsonObject1)
-
                 }
             }
     }
@@ -276,7 +273,7 @@ fun FilterBottomSheet(
     onDismiss: () -> Unit,
     onApply: () -> Unit
 ) {
-
+    val saleItems by viewModel.saleItems.collectAsState()
     var selectedFilter by remember { mutableStateOf("Date") }
     val adjustmentType by viewModel.adjustmentType.collectAsState()
     val branchList by viewModel.branch.collectAsState()
@@ -295,7 +292,12 @@ fun FilterBottomSheet(
     var toDate by remember { mutableStateOf("DD/MM/YYYY") }
 
     val calendar = Calendar.getInstance()
-
+    LaunchedEffect(saleItems) {
+        if (saleItems.isNotEmpty()) {
+            fromDate = saleItems[0].DefaultStartDate ?: "DD/MM/YYYY"
+            toDate = saleItems[0].DefaultEndDate ?: "DD/MM/YYYY"
+        }
+    }
     fun openFromDatePicker() {
         DatePickerDialog(
             context,

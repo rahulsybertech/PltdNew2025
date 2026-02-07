@@ -14,6 +14,8 @@ import com.syber.ssspltd.utils.MyConstant.GET_APP_VERSION
 import com.syber.ssspltd.utils.MyConstant.GET_BANNER_LIST
 import com.syber.ssspltd.utils.MyConstant.GetAllEventImages
 import com.syber.ssspltd.utils.MyConstant.GetAppThemeDetailsData
+import com.syber.ssspltd.utils.MyConstant.GetBankDetails
+import com.syber.ssspltd.utils.MyConstant.GetBranches
 import com.syber.ssspltd.utils.MyConstant.GetBrandMasterDetails
 import com.syber.ssspltd.utils.MyConstant.GetBrands
 import com.syber.ssspltd.utils.MyConstant.GetCourierReport
@@ -31,6 +33,7 @@ import com.syber.ssspltd.utils.MyConstant.GetGuestMasterListByCustomerId
 import com.syber.ssspltd.utils.MyConstant.GetLedgerReportWithBalance
 import com.syber.ssspltd.utils.MyConstant.GetMainPartyAndSubPartyList
 import com.syber.ssspltd.utils.MyConstant.GetNickNameList
+import com.syber.ssspltd.utils.MyConstant.GetProfileDetails
 import com.syber.ssspltd.utils.MyConstant.GetSaleReport
 import com.syber.ssspltd.utils.MyConstant.GetSaleServiceReport
 import com.syber.ssspltd.utils.MyConstant.GetSecurityCheckReport
@@ -227,6 +230,15 @@ interface ApiService {
 
     @POST(GetCreditNoteReport)
     suspend fun creditNoteReportApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetProfileDetails)
+    suspend fun profileApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetBranches)
+    suspend fun branchApii(@Body jsonObject: JsonObject): JsonObject
+
+    @POST(GetBankDetails)
+    suspend fun bankDetailApi(@Body jsonObject: JsonObject): JsonObject
 
 
 }

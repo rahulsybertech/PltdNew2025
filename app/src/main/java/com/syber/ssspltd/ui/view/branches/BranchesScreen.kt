@@ -1,5 +1,4 @@
 package com.syber.ssspltd.ui.view.branches
-import com.syber.ssspltd.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,13 +18,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.google.gson.JsonObject
 import com.piashcse.hilt_mvvm_compose_movie.navigation.Screen
+import com.syber.ssspltd.data.model.branch.BranchResult
+import com.syber.ssspltd.out.AuthViewModel
+import com.syber.ssspltd.ui.theme.ThemeColors
+import com.syber.ssspltd.utils.AppSharedPreferences
 
 data class Branch(
     val name: String,
@@ -35,29 +43,55 @@ data class Branch(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BranchesScreen(navController: NavController) {
-    val allBranches = listOf(
-        Branch("Delhi Gandhinagar", "H.O.", R.drawable.sss_icon),
-        Branch("Delhi Chandni Chowk", "B.O.", R.drawable.sss_icon),
-        Branch("Ludhiana", "B.O.", R.drawable.sss_icon),
-        Branch("Mumbai", "B.O.", R.drawable.sss_icon),
-        Branch("Surat", "B.O.", R.drawable.sss_icon),
-        Branch("Jaipur", "B.O.", R.drawable.sss_icon),
-        Branch("Bangalore", "B.O.", R.drawable.sss_icon),
-        Branch("Nagpur", "B.O.", R.drawable.sss_icon),
-        Branch("Pilkhuwa", "V.O.", R.drawable.sss_icon),
-        Branch("Pali", "V.O.", R.drawable.sss_icon),
-        Branch("Panipat", "V.O.", R.drawable.sss_icon),
-    )
+fun BranchesScreen(
+    navController: NavController,
+    viewModel1: AuthViewModel,
+    themeColors: ThemeColors
+) {
+
+    val allBranches by viewModel1.branchListInProfilePage.collectAsState()
+    val isLoading by viewModel1.loading.collectAsState()
+    val context = LocalContext.current
 
     var query by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("All") }
 
     val branchTypes = listOf("All", "H.O.", "B.O.", "V.O.")
 
-    val filteredBranches = allBranches.filter {
-        (selectedType == "All" || it.type == selectedType) &&
-                it.name.contains(query, ignoreCase = true)
+    // API call once
+    LaunchedEffect(Unit) {
+        val jsonObject = JsonObject().apply {
+            addProperty(
+                "MOBILENO",
+                AppSharedPreferences.getInstance(context).mobileNumber
+            )
+            addProperty(
+                "accountid",
+                "e9906cde-7d9c-48ac-a2de-7594eb4f8fb9"
+            )
+            addProperty("DBNAME", "")
+        }
+        viewModel1.fatchBranchList(jsonObject)
+    }
+
+    // Filtering
+    val filteredBranches = remember(
+        allBranches,
+        query,
+        selectedType
+    ) {
+        allBranches.filter { branch ->
+            val name = branch.BranchName ?: ""
+
+            val matchesType =
+                selectedType == "All" ||
+                        name.contains(selectedType, ignoreCase = true)
+
+            val matchesQuery =
+                name.contains(query, ignoreCase = true)
+
+            matchesType && matchesQuery
+        }
     }
 
     Scaffold(
@@ -75,14 +109,17 @@ fun BranchesScreen(navController: NavController) {
 
         Column(
             modifier = Modifier
-                .padding(padding)
                 .fillMaxSize()
+                .padding(padding)
         ) {
+
             // 🔍 Search Bar
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = "Search")
+                },
                 placeholder = { Text("Search branches...") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,75 +142,98 @@ fun BranchesScreen(navController: NavController) {
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 🟦 Grid
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
+            // 🟦 Content Area
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                items(filteredBranches) { branch ->
-                    BranchCard(branch = branch,navController)
+                when {
+                    isLoading -> {
+                        CircularProgressIndicator()
+                    }
+                    filteredBranches.isEmpty() -> {
+                        Text("No branches found")
+                    }
+
+                    else -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(filteredBranches) { branch ->
+                                BranchCard(
+                                    branch = branch,
+                                    navController = navController
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
 
+
 @Composable
-fun BranchCard(branch: Branch, navController: NavController) {
+
+fun BranchCard(
+    branch: BranchResult,
+    navController: NavController
+) {
     Card(
-        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp)
             .clickable {
-                // This is triggered when the card is clicked
-              //  navController.currentBackStackEntry?.arguments?.putParcelable("branch", branch)
-                navController.navigate(Screen.BranchDetailScreen.route)
+                // navigation if needed
             },
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(6.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                        )
-                    )
-                )
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.padding(12.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Image(
-                    painter = painterResource(branch.image),
-                    contentDescription = branch.name,
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.6f))
-                        .padding(8.dp)
-                )
-                Spacer(modifier = Modifier.height(10.dp))
+
+            // 🌄 Branch Image
+            AsyncImage(
+                model = branch.Branch_Images,
+                contentDescription = branch.BranchName,
+                /*contentScale = ContentScale.Crop,*/
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .width(100.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+      /*          placeholder = painterResource(R.drawble.),
+                error = painterResource(R.drawable.placeholder)*/
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 🏢 Branch Name
+            Text(
+                text = branch.BranchName ?: "N/A",
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // 📍 Managed By
+            if (!branch.BranchManagedBy.isNullOrEmpty()) {
                 Text(
-                    text = "${branch.name} (${branch.type})",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Center
+                    text = branch.BranchManagedBy,
+                    fontSize = 12.sp,
+                    color = Color.Gray
                 )
             }
         }
     }
 }
+
 

@@ -42,6 +42,9 @@ compose-foundation = "1.6.7" # or latest stable
 vico = "1.14.0"
 playServicesMlkitTextRecognitionCommon = "19.1.0"
 playServicesMlkitTextRecognition = "19.0.1"
+firebaseMessagingKtx = "25.0.1"
+
+firebaseMessaging = "24.1.0" # Change from 25.0.1 to 24.1.0
 
 
 
@@ -110,7 +113,7 @@ volley = { group = "com.android.volley", name = "volley", version.ref = "volley"
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 play-services-mlkit-text-recognition-common = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-common", version.ref = "playServicesMlkitTextRecognitionCommon" }
 play-services-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" }
-
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

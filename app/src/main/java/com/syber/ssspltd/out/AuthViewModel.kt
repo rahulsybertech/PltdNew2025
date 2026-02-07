@@ -1,6 +1,7 @@
 package com.syber.ssspltd.out
 
 import android.util.Log
+import android.util.Log.e
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,8 +30,10 @@ import com.syber.ssspltd.data.model.addorder.ItemResponse
 import com.syber.ssspltd.data.model.addorder.PartyDetailsResponse
 import com.syber.ssspltd.data.model.addorder.SaveOrderResponse
 import com.syber.ssspltd.data.model.addorder.SupplierNickNameResponse
+import com.syber.ssspltd.data.model.bank_detail.BankDetailsResult
 import com.syber.ssspltd.data.model.bookingRequest.BranchList
 import com.syber.ssspltd.data.model.bookingRequest.BranchListResponse
+import com.syber.ssspltd.data.model.branch.BranchResult
 import com.syber.ssspltd.data.model.brand.Branch
 import com.syber.ssspltd.data.model.brand.BranchResponse
 import com.syber.ssspltd.data.model.brand.BrandResponse
@@ -42,6 +45,8 @@ import com.syber.ssspltd.data.model.gallery.EventItem
 import com.syber.ssspltd.data.model.honar.BlackListedName
 import com.syber.ssspltd.data.model.ledger.LedgerResponse
 import com.syber.ssspltd.data.model.ledger.LedgerResponse.LedgerReportItem
+import com.syber.ssspltd.data.model.profile.CommonApiResponse
+import com.syber.ssspltd.data.model.profile.ProfileDetailsResult
 import com.syber.ssspltd.data.model.saleReport.AccountType1
 import com.syber.ssspltd.data.model.saleReport.AdjustmentType
 import com.syber.ssspltd.data.model.saleReport.BranchItem
@@ -821,7 +826,9 @@ import org.json.JSONObject
         viewModelScope.launch(Dispatchers.IO) {
             _loading.value = true
             try {
+
                 val result = repository.stockInOfficeApi(jsonObject)
+                Log.d("Stock in office", "Full Request: $result")
                 if (result is Resource.Success) {
                     val parsedResponse = Gson().fromJson(
                         result.value,
@@ -1416,10 +1423,6 @@ import org.json.JSONObject
         }
     }
 
-
-
-
-
     private val _creditNoteToList =
         MutableStateFlow<List<CreditNoteReportResult>>(emptyList())
 
@@ -1461,6 +1464,126 @@ import org.json.JSONObject
         }
     }
 
+
+    private val _profileResult =
+        MutableStateFlow<ProfileDetailsResult?>(null)
+
+    val profileResult: StateFlow<ProfileDetailsResult?> =
+        _profileResult
+    fun fatchProfile(jsonObject: JsonObject) {
+
+        viewModelScope.launch {
+            _loading.value = true
+
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    repository.profileApi(jsonObject)
+                }
+
+                if (result is Resource.Success) {
+
+                    Log.d("Profile", "Full Response: ${result.value}")
+
+                    val parsedResponse = Gson().fromJson(
+                        result.value,
+                        CommonApiResponse::class.java
+                    )
+
+                    _profileResult.value = parsedResponse.ProfileDetailsResult
+
+                } else {
+                    _profileResult.value = null
+                }
+
+            } catch (e: Exception) {
+                _profileResult.value = null
+                Log.e("Credit Note Error", e.message ?: "Parsing error")
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+    private val _branchListInProfilePage =
+        MutableStateFlow<List<BranchResult>>(emptyList())
+
+    val branchListInProfilePage: StateFlow<List<BranchResult>> =
+        _branchListInProfilePage
+
+    fun fatchBranchList(jsonObject: JsonObject) {
+
+        viewModelScope.launch {
+            _loading.value = true
+
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    repository.branchApi(jsonObject)
+                }
+
+                if (result is Resource.Success) {
+
+                    val parsedResponse = Gson().fromJson(
+                        result.value,
+                        CommonApiResponse::class.java
+                    )
+
+                    Log.d("Credit Note Report", "Full Response: ${result.value}")
+
+                    _branchListInProfilePage.value =
+                        parsedResponse.BranchesResult ?: emptyList()
+
+                } else {
+                    _creditNoteToList.value = emptyList()
+                }
+
+            } catch (e: Exception) {
+                _creditNoteToList.value = emptyList()
+                Log.e("Credit Note Error", e.message ?: "Parsing error")
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+
+
+    private val _bankResult =
+        MutableStateFlow<List<BankDetailsResult>>(emptyList())
+
+    val bankResult: StateFlow<List<BankDetailsResult>> = _bankResult
+    fun fatchBankDetail(jsonObject: JsonObject) {
+
+        viewModelScope.launch {
+            _loading.value = true
+
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    repository.bankDetailApi(jsonObject)
+                }
+
+                if (result is Resource.Success) {
+
+                    Log.d("Profile", "Full Response: ${result.value}")
+
+                    val parsedResponse = Gson().fromJson(
+                        result.value,
+                        CommonApiResponse::class.java
+                    )
+
+                    _bankResult.value =
+                        parsedResponse.BankDetailsResult ?: emptyList()
+
+                } else {
+                //    bankResult.value = null
+                }
+
+            } catch (bankResult: Exception) {
+                _profileResult.value = null
+            //    Log.e("Credit Note Error", e.message ?: "Parsing error")
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
 
 
 }

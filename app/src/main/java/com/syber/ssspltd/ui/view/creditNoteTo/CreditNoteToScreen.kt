@@ -101,7 +101,7 @@ fun CreditNoteToScreen(
                 TopAppBar(
                     title = {
                         Column {
-                            Text("Debit Note to", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                            Text("Credit Note Report", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             if (debitNoteToCustomerReportList.isNotEmpty()) {
                                 /*   Text(
                                        text = "${ledgerEntries.get(0).DefaultStartDate ?: "--"} to ${ledgerEntries.get(0).DefaultEndDate ?: "--"}",
@@ -119,7 +119,7 @@ fun CreditNoteToScreen(
                     },
 
                     actions = {
-                        if (debitNoteToCustomerReportList.isNotEmpty()) {
+                      /*  if (debitNoteToCustomerReportList.isNotEmpty()) {
                             IconButton(onClick = { showFilterSheet = true }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.filter),
@@ -128,7 +128,7 @@ fun CreditNoteToScreen(
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
-                        }
+                        }*/
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent,

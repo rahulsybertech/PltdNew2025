@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "584239101057",
+    "firebase_url": "https://sssnew-4e451.firebaseio.com",
+    "project_id": "sssnew-4e451",
+    "storage_bucket": "sssnew-4e451.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584239101057:android:54281d2f43b9b3ed140980",
+        "android_client_info": {
+          "package_name": "com.syber.ssspltd1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6xL_Vevv-IFsZroLlav8KfLpRxasguRw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

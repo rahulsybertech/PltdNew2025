@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.kapt) // ✅ Required for Hilt
     alias(libs.plugins.hilt)
+    id("com.google.gms.google-services")
 
 
 }
@@ -97,6 +98,12 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
+    implementation(libs.firebase.messaging)
+    // implementation(libs.firebase.messaging.ktx)
+  /*  implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-messaging")
+*/
+
 
     //Retrofit
     testImplementation(libs.junit)
@@ -133,6 +140,8 @@ dependencies {
     implementation ("io.coil-kt:coil-compose:2.3.0") // For loading images in Compose
     implementation ("androidx.activity:activity-ktx:1.9.2")
     implementation ("androidx.fragment:fragment-ktx:1.7.1")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
 
 
     implementation(libs.compose.foundation)

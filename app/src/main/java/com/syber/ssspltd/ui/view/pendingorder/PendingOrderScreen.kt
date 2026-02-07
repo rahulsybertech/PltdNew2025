@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,8 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.gson.JsonObject
 import com.google.mlkit.vision.common.InputImage
@@ -163,31 +167,23 @@ fun OrderCard(order: OrderData) {
                     .padding(12.dp)
             ) {
                 Text(
-                    text = order.SaleParty ?: "Unknown Party",
+                    text = order.SupplierName ?: "Unknown Party",
                     style = MaterialTheme.typography.titleMedium,
                     color = Color(0xFF2E7D32)
                 )
             }
+            val context = LocalContext.current
 
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(10.dp)) {
                 Text("Item: ${order.ItemName}", style = MaterialTheme.typography.bodyLarge)
-                Text("Type: ${order.OrderType}", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+                Text("Type: ${order.PcsType}", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
                 Text("Sub Party: ${order.SubParty}", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
-                Text("Date: ${order.OrderDate}", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+                Text("Order Date: ${order.OrderDate}", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
                 Text("Qty: ${order.Qty}", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
-
-                Spacer(Modifier.height(12.dp))
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    AssistChip(
-                        onClick = {},
-                        label = { Text(order.OrderNo ?: "", color = Color.Red) },
-                        leadingIcon = { Icon(Icons.Default.ShoppingCart, null) }
-                    )
+                order.let { pdfPath ->
+                    pdfView(pdfPath, context)
                 }
-
                 Spacer(Modifier.height(12.dp))
-
                 // ✅ UPDATED ACTIONS WITH IMAGE PATH
                 OrderActions(
                     pdfUrl = order.PdfPath.toString(),
@@ -197,6 +193,46 @@ fun OrderCard(order: OrderData) {
         }
     }
 }
+@Composable
+fun pdfView(
+    it1: OrderData?,
+    context: Context
+) {
+    val valueStyle = TextStyle(
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+        color = Color.Black
+    )
+
+    val isPdfAvailable = !it1?.PdfPath.isNullOrEmpty()
+
+    Text(
+        text = "Order No : ${it1?.OrderNo ?: "-"}",
+        style = valueStyle.copy(
+            textDecoration = if (isPdfAvailable)
+                TextDecoration.Underline
+            else
+                TextDecoration.None,
+            color = if (isPdfAvailable)
+                Color.Blue
+            else
+                Color.Black
+        ),
+        modifier = if (isPdfAvailable) {
+            Modifier.clickable {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(Uri.parse(it1!!.PdfPath), "application/pdf")
+                    flags = Intent.FLAG_ACTIVITY_NO_HISTORY or
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
+                context.startActivity(intent)
+            }
+        } else {
+            Modifier
+        }
+    )
+}
+
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

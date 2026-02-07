@@ -249,7 +249,7 @@ fun AppNavGraph(navController: NavHostController) {
         composable(Screen.ProfileScreen.route) {
             val viewModel: AuthViewModel = hiltViewModel()
             val themeColors = ThemeManager.getThemeColors(AppThemeType.DEFAULT)
-            ProfileScreen(navController = navController/*, viewModel1 = viewModel,themeColors*/)
+            ProfileScreen(navController = navController, viewModel1 = viewModel,themeColors)
         }
         composable(Screen.BranchDetailScreen.route) {
             val viewModel: AuthViewModel = hiltViewModel()
@@ -384,10 +384,15 @@ fun AppNavGraph(navController: NavHostController) {
             val themeColors = ThemeManager.getThemeColors(AppThemeType.DEFAULT)
             ProductDetailsScreen(navController = navController/*, viewModel1 = viewModel,themeColors*/)
         }
+        composable(Screen.BankDetailsScreen.route) {
+            val viewModel: AuthViewModel = hiltViewModel()
+            val themeColors = ThemeManager.getThemeColors(AppThemeType.DEFAULT)
+            BankDetailsScreen(navController = navController, viewModel1 = viewModel,themeColors)
+        }
         composable(Screen.BranchesScreen.route) {
             val viewModel: AuthViewModel = hiltViewModel()
             val themeColors = ThemeManager.getThemeColors(AppThemeType.DEFAULT)
-            BranchesScreen(navController = navController/*, viewModel1 = viewModel,themeColors*/)
+            BranchesScreen(navController = navController, viewModel1 = viewModel,themeColors)
         }
         composable(Screen.SignUp.route) {
             val viewModel: AuthViewModel = hiltViewModel()

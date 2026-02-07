@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
@@ -33,23 +34,60 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.gson.JsonObject
 import com.syber.ssspltd.R
+import com.syber.ssspltd.out.AuthViewModel
+import com.syber.ssspltd.ui.theme.ThemeColors
+import com.syber.ssspltd.utils.AppSharedPreferences
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(
+    navController: NavController,
+    viewModel1: AuthViewModel,
+    themeColors: ThemeColors
+) {
+
+    val profileResult by viewModel1.profileResult.collectAsState()
+    val isLoading by viewModel1.loading.collectAsState()
+    val context = LocalContext.current
+
+    // API call once
+    LaunchedEffect(Unit) {
+        val jsonObject = JsonObject().apply {
+            addProperty(
+                "MOBILENO",
+                AppSharedPreferences.getInstance(context).mobileNumber
+            )
+            addProperty(
+                "PARTYCODE",
+                AppSharedPreferences.getInstance(context).isPartyCode
+            )
+            addProperty("DBNAME", "")
+        }
+        viewModel1.fatchProfile(jsonObject)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,76 +103,138 @@ fun ProfileScreen(navController: NavController) {
                     navigationIconContentColor = Color.White
                 )
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { /* Save or Edit */ }) {
-                Icon(Icons.Default.Person, contentDescription = "Save")
-            }
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Header with avatar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFF008080), Color(0xFF00BFA5))
-                        )
-                    )
-                    .padding(bottom = 60.dp)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
+
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.sss_icon),
-                        contentDescription = "Profile",
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .border(3.dp, Color.White, CircleShape)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Rahul Tamrakar", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text("rahul@email.com", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+                    CircularProgressIndicator(color = Color(0xFF008080))
                 }
             }
 
-            // Info Cards
-            Spacer(modifier = Modifier.height(70.dp))
-            ProfileItem(icon = Icons.Default.Person, label = "Name", value = "WRONG TEST SYBER PARTY A/C")
-            ProfileItem(icon = Icons.Default.Person, label = "Mobile Number", value = "7290087642")
-            ProfileItem(icon = Icons.Default.Person, label = "Email", value = "SADHANA@SSSSYBERTECH.COM")
-            ProfileItem(icon = Icons.Default.Person, label = "Party Code", value = "DL3331")
-            ProfileItem(icon = Icons.Default.Person, label = "Fin Year", value = "2025-2026")
+            profileResult != null -> {
 
-            // Toggle
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("Postage Charge", fontWeight = FontWeight.Medium)
-                Switch(
-                    checked = true,
-                    onCheckedChange = { /* toggle */ },
-                    colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF1E88E5))
-                )
+                val profile = profileResult!!
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    // Header
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(Color(0xFF008080), Color(0xFF00BFA5))
+                                )
+                            )
+                            .padding(bottom = 60.dp)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.sss_icon),
+                                contentDescription = "Profile",
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .clip(CircleShape)
+                                    .border(3.dp, Color.White, CircleShape)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = profile.ProfileName ?: "",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
+
+                            Text(
+                                text = profile.Email ?: "",
+                                color = Color.White.copy(alpha = 0.8f),
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(70.dp))
+
+                    ProfileItem(
+                        icon = Icons.Default.Person,
+                        label = "Name",
+                        value = profile.ProfileName ?: ""
+                    )
+
+                    ProfileItem(
+                        icon = Icons.Default.Person,
+                        label = "Mobile Number",
+                        value = profile.MobileNo ?: ""
+                    )
+
+                    ProfileItem(
+                        icon = Icons.Default.Person,
+                        label = "Email",
+                        value = profile.Email ?: ""
+                    )
+
+                    ProfileItem(
+                        icon = Icons.Default.Person,
+                        label = "Party Code",
+                        value = profile.PartyCode ?: ""
+                    )
+
+                    ProfileItem(
+                        icon = Icons.Default.Person,
+                        label = "Fin Year",
+                        value = "2025-2026"
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Postage Charge", fontWeight = FontWeight.Medium)
+                        Switch(
+                            checked = profile.Postage ?: false,
+                            onCheckedChange = { },
+                        )
+                    }
+                }
+            }
+
+            else -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No profile data found")
+                }
             }
         }
     }
 }
+
+
+
 
 @Composable
 fun ProfileItem(icon: ImageVector, label: String, value: String) {

@@ -14,6 +14,7 @@ class App: Application() {
        // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         // initialize()
+
     }
   /*  private fun initialize() {
         val quoteService = RetrofitHelper.getInstance().create(ApiService::class.java)

@@ -81,6 +81,11 @@ object MyConstant {
     //Credit Note to
     const val GetCreditNoteReport: String = DOMAIN + "api/PltdApp/GetCreditNoteReport"
 
+    //profil
+    const val GetProfileDetails: String = DOMAIN + "api/PltdApp/GetProfileDetails"
+    const val GetBankDetails: String = DOMAIN + "api/PltdApp/GetBankDetails"
+    const val GetBranches: String = DOMAIN + "api/PltdApp/GetBranches"
+
 
 
     /*    GUEST*/

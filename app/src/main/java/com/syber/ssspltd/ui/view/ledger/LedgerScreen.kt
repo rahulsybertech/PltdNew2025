@@ -97,35 +97,53 @@ fun LedgerScreen(
     var showFilterSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
     // Call API when screen first opens
+    LaunchedEffect(ledgerEntries) {
+
+        if (ledgerEntries.isEmpty()) return@LaunchedEffect
+
+        val startDate = ledgerEntries.first().DefaultStartDate ?: ""
+        val endDate = ledgerEntries.first().DefaultEndDate ?: ""
+
+        val jsonObject1 = JsonObject().apply {
+            add("Branch", JsonArray())
+            add("Brand", JsonArray())
+
+            addProperty(
+                "DBNAME",
+                AppSharedPreferences.getInstance(context).userManuallySelectedYear
+            )
+            addProperty("EndDate", endDate)
+            addProperty("FILTERTYPE", "LEDGERREPORT")
+            addProperty(
+                "PARTYCODE",
+                AppSharedPreferences.getInstance(context).isPartyCode
+            )
+            addProperty("StartDate", startDate)
+
+            add("SubParty", JsonArray())
+            add("Transporter", JsonArray())
+        }
+
+        viewModel1.fatchSaleReportFilter(jsonObject1)
+    }
     LaunchedEffect(Unit) {
         val jsonObject = JsonObject().apply {
-
             addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
             addProperty("FROMDATE", "")
             addProperty("TODATE", "")
             addProperty("Status", "")
             add("AVGDATE", JsonNull.INSTANCE)
             add("TICK", JsonNull.INSTANCE)
-            addProperty("DBNAME", "2025-2026")
+            addProperty(
+                "DBNAME",
+                AppSharedPreferences.getInstance(context).userManuallySelectedYear
+            )
             add("LEDGERTYPE", JsonNull.INSTANCE)
         }
-        val jsonObject1 = JsonObject().apply {
 
-            add("Branch", JsonArray())       // []
-            add("Brand", JsonArray())        // []
-
-            addProperty("DBNAME", "")
-            addProperty("EndDate", "01/01/2026")
-            addProperty("FILTERTYPE", "LEDGERREPORT")
-            addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
-            addProperty("StartDate", "01/04/2025")
-
-            add("SubParty", JsonArray())     // []
-            add("Transporter", JsonArray())  // []
-        }
-        viewModel1.fatchSaleReportFilter(jsonObject1)
         viewModel1.fetchLedgerReport(jsonObject)
     }
+
 
     Scaffold(
         topBar = {
@@ -356,17 +374,19 @@ fun FilterBottomSheet1(
     val transporterList by viewModel.transporter.collectAsState()
 
     val selectedBranches = remember { mutableStateListOf<String>() }
+    val saleItems by viewModel.saleItems.collectAsState()
     val adjustment = remember { mutableStateListOf<String>() }
     val account = remember { mutableStateListOf<String>() }
     val entry = remember { mutableStateListOf<String>() }
     val selectedSubParty = remember { mutableStateListOf<String>() }
     val selectedSupplier = remember { mutableStateListOf<String>() }
     val selectedTransporter = remember { mutableStateListOf<String>() }
-
+    var isDateInitialized by remember { mutableStateOf(false) }
     // -------------------- DATE STATES --------------------
     val context = LocalContext.current
     var fromDate by remember { mutableStateOf("DD/MM/YYYY") }
     var toDate by remember { mutableStateOf("DD/MM/YYYY") }
+
 
     val financialYearStart = remember {
         Calendar.getInstance().apply {
@@ -462,7 +482,8 @@ fun FilterBottomSheet1(
         containerColor = Color.White,
         tonalElevation = 8.dp,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-    ) {
+    )
+    {
 
         Column(
             modifier = Modifier
@@ -529,6 +550,15 @@ fun FilterBottomSheet1(
                         .padding(start = 12.dp)
                 ) {
 
+
+
+                    LaunchedEffect(saleItems) {
+                        if (!isDateInitialized && saleItems.isNotEmpty()) {
+                            fromDate = saleItems.first().DefaultStartDate ?: "DD/MM/YYYY"
+                            toDate = saleItems.first().DefaultEndDate ?: "DD/MM/YYYY"
+                            isDateInitialized = true
+                        }
+                    }
                     //------------------------------------------------------------
                     //                      DATE FILTER
                     //------------------------------------------------------------

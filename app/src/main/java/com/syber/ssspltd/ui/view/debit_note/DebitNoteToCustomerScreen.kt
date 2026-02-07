@@ -135,7 +135,7 @@ fun DebitNoteToCustomerScreen(
                     },
 
                     actions = {
-                        if (debitNoteToCustomerReportList.isNotEmpty()) {
+                 /*       if (debitNoteToCustomerReportList.isNotEmpty()) {
                             IconButton(onClick = { showFilterSheet = true }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.filter),
@@ -144,7 +144,7 @@ fun DebitNoteToCustomerScreen(
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
-                        }
+                        }*/
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent,

@@ -115,7 +115,7 @@ fun SaleServicesScreen(
                         }
                     },
                     actions = {
-                        if (ledgerEntries.isNotEmpty()) {
+                     /*   if (ledgerEntries.isNotEmpty()) {
                             IconButton(onClick = {         showFilterSheet = true }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.filter),
@@ -124,7 +124,7 @@ fun SaleServicesScreen(
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
-                        }
+                        }*/
 
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -169,14 +169,14 @@ fun SaleServicesScreen(
                 }
             }
 
-            if (showFilterSheet) {
+        /*    if (showFilterSheet) {
                 FilterBottomSheet1(
                     viewModel = viewModel1,
                     sheetState = sheetState,
                     onDismiss = { showFilterSheet = false },
                     onApply = { showFilterSheet = false }
                 )
-            }
+            }*/
         }
 
     }
@@ -202,7 +202,7 @@ fun SaleServiceCard(entry: SaleServiceReportItem) {
           //  Text("Sale Bill No : ${entry.BillNo ?: "-"}")
             Text("Date : ${entry.Date ?: "-"}")
             Text("Sub-party : ${entry.SubParty ?: "-"}")
-            Text("Customer name : ${entry.SubParty ?: "-"}")
+            Text("Customer name : ${entry.CustomerName ?: "-"}")
             Text("Sub-party : ${entry.SubParty ?: "-"}")
 
             Spacer(Modifier.height(6.dp))
@@ -212,11 +212,6 @@ fun SaleServiceCard(entry: SaleServiceReportItem) {
                 color = Color(0xFF2E7D32),
                 fontWeight = FontWeight.Medium
             )
-
-            Spacer(Modifier.height(8.dp))
-            Divider()
-            Spacer(Modifier.height(8.dp))
-
             // ---------- Expand / Collapse Header ----------
         /*    Row(
                 modifier = Modifier
