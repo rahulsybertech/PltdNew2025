@@ -138,6 +138,7 @@ fun AppNavGraph(navController: NavHostController) {
             LedgerScreen(navController = navController, viewModel1 = viewModel, themeColors)
         }
 
+
         composable(Screen.DebitNoteScreen.route) {
             val viewModel: AuthViewModel = hiltViewModel()
             val themeColors = ThemeManager.getThemeColors(AppThemeType.DEFAULT)

@@ -1127,7 +1127,6 @@ import org.json.JSONObject
             }
         }
     }
-
     private val _nickNameList = MutableStateFlow<List<NickNameItem>>(emptyList())
     val nickNameList: StateFlow<List<NickNameItem>> = _nickNameList
 

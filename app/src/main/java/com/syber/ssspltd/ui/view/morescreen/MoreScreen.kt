@@ -194,14 +194,19 @@ fun MoreScreen(navController: NavController) {
                 confirmButton = {
                     TextButton(onClick = {
                         showExitDialog = false
-                        val prefs = AppSharedPreferences.getInstance(context)
-                        prefs.clearToken()
-                        // 1. Clear SharedPreferences
 
+                        // 1️⃣ Clear token
+                        AppSharedPreferences
+                            .getInstance(context.applicationContext)
+                            .clearToken()
 
-
-                        // 2. Finish all activities
-                        activity?.finishAffinity()
+                        // 2️⃣ Navigate to Splash and clear back stack
+                        navController.navigate(Screen.Splash.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }) {
                         Text("Yes")
                     }
@@ -213,6 +218,7 @@ fun MoreScreen(navController: NavController) {
                 }
             )
         }
+
     }
 }
 

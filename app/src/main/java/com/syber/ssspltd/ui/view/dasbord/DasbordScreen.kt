@@ -53,6 +53,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.syber.ssspltd.R
 import com.syber.ssspltd.data.model.dasbord.Account
 import com.syber.ssspltd.data.model.dasbord.InterestDiscountDetails
 import com.syber.ssspltd.data.model.dasbord.PaymentDashboardResponse
@@ -213,7 +214,7 @@ fun PaymentDashboardScreen(navController: NavController,
                 // ✅ Pie Chart
                 PaymentPieChart(
                     availableLimit = data.availableLimit,
-                    stockInOffice = data.stockInOffice
+                    stockInOffice = data.balanceTillDate
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -333,21 +334,21 @@ fun PaymentPieChart(
         factory = { context ->
             PieChart(context).apply {
                 val entries = listOf(
-                    PieEntry(availableLimit.toSafeFloat(), "Available Limit"),
-                    PieEntry(stockInOffice.toSafeFloat(), "Stock in Office")
+                    PieEntry(availableLimit.toSafeFloat(), "Available Limit",R.color.black),
+                    PieEntry(stockInOffice.toSafeFloat(), "Balance Till Date",R.color.black)
                 )
 
                 val dataSet = PieDataSet(entries, "").apply {
                     colors = listOf(
                         androidx.compose.ui.graphics.Color(0xFF008080).toArgb(), // Green
-                        androidx.compose.ui.graphics.Color.Gray.toArgb()         // Gray
+                        androidx.compose.ui.graphics.Color(0xFFFFC107).toArgb()         // Gray
                     )
                     valueTextSize = 14f
                     valueTextColor = android.graphics.Color.RED
                 }
 
                 data = PieData(dataSet)
-
+                data.setValueTextColor(R.color.black)
                 description.isEnabled = false
                 legend.isEnabled = true
                 setUsePercentValues(true)
