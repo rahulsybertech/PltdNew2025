@@ -83,7 +83,7 @@ fun SaleReportScreen(navController: NavController, viewModel1: AuthViewModel) {
     var selectedFilter by remember { mutableStateOf("Date") }
     val context = LocalContext.current
 
-
+    val hasLoaded by viewModel1.hasLoaded.collectAsState()
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
@@ -117,11 +117,31 @@ fun SaleReportScreen(navController: NavController, viewModel1: AuthViewModel) {
                         add("SubParty", JsonArray())     // []
                         add("Transporter", JsonArray())  // []
                     }
-                    viewModel1.fetchSaleReport(jsonObject)
+                  //  viewModel1.fetchSaleReport(jsonObject)
                     viewModel1.fatchSaleReportFilter(jsonObject1)
                 }
             }
     }
+
+    LaunchedEffect(Unit) {
+        if (saleItems.isEmpty()) {
+            val jsonObject = JsonObject().apply {
+                addProperty("MOBILENO", AppSharedPreferences.getInstance(context).phoneNumber)
+                addProperty("PARTYCODE", AppSharedPreferences.getInstance(context).isPartyCode)
+                add("FROMDATE", JsonNull.INSTANCE)
+                add("TODATE", JsonNull.INSTANCE)
+                add("SUBPARTY", JsonNull.INSTANCE)
+                add("SUPPLIERS", JsonNull.INSTANCE)
+                add("BRANCH", JsonNull.INSTANCE)
+                add("TRANSPORT", JsonNull.INSTANCE)
+                addProperty("DBNAME", "")
+                addProperty("FilterType", "NEW")
+            }
+
+            viewModel1.fetchSaleReport(jsonObject)
+        }
+    }
+
 
     Scaffold(
         topBar = {
@@ -213,6 +233,8 @@ fun SaleReportScreen(navController: NavController, viewModel1: AuthViewModel) {
 
                             // ✅ Table rows for that report
                             report.SaleReportSecondaryData?.forEach { secondary ->
+
+                                PurchaseRow1(context)
                                 PurchaseRow(secondary,context)
                                 Spacer(modifier = Modifier.height(12.dp))
                             }
@@ -237,7 +259,7 @@ fun SaleReportScreen(navController: NavController, viewModel1: AuthViewModel) {
             }
 
             // Empty list fallback
-            if (saleItems.isEmpty() && !isLoading) {
+            if (saleItems.isEmpty() && !isLoading && hasLoaded) {
                 item {
                     Text(
                         text = "No sales found",
@@ -329,7 +351,8 @@ fun FilterBottomSheet(
         containerColor = Color.White,
         tonalElevation = 8.dp,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-    ) {
+    )
+    {
 
         Column(
             modifier = Modifier
@@ -553,6 +576,11 @@ fun FilterBottomSheet(
         }
     }
 }
+
+
+
+
+
 
 
 @Composable

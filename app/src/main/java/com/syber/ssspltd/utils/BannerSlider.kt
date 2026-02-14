@@ -178,9 +178,9 @@ fun DynamicGridMenu(bookings:List<StayBookingResult>,
     appMenuPermissionList: List<AppMenuPermission>,
     navController: NavController,context: Context
 ) {
-    val itemsPerRow = 2
+    val itemsPerRow = 4
     val rowCount = (appMenuPermissionList.size + itemsPerRow - 1) / itemsPerRow
-    val itemHeight = 120.dp
+    val itemHeight = 70.dp
     val verticalSpacing = 12.dp
 
     val totalHeight = remember(rowCount) {
@@ -198,7 +198,7 @@ fun DynamicGridMenu(bookings:List<StayBookingResult>,
     ) {
         items(appMenuPermissionList) { item ->
             Column(
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(70.dp)
             ) {
                 Card(
                     modifier = Modifier
@@ -286,10 +286,11 @@ fun DynamicGridMenu(bookings:List<StayBookingResult>,
                             Log.d("CardClick", "You clicked on the card with item: $item")
                         },
 
-                    shape = RoundedCornerShape(5.dp),
+                  /*  shape = RoundedCornerShape(5.dp),
                     elevation = CardDefaults.cardElevation(4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
+                    colors = CardDefaults.cardColors(containerColor = Color.White)*/
+                )
+                {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -301,7 +302,7 @@ fun DynamicGridMenu(bookings:List<StayBookingResult>,
                             painter = rememberAsyncImagePainter(item.iconImage),
                             contentDescription = "Grid Image",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.size(45.dp)
+                            modifier = Modifier.size(25.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(

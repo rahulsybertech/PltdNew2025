@@ -470,7 +470,8 @@ import org.json.JSONObject
         private set
 
 
-
+    private val _hasLoaded = MutableStateFlow(false)
+    val hasLoaded = _hasLoaded.asStateFlow()
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
@@ -481,13 +482,16 @@ import org.json.JSONObject
                 when (resource) {
                     is Resource.Loading -> {
                         _loading.value = true
+                        _hasLoaded.value = false
                     }
                     is Resource.Success -> {
+                        _hasLoaded.value = true
                         _loading.value = false
                         _saleItems.value = listOf(resource.value)
                     }
                     is Resource.Failure -> {
                         _loading.value = false
+                        _hasLoaded.value = false
                         // handle error state
                     }
                 }

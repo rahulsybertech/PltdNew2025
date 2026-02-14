@@ -73,6 +73,19 @@ import com.syber.ssspltd.data.model.saleReport.SaleReportSecondaryData
         }
     }
 }
+@Composable
+fun PurchaseRow1(
+    context: Context
+) {
+    Row {
+        TableCell1("PurchaseNo", 80.dp)
+        TableCell1("Supplier", 105.dp)
+        TableCell1("Pcs", 40.dp)
+        TableCell1("Amount", 65.dp)
+        TableCell1("PSlip", 53.dp)
+
+    }
+}
 
 @Composable
 fun TableCell(
@@ -86,6 +99,33 @@ fun TableCell(
         modifier = Modifier
             .width(width)
             .height(40.dp) // fixed height for all rows
+            .border(0.5.dp, Color.Gray)
+            .background(background)
+            .padding(horizontal = 4.dp, vertical = 8.dp), // reduced padding
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Text(
+            text = text,
+            color = color,
+            style = style,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+fun TableCell1(
+    text: String,
+    width: Dp,
+    color: Color = Color.Black,
+    style: TextStyle = MaterialTheme.typography.bodySmall,
+    background: Color = Color.Transparent
+) {
+    Box(
+        modifier = Modifier
+            .width(width)
+            .height(30.dp) // fixed height for all rows
             .border(0.5.dp, Color.Gray)
             .background(background)
             .padding(horizontal = 4.dp, vertical = 8.dp), // reduced padding
