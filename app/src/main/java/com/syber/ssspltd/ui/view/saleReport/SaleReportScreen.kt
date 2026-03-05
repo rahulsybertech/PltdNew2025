@@ -230,6 +230,7 @@ fun SaleReportScreen(navController: NavController, viewModel1: AuthViewModel) {
                             SaleHeader(report)
 
                             Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
                             // ✅ Table rows for that report
                             report.SaleReportSecondaryData?.forEach { secondary ->
