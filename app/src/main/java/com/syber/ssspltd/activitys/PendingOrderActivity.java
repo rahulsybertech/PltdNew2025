@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -332,6 +333,19 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogThemeUpDown;
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.pending_fitter_dailog);
+
+        View rootView = dialog.findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            v.setPadding(
+                    v.getPaddingLeft(),
+                    systemBars.top,      // ✅ TOP for X button
+                    v.getPaddingRight(),
+                    systemBars.bottom    // ✅ BOTTOM for Apply button
+            );
+            return insets;
+        });
 //        dialog.setCancelable(false);
         new Handler().post(() -> {
             filterStack.clear();
@@ -749,7 +763,10 @@ public class PendingOrderActivity extends AppCompatActivity implements DatePicke
             }
             return true;
         });
-
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowCompat.setDecorFitsSystemWindows(window, false);
+        }
         //   getSIze(getIntent().getStringExtra("d_code"),false);
         dialog.show();
     }

@@ -209,5 +209,6 @@ Front page per ek SALE REPORT ka option arha hai us per click kriye apka sale re
       <string name="aadhar_card">Aadhar Card</string>
       <string name="action">Action</string>
       <string name="dispatch_date">Dispatch Date</string>
+      <string name="srkcc_pcc_branch_sale"><![CDATA[SRT,CCK & PCC Branch Sale]]></string>
 
 </resources>

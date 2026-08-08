@@ -22,13 +22,34 @@ public class BlackListedName {
     private Long sNo;
     @SerializedName("Station")
     private String station;
+    @SerializedName("VisibleTo")
+    private String VisibleTo;
+    @SerializedName("Url")
+    private String url;
+
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String address) {
+        this.url = url;
+    }
+
 
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getVisibleTo() {
+        return VisibleTo;
+    }
+
+    public void setVisibleTo(String VisibleTo) {
+        this.VisibleTo = VisibleTo;
     }
 
     public String getGSTNo() {

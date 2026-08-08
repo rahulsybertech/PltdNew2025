@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "com.syber.ssspltd"
         minSdkVersion 24
-        targetSdkVersion 35
-        versionCode 65
-        versionName "3.1.25"
+        targetSdkVersion 34
+        versionCode 70
+        versionName "3.1.30"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -146,7 +146,7 @@ dependencies {
 
 
     implementation 'com.github.dhaval2404:imagepicker:2.1'
-    
+
 
 /*    debugImplementation 'com.github.chuckerteam.chucker:library:4.0.0'
     releaseImplementation 'com.github.chuckerteam.chucker:library-no-op:4.0.0'*/

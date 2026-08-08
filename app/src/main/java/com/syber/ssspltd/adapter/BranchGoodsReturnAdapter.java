@@ -18,6 +18,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.response.BranchGoodsReturnResponse.BranchEmployeesResult;
 import com.squareup.picasso.Callback;
@@ -25,7 +26,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BranchGoodsReturnAdapter extends RecyclerView.Adapter<BranchGoodsReturnAdapter.MyViewHolder> {
 
@@ -141,7 +141,7 @@ public class BranchGoodsReturnAdapter extends RecyclerView.Adapter<BranchGoodsRe
 
         TextView BillingName,BillingMob;
         ImageView billingConcat;
-        CircleImageView Img_show;
+        ShapeableImageView Img_show;
 
         public MyViewHolder(View itemView) {
             super(itemView);

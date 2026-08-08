@@ -444,6 +444,7 @@ public class MainActivity extends AppCompatActivity implements TopicClickListene
 
                     }
                     if (rowItemList.size() == 1) {
+                        SharedPref.write(SharedPref.PURCHASE_PARTY_ID,rowItemList.get(0).getID());
                         adminName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     }
 

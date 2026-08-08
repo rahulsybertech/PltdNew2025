@@ -69,6 +69,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class NewDashBoardActivity extends AppCompatActivity {
@@ -281,6 +282,16 @@ public class NewDashBoardActivity extends AppCompatActivity {
                             String balanceTillDate = jsonObject.getString("BalanceTillDate");
                             String Interest = jsonObject.getString("Interest");
                             String discount_d = jsonObject.optString("Discount");
+                            String incentiveSale = jsonObject.optString("IncentiveSale");
+
+
+                            String nonIncentiveSale = jsonObject.optString("NonincentiveSale");
+
+                            binding.tvOtherBranchSale.setText(toIndianComma(incentiveSale));
+                            binding.tvPccBranchSale.setText(toIndianComma(nonIncentiveSale));
+
+
+
                             // String stockinOffice = "0";
                             //  String pending_order = "0";
 //                            String avaialbleLimit = "12154545";
@@ -590,6 +601,15 @@ public class NewDashBoardActivity extends AppCompatActivity {
                 finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private String toIndianComma(String value) {
+        try {
+            long number = Long.parseLong(value.replace(",", ""));
+            return NumberFormat.getInstance(new Locale("en", "IN")).format(number);
+        } catch (Exception e) {
+            return value;
+        }
     }
 
     public void networkConnetion3(Context mContext) {

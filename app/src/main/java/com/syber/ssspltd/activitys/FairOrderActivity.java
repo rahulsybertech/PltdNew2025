@@ -263,8 +263,6 @@ public class FairOrderActivity extends AppCompatActivity implements OnClick, Dat
         });
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
         System.out.println("GETTING_TOKEN " + SharedPref.read(SharedPref.ACCCESS_TOKEN, ""));
         Constants.SettingHeader();
         salepartyModelList = new ArrayList<>();
@@ -282,14 +280,12 @@ public class FairOrderActivity extends AppCompatActivity implements OnClick, Dat
         stationModelList = new ArrayList<>();
         stationtWithMainList = new ArrayList<>();
         stationtWithSubParty = new ArrayList<>();
-
         sdata = new ArrayList<>();
         marketerModelList = new ArrayList<>();
         marketerData = new ArrayList<>();
         transportModelList = new ArrayList<>();
         transportWithMainList = new ArrayList<>();
         transportWithSubParty = new ArrayList<>();
-
         tdata = new ArrayList<>();
 
         getDispatchTypeList();
@@ -2767,7 +2763,7 @@ public class FairOrderActivity extends AppCompatActivity implements OnClick, Dat
 
     private void getPartyDetailsByPartyCode(String partyCode ) {
         String supplierCode = SharedPref.read(SharedPref.PARTY_CODE, "");
-        String   urlWithPartyCode = GetFairPartyDetailsByAccountId+ "?accountId=" + partyCode+ "&supplierId=" + SharedPref.read(SharedPref.PURCHASE_PARTY_ID, "").toString();
+        String   urlWithPartyCode = GetFairPartyDetailsByAccountId+ "?accountId=" + partyCode+ "&supplierId=" + SharedPref.read(SharedPref.PURCHASE_PARTY_ID, "");
         //  String   urlWithPartyCode = PartyDetailsByPartyCode+ "?partyCode=" + partyCode;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlWithPartyCode, response -> {

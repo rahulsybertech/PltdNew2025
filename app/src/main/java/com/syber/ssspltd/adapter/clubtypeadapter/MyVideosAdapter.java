@@ -8,8 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.allattentionhere.autoplayvideos.AAH_CustomViewHolder;
-import com.allattentionhere.autoplayvideos.AAH_VideosAdapter;
+
 import com.squareup.picasso.Picasso;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.Lazy;
@@ -17,7 +16,10 @@ import com.syber.ssspltd.response.clubtyperespo.Clubdetail;
 
 import java.util.List;
 
-public class MyVideosAdapter extends AAH_VideosAdapter {
+public class MyVideosAdapter{
+
+}
+/*extends AAH_VideosAdapter {
 
     private final List<Clubdetail> list;
     private final Picasso picasso;
@@ -139,4 +141,4 @@ public class MyVideosAdapter extends AAH_VideosAdapter {
 //        } else return TYPE_VIDEO;
         return 0;
     }
-}
+}*/

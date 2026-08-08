@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
+import com.github.dhaval2404.imagepicker.util.FileUtil;
 import com.rajat.pdfviewer.PdfRendererView;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.AlertUtil;
@@ -36,16 +37,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import es.voghdev.pdfviewpager.library.RemotePDFViewPager;
-import es.voghdev.pdfviewpager.library.adapter.PDFPagerAdapter;
-import es.voghdev.pdfviewpager.library.remote.DownloadFile;
-import es.voghdev.pdfviewpager.library.util.FileUtil;
 
 
-public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.Listener {
+public class ViewPDFActivity extends AppCompatActivity /*implements DownloadFile.Listener */{
 
-    PDFPagerAdapter adapter;
-    RemotePDFViewPager remotePDFViewPager;
+  /*  PDFPagerAdapter adapter;
+    RemotePDFViewPager remotePDFViewPager;*/
     LinearLayout linear_layout_pdf;
     RelativeLayout rlwaterMark;
     String pdfUrl;
@@ -79,7 +76,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
         downloadPdf = findViewById(R.id.download);
         PdfRendererView view = findViewById(R.id.pdfView);
         ivBack.setOnClickListener(v -> onBackPressed());
-        share.setOnClickListener(v->sharePDF(pdfUrl));
+      //  share.setOnClickListener(v->sharePDF(pdfUrl));
         downloadPdf.setOnClickListener(v-> FileDownloader.downloadPDF(this,pdfUrl));
         System.out.println("MY_PDF_URL " + pdfUrl);
         linear_layout_pdf = findViewById(R.id.linear_layout_pdf);
@@ -98,7 +95,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
         paint.setAlpha(100);
         paint.setTextSize(50);
         canvas.drawText("WATERMARK", 100, 100, paint);*/
-          remotePDFViewPager = new RemotePDFViewPager(this, pdfUrl, this);
+       //   remotePDFViewPager = new RemotePDFViewPager(this, pdfUrl, this);
 
     }
     public static Bitmap getBitmapFromPath(String filePath) {
@@ -109,14 +106,14 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
     protected void onDestroy() {
             super.onDestroy();
             try {
-                adapter.close();
+          //      adapter.close();
             }catch (Exception e){
                 e.printStackTrace();
             }
 
     }
 
-    @Override
+/*    @Override
     public void onSuccess(String url, String destinationPath) {
         progressBar.setVisibility(View.GONE);
         System.out.println("MY_PDF_URL 2 " + url);
@@ -135,7 +132,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
 //        showWatermark();
 
 
-    }
+    }*/
 
     private void showWatermark() {
         // Create watermark text
@@ -164,20 +161,6 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
         ));
     }
 
-
-
-
-    @Override
-    public void onFailure(Exception e) {
-        AlertUtil.responseExecption(this,"PDF Error","PDF Not Found");
-        progressBar.setVisibility(View.GONE);
-
-    }
-
-    @Override
-    public void onProgressUpdate(int progress, int total) {
-
-    }
 
 //    private void sharePDF(){
 //
@@ -214,7 +197,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
 ////        }
 //    }
 
-    public void sharePDF(String pdfUrl) {
+   /* public void sharePDF(String pdfUrl) {
         try {
             // Step 1: Download the file to cache directory
             File file = new File(getCacheDir(), FileUtil.extractFileNameFromURL(pdfUrl));
@@ -236,7 +219,7 @@ public class ViewPDFActivity extends AppCompatActivity implements DownloadFile.L
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     private void downloadPdfFile(String pdfUrl, File file) throws Exception {
         URL url = new URL(pdfUrl);

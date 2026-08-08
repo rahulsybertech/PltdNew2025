@@ -70,7 +70,6 @@
                         android:clickable="true"
                         android:elevation="5dp"
                         android:layout_marginStart="3dp"
-
                         />
 
                     <LinearLayout

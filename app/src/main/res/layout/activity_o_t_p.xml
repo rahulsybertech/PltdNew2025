@@ -70,6 +70,19 @@
         </LinearLayout>
 
 
+        <!--  <com.google.android.material.textfield.TextInputEditText
+              android:id="@+id/enter_otp"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="30dp"
+              android:layout_marginEnd="30dp"
+              android:layout_marginTop="5dp"
+              android:background="@drawable/line"
+              android:inputType="number"
+              android:maxLength="4"
+              android:gravity="center"
+              android:textSize="18sp"
+              android:letterSpacing="0.6"/>-->
         <com.poovam.pinedittextfield.SquarePinField
             android:id="@+id/enter_otp"
             android:layout_width="match_parent"

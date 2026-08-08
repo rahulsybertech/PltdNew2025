@@ -19,7 +19,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,10 +26,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager.widget.ViewPager;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.syber.ssspltd.Interface.DismisDialogOnResponse;
@@ -42,10 +42,8 @@ import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
 import com.syber.ssspltd.adapter.TabAdapter;
 import com.syber.ssspltd.databinding.ActivityProfileBinding;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -161,6 +159,15 @@ public class ProfileActivity extends AppCompatActivity {
                     JSONObject TotalCustomer = jsonObject.getJSONObject("ProfileDetailsResult");
                     Log.e("test", TotalCustomer.optString("ProfileDetailsResult"));
                     profileName.setText(TotalCustomer.optString("ProfileName"));
+                    String imageUrl = TotalCustomer.optString("ProfilePhotoUrl");
+
+                    Glide.with(this)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.profile)
+                            .error(R.drawable.profile)
+                            .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(binding.ImgShow);
                     profileMob_No.setText(TotalCustomer.optString("MobileNo"));
                     profileEmail.setText(TotalCustomer.optString("Email"));
                     profile_pirtyCode.setText(TotalCustomer.optString("PartyCode"));

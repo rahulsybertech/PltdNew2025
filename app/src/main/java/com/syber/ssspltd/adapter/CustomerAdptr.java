@@ -4,11 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Responses.customer.BlackListedName;
 
@@ -34,17 +38,42 @@ public class CustomerAdptr extends RecyclerView.Adapter<CustomerAdptr.MyViewHold
     @Override
     public void onBindViewHolder(CustomerAdptr.MyViewHolder holder, final int position) {
         final BlackListedName datum = detailList.get(position);
-        if (datum.getStation().equalsIgnoreCase("")||datum.getStation().equalsIgnoreCase("null")){
+        String station = datum.getStation();
+        String imageUrl = datum.getUrl();
+
+        if (station == null || station.trim().isEmpty() || station.equalsIgnoreCase("null")) {
             holder.llStation.setVisibility(View.GONE);
-        }else {
+        } else {
             holder.llStation.setVisibility(View.VISIBLE);
-            holder.station.setText(datum.getStation());
+            holder.station.setText(station);
         }
         holder.firmName.setText(datum.getName().equals("")?"NA":datum.getName());
         holder.ownerName.setText(datum.getOwnerName().equals("")?"NA":datum.getOwnerName());
         holder.gstin.setText(datum.getGSTNo().equals("")?"NA":datum.getGSTNo());
-        holder.address.setText(datum.getAddress().equals("")?"NA":datum.getAddress());
         holder.mobile.setText(datum.getMobileNo().equals("")?"NA":datum.getMobileNo());
+        if(datum.getAddress()!=null){
+            holder.address.setText(datum.getAddress().equals("")?"NA":datum.getAddress());
+        }else {
+            holder.address.setText("NA");
+        }
+
+        if (imageUrl == null || imageUrl.trim().isEmpty() || imageUrl.equalsIgnoreCase("null")) {
+
+            // VERY IMPORTANT: clear previous image
+            Glide.with(mContext).clear(holder.Img_show);
+            holder.Img_show.setImageResource(R.drawable.profile);
+
+        } else {
+
+            Glide.with(mContext)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.profile)
+                    .error(R.drawable.profile)
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.Img_show);
+        }
+
 
     }
 
@@ -55,11 +84,13 @@ public class CustomerAdptr extends RecyclerView.Adapter<CustomerAdptr.MyViewHold
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView firmName,gstin,ownerName,address,mobile,station;
+        ImageView Img_show;
         LinearLayout llStation;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             firmName = itemView.findViewById(R.id.firm_name);
+            Img_show = itemView.findViewById(R.id.Img_show);
             gstin = itemView.findViewById(R.id.gstin);
             ownerName = itemView.findViewById(R.id.owner_name);
             address = itemView.findViewById(R.id.address);

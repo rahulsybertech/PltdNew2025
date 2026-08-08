@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:orientation="vertical"
+    tools:context=".activitys.supplierorderform.SupplierReportActivity">
+
+      <com.google.android.material.appbar.AppBarLayout
+          android:id="@+id/app_bar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:theme="@style/AppTheme.AppBarOverlay">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:title="Scheme Details" />
+      </com.google.android.material.appbar.AppBarLayout>
+
+      <RelativeLayout
+          android:id="@+id/llScheme"
+          tools:layout_editor_absoluteX="16dp"
+          tools:layout_editor_absoluteY="78dp"
+          android:layout_marginTop="10dp"
+          android:layout_width="match_parent"
+          android:layout_below="@+id/app_bar"
+          android:background="@drawable/otp_line"
+          android:layout_height="40dp"
+          tools:ignore="MissingConstraints">
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:spinnerMode="dropdown"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="8dp" />
+
+      </RelativeLayout>
+      <LinearLayout
+          android:visibility="gone"
+          android:id="@+id/ll"
+          android:layout_below="@+id/llScheme"
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/otp_line"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:fontFamily="@font/roboto_light"
+                android:drawableLeft="@drawable/menu_search_white_24dp"
+                android:padding="9dp"
+                android:maxLines="1"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:gravity="center|left"
+                android:drawablePadding="10dp"
+                android:textColorHint="#90000000"
+                android:textColor="#90000000"
+                android:layout_marginTop="10dp"
+                android:hint="Search" />
+
+             <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="8dp">
+
+                              <!-- LEFT -->
+                              <androidx.cardview.widget.CardView
+                                  android:layout_margin="2dp"
+                                  android:id="@+id/card_left"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_alignParentStart="true"
+                                  app:cardElevation="5dp"
+                                  app:cardCornerRadius="2dp">
+
+                                    <LinearLayout
+                                        android:background="@color/orange_light"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="5dp">
+
+                                          <TextView
+                                              android:id="@+id/tvTotalSaleAmount"
+                                              android:fontFamily="@font/roboto_regular"
+                                              android:layout_width="wrap_content"
+                                              android:layout_height="wrap_content"
+                                              android:textColor="@color/black"
+                                              android:text=""
+                                              android:textSize="12sp"/>
+                                    </LinearLayout>
+                              </androidx.cardview.widget.CardView>
+
+                              <!-- RIGHT -->
+                              <androidx.cardview.widget.CardView
+                                  android:layout_margin="2dp"
+                                  android:id="@+id/card_right"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_alignParentEnd="true"
+                                  app:cardElevation="5dp"
+                                  app:cardCornerRadius="2dp">
+
+                                    <LinearLayout
+                                        android:background="@color/orange_light"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="5dp">
+
+                                          <TextView
+                                              android:fontFamily="@font/roboto_regular"
+                                              android:id="@+id/tvTotalDisAmount"
+                                              android:layout_width="wrap_content"
+                                              android:layout_height="wrap_content"
+                                              android:text=""
+                                              android:textColor="@color/black"
+                                              android:textSize="12sp"/>
+                                    </LinearLayout>
+                              </androidx.cardview.widget.CardView>
+
+                        </RelativeLayout>
+
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/search"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+      </LinearLayout>
+
+
+
+      <include
+
+          android:id="@+id/include_progress"
+          layout="@layout/progress_loader"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerInParent="true" />
+</RelativeLayout>

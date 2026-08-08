@@ -72,6 +72,9 @@
                 android:name=".activitys.clubtype.ClubTypeActivity"
                 android:exported="false" />
             <activity
+                android:name=".activitys.scheme.ScehemeDetailsActivity"
+                android:exported="false" />
+            <activity
                 android:name=".activitys.supplierorderform.SupplierReportActivity"
                 android:exported="false" />
             <activity
@@ -294,9 +297,7 @@
                 android:name=".activitys.PendingOrderActivity"
                 android:exported="true"
                 android:screenOrientation="portrait" />
-            <activity
-                android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-                android:theme="@style/Base.Theme.AppCompat" />
+
             <activity
                 android:name=".activitys.SplashActivity"
                 android:exported="true">

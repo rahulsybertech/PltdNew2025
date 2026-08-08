@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.allattentionhere.autoplayvideos.AAH_CustomRecyclerView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -38,9 +37,7 @@ import com.squareup.picasso.Picasso;
 import com.syber.ssspltd.R;
 import com.syber.ssspltd.Utils.SharedPref;
 import com.syber.ssspltd.Utils.VolleySingleton;
-import com.syber.ssspltd.adapter.clubtypeadapter.MyVideosAdapter;
-import com.syber.ssspltd.response.clubtyperespo.ClubTypePojo;
-import com.syber.ssspltd.response.clubtyperespo.Clubdetail;
+
 
 import org.json.JSONObject;
 

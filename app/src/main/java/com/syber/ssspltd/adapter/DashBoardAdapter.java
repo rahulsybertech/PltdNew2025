@@ -60,6 +60,7 @@ import com.syber.ssspltd.activitys.StockInOfficeActivity;
 import com.syber.ssspltd.activitys.WhySSSActivity;
 import com.syber.ssspltd.activitys.clubtype.ClubTypeActivity;
 import com.syber.ssspltd.activitys.customer.CustomerListActivity;
+import com.syber.ssspltd.activitys.scheme.ScehemeDetailsActivity;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierOrderFormActivity;
 import com.syber.ssspltd.activitys.supplierorderform.SupplierReportActivity;
 import com.syber.ssspltd.model.booking.BookingData;
@@ -217,7 +218,8 @@ public class DashBoardAdapter extends RecyclerView.Adapter<DashBoardAdapter.MyVi
                 context.startActivity(new Intent(context, CustomerListActivity.class));
             } else if (lists.getOnClickId().equals("26")) {
                 getBookingList();
-
+            }else if (lists.getOnClickId().equals("28")) {
+                context.startActivity(new Intent(context, ScehemeDetailsActivity.class));
             }
         });
 

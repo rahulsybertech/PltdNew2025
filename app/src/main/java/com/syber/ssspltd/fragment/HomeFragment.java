@@ -77,17 +77,17 @@ public class HomeFragment extends Fragment {
     String[] list1_onclickId = {"1", "2", "3", "4", "13", "16", "23", "25", "27","22","26"};
     Integer list1_Img[] = {R.drawable.button_two, R.drawable.button_nine, R.drawable.button_eleven, R.drawable.button_eight, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_two,R.drawable.button_six, R.drawable.button_thirteen,R.drawable.button_six, R.drawable.button_four, R.drawable.button_four};
 
-    String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service", "Why SSS", "Brands"
+    String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office","Schene Details", "Pending Order", "Courier Report", "Debit Note To Customer", "Credit Note", "Sale Service", "Why SSS", "Brands"
             , "Customer Review", "Club Features", "Stay Booking","Honhar Khiladi"};
   /*  String[] list2_name = {"DashBoard", "Ledger", "Sale Report", "Stock in office", "Pending Order", "Courier Report", "Debit Note To Customer",
           "Credit Note", "Sale Service", "Why SSS", "Brands"
             , "Customer Review", "Club Features","Honhar Khiladi"};*/
   //  String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24","25"};
-    String[] list2_onclickId = {"5", "1", "6", "7", "8", "9", "10", "11", "4", "12", "13", "16", "24","26","25"};
-    Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
+    String[] list2_onclickId = {"5", "1", "6", "7", "28","8", "9", "10", "11", "4", "12", "13", "16", "24","26","25",};
+    Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three,R.drawable.button_two
             , R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten,
             R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_nine,
-            R.drawable.button_two,R.drawable.button_thirteen};
+            R.drawable.button_two,R.drawable.button_thirteen,R.drawable.button_thirteen};
    /* Integer list2_Img[] = {R.drawable.button_co, R.drawable.button_two, R.drawable.button_eight, R.drawable.button_three
             , R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve, R.drawable.button_ten,
             R.drawable.button_grey, R.drawable.button_four, R.drawable.button_six, R.drawable.button_twelve,
@@ -445,7 +445,7 @@ public class HomeFragment extends Fragment {
                        /*     if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer") && !jsonObject.getBoolean("BlackListReportStatus"))*/
                             if (SharedPref.read(SharedPref.DASHBOARD_TYPE, "").equals("Customer")) {
                                 deasbordListTypeList.clear();
-
+                  /*              for (int i = 0; i < (list2_name.length) - 1; i++)*/
                                 for (int i = 0; i < (list2_name.length) - 1; i++) {
 
                                     String name = list2_name[i];

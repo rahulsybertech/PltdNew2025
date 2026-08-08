@@ -1152,7 +1152,6 @@ public class BookingRequestActivity extends AppCompatActivity implements GuestLi
                 if (position != 0) { // Ignore "Select Branch"
                     String selectedBranch = items.get(position);
                     selectBranch = branchList.get(position - 1).getId(); // Adjust for default item
-
                     // Get availability from HashMap
                     String isStayAvailable = branchAvailabilityMap.get(selectedBranch);
 

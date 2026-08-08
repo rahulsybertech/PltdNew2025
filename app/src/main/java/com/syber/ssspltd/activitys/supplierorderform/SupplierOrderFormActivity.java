@@ -246,13 +246,8 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         geNickName();
         getMarketer(SharedPref.read(SharedPref.PARTY_CODE, ""));
         getDispatchTypeList();
-//        getSaleParty(SALE_PARTY);
-//        getTransport();
-//        getTransportDetails(SharedPref.read(SharedPref.PARTY_CODE,""), accountId, "SELF");
-//        getScheme(accountId);
         getScheme();
         getPcsType(SharedPref.read(SharedPref.PARTY_CODE, ""), selectedSuperStar);
-        //getStation();
 
 
         binding.placeholder1.setImageResource(R.drawable.ic_baseline_add_a_photo_blue);
@@ -261,25 +256,11 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
         binding.placeholder4.setImageResource(R.drawable.ic_baseline_add_a_photo_blue);
         binding.placeholder5.setImageResource(R.drawable.ic_baseline_add_a_photo_blue);
 
-//        dattAhead(CurrentDateTime.getCurrentDateString());
-//        binding.date.setText(CurrentDateTime.getCurrentDateStringDDMMYYYY());
-//        dattAhead(CurrentDateTime.getCurrentDateStringDDMMYYYY());
-//        binding.dateTo.setText(CurrentDateTime.getCurrentDateStringDDMMYYYY());
-
-
-
-
-
-
-
-
-
         handleEditInit();
         initPcsAdapter();
         handleRadioSelect();
         handleClickListner();
         handleDate();
-
 
         // Initialize the launcher
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -643,27 +624,6 @@ public class SupplierOrderFormActivity extends AppCompatActivity implements OnCl
            }
        });
     }
-
-   /* public void showDialog(Activity activity, String msg){
-        final Dialog dialog = new Dialog(activity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
-        dialog.setContentView(R.layout.dialog);
-
-        TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
-        text.setText(msg);
-
-        Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog);
-        dialogButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-
-    }*/
 
     private void showCustomDialogConfirm() {
         final Dialog  sDialog = new Dialog(mContext);

@@ -100,6 +100,9 @@ public class NewErpUrls {
     public static String UPDATE_ORDER_STATUS        = BASE_URL + "ChangeOrderStatus";
     public static String ORDER_BOOK_GENERATE_PDF        = DOMAIN + "api/OrderBook/OrderBookGeneratePdf";
 
+    public static String GetSchemeDetails               = DOMAIN + "api/SssPltdReport/GetSchemeDetails";
+    public static String GetSchemeName               = DOMAIN + "api/OrderBook/GetSchemeName";
+
 
     public static String PartyDetailsByPartyCode               = BASE_URL + "PartyDetailsByPartyCode";
     public static String GetDispatchTypeList               = BASE_URL + "GetDispatchTypeList";

@@ -4,7 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LevelListDrawable;
 import android.os.Build;
+import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +20,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Callback;
@@ -29,9 +38,6 @@ import com.syber.ssspltd.activitys.ImageGalleryActivity;
 import com.syber.ssspltd.activitys.NewGallery.SingleImgesGalleryActivity;
 import com.syber.ssspltd.response.Offers.CouponList;
 
-import org.sufficientlysecure.htmltextview.HtmlFormatter;
-import org.sufficientlysecure.htmltextview.HtmlFormatterBuilder;
-import org.sufficientlysecure.htmltextview.HtmlResImageGetter;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -125,8 +131,35 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.MyViewHold
                     TextView couponCode = dialog.findViewById(R.id.couponCode);
                     TextView offerDescription = dialog.findViewById(R.id.offerDescription);
                     WebView webView = dialog.findViewById(R.id.web_view);
-                    Spanned formattedHtml = HtmlFormatter.formatHtml(new HtmlFormatterBuilder().setHtml(datum.getOfferDescription()).setImageGetter(new HtmlResImageGetter(offerDescription.getContext())));
+
+                    Spanned formattedHtml = HtmlCompat.fromHtml(
+                            datum.getOfferDescription(),
+                            HtmlCompat.FROM_HTML_MODE_LEGACY,
+                            new Html.ImageGetter() {
+                                @Override
+                                public Drawable getDrawable(String source) {
+                                    try {
+                                        Drawable drawable = Drawable.createFromStream(
+                                                offerDescription.getContext().getAssets().open(source),
+                                                null
+                                        );
+                                        drawable.setBounds(
+                                                0,
+                                                0,
+                                                drawable.getIntrinsicWidth(),
+                                                drawable.getIntrinsicHeight()
+                                        );
+                                        return drawable;
+                                    } catch (Exception e) {
+                                        return null;
+                                    }
+                                }
+                            },
+                            null
+                    );
+
                     offerDescription.setText(formattedHtml);
+
                     dialog.setCanceledOnTouchOutside(false);
                     dialog.setCancelable(false);
                     // List<CouponList> isSelected2 = couponListList.stream().filter(p -> p.getOfferImageCategory().equals("Image")).collect(Collectors.toList());
@@ -236,8 +269,57 @@ public class OffersAdapter extends RecyclerView.Adapter<OffersAdapter.MyViewHold
                     TextView couponCode = dialog.findViewById(R.id.couponCode);
                     TextView offerDescription = dialog.findViewById(R.id.offerDescription);
                     WebView webView = dialog.findViewById(R.id.web_view);
-                    Spanned formattedHtml = HtmlFormatter.formatHtml(new HtmlFormatterBuilder().setHtml(couponListList.get(getLayoutPosition()).getOfferDescription()).setImageGetter(new HtmlResImageGetter(offerDescription.getContext())));
+
+                    String html = couponListList
+                            .get(getLayoutPosition())
+                            .getOfferDescription();
+
+                    Spanned formattedHtml = HtmlCompat.fromHtml(
+                            html,
+                            HtmlCompat.FROM_HTML_MODE_LEGACY,
+                            source -> {
+                                LevelListDrawable drawable = new LevelListDrawable();
+                                Drawable placeholder = ContextCompat.getDrawable(
+                                        offerDescription.getContext(),
+                                        R.drawable.pdf
+                                );
+
+                                drawable.addLevel(0, 0, placeholder);
+                                drawable.setBounds(
+                                        0,
+                                        0,
+                                        placeholder.getIntrinsicWidth(),
+                                        placeholder.getIntrinsicHeight()
+                                );
+
+                                Glide.with(offerDescription.getContext())
+                                        .load(source)
+                                        .into(new CustomTarget<Drawable>() {
+                                            @Override
+                                            public void onResourceReady(@NonNull Drawable resource,
+                                                                        @Nullable Transition<? super Drawable> transition) {
+                                                drawable.addLevel(1, 1, resource);
+                                                drawable.setBounds(
+                                                        0,
+                                                        0,
+                                                        resource.getIntrinsicWidth(),
+                                                        resource.getIntrinsicHeight()
+                                                );
+                                                drawable.setLevel(1);
+                                                offerDescription.invalidate();
+                                            }
+
+                                            @Override
+                                            public void onLoadCleared(@Nullable Drawable placeholder) {}
+                                        });
+
+                                return drawable;
+                            },
+                            null
+                    );
+
                     offerDescription.setText(formattedHtml);
+
                     dialog.setCanceledOnTouchOutside(false);
                     dialog.setCancelable(false);
                     // List<CouponList> isSelected2 = couponListList.stream().filter(p -> p.getOfferImageCategory().equals("Image")).collect(Collectors.toList());

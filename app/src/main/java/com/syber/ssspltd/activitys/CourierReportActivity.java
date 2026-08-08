@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -381,6 +382,19 @@ public class CourierReportActivity extends AppCompatActivity implements DatePick
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogThemeUpDown;
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.courier_fitter_dailog);
+
+        View rootView = dialog.findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            v.setPadding(
+                    v.getPaddingLeft(),
+                    systemBars.top,      // ✅ TOP for X button
+                    v.getPaddingRight(),
+                    systemBars.bottom    // ✅ BOTTOM for Apply button
+            );
+            return insets;
+        });
         dialog.setCancelable(false);
         courierFilter_Date = dialog.findViewById(R.id.courierFilter_Date);
         courierFilter_Name = dialog.findViewById(R.id.courierFilter_Name);
@@ -794,6 +808,10 @@ public class CourierReportActivity extends AppCompatActivity implements DatePick
             return true;
         });
         //   getSIze(getIntent().getStringExtra("d_code"),false);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowCompat.setDecorFitsSystemWindows(window, false);
+        }
         dialog.show();
 
         getFilters(FilterTypeCourierReport.COURIER_NAME);
